@@ -4,6 +4,6 @@ export interface Credential2 {
 	rememberMe: boolean,
 	language: string,
 	selectTenant: boolean,
-	tenant?: string,
-	application?: string
+	tenant: string,
+	application: string
 }

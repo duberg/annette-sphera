@@ -25,7 +25,15 @@ import {log} from "util";
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent implements OnInit, OnDestroy {
-	public model: any = { login: 'valery.lobachev@gmail.com', password: 'abc', rememberMe:false, selectTenant:false };
+	public model: any = {
+		login: 'valery.lobachev@gmail.com',
+		password: 'abc',
+		rememberMe:false,
+		selectTenant:false,
+		tenant: "IMC",
+		application: "IMC"
+	};
+
 	@Output() actionChange = new Subject<string>();
 	public loading = false;
 
