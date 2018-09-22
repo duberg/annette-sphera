@@ -72,6 +72,7 @@ class TenantUserDao @Inject() (
   }
 
   def getUserTenants(userId: User.Id) = {
+
     db.userTenants.getByUserId(userId)
   }
 

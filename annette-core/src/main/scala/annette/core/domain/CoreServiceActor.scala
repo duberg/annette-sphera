@@ -22,13 +22,13 @@ import annette.core.domain.tenancy.{ LastSessionService, OpenSessionService, Ses
 @Named("CoreService")
 class CoreServiceActor extends Actor with ActorLogging {
 
-  val applicationActor: ActorRef = context.actorOf(ApplicationService.props("core.application"), "application")
-  val languageActor: ActorRef = context.actorOf(LanguageService.props("core.language"), "language")
-  val userActor: ActorRef = context.actorOf(UserService.props("core.user"), "user")
+  val applicationActor: ActorRef = context.actorOf(ApplicationService.props("core-application"), "application")
+  val languageActor: ActorRef = context.actorOf(LanguageService.props("core-language"), "language")
+  val userActor: ActorRef = context.actorOf(UserService.props("core-user"), "user")
 
-  val lastSessionActor: ActorRef = context.actorOf(LastSessionService.props("core.last-session"))
-  val sessionHistoryActor: ActorRef = context.actorOf(SessionHistoryService.props("core.session-history"))
-  val openSessionActor: ActorRef = context.actorOf(OpenSessionService.props("core.open-session", lastSessionActor, sessionHistoryActor))
+  val lastSessionActor: ActorRef = context.actorOf(LastSessionService.props("core-last-session"))
+  val sessionHistoryActor: ActorRef = context.actorOf(SessionHistoryService.props("core-session-history"))
+  val openSessionActor: ActorRef = context.actorOf(OpenSessionService.props("core-open-session", lastSessionActor, sessionHistoryActor))
 
   override def receive: PartialFunction[Any, Unit] = {
     case msg: ApplicationService.Command =>
