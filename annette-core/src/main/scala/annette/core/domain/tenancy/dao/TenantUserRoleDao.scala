@@ -26,12 +26,14 @@ import scala.concurrent.{ ExecutionContext, Future }
  */
 @Singleton
 class TenantUserRoleDao @Inject() (
-  db: TenancyDb) {
+  db: TenancyDb,
+  userDao: UserDao,
+                                  ) {
 
   private def validateStore(tenantId: Tenant.Id, userId: User.Id)(implicit ec: ExecutionContext) = {
     for {
       tenantExist <- db.tenants.isExist(tenantId)
-      userExist <- db.users.isExist(userId)
+      userExist <- userDao.getById(userId).map(_.nonEmpty)
     } yield {
       if (!tenantExist) throw new TenantNotFound()
       if (!userExist) throw new UserNotFound(userId)

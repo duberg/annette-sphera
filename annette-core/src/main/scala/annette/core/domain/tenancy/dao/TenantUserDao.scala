@@ -27,6 +27,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 @Singleton
 class TenantUserDao @Inject() (
   db: TenancyDb,
+  userDao: UserDao,
   tenantDao: TenantDao,
   languageDao: LanguageDao,
   applicationDao: ApplicationDao) {
@@ -34,7 +35,7 @@ class TenantUserDao @Inject() (
   private def validateCreate(tenantId: Tenant.Id, userId: User.Id)(implicit ec: ExecutionContext) = {
     for {
       tenantExist <- db.tenants.isExist(tenantId)
-      userExist <- db.users.isExist(userId)
+      userExist <- userDao.getById(userId).map(_.nonEmpty)
     } yield {
       // проверка существования пользователя
       if (!tenantExist) throw new TenantNotFound()
