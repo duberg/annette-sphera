@@ -1,0 +1,32 @@
+pipeline {
+  agent {
+    docker {
+      image 'hseeberger/scala-sbt'
+      //args  '-v "$HOME/.sbt":/root/.sbt -v "$HOME/.m2":/root/.m2 '
+    }
+  }
+  stages {
+    stage('Build scala') {
+      steps {
+        sh 'echo $HOME'
+        sh 'ls -la $HOME'
+        sh 'mkdir -p /root/.sbt/1.0/plugins'
+        sh 'echo "credentials += Credentials(\\"Sonatype Nexus Repository Manager\\", \\"dev.aniklab.com\\", \\"user\\", \\"Sdi35dSdje3G02sfgFDfg\\")" > /root/.sbt/1.0/plugins/credentials.sbt'
+        //sh 'ls -la $HOME/.sbt/plugins'
+        sh 'sbt clean'
+        sh 'sbt compile'
+        sh 'sbt compile'
+      }
+    }
+    stage('Test') {
+      steps {
+        sh 'sbt test'
+      }
+      post {
+        always {
+          junit 'annette-core-test/target/test-reports/*.xml'
+        }
+      }
+    }
+  }
+}

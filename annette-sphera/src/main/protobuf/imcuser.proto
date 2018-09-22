@@ -1,0 +1,51 @@
+syntax = "proto2";
+
+package imc;
+
+option java_package = "annette.imc.serializer.proto";
+
+
+message ImcUserStateV1 {
+    map<string, ImcUserV1> storage = 1;
+}
+message ImcUserStateV2 {
+    map<string, ImcUserV2> storage = 1;
+}
+
+message ImcUserV1 {
+    required string id = 1;
+    optional string sphere = 2;
+    optional string company = 3;
+    optional string position = 4;
+    optional string rank = 5;
+    required bool postponed = 6;
+}
+
+message ImcUserV2 {
+    required string id = 1;
+    optional string sphere = 2;
+    optional string company = 3;
+    optional string position = 4;
+    optional string rank = 5;
+    required bool postponed = 6;
+    optional string otherTel = 7;
+    optional string otherMail = 8;
+}
+
+message ImcUserCreatedEvtV1 {
+    required ImcUserV1 imcUser = 1;
+}
+
+message ImcUserCreatedEvtV2 {
+    required ImcUserV2 imcUser = 1;
+}
+message ImcUserUpdatedEvtV1  {
+    required ImcUserV1 imcUser = 1;
+}
+message ImcUserUpdatedEvtV2  {
+    required ImcUserV2 imcUser = 1;
+}
+message ImcUserDeletedEvtV1 {
+    required string id = 1;
+}
+

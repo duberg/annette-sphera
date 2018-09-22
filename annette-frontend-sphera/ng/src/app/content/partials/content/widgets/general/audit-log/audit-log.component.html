@@ -1,0 +1,72 @@
+<!--begin:: Widgets/Audit Log-->
+<m-portlet>
+	<!-- use ng-container[mPortletHeadTitle] for the title -->
+	<ng-container mPortletHeadTitle>
+		<div class="m-portlet__head-title">
+			<h3 class="m-portlet__head-text">
+				Audit Log
+			</h3>
+		</div>
+	</ng-container>
+
+	<!-- use ng-container[mPortletHeadTools] for the top right toolbar content -->
+	<ng-container mPortletHeadTools>
+		<ul class="nav nav-pills nav-pills--brand m-nav-pills--align-right m-nav-pills--btn-pill m-nav-pills--btn-sm" role="tablist">
+			<li class="nav-item m-tabs__item">
+				<a class="nav-link m-tabs__link active" data-toggle="tab" href="#m_widget4_tab1_content" role="tab">
+					Today
+				</a>
+			</li>
+			<li class="nav-item m-tabs__item">
+				<a class="nav-link m-tabs__link" data-toggle="tab" href="#m_widget4_tab2_content" role="tab">
+					Week
+				</a>
+			</li>
+			<li class="nav-item m-tabs__item">
+				<a class="nav-link m-tabs__link" data-toggle="tab" href="#m_widget4_tab3_content" role="tab">
+					Month
+				</a>
+			</li>
+		</ul>
+	</ng-container>
+
+	<!-- use ng-container[mPortletBody] for the body content -->
+	<ng-container mPortletBody>
+		<div class="tab-content">
+			<div class="tab-pane active" id="m_widget4_tab1_content">
+				<perfect-scrollbar class="m-scrollable" data-scrollable="true" data-height="400" style="height: 400px; overflow: hidden;">
+					<div class="m-list-timeline m-list-timeline--skin-light">
+						<div class="m-list-timeline__items">
+							<ng-container *ngFor="let item of logList|async">
+								<m-timeline-item [item]="item"></m-timeline-item>
+							</ng-container>
+						</div>
+					</div>
+				</perfect-scrollbar>
+			</div>
+			<div class="tab-pane" id="m_widget4_tab2_content">
+				<perfect-scrollbar class="m-scrollable" data-scrollable="true" data-height="400" style="height: 400px; overflow: hidden;">
+					<div class="m-list-timeline m-list-timeline--skin-light">
+						<div class="m-list-timeline__items">
+							<ng-container *ngFor="let item of logList2|async">
+								<m-timeline-item [item]="item"></m-timeline-item>
+							</ng-container>
+						</div>
+					</div>
+				</perfect-scrollbar>
+			</div>
+			<div class="tab-pane" id="m_widget4_tab3_content">
+				<perfect-scrollbar class="m-scrollable" data-scrollable="true" data-height="400" style="height: 400px; overflow: hidden;">
+					<div class="m-list-timeline m-list-timeline--skin-light">
+						<div class="m-list-timeline__items">
+							<ng-container *ngFor="let item of logList3|async">
+								<m-timeline-item [item]="item"></m-timeline-item>
+							</ng-container>
+						</div>
+					</div>
+				</perfect-scrollbar>
+			</div>
+		</div>
+	</ng-container>
+</m-portlet>
+<!--end:: Widgets/Audit Log-->

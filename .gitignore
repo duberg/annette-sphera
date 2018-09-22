@@ -1,0 +1,12 @@
+*.log
+*lock.json
+.idea/
+target/
+/logs/
+node_modules/
+annette-play/public/dist/
+annette-frontend/src/main/resources/dist
+annette-frontend-sphera/src/main/resources/dist
+tools/gen/
+annette-imc-server/file-storage/
+buildinfo.properties
