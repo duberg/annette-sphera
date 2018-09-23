@@ -1,7 +1,7 @@
 package annette.core.domain.tenancy.actor
 
 import annette.core.domain.tenancy._
-import annette.core.domain.tenancy.model.{User, UserProperty, UserRec, UpdateUser}
+import annette.core.domain.tenancy.model._
 import annette.core.persistence.Persistence
 import annette.core.persistence.Persistence.PersistentState
 import org.mindrot.jbcrypt.BCrypt
@@ -10,24 +10,24 @@ case class UsersActorState(
                             users: Map[User.Id, User] = Map.empty,
                             emailIndex: Map[String, User.Id] = Map.empty,
                             phoneIndex: Map[String, User.Id] = Map.empty,
-                            loginIndex: Map[String, User.Id] = Map.empty,
+                            usernameIndex: Map[String, User.Id] = Map.empty,
                             userProperties: Map[UserProperty.Id, UserProperty] = Map.empty) extends PersistentState[UsersActorState] {
 
-  def createUser(entry: User, password: String): UsersActorState = {
-    validateCreate(entry)
+  def createUser(create: CreateUser): UsersActorState = {
+    validateCreate(create)
     val hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt())
-    val newEmailIndex = entry.email.map{ email => emailIndex + (email.trim.toLowerCase -> entry.id)}.getOrElse(emailIndex)
-    val newPhoneIndex = entry.phone.map{ phone => phoneIndex + (phone.trim.toLowerCase -> entry.id)}.getOrElse(phoneIndex)
-    val newLoginIndex = entry.username.map{ login => loginIndex + (login.trim.toLowerCase -> entry.id)}.getOrElse(loginIndex)
-    val userRec = entry.toUserRec(hashedPassword)
+    val newEmailIndex = create.email.map{ email => emailIndex + (email.trim.toLowerCase -> create.id)}.getOrElse(emailIndex)
+    val newPhoneIndex = create.phone.map{ phone => phoneIndex + (phone.trim.toLowerCase -> create.id)}.getOrElse(phoneIndex)
+    val newLoginIndex = create.username.map{ login => usernameIndex + (login.trim.toLowerCase -> create.id)}.getOrElse(usernameIndex)
+    val userRec = create.toUserRec(hashedPassword)
 
     println(s"User created: $userRec")
 
     copy(
-      users = users + (entry.id -> userRec),
+      users = users + (create.id -> userRec),
       emailIndex = newEmailIndex ,
       phoneIndex= newPhoneIndex,
-      loginIndex = newLoginIndex
+      usernameIndex = newLoginIndex
     )
   }
 
@@ -37,15 +37,15 @@ case class UsersActorState(
     username = user.username.map(_.trim.toLowerCase),
   )
 
-  def validateCreate(entry: User): Unit = {
+  def validateCreate(create: CreateUser): Unit = {
     // проверяем наличие mail'а, телефона или логина
-    if (entry.email.isEmpty && entry.phone.isEmpty && entry.username.isEmpty) throw new LoginRequired
+    if (create.email.isEmpty && create.phone.isEmpty && create.username.isEmpty) throw new LoginRequired
     // проверяем существует ли в системе пользователь с таким же email'ом, телефоном или логином
-    if (entry.email.exists(email => emailIndex.get(email.trim.toLowerCase).isDefined)) throw new EmailAlreadyExists(entry.email.get)
-    if (entry.phone.exists(phone => phoneIndex.get(phone.trim.toLowerCase).isDefined)) throw new PhoneAlreadyExists(entry.phone.get)
-    if (entry.username.exists(login => loginIndex.get(login.trim.toLowerCase).isDefined)) throw new LoginAlreadyExists(entry.username.get)
+    if (create.email.exists(email => emailIndex.get(email.trim.toLowerCase).isDefined)) throw new EmailAlreadyExists(create.email.get)
+    if (create.phone.exists(phone => phoneIndex.get(phone.trim.toLowerCase).isDefined)) throw new PhoneAlreadyExists(create.phone.get)
+    if (create.username.exists(login => usernameIndex.get(login.trim.toLowerCase).isDefined)) throw new LoginAlreadyExists(create.username.get)
     // проверяем существует ли пользователь с таким же id
-    if (users.get(entry.id).isDefined) throw new UserAlreadyExists(entry.id)
+    if (users.get(create.id).isDefined) throw new UserAlreadyExists(create.id)
   }
 
 
@@ -59,7 +59,7 @@ case class UsersActorState(
           // проверяем что phone уже существует
           if (entry.phone.flatten.exists( phone => phoneIndex.get(phone.trim.toLowerCase).exists(_ != entry.id) )) throw new PhoneAlreadyExists(entry.phone.get.get)
           // проверяем что login уже существует
-          if (entry.login.flatten.exists( login => loginIndex.get(login.trim.toLowerCase).exists(_ != entry.id) )) throw new LoginAlreadyExists(entry.login.get.get)
+          if (entry.login.flatten.exists( login => usernameIndex.get(login.trim.toLowerCase).exists(_ != entry.id) )) throw new LoginAlreadyExists(entry.login.get.get)
 
           // проверяем наличие mail'а, телефона или логина
           val email = entry.email.getOrElse(user.email)
@@ -96,11 +96,11 @@ case class UsersActorState(
     val newLoginIndex = entry.login.map {
       // удаляем старый login, если он существует
       case None =>
-        userRec.login.map(oldLogin => loginIndex - oldLogin.trim.toLowerCase).getOrElse(loginIndex)
+        userRec.login.map(oldLogin => usernameIndex - oldLogin.trim.toLowerCase).getOrElse(usernameIndex)
       // удаляем старый login, если он существует и добавляем новый
       case Some(newLogin) =>
-        userRec.login.map(oldLogin => loginIndex - oldLogin.trim.toLowerCase).getOrElse(loginIndex) + (newLogin.trim.toLowerCase -> entry.id)
-    }.getOrElse(loginIndex) // ничего не меняем
+        userRec.login.map(oldLogin => usernameIndex - oldLogin.trim.toLowerCase).getOrElse(usernameIndex) + (newLogin.trim.toLowerCase -> entry.id)
+    }.getOrElse(usernameIndex) // ничего не меняем
 
 
     val updatedEntry = userRec.copy(
@@ -116,7 +116,7 @@ case class UsersActorState(
       users = users + (entry.id -> updatedEntry),
       emailIndex = newEmailIndex,
       phoneIndex = newPhoneIndex,
-      loginIndex = newLoginIndex
+      usernameIndex = newLoginIndex
     )
 
   }
@@ -126,7 +126,7 @@ case class UsersActorState(
       user =>
       val newEmailIndex = user.email.map{ email => emailIndex - email.trim.toLowerCase}.getOrElse(emailIndex)
       val newPhoneIndex = user.phone.map{ phone => phoneIndex - phone.trim.toLowerCase }.getOrElse(phoneIndex)
-      val newLoginIndex = user.login.map{ login => loginIndex - login.trim.toLowerCase }.getOrElse(loginIndex)
+      val newLoginIndex = user.login.map{ login => usernameIndex - login.trim.toLowerCase }.getOrElse(usernameIndex)
       copy(users = users - id)
     }.getOrElse( throw new UserNotFound(id) )
 
@@ -171,7 +171,7 @@ case class UsersActorState(
     emailIndex.get(cleanLogin).map(Some(_))
       .getOrElse(
         phoneIndex.get(cleanLogin).map(Some(_))
-          .getOrElse(loginIndex.get(cleanLogin))
+          .getOrElse(usernameIndex.get(cleanLogin))
       )
   }
 

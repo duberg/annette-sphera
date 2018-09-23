@@ -32,7 +32,7 @@ trait UserConverters {
       userRecs = obj.users.map({ case (x, y) => x.toString -> fromUserRec(y) }),
       emailIndex = obj.emailIndex.mapValues(_.toString),
       phoneIndex = obj.phoneIndex.mapValues(_.toString),
-      loginIndex = obj.loginIndex.mapValues(_.toString),
+      loginIndex = obj.usernameIndex.mapValues(_.toString),
       userProperties = obj.userProperties.map({ case (x, y) => x.toString -> fromUserProperty(y) })).toByteArray
   }
 

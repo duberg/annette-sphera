@@ -26,12 +26,12 @@ import annette.core.domain.application.model.Application
   */
 case class User(
                  id: User.Id,
-                 username: String,
+                 username: Option[String],
                  name: Option[String],
                  firstName: String,
                  lastName: String,
                  middleName: Option[String],
-                 email: String,
+                 email: Option[String],
                  url: Option[String],
                  description: Option[String],
                  phone: Option[String],
@@ -52,12 +52,12 @@ case class User(
                  deactivated: Boolean)
 
 case class CreateUser(
-                 username: String,
+                 username: Option[String],
                  name: Option[String],
                  firstName: String,
                  lastName: String,
                  middleName: Option[String],
-                 email: String,
+                 email: Option[String],
                  url: Option[String],
                  description: Option[String],
                  phone: Option[String],
@@ -76,12 +76,12 @@ case class CreateUser(
 
 case class UpdateUser(
                        id: User.Id,
-                       username: Option[String],
+                       username: Option[Option[String]],
                        name: Option[String],
                        firstName: Option[String],
                        lastName: Option[String],
                        middleName: Option[Option[String]],
-                       email: Option[String],
+                       email: Option[Option[String]],
                        url: Option[Option[String]],
                        description: Option[Option[String]],
                        phone: Option[Option[String]],
