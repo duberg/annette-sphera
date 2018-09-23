@@ -13,8 +13,7 @@ import annette.imc.user.{ ImcUserActor, ImcUserState }
 import com.typesafe.config.ConfigFactory
 import annette.imc.http.routes._
 
-class ImcApi(val coreModule: CoreModule, ctx1: ImcContext, auth1: Directive1[SessionData]) extends AdminRoutes
-  with ApRoutes
+class ImcApi(val coreModule: CoreModule, ctx1: ImcContext, auth1: Directive1[SessionData]) extends ApRoutes //AdminRoutes
   with BulletinRoutes
   with CriterionRoutes
   with FileRoutes
@@ -43,8 +42,8 @@ class ImcApi(val coreModule: CoreModule, ctx1: ImcContext, auth1: Directive1[Ses
 
   def routes: Route = pathPrefix("imc" / "api") {
     implicit val routingSettings: RoutingSettings = RoutingSettings(ConfigFactory.load())
-
-    Route.seal(adminRoutes ~ apRoutes ~ expertRoutes ~ fileRoutes ~ criterionRoutes ~
+    // adminRoutes ~
+    Route.seal(apRoutes ~ expertRoutes ~ fileRoutes ~ criterionRoutes ~
       statusRoutes ~ bulletinRoutes ~ reportRoutes ~ notificationRoutes ~ pdfRoutes)
   }
 

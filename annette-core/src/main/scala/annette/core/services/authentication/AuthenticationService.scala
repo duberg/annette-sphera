@@ -13,7 +13,7 @@ package annette.core.services.authentication
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-import akka.actor.{Actor, ActorLogging, Props}
+import akka.actor.{ Actor, ActorLogging, Props }
 import akka.event.LoggingReceive
 import akka.routing.FromConfig
 import akka.util.Timeout
@@ -24,7 +24,7 @@ import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.UserService
 import annette.core.domain.tenancy.dao._
 import annette.core.domain.tenancy.model.Tenant
-import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.config.{ Config, ConfigFactory }
 
 import scala.concurrent.duration._
 import scala.util.Try
@@ -89,13 +89,13 @@ object AuthenticationService {
     languageId: Language.Id)
 
   def props(
-             sessionDao: SessionDao,
-             tenantDao: TenantDao,
-             applicationDao: ApplicationDao,
-             userDao: UserService,
-             tenantUserDao: TenantUserDao,
-             languageDao: LanguageDao,
-             config: Config) = Props(
+    sessionDao: SessionDao,
+    tenantDao: TenantDao,
+    applicationDao: ApplicationDao,
+    userDao: UserService,
+    tenantUserDao: TenantUserDao,
+    languageDao: LanguageDao,
+    config: Config) = Props(
     classOf[AuthenticationService],
     sessionDao,
     tenantDao,
@@ -108,13 +108,13 @@ object AuthenticationService {
 }
 
 class AuthenticationService(
-                             sessionDao: SessionDao,
-                             tenantDao: TenantDao,
-                             applicationDao: ApplicationDao,
-                             userDao: UserService,
-                             tenantUserDao: TenantUserDao,
-                             languageDao: LanguageDao,
-                             config: Config)
+  sessionDao: SessionDao,
+  tenantDao: TenantDao,
+  applicationDao: ApplicationDao,
+  userDao: UserService,
+  tenantUserDao: TenantUserDao,
+  languageDao: LanguageDao,
+  config: Config)
   extends Actor with ActorLogging {
 
   implicit val ec = context.dispatcher

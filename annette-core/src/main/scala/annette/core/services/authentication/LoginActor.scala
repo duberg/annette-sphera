@@ -12,7 +12,7 @@ package annette.core.services.authentication
 
 import java.util.UUID
 
-import akka.actor.{Actor, ActorLogging, ActorRef}
+import akka.actor.{ Actor, ActorLogging, ActorRef }
 import akka.event.LoggingReceive
 import akka.http.scaladsl.util.FastFuture
 import annette.core.domain.application.dao.ApplicationDao
@@ -21,7 +21,7 @@ import annette.core.domain.language.dao.LanguageDao
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.UserService
 import annette.core.domain.tenancy.dao._
-import annette.core.domain.tenancy.model.{OpenSession, Tenant, User}
+import annette.core.domain.tenancy.model.{ OpenSession, Tenant, User }
 import annette.core.services.authentication.AuthenticationService._
 import annette.core.services.authentication.jwt.JwtHelper
 import org.joda.time.DateTime
@@ -32,15 +32,15 @@ import scala.concurrent.Future
  * Created by valery on 22.10.16.
  */
 class LoginActor(
-                  userDao: UserService,
-                  sessionDao: SessionDao,
-                  tenantDao: TenantDao,
-                  tenantUserDao: TenantUserDao,
-                  applicationDao: ApplicationDao,
-                  languageDao: LanguageDao,
-                  rememberMeSessionTimeout: Int,
-                  sessionTimeout: Int,
-                  override val secret: String)
+  userDao: UserService,
+  sessionDao: SessionDao,
+  tenantDao: TenantDao,
+  tenantUserDao: TenantUserDao,
+  applicationDao: ApplicationDao,
+  languageDao: LanguageDao,
+  rememberMeSessionTimeout: Int,
+  sessionTimeout: Int,
+  override val secret: String)
   extends Actor with ActorLogging with JwtHelper {
 
   implicit val ec = context.dispatcher

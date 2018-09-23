@@ -9,52 +9,20 @@ import annette.core.persistence.Persistence
 import annette.core.persistence.Persistence.PersistentState
 import org.mindrot.jbcrypt.BCrypt
 
-case class UsersActorState(
+case class UsersState(
                             users: Map[User.Id, User] = Map.empty,
                             emailIndex: Map[String, User.Id] = Map.empty,
                             phoneIndex: Map[String, User.Id] = Map.empty,
                             usernameIndex: Map[String, User.Id] = Map.empty,
-                            userProperties: Map[UserProperty.Id, UserProperty] = Map.empty) extends PersistentState[UsersActorState] {
+                            userProperties: Map[UserProperty.Id, UserProperty] = Map.empty) extends PersistentState[UsersState] {
 
-  def createUser(x: CreateUser): UsersActorState = {
-    validateCreate(x)
-    val userId = if (users.isEmpty) 1000 else users.keys.max
-    val hashedPassword = BCrypt.hashpw(x.password, BCrypt.gensalt())
-    val newEmailIndex = x.email.map{ email => emailIndex + (email.trim.toLowerCase -> userId)}.getOrElse(emailIndex)
-    val newPhoneIndex = x.phone.map{ phone => phoneIndex + (phone.trim.toLowerCase -> userId)}.getOrElse(phoneIndex)
-    val newLoginIndex = x.username.map{ login => usernameIndex + (login.trim.toLowerCase -> userId)}.getOrElse(usernameIndex)
-    val user = User(
-      id = userId,
-      username = x.username,
-      name = x.name,
-      firstName = x.firstName,
-      lastName = x.lastName,
-      middleName = x.middleName,
-      email = x.email,
-      url = x.url,
-      description = x.description,
-      phone = x.phone,
-      locale = x.locale,
-      registeredDate = ZonedDateTime.now(),
-      tenants = x.tenants,
-      applications = x.applications,
-      roles = x.roles,
-      password = hashedPassword,
-      avatarUrl = x.avatarUrl,
-      sphere = x.sphere,
-      company = x.company,
-      position = x.position,
-      rank = x.rank,
-      additionalTel = x.additionalTel,
-      additionalMail = x.additionalMail,
-      meta = x.meta,
-      deactivated = x.deactivated
-    )
-
-    println(s"User created: $user")
+  def createUser(x: User): UsersState = {
+    val newEmailIndex = x.email.map{ email => emailIndex + (email.trim.toLowerCase -> x.id)}.getOrElse(emailIndex)
+    val newPhoneIndex = x.phone.map{ phone => phoneIndex + (phone.trim.toLowerCase -> x.id)}.getOrElse(phoneIndex)
+    val newLoginIndex = x.username.map{ login => usernameIndex + (login.trim.toLowerCase -> x.id)}.getOrElse(usernameIndex)
 
     copy(
-      users = users + (userId -> user),
+      users = users + (x.id -> x),
       emailIndex = newEmailIndex ,
       phoneIndex= newPhoneIndex,
       usernameIndex = newLoginIndex
@@ -78,80 +46,78 @@ case class UsersActorState(
     //if (users.get(create.id).isDefined) throw new UserAlreadyExists(create.id)
   }
 
-
-  def validateUpdate(entry: UpdateUser): UserRec = {
+  def validateUpdate(x: UpdateUser): User = {
     users
-      .get(entry.id)
+      .get(x.id)
       .map{
         user =>
           // проверяем что email уже существует
-          if (entry.email.flatten.exists( email => emailIndex.get(email.trim.toLowerCase).exists(_ != entry.id) )) throw new EmailAlreadyExists(entry.email.get.get)
+          if (x.email.flatten.exists(email => emailIndex.get(email.trim.toLowerCase).exists(_ != x.id) )) throw new EmailAlreadyExists(x.email.get.get)
           // проверяем что phone уже существует
-          if (entry.phone.flatten.exists( phone => phoneIndex.get(phone.trim.toLowerCase).exists(_ != entry.id) )) throw new PhoneAlreadyExists(entry.phone.get.get)
+          if (x.phone.flatten.exists(phone => phoneIndex.get(phone.trim.toLowerCase).exists(_ != x.id) )) throw new PhoneAlreadyExists(x.phone.get.get)
           // проверяем что login уже существует
-          if (entry.login.flatten.exists( login => usernameIndex.get(login.trim.toLowerCase).exists(_ != entry.id) )) throw new LoginAlreadyExists(entry.login.get.get)
+          if (x.username.flatten.exists(username => usernameIndex.get(username.trim.toLowerCase).exists(_ != x.id) )) throw new LoginAlreadyExists(x.username.get.get)
 
           // проверяем наличие mail'а, телефона или логина
-          val email = entry.email.getOrElse(user.email)
-          val phone = entry.phone.getOrElse(user.phone)
-          val login = entry.login.getOrElse(user.login)
+          val email = x.email.getOrElse(user.email)
+          val phone = x.phone.getOrElse(user.phone)
+          val username = x.username.getOrElse(user.username)
           //println(s"Validate Update: entry = $entry, user = $user email = $email, phone = $phone, login = $login")
-          if (email.isEmpty && phone.isEmpty && login.isEmpty) throw new LoginRequired
+          if (email.isEmpty && phone.isEmpty && username.isEmpty) throw new LoginRequired
           user
       }
-      .getOrElse(throw new UserNotFound(entry.id))
+      .getOrElse(throw new UserNotFound(x.id))
   }
 
-  def updateUser(entry: UpdateUser): UsersActorState = {
-    val userRec = validateUpdate(entry)
+  def updateUser(x: UpdateUser): UsersState = {
+    val user = validateUpdate(x)
 
-    val newEmailIndex = entry.email.map {
+    val newEmailIndex = x.email.map {
       // удаляем старый email, если он существует
       case None =>
-        userRec.email.map(oldEmail => emailIndex - oldEmail.trim.toLowerCase).getOrElse(emailIndex)
+        user.email.map(oldEmail => emailIndex - oldEmail.trim.toLowerCase).getOrElse(emailIndex)
       // удаляем старый email, если он существует и добавляем новый
       case Some(newEmail) =>
-        userRec.email.map(oldEmail => emailIndex - oldEmail.trim.toLowerCase).getOrElse(emailIndex) + (newEmail.trim.toLowerCase -> entry.id)
+        user.email.map(oldEmail => emailIndex - oldEmail.trim.toLowerCase).getOrElse(emailIndex) + (newEmail.trim.toLowerCase -> x.id)
     }.getOrElse(emailIndex) // ничего не меняем
 
-    val newPhoneIndex = entry.phone.map {
+    val newPhoneIndex = x.phone.map {
       // удаляем старый phone, если он существует
       case None =>
-        userRec.phone.map(oldPhone => phoneIndex - oldPhone.trim.toLowerCase).getOrElse(phoneIndex)
+        user.phone.map(oldPhone => phoneIndex - oldPhone.trim.toLowerCase).getOrElse(phoneIndex)
       // удаляем старый phone, если он существует и добавляем новый
       case Some(newPhone) =>
-        userRec.phone.map(oldPhone => phoneIndex - oldPhone.trim.toLowerCase).getOrElse(phoneIndex) + (newPhone.trim.toLowerCase -> entry.id)
+        user.phone.map(oldPhone => phoneIndex - oldPhone.trim.toLowerCase).getOrElse(phoneIndex) + (newPhone.trim.toLowerCase -> x.id)
     }.getOrElse(phoneIndex) // ничего не меняем
 
-    val newLoginIndex = entry.login.map {
+    val newUsernameIndex = x.username.map {
       // удаляем старый login, если он существует
       case None =>
-        userRec.login.map(oldLogin => usernameIndex - oldLogin.trim.toLowerCase).getOrElse(usernameIndex)
+        user.username.map(oldUsername => usernameIndex - oldUsername.trim.toLowerCase).getOrElse(usernameIndex)
       // удаляем старый login, если он существует и добавляем новый
       case Some(newLogin) =>
-        userRec.login.map(oldLogin => usernameIndex - oldLogin.trim.toLowerCase).getOrElse(usernameIndex) + (newLogin.trim.toLowerCase -> entry.id)
+        user.username.map(oldUsername => usernameIndex - oldUsername.trim.toLowerCase).getOrElse(usernameIndex) + (newLogin.trim.toLowerCase -> x.id)
     }.getOrElse(usernameIndex) // ничего не меняем
 
-
-    val updatedEntry = userRec.copy(
-      firstname = entry.firstname.getOrElse(userRec.firstname),
-      lastname = entry.lastname.getOrElse(userRec.lastname),
-      middlename = entry.middlename.getOrElse(userRec.middlename),
-      email = entry.email.getOrElse(userRec.email),
-      phone = entry.phone.getOrElse(userRec.phone),
-      login = entry.login.getOrElse(userRec.login),
-      defaultLanguage = entry.defaultLanguage.getOrElse(userRec.defaultLanguage),
+    val updated = user.copy(
+      username = x.username.getOrElse(user.username),
+      firstName = x.firstName.getOrElse(user.firstName),
+      lastName = x.lastName.getOrElse(user.lastName),
+      middleName = x.middleName.getOrElse(user.middleName),
+      email = x.email.getOrElse(user.email),
+      phone = x.phone.getOrElse(user.phone),
+      locale = x.locale.getOrElse(user.locale)
     )
+
     copy(
-      users = users + (entry.id -> updatedEntry),
+      users = users + (x.id -> updated),
       emailIndex = newEmailIndex,
       phoneIndex = newPhoneIndex,
-      usernameIndex = newLoginIndex
+      usernameIndex = newUsernameIndex
     )
-
   }
 
-  def deleteUser(id: User.Id): UsersActorState = {
+  def deleteUser(id: User.Id): UsersState = {
     users.get(id).map {
       user =>
       val newEmailIndex = user.email.map{ email => emailIndex - email.trim.toLowerCase}.getOrElse(emailIndex)
@@ -166,7 +132,7 @@ case class UsersActorState(
 
   def userExists(id: User.Id): Boolean = users.get(id).isDefined
 
-  def updatePassword(userId: User.Id, password: String): UsersActorState = {
+  def updatePassword(userId: User.Id, password: String): UsersState = {
     users
       .get(userId)
       .map{
@@ -185,8 +151,8 @@ case class UsersActorState(
       .flatMap{
         userId =>
           users.get(userId).map {
-            case userRec if BCrypt.checkpw(password, userRec.password) =>
-              Some(userRec.toUser)
+            case user if BCrypt.checkpw(password, user.password) =>
+              Some(user)
             case _ =>
               println(s"can't find user: $userId, cleanLogin: $cleanLogin")
               None
@@ -205,10 +171,10 @@ case class UsersActorState(
 
   override def updated(event: Persistence.PersistentEvent) = {
     event match {
-      case UserService.UserCreatedEvt(entry,  password) => createUser(entry,  password)
-      case UserService.UserUpdatedEvt(entry) => updateUser(entry)
-      case UserService.UserDeletedEvt(id) => deleteUser(id)
-      case UserService.PasswordUpdatedEvt(userId,  password) => updatePassword(userId,  password)
+      case UserService.CreatedUserEvt(x) => createUser(x)
+      case UserService.UpdatedUserEvt(x) => updateUser(x)
+      case UserService.DeletedUserEvt(x) => deleteUser(x)
+      case UserService.UpdatedPasswordEvt(x, y) => updatePassword(x, y)
     }
   }
 }

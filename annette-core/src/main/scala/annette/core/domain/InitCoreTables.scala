@@ -1,55 +1,40 @@
-/**
- * *************************************************************************************
- * Copyright (c) 2014-2017 by Valery Lobachev
- * Redistribution and use in source and binary forms, with or without
- * modification, are NOT permitted without written permission from Valery Lobachev.
- *
- * Copyright (c) 2014-2017 Валерий Лобачев
- * Распространение и/или использование в исходном или бинарном формате, с изменениями или без таковых,
- * запрещено без письменного разрешения правообладателя.
- * **************************************************************************************
- */
-
 package annette.core.domain
 
 import java.util.UUID
 
 import javax.inject._
 import akka.actor.ActorSystem
-import akka.event.{LogSource, Logging}
+import akka.event.{ LogSource, Logging }
 import akka.http.scaladsl.util.FastFuture
 import annette.core.domain.application.ApplicationAlreadyExists
-import annette.core.domain.application.dao.{ApplicationDao, ApplicationDb}
+import annette.core.domain.application.dao.{ ApplicationDao, ApplicationDb }
 import annette.core.domain.application.model.Application
 import annette.core.domain.language.LanguageAlreadyExists
-import annette.core.domain.language.dao.{LanguageDao, LanguageDb}
+import annette.core.domain.language.dao.{ LanguageDao, LanguageDb }
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.dao._
-import annette.core.domain.tenancy.model.{Tenant, TenantUserRole, User}
+import annette.core.domain.tenancy.model.{ CreateUser, Tenant, TenantUserRole, User }
 import annette.core.domain.tenancy._
 import com.typesafe.config.Config
 
 import scala.collection.JavaConverters._
 import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, ExecutionContextExecutor, Future}
+import scala.concurrent.{ Await, ExecutionContextExecutor, Future }
 import scala.util.Try
 
-/**
- * Created by valery on 17.12.16.
- */
 @Singleton
 class InitCoreTables @Inject() (
-                                 config: Config,
-                                 tenancyDb: TenancyDb,
-                                 userDao: UserService,
-                                 tenantDao: TenantDao,
-                                 tenantUserDao: TenantUserDao,
-                                 tenantUserRoleDao: TenantUserRoleDao,
-                                 languageDb: LanguageDb,
-                                 languageDao: LanguageDao,
-                                 applicationDb: ApplicationDb,
-                                 applicationDao: ApplicationDao,
-                                 system: ActorSystem) {
+  config: Config,
+  tenancyDb: TenancyDb,
+  userDao: UserService,
+  tenantDao: TenantDao,
+  tenantUserDao: TenantUserDao,
+  tenantUserRoleDao: TenantUserRoleDao,
+  languageDb: LanguageDb,
+  languageDao: LanguageDao,
+  applicationDb: ApplicationDb,
+  applicationDao: ApplicationDao,
+  system: ActorSystem) {
 
   implicit val myLogSourceType: LogSource[InitCoreTables] = (a: InitCoreTables) => "InitCoreTables"
 
@@ -77,7 +62,7 @@ class InitCoreTables @Inject() (
       _ <- load("languages", loadLanguages)
       _ <- load("applications", loadApplications)
       _ <- load("tenants", loadTenants)
-      _ <- load("users", loadUsers)
+      // _ <- load("users", loadUsers)
     } yield ()
 
   }
@@ -185,57 +170,72 @@ class InitCoreTables @Inject() (
   }
 
   private def loadUsers(list: List[Config]) = {
-    val data = list.map {
-      conf =>
-        val tenantsConf = opt(conf.getConfigList("tenants").asScala.toList).get
-        val tenantsAndRoles = tenantsConf.map {
-          case tenantConf =>
-            val tenant = opt(tenantConf.getString("tenant")).getOrElse("")
-            val roles = opt(tenantConf.getStringList("roles").asScala.toSet).getOrElse(Set.empty)
-            tenant -> roles
-        }
-        val user = User(
-          firstname = opt(conf.getString("firstname")).getOrElse(""),
-          middlename = opt(conf.getString("middlename")).getOrElse(""),
-          lastname = opt(conf.getString("lastname")).getOrElse(""),
-          email = opt(conf.getString("email")),
-          phone = opt(conf.getString("phone")),
-          id = opt(UUID.fromString(conf.getString("id"))).getOrElse(UUID.randomUUID()))
-        val password = opt(conf.getString("password")).getOrElse("abc")
-        (user, password, tenantsAndRoles)
-    }
-    Future
-      .traverse(data) {
-        case (user, password, tenantsAndRoles) =>
-          userDao
-            .create(user, password)
-            .andThen {
-              case a =>
-                tenantsAndRoles.map {
-                  case (tenant, roles) =>
-                    tenantUserDao.create(tenant, user.id)
-                }
-            }
-            .andThen {
-              case _ =>
-                tenantsAndRoles.map {
-                  case (tenant, roles) =>
-                    if (roles.nonEmpty) tenantUserRoleDao.store(TenantUserRole(tenant, user.id, roles))
-                }
-            }
-            .recover {
-              case _: UserAlreadyExists =>
-                log.error(s"Failed to load $user: already exist")
-              case _: EmailAlreadyExists =>
-                log.error(s"Failed to load $user: already exist")
-              case _: PhoneAlreadyExists =>
-                log.error(s"Failed to load $user: already exist")
-              case th =>
-                log.error(s"Failed to load $user")
-                th.printStackTrace()
-            }
-      }
-      .map(_ => ())
+    //    val data = list.map {
+    //      conf =>
+    //        val tenantsConf = opt(conf.getConfigList("tenants").asScala.toList).get
+    //        val tenantsAndRoles = tenantsConf.map {
+    //          case tenantConf =>
+    //            val tenant = opt(tenantConf.getString("tenant")).getOrElse("")
+    //            val roles = opt(tenantConf.getStringList("roles").asScala.toSet).getOrElse(Set.empty)
+    //            tenant -> roles
+    //        }
+    //        val x = CreateUser(
+    //          username = opt(conf.getString("username")),
+    //          name = opt(conf.getString("name")),
+    //          firstName = opt(conf.getString("firstName")).getOrElse(""),
+    //          lastName = opt(conf.getString("lastName")).getOrElse(""),
+    //          middleName = opt(conf.getString("middleName")),
+    //          email = opt(conf.getString("email")),
+    //          url = opt(conf.getString("url")),
+    //          description = opt(conf.getString("description")),
+    //          phone = opt(conf.getString("phone")),
+    //          locale = opt(conf.getString("locale")),
+    //          tenants = ???,
+    //          applications = ???,
+    //          roles = ???,
+    //          password = opt(conf.getString("password")).getOrElse("abc"),
+    //          avatarUrl = opt(conf.getString("avatarUrl")),
+    //          sphere = opt(conf.getString("sphere")),
+    //          company = opt(conf.getString("company")),
+    //          position = opt(conf.getString("position")),
+    //          rank = opt(conf.getString("rank")),
+    //          additionalTel = opt(conf.getString("additionalTel")),
+    //          additionalMail = opt(conf.getString("additionalMail")),
+    //          meta = Map.empty,
+    //          deactivated = false)
+    //
+    //        (x, tenantsAndRoles)
+    //    }
+    //    Future
+    //      .traverse(data) {
+    //        case (x, tenantsAndRoles) =>
+    //          for {
+    //            x1 <- userDao.create(x)
+    //            x2 <- tenantsAndRoles.map {
+    //              case (tenant, roles) =>
+    //                tenantUserDao.create(tenant, x1.id)
+    //            }
+    //            x3 <- tenantsAndRoles.map {
+    //              case (tenant, roles) =>
+    //                if (roles.nonEmpty) tenantUserRoleDao.store(TenantUserRole(tenant, x1.id, roles))
+    //            }
+    //          } yield
+    //
+    //
+    //
+    //            .recover {
+    //              case _: UserAlreadyExists =>
+    //                log.error(s"Failed to load $x: already exist")
+    //              case _: EmailAlreadyExists =>
+    //                log.error(s"Failed to load $x: already exist")
+    //              case _: PhoneAlreadyExists =>
+    //                log.error(s"Failed to load $x: already exist")
+    //              case th =>
+    //                log.error(s"Failed to load $x")
+    //                th.printStackTrace()
+    //            }
+    //      }
+    //      .map(_ => ())
   }
 
 }

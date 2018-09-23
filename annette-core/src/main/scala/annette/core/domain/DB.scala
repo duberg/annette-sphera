@@ -20,9 +20,7 @@ import com.typesafe.config.Config
 import scala.collection.JavaConverters._
 
 @Singleton
-class DB @Inject() (
-  config: Config) {
-
+class DB @Inject() (config: Config) {
   val hosts = config.getStringList("annette.cassandra.hosts").asScala.map {
     hostAndPort =>
       val arr = hostAndPort.split(":")

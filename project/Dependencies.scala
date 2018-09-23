@@ -39,6 +39,7 @@ object Dependencies {
     "io.circe" %% "circe-core" % Version.circle,
     "io.circe" %% "circe-generic" % Version.circle,
     "io.circe" %% "circe-parser" % Version.circle,
+    "io.circe" %% "circe-java8" % Version.circle,
 
     "com.google.protobuf" % "protobuf-java" % Version.protobuf,
 

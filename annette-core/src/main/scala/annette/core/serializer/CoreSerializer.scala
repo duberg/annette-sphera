@@ -3,8 +3,8 @@ package annette.core.serializer
 import akka.serialization.SerializerWithStringManifest
 import annette.core.domain.tenancy.UserService
 import annette.core.domain.application.model._
-import annette.core.domain.application.{ApplicationService, ApplicationState}
-import annette.core.domain.tenancy.actor.UsersActorState
+import annette.core.domain.application.{ ApplicationService, ApplicationState }
+import annette.core.domain.tenancy.actor.UsersState
 
 class CoreSerializer extends SerializerWithStringManifest
   with UserConverters
@@ -16,10 +16,10 @@ class CoreSerializer extends SerializerWithStringManifest
 
   override def toBinary(o: AnyRef): Array[Byte] = {
     o match {
-      case obj: UserService.UserCreatedEvt => toUserCreatedEvtBinary(obj)
-      case obj: UserService.UserUpdatedEvt => toUserUpdateEvtBinary(obj)
-      case obj: UserService.UserDeletedEvt => toUserDeleteEvtBinary(obj)
-      case obj: UsersActorState => toUserStateBinary(obj)
+      case obj: UserService.CreatedUserEvt => toCreatedUserEvtBinary(obj)
+      case obj: UserService.UpdatedUserEvt => toUpdateUserEvtBinary(obj)
+      case obj: UserService.DeletedUserEvt => toDeleteUserEvtBinary(obj)
+      case obj: UsersState => toUserStatesBinary(obj)
 
       case obj: ApplicationService.ApplicationCreatedEvt => toApplicationCreatedEvtBinary(obj)
       case obj: ApplicationService.ApplicationUpdatedEvt => toApplicationUpdateEvtBinary(obj)
@@ -34,10 +34,10 @@ class CoreSerializer extends SerializerWithStringManifest
 
   override def manifest(o: AnyRef): String = {
     o match {
-      case _: UserService.UserCreatedEvt => UserCreatedEvtManifestV1
-      case _: UserService.UserUpdatedEvt => UserUpdatedEvtManifestV1
-      case _: UserService.UserDeletedEvt => UserDeletedEvtManifestV1
-      case _: UsersActorState => UserStateManifestV1
+      case _: UserService.CreatedUserEvt => CreatedUserEvtManifestV1
+      case _: UserService.UpdatedUserEvt => UpdatedUserEvtManifestV1
+      case _: UserService.DeletedUserEvt => DeletedUserEvtManifestV1
+      case _: UsersState => UsersStateManifestV1
 
       case _: ApplicationService.ApplicationCreatedEvt => ApplicationCreatedEvtManifestV1
       case _: ApplicationService.ApplicationUpdatedEvt => ApplicationUpdatedEvtManifestV1
@@ -52,10 +52,10 @@ class CoreSerializer extends SerializerWithStringManifest
 
   override def fromBinary(bytes: Array[Byte], manifest: String): AnyRef = {
     manifest match {
-      case UserCreatedEvtManifestV1 => fromUserCreatedEvtV1(bytes)
-      case UserUpdatedEvtManifestV1 => fromUserUpdatedEvtV1(bytes)
-      case UserDeletedEvtManifestV1 => fromUserDeletedEvtV1(bytes)
-      case UserStateManifestV1 => fromUserStateV1(bytes)
+      case CreatedUserEvtManifestV1 => fromCreatedUserEvtV1(bytes)
+      case UpdatedUserEvtManifestV1 => fromUpdatedUserEvtV1(bytes)
+      case DeletedUserEvtManifestV1 => fromDeletedUserEvtV1(bytes)
+      case UsersStateManifestV1 => fromUsersStateV1(bytes)
 
       case ApplicationCreatedEvtManifestV1 => fromApplicationCreatedEvtV1(bytes)
       case ApplicationUpdatedEvtManifestV1 => fromApplicationUpdatedEvtV1(bytes)

@@ -1,54 +1,57 @@
 package annette.core.domain.tenancy
 
 import akka.Done
-import akka.actor.{ActorRef, Props}
+import akka.actor.{ ActorRef, Props }
 import akka.util.Timeout
 import annette.core.domain.tenancy.model.User.Id
 import annette.core.domain.tenancy.model._
 import annette.core.exception.AnnetteMessage
-import annette.core.persistence.Persistence.{PersistentCommand, PersistentEvent, PersistentQuery}
-import javax.inject.{Inject, Named, Singleton}
+import annette.core.persistence.Persistence.{ PersistentCommand, PersistentEvent, PersistentQuery }
+import javax.inject.{ Inject, Named, Singleton }
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import akka.Done
 import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
-import annette.core.domain.tenancy.actor.{UsersActor, UsersActorState}
+import annette.core.domain.tenancy.UserService.{ CreateUserSuccess, CreatedUserEvt }
+import annette.core.domain.tenancy.actor.{ UsersActor, UsersState }
 import annette.core.domain.tenancy.model.User.Id
-import annette.core.domain.tenancy.model.{User, UpdateUser}
+import annette.core.domain.tenancy.model.{ UpdateUser, User }
 import annette.core.exception.AnnetteMessage
 import javax.inject._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.duration._
 
 @Singleton
-class UserService @Inject()(@Named("CoreService") actor: ActorRef)(implicit c: ExecutionContext, t: Timeout) {
-  def create(user: User, password: String): Future[Unit] = {
+class UserService @Inject() (@Named("CoreService") actor: ActorRef) {
+  implicit def t: Timeout = 3.minutes
+
+  def create(x: CreateUser)(implicit ec: ExecutionContext): Future[User] = {
     for {
-      f <- ask(actor, UserService.CreateUserCmd(user, password))
+      f <- ask(actor, UserService.CreateUserCmd(x))
     } yield {
       f match {
-        case Done =>
+        case CreateUserSuccess(u) => u
+        case m: AnnetteMessage => throw m.toException
+      }
+    }
+  }
+
+  def update(x: UpdateUser)(implicit ec: ExecutionContext): Future[Unit] = {
+    for {
+      f <- ask(actor, UserService.UpdateUserCmd(x))
+    } yield {
+      f match {
+        case Done => println("--ss---")
         case m: AnnetteMessage => throw m.toException
 
       }
     }
   }
 
-  override def update(user: UpdateUser)(implicit ec: ExecutionContext): Future[Unit] = {
-    for {
-      f <- ask(actor, UserService.UpdateUserCmd(user))
-    } yield {
-      f match {
-        case Done =>
-        case m: AnnetteMessage => throw m.toException
-
-      }
-    }
-  }
-
-  override def setPassword(userId: Id, password: String)(implicit ec: ExecutionContext): Future[Boolean] = {
+  def setPassword(userId: Id, password: String)(implicit ec: ExecutionContext): Future[Boolean] = {
     for {
       f <- ask(actor, UserService.UpdatePasswordCmd(userId, password))
     } yield {
@@ -59,9 +62,9 @@ class UserService @Inject()(@Named("CoreService") actor: ActorRef)(implicit c: E
     }
   }
 
-  override def delete(id: Id)(implicit ec: ExecutionContext): Future[Boolean] = {
+  def delete(userId: Id)(implicit ec: ExecutionContext): Future[Boolean] = {
     for {
-      f <- ask(actor, UserService.DeleteUserCmd(id))
+      f <- ask(actor, UserService.DeleteUserCmd(userId))
     } yield {
       f match {
         case Done => true
@@ -70,15 +73,15 @@ class UserService @Inject()(@Named("CoreService") actor: ActorRef)(implicit c: E
     }
   }
 
-  override def getById(id: Id)(implicit ec: ExecutionContext): Future[Option[User]] = {
+  def getById(id: Id)(implicit ec: ExecutionContext): Future[Option[User]] = {
     ask(actor, UserService.FindUserById(id)).mapTo[UserService.SingleUser].map(_.maybeEntry)
   }
 
-  override def selectAll(implicit ec: ExecutionContext): Future[List[User]] = {
+  def selectAll(implicit ec: ExecutionContext): Future[List[User]] = {
     ask(actor, UserService.FindAllUsers).mapTo[UserService.MultipleUsers].map(_.entries.values.toList)
   }
 
-  override def getByLoginAndPassword(login: String, password: String)(implicit ec: ExecutionContext): Future[Option[User]] = {
+  def getByLoginAndPassword(login: String, password: String)(implicit ec: ExecutionContext): Future[Option[User]] = {
     ask(actor, UserService.FindUserByLoginAndPassword(login, password)).mapTo[UserService.SingleUser].map(_.maybeEntry)
   }
 }
@@ -90,7 +93,7 @@ object UserService {
   sealed trait Event extends PersistentEvent
   sealed trait Response
 
-  case class CreateUserCmd(x: User) extends Command
+  case class CreateUserCmd(x: CreateUser) extends Command
   case class UpdateUserCmd(x: UpdateUser) extends Command
   case class DeleteUserCmd(userId: User.Id) extends Command
 
@@ -99,13 +102,14 @@ object UserService {
   case class FindUserByLoginAndPassword(login: String, password: String) extends Query
   object FindAllUsers extends Query
 
-  case class UserCreatedEvt(entry: User, password: String) extends Event
-  case class UserUpdatedEvt(entry: UpdateUser) extends Event
-  case class PasswordUpdatedEvt(userId: User.Id, password: String) extends Event
-  case class UserDeletedEvt(id: User.Id) extends Event
+  case class CreatedUserEvt(x: User) extends Event
+  case class UpdatedUserEvt(x: UpdateUser) extends Event
+  case class UpdatedPasswordEvt(userId: User.Id, password: String) extends Event
+  case class DeletedUserEvt(userId: User.Id) extends Event
 
+  case class CreateUserSuccess(x: User) extends Response
   case class SingleUser(maybeEntry: Option[User]) extends Response
   case class MultipleUsers(entries: Map[User.Id, User]) extends Response
 
-  def props(id: String, state: UsersActorState = UsersActorState()) = Props(classOf[UsersActor], id, state)
+  def props(id: String, state: UsersState = UsersState()) = Props(classOf[UsersActor], id, state)
 }

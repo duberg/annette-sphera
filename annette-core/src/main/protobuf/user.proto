@@ -4,47 +4,68 @@ package core;
 
 option java_package = "annette.core.serializer.proto";
 
-message UserStateV1 {
-    map<string, UserRecV1> userRecs = 1;
+message UsersStateV1 {
+    map<string, UserV1> users = 1;
     map<string, string> emailIndex = 2;
     map<string, string> phoneIndex = 3;
-    map<string, string> loginIndex = 4;
+    map<string, string> usernameIndex = 4;
     map<string, UserPropertyV1> userProperties = 5;
 }
 
 message UserV1 {
-    required string lastname = 1;
-    required string firstname = 2;
-    required string middlename = 3;
-    optional string email = 4;
-    optional string phone = 5;
-    optional string login = 6;
-    required string defaultLanguage = 7;
-    required string id = 8;
+    required string id = 1;
+    optional string username = 2;
+    optional string name = 3;
+    required string lastName = 4;
+    required string firstName = 5;
+    optional string middleName = 6;
+    optional string email = 7;
+    optional string url = 8;
+    optional string description = 9;
+    optional string phone = 10;
+    optional string locale = 11;
+    required string registeredDate = 12;
+    repeated string tenants = 13;
+    map<string, string> applications = 14;
+    map<string, string> roles = 15;
+    required string password = 16;
+    optional string avatarUrl = 17;
+    optional string sphere = 18;
+    optional string company = 19;
+    optional string position = 20;
+    optional string rank = 21;
+    optional string additionalTel = 22;
+    optional string additionalMail = 23;
+    map<string, string> meta = 24;
+    required bool deactivated = 25;
 }
 
-message UserUpdateV1 {
-    optional string lastname = 1;
-    optional string firstname = 2;
-    optional string middlename = 3;
-    optional string email = 4;
-    optional string phone = 5;
-    optional string login = 6;
-    optional string defaultLanguage = 7;
-    optional string password = 8;
-    required string id = 9;
-}
-
-message UserRecV1 {
-    required string lastname = 1;
-    required string firstname = 2;
-    required string middlename = 3;
-    optional string email = 4;
-    optional string phone = 5;
-    optional string login = 6;
-    required string defaultLanguage = 7;
-    required string password = 8;
-    required string id = 9;
+message UpdateUserV1 {
+    required string id = 1;
+    optional string username = 2;
+    optional string name = 3;
+    optional string lastName = 4;
+    optional string firstName = 5;
+    optional string middleName = 6;
+    optional string email = 7;
+    optional string url = 8;
+    optional string description = 9;
+    optional string phone = 10;
+    optional string locale = 11;
+    optional string registeredDate = 12;
+    repeated string tenants = 13;
+    map<string, string> applications = 14;
+    map<string, string> roles = 15;
+    optional string password = 16;
+    optional string avatarUrl = 17;
+    optional string sphere = 18;
+    optional string company = 19;
+    optional string position = 20;
+    optional string rank = 21;
+    optional string additionalTel = 22;
+    optional string additionalMail = 23;
+    map<string, string> meta = 24;
+    optional bool deactivated = 25;
 }
 
 message UserPropertyV1 {
@@ -59,20 +80,19 @@ message UserPropertyIdV1 {
     required string key= 4;
 }
 
-message UserCreatedEvtV1 {
-    required UserV1 entry = 1;
-    required string password = 2;
+message CreatedUserEvtV1 {
+    required UserV1 x = 1;
 }
 
-message UserUpdatedEvtV1 {
-    required UserUpdateV1 entry = 1;
+message UpdatedUserEvtV1 {
+    required UpdateUserV1 x = 1;
 }
 
-message UserDeletedEvtV1 {
-    required string id = 1;
+message DeletedUserEvtV1 {
+    required string userId = 1;
 }
 
-message PasswordUpdatedEvtV1 {
+message UpdatedPasswordEvtV1 {
     required string userId = 1;
     required string password = 2;
 }

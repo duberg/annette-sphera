@@ -32,9 +32,9 @@ class ImcModule extends AnnetteHttpModule {
 
         UserRoled(
           user.id,
-          user.lastname,
-          user.firstname,
-          user.middlename,
+          user.lastName,
+          user.firstName,
+          user.middleName.getOrElse(""),
           user.email,
           roles.exists(_.contains("admin")),
           roles.exists(_.contains("secretar")),

@@ -65,9 +65,9 @@ trait TemplateDataRetrieverB {
 
         FullUser(
           user.id,
-          user.lastname,
-          user.firstname,
-          user.middlename,
+          user.lastName,
+          user.firstName,
+          user.middleName.getOrElse(""),
           imcUser.flatMap(_.company),
           imcUser.flatMap(_.position),
           imcUser.flatMap(_.rank),
@@ -80,15 +80,15 @@ trait TemplateDataRetrieverB {
       }
 
       val chairman = x.find(_.chairman)
-      val chairmanName = chairman.map(y => s"${y.lastname} ${y.firstname.take(1)}.${
-        y.middlename match {
+      val chairmanName = chairman.map(y => s"${y.lastName} ${y.firstName.take(1)}.${
+        y.middleName match {
           case x: String if x == "" => ""
           case x: String => " " + x.take(1) + "."
         }
       }").getOrElse("")
       val secretar = x.find(_.secretar)
-      val secretarName = secretar.map(y => s"${y.lastname} ${y.firstname.take(1)}.${
-        y.middlename match {
+      val secretarName = secretar.map(y => s"${y.lastName} ${y.firstName.take(1)}.${
+        y.middleName match {
           case x: String if x == "" => ""
           case x: String => " " + x.take(1) + "."
         }
@@ -103,7 +103,7 @@ trait TemplateDataRetrieverB {
 
       val commentRows = ap.expertise.bulletins.values.filter(x => x.isFinished && x.rejection != Some(true)).toList.map { bulletin =>
         (
-          x.find(_.id == bulletin.expertId).map(u => u.lastname + " " + u.firstname).getOrElse(""),
+          x.find(_.id == bulletin.expertId).map(u => u.lastName + " " + u.firstName).getOrElse(""),
           bulletin.positiveConclusion.getOrElse(""),
           bulletin.negativeConclusion.getOrElse(""))
       }

@@ -48,7 +48,7 @@ export class UserProfileComponent implements OnInit {
 	}
 
 	public update(user: User): User {
-		this.fullname$.next(`${user.firstname} ${user.lastname}`);
+		this.fullname$.next(`${user.firstName} ${user.lastName}`);
 		this.email$.next(user.email);
 		return user;
 	}

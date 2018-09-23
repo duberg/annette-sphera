@@ -54,28 +54,28 @@ class PasswordConsistencyError(id: User.Id) extends AnnetteMessageException(Pass
 
 case class UserEmailPasswordConsistencyErrorMsg(user: User) extends AnnetteMessage(
   "core.tenancy.user.emailPasswordConsistencyError",
-  Map("userId" -> user.id.toString, "firstname" -> user.firstname, "lastname" -> user.lastname)) {
+  Map("userId" -> user.id.toString, "firstName" -> user.firstName, "lastName" -> user.lastName)) {
   override def toException = new UserEmailPasswordConsistencyError(user)
 }
 class UserEmailPasswordConsistencyError(user: User) extends AnnetteMessageException(UserEmailPasswordConsistencyErrorMsg(user))
 
 case class UserPhonePasswordConsistencyErrorMsg(user: User) extends AnnetteMessage(
   "core.tenancy.user.phonePasswordConsistencyError",
-  Map("userId" -> user.id.toString, "firstname" -> user.firstname, "lastname" -> user.lastname)) {
+  Map("userId" -> user.id.toString, "firstName" -> user.firstName, "lastName" -> user.lastName)) {
   override def toException = new UserPhonePasswordConsistencyError(user)
 }
 class UserPhonePasswordConsistencyError(user: User) extends AnnetteMessageException(UserPhonePasswordConsistencyErrorMsg(user))
 
 case class UserLoginPasswordConsistencyErrorMsg(user: User) extends AnnetteMessage(
   "core.tenancy.user.loginPasswordConsistencyError",
-  Map("userId" -> user.id.toString, "firstname" -> user.firstname, "lastname" -> user.lastname)) {
+  Map("userId" -> user.id.toString, "firstName" -> user.firstName, "lastName" -> user.lastName)) {
   override def toException = new UserLoginPasswordConsistencyError(user)
 }
 class UserLoginPasswordConsistencyError(user: User) extends AnnetteMessageException(UserLoginPasswordConsistencyErrorMsg(user))
 
 case class UserConsistencyErrorMsg(user: User) extends AnnetteMessage(
   "core.tenancy.user.consistencyError",
-  Map("userId" -> user.id.toString, "firstname" -> user.firstname, "lastname" -> user.lastname)) {
+  Map("userId" -> user.id.toString, "firstName" -> user.firstName, "lastName" -> user.lastName)) {
   override def toException = new UserConsistencyError(user)
 }
 class UserConsistencyError(user: User) extends AnnetteMessageException(UserConsistencyErrorMsg(user))

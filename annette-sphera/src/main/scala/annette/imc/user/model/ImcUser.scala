@@ -34,9 +34,9 @@ case class UpdatedUser(
   otherMail: Option[String] = None)
 
 case class PreUser(
-  lastname: String,
-  firstname: String,
-  middlename: String,
+  lastName: String,
+  firstName: String,
+  middleName: String,
   email: Option[String],
   phone: Option[String],
   defaultLanguage: String = "RU")
@@ -56,9 +56,9 @@ case class UserRoled(
 
 case class FullUser(
   id: User.Id,
-  lastname: String,
-  firstname: String,
-  middlename: String,
+  lastName: String,
+  firstName: String,
+  middleName: String,
   company: Option[String],
   position: Option[String],
   rank: Option[String],

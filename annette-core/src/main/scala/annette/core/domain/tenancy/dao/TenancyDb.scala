@@ -28,12 +28,11 @@ class TenancyDb @Inject() (val db: DB) extends Database[TenancyDb](db.keySpaceDe
   object tenantUserRoles extends TenantUserRoleTable with db.keySpaceDef.Connector
   object userTenants extends UserTenantTable with db.keySpaceDef.Connector
 
-  object users extends UserTable with db.keySpaceDef.Connector
-  object emailPasswords extends UserEmailPasswordTable with db.keySpaceDef.Connector
-  object phonePasswords extends UserPhonePasswordTable with db.keySpaceDef.Connector
+  //  object users extends UserTable with db.keySpaceDef.Connector
+  //  object emailPasswords extends UserEmailPasswordTable with db.keySpaceDef.Connector
+  //  object phonePasswords extends UserPhonePasswordTable with db.keySpaceDef.Connector
 
-  object openSessions extends OpenSessionTable with db.keySpaceDef.Connector
-  object lastSessions extends LastSessionTable with db.keySpaceDef.Connector
-  object sessionHistories extends SessionHistoryTable with db.keySpaceDef.Connector
-
+  //  object openSessions extends OpenSessionTable with db.keySpaceDef.Connector
+  //  object lastSessions extends LastSessionTable with db.keySpaceDef.Connector
+  //  object sessionHistories extends SessionHistoryTable with db.keySpaceDef.Connector
 }

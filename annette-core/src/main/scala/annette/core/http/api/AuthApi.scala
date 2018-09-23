@@ -1,14 +1,3 @@
-/**
- * *************************************************************************************
- * Copyright (c) 2014-2017 by Valery Lobachev
- * Redistribution and use in source and binary forms, with or without
- * modification, are NOT permitted without written permission from Valery Lobachev.
- *
- * Copyright (c) 2014-2017 Валерий Лобачев
- * Распространение и/или использование в исходном или бинарном формате, с изменениями или без таковых,
- * запрещено без письменного разрешения правообладателя.
- * **************************************************************************************
- */
 package annette.core.http.api
 
 import akka.actor.ActorRef
@@ -27,6 +16,7 @@ import annette.core.http.security.AnnetteSecurityDirectives
 import annette.core.services.authentication.{ ApplicationState, AuthenticationService, ForbiddenException }
 import com.typesafe.config.Config
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
+import io.circe.java8.time.TimeInstances
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
@@ -36,13 +26,14 @@ class AuthApi(
   languageDao: LanguageDao,
   authenticationService: ActorRef,
   annetteSecurityDirectives: AnnetteSecurityDirectives,
-  config: Config)(implicit ec: ExecutionContextExecutor) {
+  config: Config)(implicit ec: ExecutionContextExecutor) extends TimeInstances {
 
   implicit val serviceTimeout: Timeout = 30.seconds // TODO: заменить на конфигурацию
 
   import FailFastCirceSupport._
   import annetteSecurityDirectives._
   import io.circe.generic.auto._
+  import io.circe.java8.time.TimeInstances
 
   private def loginRoutes = (path("login") & post) {
     (entity(as[AuthenticationService.LoginData]) & extractClientIP) {
@@ -97,6 +88,7 @@ class AuthApi(
         maybeSession =>
           import FailFastCirceSupport._
           import io.circe.generic.auto._
+          import io.circe.java8.time.TimeInstances
           val applicationStateFuture = authenticationService
             .ask(AuthenticationService.GetApplicationState(maybeSession))
             .mapTo[ApplicationState]
@@ -118,6 +110,7 @@ class AuthApi(
         case (sessionData, SetApplicationState(tenantId, applicationId, languageId)) =>
           import FailFastCirceSupport._
           import io.circe.generic.auto._
+          import io.circe.java8.time.TimeInstances
           val applicationStateFuture = authenticationService
             .ask(AuthenticationService.SetApplicationState(sessionData, tenantId, applicationId, languageId))
             .mapTo[ApplicationState]

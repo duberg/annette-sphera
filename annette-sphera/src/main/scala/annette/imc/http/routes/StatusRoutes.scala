@@ -51,25 +51,25 @@ trait StatusRoutes
               val secretar = x.find(_.isSecretar)
               val chairman = x.find(_.isChairman)
 
-              val chairmanName = chairman.map(x => s"${x.u.firstname} ${x.u.lastname} ${x.u.middlename}").getOrElse("")
+              val chairmanName = chairman.map(x => s"${x.u.firstName} ${x.u.lastName} ${x.u.middleName.getOrElse("")}").getOrElse("")
 
               //                secretar.foreach {
               //                  case UserWithRoles(u, _, _) =>
               //                    u.email.foreach { email =>
-              //                      val userName = s"${u.lastname} ${u.firstname.take(1)}.${
-              //                        u.middlename match {
+              //                      val userName = s"${u.lastName} ${u.firstName.take(1)}.${
+              //                        u.middleName match {
               //                          case x: String if x.isEmpty => ""
               //                          case x: String => x.take(1) + "."
               //                        }
               //                      }"
-              //                      val userNameFull = s"${u.lastname} ${u.firstname}${
-              //                        u.middlename match {
+              //                      val userNameFull = s"${u.lastName} ${u.firstName}${
+              //                        u.middleName match {
               //                          case x: String if x.isEmpty => ""
               //                          case x: String => " " + x
               //                        }
               //                      }"
               //
-              //                      val applicantName = applicant(ap, u.defaultLanguage)
+              //                      val applicantName = applicant(ap, u.locale)
               //
               //                      val p = Map(
               //                        "Id" -> apId,
@@ -82,14 +82,14 @@ trait StatusRoutes
               //                      notificationService.addNotificationAsync(MailNotification.ToReview(
               //                        id = UUID.randomUUID(),
               //                        email = email,
-              //                        language = u.defaultLanguage,
+              //                        language = u.locale,
               //                        templateParameters = p))
               //                    }
               //                    u.phone.foreach { phone =>
               //                      notificationService.addNotificationAsync(SmsNotification.ToReview(
               //                        id = UUID.randomUUID(),
               //                        phone = phone,
-              //                        language = u.defaultLanguage))
+              //                        language = u.locale))
               //                    }
               //                }
 
@@ -97,20 +97,20 @@ trait StatusRoutes
                 case UserWithRoles(u, _, _) =>
 
                   u.email.foreach { email =>
-                    val userName = s"${u.lastname} ${u.firstname.take(1)}.${
-                      u.middlename match {
+                    val userName = s"${u.lastName} ${u.firstName.take(1)}.${
+                      u.middleName.getOrElse("") match {
                         case x: String if x.isEmpty => ""
                         case x: String => x.take(1) + "."
                       }
                     }"
-                    val userNameFull = s"${u.lastname} ${u.firstname}${
-                      u.middlename match {
+                    val userNameFull = s"${u.lastName} ${u.firstName}${
+                      u.middleName.getOrElse("") match {
                         case x: String if x.isEmpty => ""
                         case x: String => " " + x
                       }
                     }"
 
-                    val applicantName = applicant(ap, u.defaultLanguage)
+                    val applicantName = applicant(ap, u.locale.getOrElse(""))
 
                     val p = Map(
                       "Id" -> apId,
@@ -124,7 +124,7 @@ trait StatusRoutes
                     notificationService.addNotificationAsync(MailNotification.ToReview(
                       id = UUID.randomUUID(),
                       email = email,
-                      language = u.defaultLanguage,
+                      language = u.locale.getOrElse(""),
                       templateParameters = p))
                   }
 
@@ -132,7 +132,7 @@ trait StatusRoutes
                     notificationService.addNotificationAsync(SmsNotification.ToReview(
                       id = UUID.randomUUID(),
                       phone = phone,
-                      language = u.defaultLanguage))
+                      language = u.locale.getOrElse("")))
                   }
               }
             }
@@ -179,25 +179,25 @@ trait StatusRoutes
               val secretar = x.find(_.isSecretar)
               val chairman = x.find(_.isChairman)
 
-              val chairmanName = chairman.map(x => s"${x.u.firstname} ${x.u.lastname} ${x.u.middlename}").getOrElse("")
+              val chairmanName = chairman.map(x => s"${x.u.firstName} ${x.u.lastName} ${x.u.middleName.getOrElse("")}").getOrElse("")
 
               secretar.foreach {
                 case UserWithRoles(u, _, _) =>
                   u.email.foreach { email =>
-                    val userName = s"${u.lastname} ${u.firstname.take(1)}.${
-                      u.middlename match {
+                    val userName = s"${u.lastName} ${u.firstName.take(1)}.${
+                      u.middleName.getOrElse("") match {
                         case x: String if x.isEmpty => ""
                         case x: String => x.take(1) + "."
                       }
                     }"
-                    val userNameFull = s"${u.lastname} ${u.firstname}${
-                      u.middlename match {
+                    val userNameFull = s"${u.lastName} ${u.firstName}${
+                      u.middleName.getOrElse("") match {
                         case x: String if x.isEmpty => ""
                         case x: String => " " + x
                       }
                     }"
 
-                    val applicantName = applicant(ap, u.defaultLanguage)
+                    val applicantName = applicant(ap, u.locale.getOrElse(""))
 
                     val p = Map(
                       "Id" -> apId,
@@ -211,14 +211,14 @@ trait StatusRoutes
                     notificationService.addNotificationAsync(MailNotification.ToReview(
                       id = UUID.randomUUID(),
                       email = email,
-                      language = u.defaultLanguage,
+                      language = u.locale.getOrElse(""),
                       templateParameters = p))
                   }
                   u.phone.foreach { phone =>
                     notificationService.addNotificationAsync(SmsNotification.ToReview(
                       id = UUID.randomUUID(),
                       phone = phone,
-                      language = u.defaultLanguage))
+                      language = u.locale.getOrElse("")))
                   }
               }
 
@@ -226,20 +226,20 @@ trait StatusRoutes
               //                case UserWithRoles(u, _, _) =>
               //
               //                  u.email.foreach { email =>
-              //                    val userName = s"${u.lastname} ${u.firstname.take(1)}.${
-              //                      u.middlename match {
+              //                    val userName = s"${u.lastName} ${u.firstName.take(1)}.${
+              //                      u.middleName match {
               //                        case x: String if x.isEmpty => ""
               //                        case x: String => x.take(1) + "."
               //                      }
               //                    }"
-              //                    val userNameFull = s"${u.lastname} ${u.firstname}${
-              //                      u.middlename match {
+              //                    val userNameFull = s"${u.lastName} ${u.firstName}${
+              //                      u.middleName match {
               //                        case x: String if x.isEmpty => ""
               //                        case x: String => " " + x
               //                      }
               //                    }"
               //
-              //                    val applicantName = applicant(ap, u.defaultLanguage)
+              //                    val applicantName = applicant(ap, u.locale)
               //
               //                    val p = Map(
               //                      "Id" -> apId,
@@ -252,7 +252,7 @@ trait StatusRoutes
               //                    notificationService.addNotificationAsync(MailNotification.ToReview(
               //                      id = UUID.randomUUID(),
               //                      email = email,
-              //                      language = u.defaultLanguage,
+              //                      language = u.locale,
               //                      templateParameters = p))
               //                  }
               //
@@ -260,7 +260,7 @@ trait StatusRoutes
               //                    notificationService.addNotificationAsync(SmsNotification.ToReview(
               //                      id = UUID.randomUUID(),
               //                      phone = phone,
-              //                      language = u.defaultLanguage))
+              //                      language = u.locale))
               //                  }
               //              }
             }
@@ -299,21 +299,21 @@ trait StatusRoutes
           case Success((name, Some(pm), Some(sender))) =>
             val u = pm.asInstanceOf[User]
             val s = sender.asInstanceOf[User]
-            val user = s"${u.lastname} ${u.firstname.take(1)}.${
-              u.middlename match {
+            val user = s"${u.lastName} ${u.firstName.take(1)}.${
+              u.middleName.getOrElse("") match {
                 case x: String if x.isEmpty => ""
                 case x: String => x.take(1) + "."
               }
             }"
-            val userFull = s"${u.lastname} ${u.firstname}${
-              u.middlename match {
+            val userFull = s"${u.lastName} ${u.firstName}${
+              u.middleName.getOrElse("") match {
                 case x: String if x.isEmpty => ""
                 case x: String => " " + x
               }
             }"
 
-            val senderShort = s"${s.lastname} ${s.firstname.take(1)}.${
-              s.middlename match {
+            val senderShort = s"${s.lastName} ${s.firstName.take(1)}.${
+              s.middleName.getOrElse("") match {
                 case x: String if x.isEmpty => ""
                 case x: String => x.take(1) + "."
               }
@@ -387,23 +387,23 @@ trait StatusRoutes
               ap <- getApById(apId)
             } yield {
               experts.foreach { u =>
-                val language = u.defaultLanguage
+                val language = u.locale
 
                 u.email.foreach { email =>
-                  val expert = s"${u.lastname} ${u.firstname.take(1)}.${
-                    u.middlename match {
+                  val expert = s"${u.lastName} ${u.firstName.take(1)}.${
+                    u.middleName.getOrElse("") match {
                       case x: String if x.isEmpty => ""
                       case x: String => x.take(1) + "."
                     }
                   }"
-                  val expertFull = s"${u.lastname} ${u.firstname}${
-                    u.middlename match {
+                  val expertFull = s"${u.lastName} ${u.firstName}${
+                    u.middleName.getOrElse("") match {
                       case x: String if x.isEmpty => ""
                       case x: String => " " + x
                     }
                   }"
 
-                  val applicantName = applicant(ap, u.defaultLanguage)
+                  val applicantName = applicant(ap, u.locale.getOrElse("RU"))
 
                   val x = for (user <- allUsers) yield {
                     val roles = allUserRole.find(_.userId == user.id).map(_.roles)
@@ -411,9 +411,9 @@ trait StatusRoutes
 
                     FullUser(
                       user.id,
-                      user.lastname,
-                      user.firstname,
-                      user.middlename,
+                      user.lastName,
+                      user.firstName,
+                      user.middleName.getOrElse(""),
                       imcUser.flatMap(_.company),
                       imcUser.flatMap(_.position),
                       imcUser.flatMap(_.rank),
@@ -426,7 +426,7 @@ trait StatusRoutes
                   }
 
                   val chairman = x.find(_.chairman)
-                  val chairmanName = chairman.map(x => s"${x.lastname} ${x.firstname} ${x.middlename}").getOrElse("")
+                  val chairmanName = chairman.map(x => s"${x.lastName} ${x.firstName} ${x.middleName}").getOrElse("")
 
                   val p = Map(
                     "Id" -> apId,
@@ -439,14 +439,14 @@ trait StatusRoutes
                   notificationService.addNotificationAsync(MailNotification.ToExpertise(
                     id = UUID.randomUUID(),
                     email = email,
-                    language = language,
+                    language = language.getOrElse(""),
                     templateParameters = p))
                 }
                 u.phone.foreach { phone =>
                   notificationService.addNotificationAsync(SmsNotification.ToExpertise(
                     id = UUID.randomUUID(),
                     phone = phone,
-                    language = language))
+                    language = language.getOrElse("")))
                 }
               }
               experts

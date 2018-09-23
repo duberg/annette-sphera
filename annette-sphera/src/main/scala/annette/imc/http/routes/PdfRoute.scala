@@ -48,9 +48,9 @@ trait PdfRoute { self: APIContext with API =>
 
             FullUser(
               user.id,
-              user.lastname,
-              user.firstname,
-              user.middlename,
+              user.lastName,
+              user.firstName,
+              user.middleName.getOrElse(""),
               imcUser.flatMap(_.company),
               imcUser.flatMap(_.position),
               imcUser.flatMap(_.rank),
@@ -65,15 +65,15 @@ trait PdfRoute { self: APIContext with API =>
           val applicant = ap.apData.name.map(_.ru).getOrElse("")
 
           val chairman = x.find(_.chairman)
-          val chairmanName = chairman.map(y => s"${y.lastname} ${y.firstname.take(1)}.${
-            y.middlename match {
+          val chairmanName = chairman.map(y => s"${y.lastName} ${y.firstName.take(1)}.${
+            y.middleName match {
               case x: String if x == "" => ""
               case x: String => " " + x.take(1) + "."
             }
           }").getOrElse("")
           val secretar = x.find(_.secretar)
-          val secretarName = secretar.map(y => s"${y.lastname} ${y.firstname.take(1)}.${
-            y.middlename match {
+          val secretarName = secretar.map(y => s"${y.lastName} ${y.firstName.take(1)}.${
+            y.middleName match {
               case x: String if x == "" => ""
               case x: String => " " + x.take(1) + "."
             }
@@ -97,8 +97,8 @@ trait PdfRoute { self: APIContext with API =>
           val notCorrespond = (1 to 5).flatMap(i => votes.toSeq.map(_.criterions.get(i).count(_.decision == 1)))
           val rejectorsList = rejectors.toList.map { bulletin =>
 
-            x.find(_.id == bulletin.expertId).map(u => s"${u.lastname} ${u.firstname.take(1)}.${
-              u.middlename match {
+            x.find(_.id == bulletin.expertId).map(u => s"${u.lastName} ${u.firstName.take(1)}.${
+              u.middleName match {
                 case x: String if x == "" => ""
                 case x: String => " " + x.take(1) + "."
               }
@@ -107,8 +107,8 @@ trait PdfRoute { self: APIContext with API =>
 
           val notVotedList: Seq[String] = notVoted.toList.map { bulletin =>
 
-            x.find(_.id == bulletin.expertId).map(u => s"${u.lastname} ${u.firstname.take(1)}.${
-              u.middlename match {
+            x.find(_.id == bulletin.expertId).map(u => s"${u.lastName} ${u.firstName.take(1)}.${
+              u.middleName match {
                 case x: String if x == "" => ""
                 case x: String => " " + x.take(1) + "."
               }
@@ -116,8 +116,8 @@ trait PdfRoute { self: APIContext with API =>
           }
           val criterions = votes.toList.map { bulletin =>
             (
-              x.find(_.id == bulletin.expertId).map(u => s"${u.lastname} ${u.firstname.take(1)}.${
-                u.middlename match {
+              x.find(_.id == bulletin.expertId).map(u => s"${u.lastName} ${u.firstName.take(1)}.${
+                u.middleName match {
                   case x: String if x == "" => ""
                   case x: String => " " + x.take(1) + "."
                 }
@@ -155,8 +155,8 @@ trait PdfRoute { self: APIContext with API =>
           }
           val balls = votes.toList.map { bulletin =>
             (
-              x.find(_.id == bulletin.expertId).map(u => s"${u.lastname} ${u.firstname.take(1)}.${
-                u.middlename match {
+              x.find(_.id == bulletin.expertId).map(u => s"${u.lastName} ${u.firstName.take(1)}.${
+                u.middleName match {
                   case x: String if x == "" => ""
                   case x: String => " " + x.take(1) + "."
                 }

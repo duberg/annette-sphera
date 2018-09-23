@@ -12,7 +12,7 @@
 
 package annette.core.services.authentication
 
-import akka.actor.{Actor, ActorLogging}
+import akka.actor.{ Actor, ActorLogging }
 import akka.event.LoggingReceive
 import akka.pattern.pipe
 import annette.core.domain.application.dao.ApplicationDao
@@ -20,7 +20,7 @@ import annette.core.domain.application.model.Application
 import annette.core.domain.language.dao.LanguageDao
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.UserService
-import annette.core.domain.tenancy.dao.{SessionDao, TenantDao, TenantUserDao}
+import annette.core.domain.tenancy.dao.{ SessionDao, TenantDao, TenantUserDao }
 import annette.core.domain.tenancy.model.Tenant
 import annette.core.services.authentication.jwt.JwtHelper
 
@@ -30,13 +30,13 @@ import scala.concurrent.Future
  * Created by valery on 22.10.16.
  */
 class ApplicationStateActor(
-                             sessionDao: SessionDao,
-                             tenantDao: TenantDao,
-                             applicationDao: ApplicationDao,
-                             userDao: UserService,
-                             tenantUserDao: TenantUserDao,
-                             languageDao: LanguageDao,
-                             override val secret: String)
+  sessionDao: SessionDao,
+  tenantDao: TenantDao,
+  applicationDao: ApplicationDao,
+  userDao: UserService,
+  tenantUserDao: TenantUserDao,
+  languageDao: LanguageDao,
+  override val secret: String)
   extends Actor with ActorLogging with JwtHelper {
 
   implicit val ec = context.dispatcher

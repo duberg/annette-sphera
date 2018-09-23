@@ -70,9 +70,9 @@ trait TemplateDataRetrieverD {
 
         FullUser(
           user.id,
-          user.lastname,
-          user.firstname,
-          user.middlename,
+          user.lastName,
+          user.firstName,
+          user.middleName.getOrElse(""),
           imcUser.flatMap(_.company),
           imcUser.flatMap(_.position),
           imcUser.flatMap(_.rank),
@@ -88,7 +88,7 @@ trait TemplateDataRetrieverD {
 
       val parameters = Map(
         "Applicant" -> ap.apData.entityName.map(_.ru).getOrElse(""),
-        "Expert" -> x.toList.find(_.id == expertId).map(y => y.lastname + " " + y.firstname + " " + y.middlename).getOrElse(""),
+        "Expert" -> x.toList.find(_.id == expertId).map(y => y.lastName + " " + y.firstName + " " + y.middleName).getOrElse(""),
         "Date" -> LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
         "Reason" -> ap.expertise.bulletins.get(expertId).flatMap(y => y.rejection match {
           case Some(true) =>
@@ -116,9 +116,9 @@ trait TemplateDataRetrieverD {
 
         FullUser(
           user.id,
-          user.lastname,
-          user.firstname,
-          user.middlename,
+          user.lastName,
+          user.firstName,
+          user.middleName.getOrElse(""),
           imcUser.flatMap(_.company),
           imcUser.flatMap(_.position),
           imcUser.flatMap(_.rank),
@@ -134,7 +134,7 @@ trait TemplateDataRetrieverD {
 
       val parameters = Map(
         "Applicant" -> ap.apData.entityName.map(_.ru).getOrElse(""),
-        "Expert" -> x.toList.find(_.id == expertId).map(y => y.lastname + " " + y.firstname + " " + y.middlename).getOrElse(""),
+        "Expert" -> x.toList.find(_.id == expertId).map(y => y.lastName + " " + y.firstName + " " + y.middleName).getOrElse(""),
         "Date" -> LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
         "Reason" -> ap.expertise.bulletins.get(expertId).flatMap(y => y.rejection match {
           case Some(true) =>

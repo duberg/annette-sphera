@@ -14,11 +14,15 @@ trait Generator {
   def generateUUID: UUID = UUID.randomUUID()
   def generateUUIDOpt = Option(UUID.randomUUID())
   def generateTestName = s"gen-test${testId.incrementAndGet()}"
+
   def generateString(x: Int = 10): String =
     Random.alphanumeric
       .take(x)
       .mkString
       .toLowerCase
+
+  def genStrOpt = Some(generateString())
+
   def generateFileName(extension: String): String = s"${generateString(8).toLowerCase}.$extension"
   def generateInt(start: Int, end: Int): Int = {
     val rnd = new Random
@@ -29,8 +33,12 @@ trait Generator {
   def hide(x: String): String = x.map(_ => "*").mkString
   def generateEmail = s"${generateString(12)}@${generateString(5)}.ru"
   def generateEmailOpt = Option(generateEmail)
+
   def generatePassword: String = generateString(8)
+  def genPassOpt = Some(generateString(8))
+
   def generatePhone: String = s"+791666${generateInt(10000, 99999)}"
+  def genPhoneOpt = Some(generatePhone)
 }
 
 object Generator {

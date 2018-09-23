@@ -40,9 +40,9 @@ export interface Language {
 }
 
 export interface User {
-  lastname: string;
-  firstname: string;
-  middlename?: string;
+  lastName: string;
+  firstName: string;
+  middleName?: string;
   email?: string;
   phone?: string;
   id?: string;

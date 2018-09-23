@@ -70,9 +70,9 @@ trait TemplateDataRetrieverC {
 
         FullUser(
           user.id,
-          user.lastname,
-          user.firstname,
-          user.middlename,
+          user.lastName,
+          user.firstName,
+          user.middleName.getOrElse(""),
           imcUser.flatMap(_.company),
           imcUser.flatMap(_.position),
           imcUser.flatMap(_.rank),
@@ -86,7 +86,7 @@ trait TemplateDataRetrieverC {
 
       val parameters = Map(
         "Applicant" -> ap.apData.entityName.map(_.en).getOrElse(""),
-        "Expert" -> x.toList.find(_.id == expertId).map(y => y.lastname + " " + y.firstname + " " + y.middlename).getOrElse(""),
+        "Expert" -> x.toList.find(_.id == expertId).map(y => y.lastName + " " + y.firstName + " " + y.middleName).getOrElse(""),
         "Date" -> LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
         //        "Criterion1.ExpertOpinion" -> if(ap.expertise.bulletins),
         "Criterion1.ExpertOpinion" -> ap.expertise.bulletins.get(expertId).map(y => y.criterions.get(1).map(_.decision) match {
@@ -153,9 +153,9 @@ trait TemplateDataRetrieverC {
 
         FullUser(
           user.id,
-          user.lastname,
-          user.firstname,
-          user.middlename,
+          user.lastName,
+          user.firstName,
+          user.middleName.getOrElse(""),
           imcUser.flatMap(_.company),
           imcUser.flatMap(_.position),
           imcUser.flatMap(_.rank),
@@ -169,7 +169,7 @@ trait TemplateDataRetrieverC {
 
       val parameters = Map(
         "Applicant" -> ap.apData.entityName.map(_.ru).getOrElse(""),
-        "Expert" -> x.toList.find(_.id == expertId).map(y => y.lastname + " " + y.firstname + " " + y.middlename).getOrElse(""),
+        "Expert" -> x.toList.find(_.id == expertId).map(y => y.lastName + " " + y.firstName + " " + y.middleName).getOrElse(""),
         "Date" -> LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
         //        "Criterion1.ExpertOpinion" -> if(ap.expertise.bulletins),
         "Criterion1.ExpertOpinion" -> ap.expertise.bulletins.get(expertId).map(y => y.criterions.get(1).map(_.decision) match {

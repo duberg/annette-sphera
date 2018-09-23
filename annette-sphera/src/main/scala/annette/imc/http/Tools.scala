@@ -58,15 +58,15 @@ object Tools {
       generateRandomConsonant
   }
 
-  def buildFIO(u: User): String = s"${u.lastname} ${u.firstname.take(1)}.${
-    u.middlename match {
+  def buildFIO(u: User): String = s"${u.lastName} ${u.firstName.take(1)}.${
+    u.middleName.getOrElse("") match {
       case x: String if x.isEmpty => ""
       case x: String => x.take(1) + "."
     }
   }"
 
-  def buildFullName(u: User): String = s"${u.lastname} ${u.firstname}${
-    u.middlename match {
+  def buildFullName(u: User): String = s"${u.lastName} ${u.firstName}${
+    u.middleName.getOrElse("") match {
       case x: String if x.isEmpty => ""
       case x: String => " " + x
     }

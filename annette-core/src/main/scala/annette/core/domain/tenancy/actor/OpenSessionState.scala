@@ -1,7 +1,7 @@
 package annette.core.domain.tenancy.actor
 
 import annette.core.domain.tenancy.OpenSessionService
-import annette.core.domain.tenancy.model.{OpenSession, OpenSessionUpdate}
+import annette.core.domain.tenancy.model.{ OpenSession, OpenSessionUpdate }
 import annette.core.persistence.Persistence
 import annette.core.persistence.Persistence.PersistentState
 

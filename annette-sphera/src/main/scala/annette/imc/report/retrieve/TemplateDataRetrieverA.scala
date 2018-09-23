@@ -66,9 +66,9 @@ trait TemplateDataRetrieverA {
 
         FullUser(
           user.id,
-          user.lastname,
-          user.firstname,
-          user.middlename,
+          user.lastName,
+          user.firstName,
+          user.middleName.getOrElse(""),
           imcUser.flatMap(_.company),
           imcUser.flatMap(_.position),
           imcUser.flatMap(_.rank),
@@ -81,7 +81,7 @@ trait TemplateDataRetrieverA {
       }
 
       val chairman = x.find(_.chairman)
-      val chairmanName = chairman.map(x => s"${x.lastname} ${x.firstname} ${x.middlename}").getOrElse("")
+      val chairmanName = chairman.map(x => s"${x.lastName} ${x.firstName} ${x.middleName}").getOrElse("")
       val chairmanPosition = chairman.flatMap(_.position).getOrElse("")
 
       val applicant = ap.apData.entityName.map(_.ru).getOrElse("")
@@ -95,8 +95,8 @@ trait TemplateDataRetrieverA {
 
       val listC: Seq[String] = x.filter(y => {
         ap.expertise.experts.contains(y.id)
-      }).map(y => s"${y.lastname} ${y.firstname.take(1)}.${
-        y.middlename match {
+      }).map(y => s"${y.lastName} ${y.firstName.take(1)}.${
+        y.middleName match {
           case x if x == "" => ""
           case x => x.take(1) + "."
         }
@@ -106,8 +106,8 @@ trait TemplateDataRetrieverA {
       val directorPosition = ap.apData.personPosition.map(_.ru).getOrElse("")
 
       val secretar = x.find(_.secretar)
-      val secretarName = secretar.map(y => s"${y.lastname} ${y.firstname.take(1)}.${
-        y.middlename match {
+      val secretarName = secretar.map(y => s"${y.lastName} ${y.firstName.take(1)}.${
+        y.middleName match {
           case x if x == "" => ""
           case x => x.take(1) + "."
         }
@@ -122,14 +122,14 @@ trait TemplateDataRetrieverA {
         })
           .map { y =>
             val p = y.position.getOrElse("") + " " + y.rank.getOrElse("")
-            val n = s"${y.lastname} ${y.firstname.take(1)}.${y.middlename match {
+            val n = s"${y.lastName} ${y.firstName.take(1)}.${y.middleName match {
               case x: String if x == "" => ""
               case x: String => " " + x.take(1) + "."
             }}"
             (p, "-", n)
           }
 
-      val RejList = x.filter(z => rejectors.contains(z.id)).map(_.lastname)
+      val RejList = x.filter(z => rejectors.contains(z.id)).map(_.lastName)
 
       val RejectString = RejList.size match {
         case 0 => ""
@@ -140,8 +140,8 @@ trait TemplateDataRetrieverA {
       val inviteesRows = Seq.empty
       val apExperts = x.filter(y => ap.expertise.experts.contains(y.id))
 
-      val listA = x.filter(_.expert).map(_.lastname) // все эксперты
-      val listB = apExperts.withFilter(e => e.expert || e.additional ).map(_.lastname) // вовлеченные в заявку эксперты
+      val listA = x.filter(_.expert).map(_.lastName) // все эксперты
+      val listB = apExperts.withFilter(e => e.expert || e.additional ).map(_.lastName) // вовлеченные в заявку эксперты
 
       val parameters: Map[String, Any] = Map(
         "Rejectors" -> RejectString,

@@ -7,7 +7,7 @@ import akka.util.Timeout
 import annette.core.domain.application.model.Application
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.model._
-import annette.core.domain.tenancy.{LastSessionService, OpenSessionService, SessionHistoryService}
+import annette.core.domain.tenancy.{ LastSessionService, OpenSessionService, SessionHistoryService }
 import annette.core.persistence.Persistence._
 import org.joda.time.DateTime
 

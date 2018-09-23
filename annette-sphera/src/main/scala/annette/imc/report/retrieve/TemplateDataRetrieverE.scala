@@ -68,9 +68,9 @@ trait TemplateDataRetrieverE {
 
         FullUser(
           user.id,
-          user.lastname,
-          user.firstname,
-          user.middlename,
+          user.lastName,
+          user.firstName,
+          user.middleName.getOrElse(""),
           imcUser.flatMap(_.company),
           imcUser.flatMap(_.position),
           imcUser.flatMap(_.rank),
@@ -83,12 +83,12 @@ trait TemplateDataRetrieverE {
       }
 
       val chairman = x.find(_.chairman)
-      val chairmanName = chairman.map(x => s"${x.lastname} ${x.firstname} ${x.middlename}").getOrElse("")
+      val chairmanName = chairman.map(x => s"${x.lastName} ${x.firstName} ${x.middleName}").getOrElse("")
       val chairmanPosition = chairman.flatMap(_.position).getOrElse("")
 
       val applicant = ap.apData.entityName.map(_.ru).getOrElse("")
 
-      val RejList = x.filter(z => rejectors.contains(z.id)).map(_.lastname)
+      val RejList = x.filter(z => rejectors.contains(z.id)).map(_.lastName)
 
       val RejectString = RejList.size match {
         case 0 => "0"
@@ -124,8 +124,8 @@ trait TemplateDataRetrieverE {
       else if (pluses.toFloat / votes.size.toFloat >= 0.67) "соответствующми"
       else "не соответствующми"
 
-      val listA = x.filter(_.expert).map(_.lastname) // все эксперты
-      val listB = apExperts.withFilter(e => e.expert || e.additional).map(_.lastname) // вовлеченные в заявку эксперты
+      val listA = x.filter(_.expert).map(_.lastName) // все эксперты
+      val listB = apExperts.withFilter(e => e.expert || e.additional).map(_.lastName) // вовлеченные в заявку эксперты
       val additionalSize = x.count(_.additional)
       val parameters: Map[String, Any] = Map(
         "Rejectors" -> RejectString,

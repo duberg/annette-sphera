@@ -1,142 +1,185 @@
 package annette.core.serializer
 
+import java.time.ZonedDateTime
 import java.util.UUID
 
 import annette.core.domain.application.model.Application
 import annette.core.domain.tenancy.model._
-import annette.core.domain.tenancy.UserService
-import annette.core.domain.tenancy.actor.UsersActorState
+import annette.core.domain.tenancy.{ UserService, actor }
+import annette.core.domain.tenancy.actor.UsersState
 import annette.core.serializer.proto.user._
+import Implicits._
 
 trait UserConverters {
 
-  val UserCreatedEvtManifestV1 = "User.CreatedEvt.v1"
-  val UserUpdatedEvtManifestV1 = "User.UpdatedEvt.v1"
-  val UserDeletedEvtManifestV1 = "User.DeletedEvt.v1"
-  val UserStateManifestV1 = "User.State.v1"
+  val CreatedUserEvtManifestV1 = "CreatedUserEvt.v1"
+  val UpdatedUserEvtManifestV1 = "UpdatedUserEvt.v1"
+  val DeletedUserEvtManifestV1 = "DeletedUserEvt.v1"
+  val UsersStateManifestV1 = "UsersState.v1"
 
-  def toUserCreatedEvtBinary(obj: UserService.UserCreatedEvt) = {
-    UserCreatedEvtV1(obj.entry, obj.password).toByteArray
+  def toCreatedUserEvtBinary(obj: UserService.CreatedUserEvt) = {
+    CreatedUserEvtV1(obj.x).toByteArray
   }
 
-  def toUserUpdateEvtBinary(obj: UserService.UserUpdatedEvt): Array[Byte] = {
-    UserUpdatedEvtV1(obj.entry).toByteArray
+  def toUpdateUserEvtBinary(obj: UserService.UpdatedUserEvt): Array[Byte] = {
+    UpdatedUserEvtV1(obj.x).toByteArray
   }
 
-  def toUserDeleteEvtBinary(obj: UserService.UserDeletedEvt) = {
-    UserDeletedEvtV1(obj.id.toString).toByteArray
+  def toDeleteUserEvtBinary(obj: UserService.DeletedUserEvt) = {
+    DeletedUserEvtV1(obj.userId).toByteArray
   }
 
-  def toUserStateBinary(obj: UsersActorState): Array[Byte] = {
-    UserStateV1(
-      userRecs = obj.users.map({ case (x, y) => x.toString -> fromUserRec(y) }),
-      emailIndex = obj.emailIndex.mapValues(_.toString),
-      phoneIndex = obj.phoneIndex.mapValues(_.toString),
-      loginIndex = obj.usernameIndex.mapValues(_.toString),
+  def toUserStatesBinary(obj: UsersState): Array[Byte] = {
+    UsersStateV1(
+      users = obj.users.map({ case (x, y) => UUIDToString(x) -> fromUser(y) }),
+      emailIndex = obj.emailIndex,
+      phoneIndex = obj.phoneIndex,
+      usernameIndex = obj.usernameIndex,
       userProperties = obj.userProperties.map({ case (x, y) => x.toString -> fromUserProperty(y) })).toByteArray
   }
 
-  def fromUserCreatedEvtV1(bytes: Array[Byte]): UserService.UserCreatedEvt = {
-    val x = UserCreatedEvtV1.parseFrom(bytes)
-    UserService.UserCreatedEvt(x.entry, x.password)
+  def fromCreatedUserEvtV1(bytes: Array[Byte]): UserService.CreatedUserEvt = {
+    val x = CreatedUserEvtV1.parseFrom(bytes).x
+    UserService.CreatedUserEvt(x)
   }
 
-  def fromUserUpdatedEvtV1(bytes: Array[Byte]): UserService.UserUpdatedEvt = {
-    val x = UserUpdatedEvtV1.parseFrom(bytes)
-    UserService.UserUpdatedEvt(x.entry)
+  def fromUpdatedUserEvtV1(bytes: Array[Byte]): UserService.UpdatedUserEvt = {
+    val x = UpdatedUserEvtV1.parseFrom(bytes).x
+    UserService.UpdatedUserEvt(x)
   }
 
-  def fromUserDeletedEvtV1(bytes: Array[Byte]): UserService.UserDeletedEvt = {
-    val id = UUID.fromString(UserDeletedEvtV1.parseFrom(bytes).id)
-    UserService.UserDeletedEvt(id)
+  def fromDeletedUserEvtV1(bytes: Array[Byte]): UserService.DeletedUserEvt = {
+    val userId = DeletedUserEvtV1.parseFrom(bytes).userId
+    UserService.DeletedUserEvt(userId)
   }
 
-  def fromUserStateV1(bytes: Array[Byte]): UsersActorState = {
-    val p = UserStateV1.parseFrom(bytes)
-    UserState(
-      userRecs = p.userRecs.map({ case (x, y) => UUID.fromString(x) -> toUserRec(y) }),
-      emailIndex = p.emailIndex.mapValues(UUID.fromString),
-      phoneIndex = p.phoneIndex.mapValues(UUID.fromString),
-      loginIndex = p.loginIndex.mapValues(UUID.fromString),
-      userProperties = p.userProperties.map({ case (x, y) => UserProperty.Id(x) -> toUserProperty(y) }))
+  def fromUsersStateV1(bytes: Array[Byte]): UsersState = {
+    val x = UsersStateV1.parseFrom(bytes)
+    UsersState(
+      users = x.users.map({ case (a, b) => stringToUUID(a) -> toUser(b) }),
+      emailIndex = x.emailIndex,
+      phoneIndex = x.phoneIndex,
+      usernameIndex = x.usernameIndex,
+      userProperties = x.userProperties.map({ case (a, b) => UserProperty.Id(a) -> toUserProperty(b) }))
   }
 
-  implicit def toUser(x: UserV1): User =
+  implicit def toUser(x: UserV1): User = {
     User(
-      lastname = x.lastname,
-      firstname = x.firstname,
-      middlename = x.middlename,
+      id = x.id,
+      username = x.username,
+      name = x.name,
+      firstName = x.firstName,
+      lastName = x.lastName,
+      middleName = x.middleName,
       email = x.email,
+      url = x.url,
+      description = x.description,
       phone = x.phone,
-      username = x.login,
-      defaultLanguage = x.defaultLanguage,
-      id = UUID.fromString(x.id))
+      locale = x.locale,
+      registeredDate = x.registeredDate,
+      tenants = x.tenants.toSet,
+      applications = x.applications,
+      roles = x.roles,
+      password = x.password,
+      avatarUrl = x.avatarUrl,
+      sphere = x.sphere,
+      company = x.company,
+      position = x.position,
+      rank = x.rank,
+      additionalTel = x.additionalTel,
+      additionalMail = x.additionalMail,
+      meta = x.meta,
+      deactivated = x.deactivated)
+  }
 
   implicit def fromUser(x: User): UserV1 = {
     UserV1(
-      lastname = x.lastname,
-      firstname = x.firstname,
-      middlename = x.middlename,
+      id = x.id,
+      username = x.username,
+      name = x.name,
+      firstName = x.firstName,
+      lastName = x.lastName,
+      middleName = x.middleName,
       email = x.email,
+      url = x.url,
+      description = x.description,
       phone = x.phone,
-      login = x.username,
-      defaultLanguage = x.defaultLanguage,
-      id = x.id.toString)
-  }
-
-  implicit def toUserUpdate(x: UserUpdateV1): UpdateUser = {
-    UserUpdate(
-      lastname = x.lastname,
-      firstname = x.firstname,
-      middlename = x.middlename,
-      email = Some(x.email),
-      phone = Some(x.phone),
-      login = Some(x.login),
-      defaultLanguage = x.defaultLanguage,
-      id = UUID.fromString(x.id))
-  }
-
-  implicit def fromUserUpdate(x: UpdateUser): UserUpdateV1 = {
-    UserUpdateV1(
-      lastname = x.lastname,
-      firstname = x.firstname,
-      middlename = x.middlename,
-      email = x.email.get,
-      phone = x.phone.get,
-      login = x.login.get,
-      defaultLanguage = x.defaultLanguage,
-      id = x.id.toString)
-  }
-
-  implicit def toUserRec(x: UserRecV1): UserRec = {
-    UserRec(
-      lastname = x.lastname,
-      firstname = x.firstname,
-      middlename = x.middlename,
-      email = x.email,
-      phone = x.phone,
-      login = x.login,
-      defaultLanguage = x.defaultLanguage,
+      locale = x.locale,
+      registeredDate = x.registeredDate,
+      tenants = x.tenants.toSet,
+      applications = x.applications,
+      roles = x.roles,
       password = x.password,
-      id = UUID.fromString(x.id))
+      avatarUrl = x.avatarUrl,
+      sphere = x.sphere,
+      company = x.company,
+      position = x.position,
+      rank = x.rank,
+      additionalTel = x.additionalTel,
+      additionalMail = x.additionalMail,
+      meta = x.meta,
+      deactivated = x.deactivated)
   }
 
-  implicit def fromUserRec(x: UserRec): UserRecV1 = {
-    UserRecV1(
-      lastname = x.lastname,
-      firstname = x.firstname,
-      middlename = x.middlename,
+  implicit def toUpdateUser(x: UpdateUserV1): UpdateUser = {
+    UpdateUser(
+      id = x.id,
+      username = x.username,
+      name = x.name,
+      firstName = x.firstName,
+      lastName = x.lastName,
+      middleName = x.middleName,
       email = x.email,
+      url = x.url,
+      description = x.description,
       phone = x.phone,
-      login = x.login,
-      defaultLanguage = x.defaultLanguage,
+      locale = x.locale,
+      tenants = x.tenants,
+      applications = x.applications,
+      roles = x.roles,
       password = x.password,
-      id = x.id.toString)
+      avatarUrl = x.avatarUrl,
+      sphere = x.sphere,
+      company = x.company,
+      position = x.position,
+      rank = x.rank,
+      additionalTel = x.additionalTel,
+      additionalMail = x.additionalMail,
+      meta = x.meta,
+      deactivated = x.deactivated)
+  }
+
+  implicit def fromUpdateUser(x: UpdateUser): UpdateUserV1 = {
+    UpdateUserV1(
+      id = x.id,
+      username = x.username,
+      name = x.name,
+      firstName = x.firstName,
+      lastName = x.lastName,
+      middleName = x.middleName,
+      email = x.email,
+      url = x.url,
+      description = x.description,
+      phone = x.phone,
+      locale = x.locale,
+      tenants = x.tenants,
+      applications = x.applications,
+      roles = x.roles,
+      password = x.password,
+      avatarUrl = x.avatarUrl,
+      sphere = x.sphere,
+      company = x.company,
+      position = x.position,
+      rank = x.rank,
+      additionalTel = x.additionalTel,
+      additionalMail = x.additionalMail,
+      meta = x.meta,
+      deactivated = x.deactivated)
   }
 
   implicit def toUserPropertyId(x: UserPropertyIdV1): UserProperty.Id = {
     UserProperty.Id(
-      userId = UUID.fromString(x.userId),
+      userId = x.userId,
       tenantId = x.tenantId,
       applicationId = x.applicationId,
       key = x.key)
@@ -144,7 +187,7 @@ trait UserConverters {
 
   implicit def fromUserPropertyId(x: UserProperty.Id): UserPropertyIdV1 = {
     UserPropertyIdV1(
-      userId = x.userId.toString,
+      userId = x.userId,
       tenantId = x.tenantId,
       applicationId = x.applicationId,
       key = x.key)

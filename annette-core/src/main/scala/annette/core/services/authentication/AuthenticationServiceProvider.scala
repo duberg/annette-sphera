@@ -11,15 +11,15 @@
 package annette.core.services.authentication
 
 import javax.inject._
-import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.actor.{ ActorRef, ActorSystem, Props }
 import akka.cluster.Cluster
-import akka.event.{LogSource, Logging}
+import akka.event.{ LogSource, Logging }
 import akka.routing.FromConfig
 import annette.core.domain.InitCoreTables
 import annette.core.domain.application.dao.ApplicationDao
 import annette.core.domain.language.dao.LanguageDao
 import annette.core.domain.tenancy.UserService
-import annette.core.domain.tenancy.dao.{SessionDao, TenantDao, TenantUserDao}
+import annette.core.domain.tenancy.dao.{ SessionDao, TenantDao, TenantUserDao }
 import com.google.inject.Provider
 import com.typesafe.config.Config
 
@@ -28,15 +28,15 @@ import com.typesafe.config.Config
  */
 @Singleton
 class AuthenticationServiceProvider @Inject() (
-                                                system: ActorSystem,
-                                                sessionDao: SessionDao,
-                                                tenantDao: TenantDao,
-                                                applicationDao: ApplicationDao,
-                                                userDao: UserService,
-                                                tenantUserDao: TenantUserDao,
-                                                languageDao: LanguageDao,
-                                                config: Config,
-                                                initCoreTables: InitCoreTables) extends Provider[ActorRef] {
+  system: ActorSystem,
+  sessionDao: SessionDao,
+  tenantDao: TenantDao,
+  applicationDao: ApplicationDao,
+  userDao: UserService,
+  tenantUserDao: TenantUserDao,
+  languageDao: LanguageDao,
+  config: Config,
+  initCoreTables: InitCoreTables) extends Provider[ActorRef] {
 
   implicit val myLogSourceType: LogSource[AuthenticationServiceProvider] = (a: AuthenticationServiceProvider) => "AuthenticationServiceProvider"
 
