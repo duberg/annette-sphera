@@ -21,6 +21,8 @@ case class UserState(
     val newLoginIndex = entry.login.map{ login => loginIndex + (login.trim.toLowerCase -> entry.id)}.getOrElse(loginIndex)
     val userRec = entry.toUserRec(hashedPassword)
 
+    println(s"User created: $userRec")
+
     copy(
       userRecs = userRecs + (entry.id -> userRec),
       emailIndex = newEmailIndex ,

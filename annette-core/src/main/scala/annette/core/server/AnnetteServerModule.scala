@@ -17,7 +17,7 @@ import annette.core.domain.{ CoreService, InitCoreTables }
 import annette.core.services.authentication.{ AuthenticationService, AuthenticationServiceProvider }
 import com.google.inject.{ AbstractModule, Provides }
 import com.google.inject.name.Names
-import javax.inject.Named
+import javax.inject.{ Named, Singleton }
 import net.codingwell.scalaguice.ScalaModule
 
 class AnnetteServerModule extends AbstractModule with ScalaModule {
@@ -28,8 +28,9 @@ class AnnetteServerModule extends AbstractModule with ScalaModule {
   }
 
   @Provides
+  @Singleton
   @Named("CoreService")
   def getCoreService(actorSystem: ActorSystem) = {
-    actorSystem.actorOf(CoreService.props)
+    actorSystem.actorOf(CoreService.props, "core")
   }
 }

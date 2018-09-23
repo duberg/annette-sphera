@@ -26,9 +26,9 @@ class CoreServiceActor extends Actor with ActorLogging {
   val languageActor: ActorRef = context.actorOf(LanguageService.props("core-language"), "language")
   val userActor: ActorRef = context.actorOf(UserService.props("core-user"), "user")
 
-  val lastSessionActor: ActorRef = context.actorOf(LastSessionService.props("core-last-session"))
-  val sessionHistoryActor: ActorRef = context.actorOf(SessionHistoryService.props("core-session-history"))
-  val openSessionActor: ActorRef = context.actorOf(OpenSessionService.props("core-open-session", lastSessionActor, sessionHistoryActor))
+  val lastSessionActor: ActorRef = context.actorOf(LastSessionService.props("core-last-session"), "last-session")
+  val sessionHistoryActor: ActorRef = context.actorOf(SessionHistoryService.props("core-session-history"), "session-history")
+  val openSessionActor: ActorRef = context.actorOf(OpenSessionService.props("core-open-session", lastSessionActor, sessionHistoryActor), "open-session")
 
   override def receive: PartialFunction[Any, Unit] = {
     case msg: ApplicationService.Command =>
@@ -59,5 +59,7 @@ class CoreServiceActor extends Actor with ActorLogging {
 }
 
 object CoreService {
+  val name = "core"
+
   def props = Props(classOf[CoreServiceActor])
 }
