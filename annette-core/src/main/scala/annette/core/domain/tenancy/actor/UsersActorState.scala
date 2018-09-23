@@ -1,5 +1,8 @@
 package annette.core.domain.tenancy.actor
 
+import java.time.ZonedDateTime
+
+import annette.core.domain.application.model.Application
 import annette.core.domain.tenancy._
 import annette.core.domain.tenancy.model._
 import annette.core.persistence.Persistence
@@ -13,18 +16,45 @@ case class UsersActorState(
                             usernameIndex: Map[String, User.Id] = Map.empty,
                             userProperties: Map[UserProperty.Id, UserProperty] = Map.empty) extends PersistentState[UsersActorState] {
 
-  def createUser(create: CreateUser): UsersActorState = {
-    validateCreate(create)
-    val hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt())
-    val newEmailIndex = create.email.map{ email => emailIndex + (email.trim.toLowerCase -> create.id)}.getOrElse(emailIndex)
-    val newPhoneIndex = create.phone.map{ phone => phoneIndex + (phone.trim.toLowerCase -> create.id)}.getOrElse(phoneIndex)
-    val newLoginIndex = create.username.map{ login => usernameIndex + (login.trim.toLowerCase -> create.id)}.getOrElse(usernameIndex)
-    val userRec = create.toUserRec(hashedPassword)
+  def createUser(x: CreateUser): UsersActorState = {
+    validateCreate(x)
+    val userId = if (users.isEmpty) 1000 else users.keys.max
+    val hashedPassword = BCrypt.hashpw(x.password, BCrypt.gensalt())
+    val newEmailIndex = x.email.map{ email => emailIndex + (email.trim.toLowerCase -> userId)}.getOrElse(emailIndex)
+    val newPhoneIndex = x.phone.map{ phone => phoneIndex + (phone.trim.toLowerCase -> userId)}.getOrElse(phoneIndex)
+    val newLoginIndex = x.username.map{ login => usernameIndex + (login.trim.toLowerCase -> userId)}.getOrElse(usernameIndex)
+    val user = User(
+      id = userId,
+      username = x.username,
+      name = x.name,
+      firstName = x.firstName,
+      lastName = x.lastName,
+      middleName = x.middleName,
+      email = x.email,
+      url = x.url,
+      description = x.description,
+      phone = x.phone,
+      locale = x.locale,
+      registeredDate = ZonedDateTime.now(),
+      tenants = x.tenants,
+      applications = x.applications,
+      roles = x.roles,
+      password = hashedPassword,
+      avatarUrl = x.avatarUrl,
+      sphere = x.sphere,
+      company = x.company,
+      position = x.position,
+      rank = x.rank,
+      additionalTel = x.additionalTel,
+      additionalMail = x.additionalMail,
+      meta = x.meta,
+      deactivated = x.deactivated
+    )
 
-    println(s"User created: $userRec")
+    println(s"User created: $user")
 
     copy(
-      users = users + (create.id -> userRec),
+      users = users + (userId -> user),
       emailIndex = newEmailIndex ,
       phoneIndex= newPhoneIndex,
       usernameIndex = newLoginIndex
@@ -45,7 +75,7 @@ case class UsersActorState(
     if (create.phone.exists(phone => phoneIndex.get(phone.trim.toLowerCase).isDefined)) throw new PhoneAlreadyExists(create.phone.get)
     if (create.username.exists(login => usernameIndex.get(login.trim.toLowerCase).isDefined)) throw new LoginAlreadyExists(create.username.get)
     // проверяем существует ли пользователь с таким же id
-    if (users.get(create.id).isDefined) throw new UserAlreadyExists(create.id)
+    //if (users.get(create.id).isDefined) throw new UserAlreadyExists(create.id)
   }
 
 
@@ -126,15 +156,13 @@ case class UsersActorState(
       user =>
       val newEmailIndex = user.email.map{ email => emailIndex - email.trim.toLowerCase}.getOrElse(emailIndex)
       val newPhoneIndex = user.phone.map{ phone => phoneIndex - phone.trim.toLowerCase }.getOrElse(phoneIndex)
-      val newLoginIndex = user.login.map{ login => usernameIndex - login.trim.toLowerCase }.getOrElse(usernameIndex)
+      val newLoginIndex = user.username.map{ username => usernameIndex - username.trim.toLowerCase }.getOrElse(usernameIndex)
       copy(users = users - id)
     }.getOrElse( throw new UserNotFound(id) )
 
   }
 
-  def findUserById(id: User.Id): Option[User] = users.get(id).map(_.toUser)
-
-  def findAllUsers: Map[User.Id, User] = users.map(r => r._1 -> r._2.toUser)
+  def findUserById(id: User.Id): Option[User] = users.get(id)
 
   def userExists(id: User.Id): Boolean = users.get(id).isDefined
 
