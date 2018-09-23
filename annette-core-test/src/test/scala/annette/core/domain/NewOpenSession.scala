@@ -5,7 +5,7 @@ import java.util.UUID
 import akka.actor.ActorRef
 import akka.testkit.TestKit
 import annette.core.domain.language.LanguageService
-import annette.core.domain.tenancy.{LastSessionService, OpenSessionService, SessionHistoryService}
+import annette.core.domain.tenancy.{ LastSessionService, OpenSessionService, SessionHistoryService }
 import annette.core.domain.tenancy.model.OpenSession
 import annette.core.test.PersistenceSpec
 import org.joda.time.DateTime
@@ -18,15 +18,14 @@ trait NewOpenSession { _: PersistenceSpec with TestKit =>
 
   def newOpenSession = OpenSession(
     userId = UUID.randomUUID(),
-    tenantId = "tenant"+random.nextInt(),
-    applicationId = "application"+random.nextInt(),
-    languageId = "lang"+random.nextInt(),
+    tenantId = "tenant" + random.nextInt(),
+    applicationId = "application" + random.nextInt(),
+    languageId = "lang" + random.nextInt(),
     startTimestamp = DateTime.now(),
     lastOpTimestamp = DateTime.now(),
     rememberMe = random.nextBoolean(),
     timeout = 0,
-    ip = "localhost"
-  )
+    ip = "localhost")
 
   def lastSessionActor(): ActorRef = {
     val uuid = UUID.randomUUID().toString
@@ -40,7 +39,8 @@ trait NewOpenSession { _: PersistenceSpec with TestKit =>
 
   def newOpenSessionActor(): ActorRef = {
     val uuid = UUID.randomUUID().toString
-    system.actorOf(OpenSessionService.props(s"OpenSession-$uuid", lastSessionActor(), sessionHistoryActor()),
+    system.actorOf(
+      OpenSessionService.props(s"OpenSession-$uuid", lastSessionActor(), sessionHistoryActor()),
       s"open-session-$uuid")
   }
 

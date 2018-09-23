@@ -60,6 +60,13 @@ lazy val annetteCore = Project(
     buildInfoOptions += BuildInfoOption.BuildTime,
     buildInfoPackage := "annette.core",
     libraryDependencies ++= Dependencies.core,
+
+    PB.targets in Compile := Seq(
+      scalapb.gen() -> (sourceManaged in Compile).value
+    ),
+
+    PB.deleteTargetDirectory := false,
+
     commonSettings
   )
 
@@ -85,15 +92,15 @@ lazy val annetteSphera = Project(
   id = "annette-sphera",
   base = file("annette-sphera")
 )
-  //.enablePlugins(BuildInfoPlugin)
+  .enablePlugins(BuildInfoPlugin)
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(UniversalPlugin)
   .settings(
     name := "annette-sphera",
     version := imcVersion,
-    //buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion, buildInfoBuildNumber),
-   // buildInfoOptions += BuildInfoOption.BuildTime,
-   // buildInfoPackage := "annette.sphera",
+    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion, buildInfoBuildNumber),
+    buildInfoOptions += BuildInfoOption.BuildTime,
+    buildInfoPackage := "annette.sphera",
 
     libraryDependencies ++= Dependencies.imc,
     unmanagedClasspath in Test += (resourceDirectory in Compile).value,
@@ -101,6 +108,8 @@ lazy val annetteSphera = Project(
     PB.targets in Compile := Seq(
       scalapb.gen() -> (sourceManaged in Compile).value
     ),
+
+    PB.deleteTargetDirectory := false,
 
     commonSettings
   ).dependsOn(annetteCore)

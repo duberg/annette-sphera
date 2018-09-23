@@ -18,14 +18,13 @@ trait NewSessionHistory { _: PersistenceSpec with TestKit =>
 
   def newSessionHistory = SessionHistory(
     userId = UUID.randomUUID(),
-    tenantId = "tenant"+random.nextInt(),
-    applicationId = "application"+random.nextInt(),
-    languageId = "lang"+random.nextInt(),
+    tenantId = "tenant" + random.nextInt(),
+    applicationId = "application" + random.nextInt(),
+    languageId = "lang" + random.nextInt(),
     startTimestamp = DateTime.now(),
     endTimestamp = DateTime.now(),
     ip = "localhost",
-    id = UUID.randomUUID()
-  )
+    id = UUID.randomUUID())
 
   def newSessionHistoryActor(): ActorRef = {
     val uuid = UUID.randomUUID().toString

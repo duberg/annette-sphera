@@ -8,12 +8,12 @@ import akka.pattern.ask
 import akka.testkit.TestKit
 import annette.core.domain.tenancy.LastSessionService
 import annette.core.domain.tenancy.LastSessionService.LastSessionOpt
-import annette.core.domain.tenancy.OpenSessionService.{OpenSessionOpt, OpenSessionSeq}
+import annette.core.domain.tenancy.OpenSessionService.{ OpenSessionOpt, OpenSessionSeq }
 import annette.core.domain.tenancy.model.OpenSessionUpdate
 import annette.core.test.PersistenceSpec
 import org.joda.time.DateTime
 
-class LastSessionActorSpec  extends TestKit(ActorSystem("LastSessionActorSpec"))
+class LastSessionActorSpec extends TestKit(ActorSystem("LastSessionActorSpec"))
   with PersistenceSpec with NewLastSession {
   "A LastSessionActor" when receive {
     "StoreLastSessionCmd" must {

@@ -1,0 +1,80 @@
+syntax = "proto2";
+
+package core;
+
+option java_package = "annette.core.serializer.proto";
+
+message UserStateV1 {
+    map<string, UserRecV1> userRecs = 1;
+    map<string, string> emailIndex = 2;
+    map<string, string> phoneIndex = 3;
+    map<string, string> loginIndex = 4;
+    map<string, UserPropertyV1> userProperties = 5;
+}
+
+message UserV1 {
+    required string lastname = 1;
+    required string firstname = 2;
+    required string middlename = 3;
+    optional string email = 4;
+    optional string phone = 5;
+    optional string login = 6;
+    required string defaultLanguage = 7;
+    required string id = 8;
+}
+
+message UserUpdateV1 {
+    optional string lastname = 1;
+    optional string firstname = 2;
+    optional string middlename = 3;
+    optional string email = 4;
+    optional string phone = 5;
+    optional string login = 6;
+    optional string defaultLanguage = 7;
+    optional string password = 8;
+    required string id = 9;
+}
+
+message UserRecV1 {
+    required string lastname = 1;
+    required string firstname = 2;
+    required string middlename = 3;
+    optional string email = 4;
+    optional string phone = 5;
+    optional string login = 6;
+    required string defaultLanguage = 7;
+    required string password = 8;
+    required string id = 9;
+}
+
+message UserPropertyV1 {
+    required UserPropertyIdV1 id = 1;
+    required string value = 2;
+}
+
+message UserPropertyIdV1 {
+    required string userId = 1;
+    optional string tenantId = 2;
+    optional string applicationId =3;
+    required string key= 4;
+}
+
+message UserCreatedEvtV1 {
+    required UserV1 entry = 1;
+    required string password = 2;
+}
+
+message UserUpdatedEvtV1 {
+    required UserUpdateV1 entry = 1;
+}
+
+message UserDeletedEvtV1 {
+    required string id = 1;
+}
+
+message PasswordUpdatedEvtV1 {
+    required string userId = 1;
+    required string password = 2;
+}
+
+

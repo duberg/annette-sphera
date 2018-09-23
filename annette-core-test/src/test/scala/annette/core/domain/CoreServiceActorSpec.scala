@@ -14,16 +14,16 @@ package annette.core.domain
 import java.util.UUID
 
 import akka.Done
-import akka.actor.{ActorRef, ActorSystem}
+import akka.actor.{ ActorRef, ActorSystem }
 import akka.pattern.ask
 import akka.testkit.TestKit
 import annette.core.domain.application.ApplicationService
-import annette.core.domain.application.model.{Application, ApplicationUpdate}
+import annette.core.domain.application.model.{ Application, ApplicationUpdate }
 import annette.core.domain.language.LanguageService
-import annette.core.domain.language.model.{Language, LanguageUpdate}
+import annette.core.domain.language.model.{ Language, LanguageUpdate }
 import annette.core.domain.tenancy._
 import LastSessionService.LastSessionOpt
-import OpenSessionService.{OpenSessionOpt, OpenSessionSeq}
+import OpenSessionService.{ OpenSessionOpt, OpenSessionSeq }
 import annette.core.domain.tenancy.model._
 import annette.core.test.PersistenceSpec
 import org.joda.time.DateTime
@@ -563,8 +563,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
         val s1 = newOpenSession
         val upd = OpenSessionUpdate(
           id = s1.id,
-          tenantId = Some("EXXO")
-        )
+          tenantId = Some("EXXO"))
         val actor = newCoreServiceActor()
         for {
           c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s1))
@@ -581,8 +580,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
         val s1 = newOpenSession
         val upd = OpenSessionUpdate(
           id = s1.id,
-          languageId = Some("RU")
-        )
+          languageId = Some("RU"))
         val actor = newCoreServiceActor()
         for {
           c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s1))
@@ -599,8 +597,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
         val s1 = newOpenSession
         val upd = OpenSessionUpdate(
           id = s1.id,
-          applicationId = Some("exxo")
-        )
+          applicationId = Some("exxo"))
         val actor = newCoreServiceActor()
         for {
           c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s1))
@@ -617,8 +614,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
         val s1 = newOpenSession
         val upd = OpenSessionUpdate(
           id = s1.id,
-          rememberMe = Some(false)
-        )
+          rememberMe = Some(false))
         val actor = newCoreServiceActor()
         for {
           c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s1))
@@ -637,8 +633,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
           id = s1.id,
           tenantId = Some("EXXO"),
           languageId = Some("RU"),
-          applicationId = Some("exxo")
-        )
+          applicationId = Some("exxo"))
         val actor = newCoreServiceActor()
         for {
           c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s1))
@@ -656,8 +651,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
         val s1 = newOpenSession
         val upd = OpenSessionUpdate(
           id = s1.id,
-          lastOpTimestamp = Some(DateTime.now)
-        )
+          lastOpTimestamp = Some(DateTime.now))
         val actor = newCoreServiceActor()
         for {
           c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s1))
@@ -676,8 +670,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
       "do nothing" in {
         val upd = OpenSessionUpdate(
           id = UUID.randomUUID(),
-          rememberMe = Some(false)
-        )
+          rememberMe = Some(false))
         val actor = newCoreServiceActor()
         for {
           u <- ask(actor, OpenSessionService.UpdateOpenSessionCmd(upd))
@@ -765,7 +758,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
         val actor = newSessionHistoryActor()
         for {
           c1 <- ask(actor, SessionHistoryService.CreateSessionHistoryCmd(s1))
-          c2 <- ask(actor,  SessionHistoryService.CreateSessionHistoryCmd(s2))
+          c2 <- ask(actor, SessionHistoryService.CreateSessionHistoryCmd(s2))
           r <- ask(actor, SessionHistoryService.FindAllSessionHistory)
             .mapTo[SessionHistoryService.SessionHistorySeq].map(_.entries)
         } yield {
@@ -778,11 +771,11 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
     "CreateSessionHistoryCmd with the same id" must {
       "do nothing" in {
         val s1 = newSessionHistory
-        val s2 = newSessionHistory.copy(id=s1.id)
+        val s2 = newSessionHistory.copy(id = s1.id)
         val actor = newSessionHistoryActor()
         for {
           c1 <- ask(actor, SessionHistoryService.CreateSessionHistoryCmd(s1))
-          c2 <- ask(actor,  SessionHistoryService.CreateSessionHistoryCmd(s2))
+          c2 <- ask(actor, SessionHistoryService.CreateSessionHistoryCmd(s2))
           r <- ask(actor, SessionHistoryService.FindAllSessionHistory).mapTo[SessionHistoryService.SessionHistorySeq].map(_.entries)
           r1 <- ask(actor, SessionHistoryService.FindSessionHistoryById(s1.id))
             .mapTo[SessionHistoryService.SessionHistoryOpt].map(_.maybeEntry)

@@ -3,15 +3,15 @@ package annette.core.domain
 import java.util.UUID
 
 import akka.Done
-import akka.actor.{ActorRef, ActorSystem}
+import akka.actor.{ ActorRef, ActorSystem }
 import akka.pattern.ask
 import akka.testkit.TestKit
 import annette.core.domain.application.ApplicationService
-import annette.core.domain.application.model.{Application, ApplicationUpdate}
+import annette.core.domain.application.model.{ Application, ApplicationUpdate }
 import annette.core.domain.language.LanguageService
-import annette.core.domain.language.model.{Language, LanguageUpdate}
+import annette.core.domain.language.model.{ Language, LanguageUpdate }
 import annette.core.domain.tenancy._
-import annette.core.domain.tenancy.dao.{SessionDao, UserDao}
+import annette.core.domain.tenancy.dao.{ SessionDao, UserDao }
 import annette.core.domain.tenancy.model._
 import annette.core.exception.AnnetteException
 import annette.core.test.PersistenceSpec
@@ -22,7 +22,6 @@ import scala.concurrent.Future
 class SessionDaoSpec extends TestKit(ActorSystem("SessionDaoSpec"))
   with PersistenceSpec
   with NewOpenSession {
-
 
   def newCoreServiceActor(): ActorRef = {
     val uuid = UUID.randomUUID().toString
@@ -88,10 +87,9 @@ class SessionDaoSpec extends TestKit(ActorSystem("SessionDaoSpec"))
           r3 <- dao.getAllSessionHistories
           d <- dao.closeSession(s1.id)
           r4 <- dao.getAllOpenSessions
-          _ <- Future{Thread.sleep(100)}
+          _ <- Future { Thread.sleep(100) }
           r5 <- dao.getAllLastSessions
           r6 <- dao.getAllSessionHistories
-
 
         } yield {
           cc1 shouldBe s1
@@ -125,7 +123,7 @@ class SessionDaoSpec extends TestKit(ActorSystem("SessionDaoSpec"))
       for {
         cc1 <- dao.createSession(s1)
         u <- Future.successful(dao.updateLastOpTimestamp(s1.id))
-        _ <- Future{Thread.sleep(100)}
+        _ <- Future { Thread.sleep(100) }
         r1 <- dao.getOpenSessionById(s1.id)
 
       } yield {
@@ -142,8 +140,7 @@ class SessionDaoSpec extends TestKit(ActorSystem("SessionDaoSpec"))
         id = s1.id,
         tenantId = Some("EXXO"),
         languageId = Some("RU"),
-        applicationId = Some("exxo")
-      )
+        applicationId = Some("exxo"))
       val dao = newSessionDao()
       for {
         c1 <- dao.createSession(s1)

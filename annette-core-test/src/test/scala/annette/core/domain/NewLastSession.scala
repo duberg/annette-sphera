@@ -6,7 +6,7 @@ import akka.actor.ActorRef
 import akka.testkit.TestKit
 import annette.core.domain.language.LanguageService
 import annette.core.domain.tenancy.LastSessionService
-import annette.core.domain.tenancy.model.{LastSession, OpenSession}
+import annette.core.domain.tenancy.model.{ LastSession, OpenSession }
 import annette.core.test.PersistenceSpec
 import org.joda.time.DateTime
 
@@ -18,14 +18,13 @@ trait NewLastSession { _: PersistenceSpec with TestKit =>
 
   def newLastSession = LastSession(
     userId = UUID.randomUUID(),
-    tenantId = "tenant"+random.nextInt(),
-    applicationId = "application"+random.nextInt(),
-    languageId = "lang"+random.nextInt(),
+    tenantId = "tenant" + random.nextInt(),
+    applicationId = "application" + random.nextInt(),
+    languageId = "lang" + random.nextInt(),
     startTimestamp = DateTime.now(),
     endTimestamp = DateTime.now(),
     ip = "localhost",
-    id = UUID.randomUUID()
-  )
+    id = UUID.randomUUID())
 
   def newLastSessionActor(): ActorRef = {
     val uuid = UUID.randomUUID().toString

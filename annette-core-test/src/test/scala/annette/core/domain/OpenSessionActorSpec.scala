@@ -7,39 +7,38 @@ import akka.actor.ActorSystem
 import akka.pattern.ask
 import akka.testkit.TestKit
 import annette.core.domain.tenancy.OpenSessionService
-import annette.core.domain.tenancy.OpenSessionService.{OpenSessionOpt, OpenSessionSeq}
+import annette.core.domain.tenancy.OpenSessionService.{ OpenSessionOpt, OpenSessionSeq }
 import annette.core.domain.tenancy.model.OpenSessionUpdate
 import annette.core.test.PersistenceSpec
 import org.joda.time.DateTime
 
 import scala.concurrent.Future
 
-class OpenSessionActorSpec  extends TestKit(ActorSystem("OpenSessionActorSpec"))
+class OpenSessionActorSpec extends TestKit(ActorSystem("OpenSessionActorSpec"))
   with PersistenceSpec with NewOpenSession {
   "A OpenSessionActor" when receive {
-  "CreateOpenSessionCmd" must {
-    "create new OpenSession" in {
-      val s1 = newOpenSession
-      val s2 = newOpenSession
-      val actor = newOpenSessionActor()
-      for {
-        c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s1))
-        c2 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s2))
-        r <- ask(actor, OpenSessionService.FindAllOpenSessions).mapTo[OpenSessionService.OpenSessionSeq].map(_.entries)
-      } yield {
-        c1 shouldBe Done
-        c2 shouldBe Done
-        r.size shouldBe 2
+    "CreateOpenSessionCmd" must {
+      "create new OpenSession" in {
+        val s1 = newOpenSession
+        val s2 = newOpenSession
+        val actor = newOpenSessionActor()
+        for {
+          c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s1))
+          c2 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s2))
+          r <- ask(actor, OpenSessionService.FindAllOpenSessions).mapTo[OpenSessionService.OpenSessionSeq].map(_.entries)
+        } yield {
+          c1 shouldBe Done
+          c2 shouldBe Done
+          r.size shouldBe 2
+        }
       }
-     }
     }
     "UpdateOpenSessionCmd" must {
       "update tenantId" in {
         val s1 = newOpenSession
         val upd = OpenSessionUpdate(
           id = s1.id,
-          tenantId = Some("EXXO")
-        )
+          tenantId = Some("EXXO"))
         val actor = newOpenSessionActor()
         for {
           c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s1))
@@ -56,8 +55,7 @@ class OpenSessionActorSpec  extends TestKit(ActorSystem("OpenSessionActorSpec"))
         val s1 = newOpenSession
         val upd = OpenSessionUpdate(
           id = s1.id,
-          languageId = Some("RU")
-        )
+          languageId = Some("RU"))
         val actor = newOpenSessionActor()
         for {
           c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s1))
@@ -74,8 +72,7 @@ class OpenSessionActorSpec  extends TestKit(ActorSystem("OpenSessionActorSpec"))
         val s1 = newOpenSession
         val upd = OpenSessionUpdate(
           id = s1.id,
-          applicationId = Some("exxo")
-        )
+          applicationId = Some("exxo"))
         val actor = newOpenSessionActor()
         for {
           c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s1))
@@ -92,8 +89,7 @@ class OpenSessionActorSpec  extends TestKit(ActorSystem("OpenSessionActorSpec"))
         val s1 = newOpenSession
         val upd = OpenSessionUpdate(
           id = s1.id,
-          rememberMe = Some(false)
-        )
+          rememberMe = Some(false))
         val actor = newOpenSessionActor()
         for {
           c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s1))
@@ -112,8 +108,7 @@ class OpenSessionActorSpec  extends TestKit(ActorSystem("OpenSessionActorSpec"))
           id = s1.id,
           tenantId = Some("EXXO"),
           languageId = Some("RU"),
-          applicationId = Some("exxo")
-        )
+          applicationId = Some("exxo"))
         val actor = newOpenSessionActor()
         for {
           c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s1))
@@ -130,28 +125,26 @@ class OpenSessionActorSpec  extends TestKit(ActorSystem("OpenSessionActorSpec"))
       "update lastOpTimestamp" in {
         val s1 = newOpenSession
         val upd = OpenSessionUpdate(
-        id = s1.id,
-        lastOpTimestamp = Some(DateTime.now)
-        )
+          id = s1.id,
+          lastOpTimestamp = Some(DateTime.now))
         val actor = newOpenSessionActor()
         for {
-        c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s1))
-        u <- ask(actor, OpenSessionService.UpdateOpenSessionCmd(upd))
-        r <- ask(actor, OpenSessionService.FindOpenSessionById(s1.id))
-        .mapTo[OpenSessionService.OpenSessionOpt].map(_.maybeEntry.map(_.lastOpTimestamp))
+          c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s1))
+          u <- ask(actor, OpenSessionService.UpdateOpenSessionCmd(upd))
+          r <- ask(actor, OpenSessionService.FindOpenSessionById(s1.id))
+            .mapTo[OpenSessionService.OpenSessionOpt].map(_.maybeEntry.map(_.lastOpTimestamp))
         } yield {
-        c1 shouldBe Done
-        u shouldBe Done
-        r shouldBe upd.lastOpTimestamp
+          c1 shouldBe Done
+          u shouldBe Done
+          r shouldBe upd.lastOpTimestamp
         }
-        }
+      }
     }
     "UpdateOpenSessionCmd with wrong id" must {
       "do nothing" in {
         val upd = OpenSessionUpdate(
           id = UUID.randomUUID(),
-          rememberMe = Some(false)
-        )
+          rememberMe = Some(false))
         val actor = newOpenSessionActor()
         for {
           u <- ask(actor, OpenSessionService.UpdateOpenSessionCmd(upd))
@@ -196,7 +189,7 @@ class OpenSessionActorSpec  extends TestKit(ActorSystem("OpenSessionActorSpec"))
     "getOpenSessionById" must {
       "close session if expired" in {
         val s1 = newOpenSession
-        val s2 = s1.copy(timeout = 1, rememberMe=true, startTimestamp = DateTime.now().minusMinutes(14))
+        val s2 = s1.copy(timeout = 1, rememberMe = true, startTimestamp = DateTime.now().minusMinutes(14))
         val actor = newOpenSessionActor()
         for {
           c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s2))

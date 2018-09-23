@@ -8,12 +8,12 @@ import akka.pattern.ask
 import akka.testkit.TestKit
 import annette.core.domain.tenancy.SessionHistoryService
 import annette.core.domain.tenancy.LastSessionService.LastSessionOpt
-import annette.core.domain.tenancy.OpenSessionService.{OpenSessionOpt, OpenSessionSeq}
+import annette.core.domain.tenancy.OpenSessionService.{ OpenSessionOpt, OpenSessionSeq }
 import annette.core.domain.tenancy.model.OpenSessionUpdate
 import annette.core.test.PersistenceSpec
 import org.joda.time.DateTime
 
-class SessionHistoryActorSpec  extends TestKit(ActorSystem("SessionHistoryActorSpec"))
+class SessionHistoryActorSpec extends TestKit(ActorSystem("SessionHistoryActorSpec"))
   with PersistenceSpec with NewSessionHistory {
   "A SessionHistoryActor" when receive {
     "CreateSessionHistoryCmd" must {
@@ -23,7 +23,7 @@ class SessionHistoryActorSpec  extends TestKit(ActorSystem("SessionHistoryActorS
         val actor = newSessionHistoryActor()
         for {
           c1 <- ask(actor, SessionHistoryService.CreateSessionHistoryCmd(s1))
-          c2 <- ask(actor,  SessionHistoryService.CreateSessionHistoryCmd(s2))
+          c2 <- ask(actor, SessionHistoryService.CreateSessionHistoryCmd(s2))
           r <- ask(actor, SessionHistoryService.FindAllSessionHistory)
             .mapTo[SessionHistoryService.SessionHistorySeq].map(_.entries)
         } yield {
@@ -36,11 +36,11 @@ class SessionHistoryActorSpec  extends TestKit(ActorSystem("SessionHistoryActorS
     "CreateSessionHistoryCmd with the same id" must {
       "do nothing" in {
         val s1 = newSessionHistory
-        val s2 = newSessionHistory.copy(id=s1.id)
+        val s2 = newSessionHistory.copy(id = s1.id)
         val actor = newSessionHistoryActor()
         for {
           c1 <- ask(actor, SessionHistoryService.CreateSessionHistoryCmd(s1))
-          c2 <- ask(actor,  SessionHistoryService.CreateSessionHistoryCmd(s2))
+          c2 <- ask(actor, SessionHistoryService.CreateSessionHistoryCmd(s2))
           r <- ask(actor, SessionHistoryService.FindAllSessionHistory).mapTo[SessionHistoryService.SessionHistorySeq].map(_.entries)
           r1 <- ask(actor, SessionHistoryService.FindSessionHistoryById(s1.id))
             .mapTo[SessionHistoryService.SessionHistoryOpt].map(_.maybeEntry)
