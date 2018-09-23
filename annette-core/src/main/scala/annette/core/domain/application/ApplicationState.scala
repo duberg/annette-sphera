@@ -4,8 +4,7 @@ import annette.core.domain.application.model._
 import annette.core.persistence.Persistence
 import annette.core.persistence.Persistence.PersistentState
 
-case class ApplicationState(
-  applications: Map[Application.Id, Application] = Map.empty) extends PersistentState[ApplicationState] {
+case class ApplicationState(applications: Map[Application.Id, Application] = Map.empty) extends PersistentState[ApplicationState] {
 
   def createApplication(entry: Application): ApplicationState = {
     if (applications.get(entry.id).isDefined) throw new IllegalArgumentException

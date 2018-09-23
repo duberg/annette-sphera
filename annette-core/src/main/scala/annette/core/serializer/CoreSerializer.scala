@@ -2,9 +2,12 @@ package annette.core.serializer
 
 import akka.serialization.SerializerWithStringManifest
 import annette.core.domain.tenancy.{ UserService, UserState }
+import annette.core.domain.application.model._
+import annette.core.domain.application.{ ApplicationService, ApplicationState }
 
 class CoreSerializer extends SerializerWithStringManifest
-  with UserConverters {
+  with UserConverters
+  with ApplicationConverters {
 
   private val className = Option(this.getClass.getName).getOrElse("<undefined>")
 
@@ -16,6 +19,11 @@ class CoreSerializer extends SerializerWithStringManifest
       case obj: UserService.UserUpdatedEvt => toUserUpdateEvtBinary(obj)
       case obj: UserService.UserDeletedEvt => toUserDeleteEvtBinary(obj)
       case obj: UserState => toUserStateBinary(obj)
+
+      case obj: ApplicationService.ApplicationCreatedEvt => toApplicationCreatedEvtBinary(obj)
+      case obj: ApplicationService.ApplicationUpdatedEvt => toApplicationUpdateEvtBinary(obj)
+      case obj: ApplicationService.ApplicationDeletedEvt => toApplicationDeleteEvtBinary(obj)
+      case obj: ApplicationState => toApplicationStateBinary(obj)
 
       case _ =>
         val errorMsg = s"Can't serialize an object using $className [${o.toString}]"
@@ -30,6 +38,11 @@ class CoreSerializer extends SerializerWithStringManifest
       case _: UserService.UserDeletedEvt => UserDeletedEvtManifestV1
       case _: UserState => UserStateManifestV1
 
+      case _: ApplicationService.ApplicationCreatedEvt => ApplicationCreatedEvtManifestV1
+      case _: ApplicationService.ApplicationUpdatedEvt => ApplicationUpdatedEvtManifestV1
+      case _: ApplicationService.ApplicationDeletedEvt => ApplicationDeletedEvtManifestV1
+      case _: ApplicationState => ApplicationStateManifestV1
+
       case _ =>
         val errorMsg = s"Can't create manifest for object using $className [${o.toString}]"
         throw new IllegalArgumentException(errorMsg)
@@ -42,6 +55,11 @@ class CoreSerializer extends SerializerWithStringManifest
       case UserUpdatedEvtManifestV1 => fromUserUpdatedEvtV1(bytes)
       case UserDeletedEvtManifestV1 => fromUserDeletedEvtV1(bytes)
       case UserStateManifestV1 => fromUserStateV1(bytes)
+
+      case ApplicationCreatedEvtManifestV1 => fromApplicationCreatedEvtV1(bytes)
+      case ApplicationUpdatedEvtManifestV1 => fromApplicationUpdatedEvtV1(bytes)
+      case ApplicationDeletedEvtManifestV1 => fromApplicationDeletedEvtV1(bytes)
+      case ApplicationStateManifestV1 => fromApplicationStateV1(bytes)
 
       case _ =>
         val errorMsg = s"Can't deserialize an object using $className manifest [$manifest]"

@@ -17,8 +17,6 @@ class UserActor(val id: String, val initState: UserState) extends PersistentStat
   }
 
   def createUser(state: UserState, entry: User, password: String): Unit = {
-    log.info("createUser")
-
     val validateResult = Try { state.validateCreate(entry) }
     validateResult.fold(
       processFailure,

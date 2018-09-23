@@ -1,0 +1,34 @@
+syntax = "proto2";
+
+package core;
+
+option java_package = "annette.core.serializer.proto";
+
+message ApplicationStateV1 {
+    map<string, ApplicationV1> applications = 1;
+}
+
+message ApplicationV1 {
+    required string name = 1;
+    required string code = 2;
+    required string id = 3;
+}
+
+message ApplicationUpdateV1 {
+    optional string name = 1;
+    optional string code = 2;
+    required string id = 3;
+}
+
+message ApplicationCreatedEvtV1 {
+    required ApplicationV1 entry = 1;
+}
+
+message ApplicationUpdatedEvtV1 {
+    required ApplicationUpdateV1 entry = 1;
+}
+
+message ApplicationDeletedEvtV1 {
+    required string id = 1;
+}
+
