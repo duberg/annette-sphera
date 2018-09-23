@@ -11,7 +11,7 @@ import annette.core.domain.application.model.{ Application, ApplicationUpdate }
 import annette.core.domain.language.LanguageService
 import annette.core.domain.language.model.{ Language, LanguageUpdate }
 import annette.core.domain.tenancy._
-import annette.core.domain.tenancy.dao.{ SessionDao, UserDao }
+import annette.core.domain.tenancy.dao.SessionDao
 import annette.core.domain.tenancy.model._
 import annette.core.exception.AnnetteException
 import annette.core.test.PersistenceSpec

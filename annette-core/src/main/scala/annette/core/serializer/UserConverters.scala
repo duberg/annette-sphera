@@ -4,7 +4,8 @@ import java.util.UUID
 
 import annette.core.domain.application.model.Application
 import annette.core.domain.tenancy.model._
-import annette.core.domain.tenancy.{ UserService, UserState }
+import annette.core.domain.tenancy.UserService
+import annette.core.domain.tenancy.actor.UsersActorState
 import annette.core.serializer.proto.user._
 
 trait UserConverters {
@@ -26,9 +27,9 @@ trait UserConverters {
     UserDeletedEvtV1(obj.id.toString).toByteArray
   }
 
-  def toUserStateBinary(obj: UserState): Array[Byte] = {
+  def toUserStateBinary(obj: UsersActorState): Array[Byte] = {
     UserStateV1(
-      userRecs = obj.userRecs.map({ case (x, y) => x.toString -> fromUserRec(y) }),
+      userRecs = obj.users.map({ case (x, y) => x.toString -> fromUserRec(y) }),
       emailIndex = obj.emailIndex.mapValues(_.toString),
       phoneIndex = obj.phoneIndex.mapValues(_.toString),
       loginIndex = obj.loginIndex.mapValues(_.toString),
@@ -50,7 +51,7 @@ trait UserConverters {
     UserService.UserDeletedEvt(id)
   }
 
-  def fromUserStateV1(bytes: Array[Byte]): UserState = {
+  def fromUserStateV1(bytes: Array[Byte]): UsersActorState = {
     val p = UserStateV1.parseFrom(bytes)
     UserState(
       userRecs = p.userRecs.map({ case (x, y) => UUID.fromString(x) -> toUserRec(y) }),
@@ -67,7 +68,7 @@ trait UserConverters {
       middlename = x.middlename,
       email = x.email,
       phone = x.phone,
-      login = x.login,
+      username = x.login,
       defaultLanguage = x.defaultLanguage,
       id = UUID.fromString(x.id))
 
@@ -78,12 +79,12 @@ trait UserConverters {
       middlename = x.middlename,
       email = x.email,
       phone = x.phone,
-      login = x.login,
+      login = x.username,
       defaultLanguage = x.defaultLanguage,
       id = x.id.toString)
   }
 
-  implicit def toUserUpdate(x: UserUpdateV1): UserUpdate = {
+  implicit def toUserUpdate(x: UserUpdateV1): UpdateUser = {
     UserUpdate(
       lastname = x.lastname,
       firstname = x.firstname,
@@ -95,7 +96,7 @@ trait UserConverters {
       id = UUID.fromString(x.id))
   }
 
-  implicit def fromUserUpdate(x: UserUpdate): UserUpdateV1 = {
+  implicit def fromUserUpdate(x: UpdateUser): UserUpdateV1 = {
     UserUpdateV1(
       lastname = x.lastname,
       firstname = x.firstname,

@@ -14,19 +14,18 @@ package annette.core.domain
 import java.util.UUID
 
 import akka.Done
-import akka.actor.{ ActorRef, ActorSystem }
+import akka.actor.{ActorRef, ActorSystem}
 import akka.pattern.ask
 import akka.testkit.TestKit
 import annette.core.domain.application.ApplicationService
-import annette.core.domain.application.model.{ Application, ApplicationUpdate }
+import annette.core.domain.application.model.{Application, ApplicationUpdate}
 import annette.core.domain.language.LanguageService
-import annette.core.domain.language.model.{ Language, LanguageUpdate }
-import annette.core.domain.tenancy._
-import annette.core.domain.tenancy.dao.UserDao
+import annette.core.domain.language.model.{Language, LanguageUpdate}
+import annette.core.domain.tenancy.{UserService, _}
 import annette.core.domain.tenancy.model._
 import annette.core.test.PersistenceSpec
 
-class UserDaoSpec extends TestKit(ActorSystem("UserActorSpec"))
+class UserServiceSpec extends TestKit(ActorSystem("UserActorSpec"))
   with PersistenceSpec
   with NewApplication
   with NewLanguage
@@ -37,9 +36,9 @@ class UserDaoSpec extends TestKit(ActorSystem("UserActorSpec"))
     system.actorOf(CoreService.props, s"CoreService-$uuid")
   }
 
-  def newUserDao(): UserDao = {
+  def newUserDao(): UserService = {
     val coreServiceActor = newCoreServiceActor()
-    new UserDao(coreServiceActor)
+    new UserService(coreServiceActor)
   }
 
   "A UserDao" when call {
@@ -72,7 +71,7 @@ class UserDaoSpec extends TestKit(ActorSystem("UserActorSpec"))
 
       "should not create new user if it already exists" in {
         val c1 = newUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
-        val c2 = c1.copy(email = Some("valery1@valery.com"), phone = Some("+7123451"), login = Some("valery1"))
+        val c2 = c1.copy(email = Some("valery1@valery.com"), phone = Some("+7123451"), username = Some("valery1"))
         val dao = newUserDao()
         for {
 
@@ -111,7 +110,7 @@ class UserDaoSpec extends TestKit(ActorSystem("UserActorSpec"))
       }
       "should not create new user if login already exists" in {
         val c1 = newUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
-        val c2 = newUser(login = c1.login)
+        val c2 = newUser(login = c1.username)
         val dao = newUserDao()
         for {
 
@@ -135,7 +134,7 @@ class UserDaoSpec extends TestKit(ActorSystem("UserActorSpec"))
           middlename = Some(c2.middlename),
           email = Some(c2.email),
           phone = Some(c2.phone),
-          login = Some(c2.login),
+          login = Some(c2.username),
           defaultLanguage = Some(c2.defaultLanguage),
           id = c1.id)
         val dao = newUserDao()
@@ -152,7 +151,7 @@ class UserDaoSpec extends TestKit(ActorSystem("UserActorSpec"))
 
       "update none data of user" in {
         val c1 = newUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
-        val u1 = UserUpdate(
+        val u1 = UpdateUser(
           id = c1.id)
         val dao = newUserDao()
         for {
@@ -168,7 +167,7 @@ class UserDaoSpec extends TestKit(ActorSystem("UserActorSpec"))
 
       "should not update user if there are no email & phone & login" in {
         val c1 = newUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
-        val u1 = UserUpdate(
+        val u1 = UpdateUser(
           email = Some(None),
           phone = Some(None),
           login = Some(None),
@@ -214,7 +213,7 @@ class UserDaoSpec extends TestKit(ActorSystem("UserActorSpec"))
       "should not update user if phone already exists" in {
         val c1 = newUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
         val c2 = newUser(email = Some("valery1@valery.com"), phone = Some("+7123451"), login = Some("valery1"))
-        val u2 = UserUpdate(
+        val u2 = UpdateUser(
           phone = Some(c1.phone),
           id = c2.id)
         val dao = newUserDao()
@@ -233,7 +232,7 @@ class UserDaoSpec extends TestKit(ActorSystem("UserActorSpec"))
         val c1 = newUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
         val c2 = newUser(email = Some("valery1@valery.com"), phone = Some("+7123451"), login = Some("valery1"))
         val u2 = UserUpdate(
-          login = Some(c1.login),
+          login = Some(c1.username),
           id = c2.id)
         val dao = newUserDao()
         for {
@@ -283,7 +282,7 @@ class UserDaoSpec extends TestKit(ActorSystem("UserActorSpec"))
           cc1 <- dao.create(c1, "abc")
           cc2 <- dao.getByLoginAndPassword(c1.email.get.toUpperCase.trim + " ", "abc")
           cc3 <- dao.getByLoginAndPassword(c1.phone.get.toUpperCase.trim + " ", "abc")
-          cc4 <- dao.getByLoginAndPassword(c1.login.get.toUpperCase.trim + " ", "abc")
+          cc4 <- dao.getByLoginAndPassword(c1.username.get.toUpperCase.trim + " ", "abc")
         } yield {
           cc1 shouldBe ()
           cc2 shouldBe Some(c1)
@@ -299,7 +298,7 @@ class UserDaoSpec extends TestKit(ActorSystem("UserActorSpec"))
           cc1 <- dao.create(c1, "abc")
           cc2 <- dao.getByLoginAndPassword(c1.email.get, "abc1")
           cc3 <- dao.getByLoginAndPassword(c1.phone.get, "abc1")
-          cc4 <- dao.getByLoginAndPassword(c1.login.get, "abc1")
+          cc4 <- dao.getByLoginAndPassword(c1.username.get, "abc1")
         } yield {
           cc1 shouldBe ()
           cc2 shouldBe None
@@ -331,7 +330,7 @@ class UserDaoSpec extends TestKit(ActorSystem("UserActorSpec"))
           cc5 <- dao.setPassword(c1.id, "abc1")
           cc2 <- dao.getByLoginAndPassword(c1.email.get, "abc1")
           cc3 <- dao.getByLoginAndPassword(c1.phone.get, "abc1")
-          cc4 <- dao.getByLoginAndPassword(c1.login.get, "abc1")
+          cc4 <- dao.getByLoginAndPassword(c1.username.get, "abc1")
         } yield {
           cc1 shouldBe ()
           cc5 shouldBe true

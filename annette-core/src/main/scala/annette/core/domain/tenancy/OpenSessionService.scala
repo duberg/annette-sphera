@@ -1,10 +1,11 @@
 package annette.core.domain.tenancy
 
-import akka.actor.{ ActorRef, Props }
+import akka.actor.{ActorRef, Props}
 import annette.core.domain.application.model.Application
 import annette.core.domain.language.model.Language
+import annette.core.domain.tenancy.actor.{OpenSessionActor, OpenSessionState}
 import annette.core.domain.tenancy.model._
-import annette.core.persistence.Persistence.{ PersistentCommand, PersistentEvent, PersistentQuery }
+import annette.core.persistence.Persistence.{PersistentCommand, PersistentEvent, PersistentQuery}
 import io.circe.Decoder.state
 
 object OpenSessionService {

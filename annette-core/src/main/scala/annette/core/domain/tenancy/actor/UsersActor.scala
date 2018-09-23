@@ -1,13 +1,14 @@
-package annette.core.domain.tenancy
+package annette.core.domain.tenancy.actor
 
 import akka.Done
 import annette.core.domain.tenancy.model._
+import annette.core.domain.tenancy.{UserNotFoundMsg, UserService}
 import annette.core.exception.AnnetteMessageException
 import annette.core.persistence.Persistence._
 
 import scala.util.Try
 
-class UserActor(val id: String, val initState: UserState) extends PersistentStateActor[UserState] {
+class UsersActor(val id: String, val initState: UsersActorState) extends PersistentStateActor[UsersActorState] {
 
   def processFailure: PartialFunction[Throwable, Unit] = {
     case e: AnnetteMessageException =>
@@ -16,7 +17,7 @@ class UserActor(val id: String, val initState: UserState) extends PersistentStat
       sender ! akka.actor.Status.Failure(th)
   }
 
-  def createUser(state: UserState, entry: User, password: String): Unit = {
+  def createUser(state: UsersActorState, entry: User, password: String): Unit = {
     val validateResult = Try { state.validateCreate(entry) }
     validateResult.fold(
       processFailure,
@@ -27,7 +28,7 @@ class UserActor(val id: String, val initState: UserState) extends PersistentStat
         })
   }
 
-  def updateUser(state: UserState, entry: UserUpdate): Unit = {
+  def updateUser(state: UsersActorState, entry: UpdateUser): Unit = {
     val validateResult = Try {
       state.validateUpdate(entry)
     }
@@ -40,7 +41,7 @@ class UserActor(val id: String, val initState: UserState) extends PersistentStat
         })
   }
 
-  def deleteUser(state: UserState, id: User.Id): Unit = {
+  def deleteUser(state: UsersActorState, id: User.Id): Unit = {
     if (state.userExists(id)) {
       persist(UserService.UserDeletedEvt(id)) { event =>
         changeState(state.updated(event))
@@ -51,13 +52,13 @@ class UserActor(val id: String, val initState: UserState) extends PersistentStat
     }
   }
 
-  def findUserById(state: UserState, id: User.Id): Unit =
+  def findUserById(state: UsersActorState, id: User.Id): Unit =
     sender ! UserService.SingleUser(state.findUserById(id))
 
-  def findAllUsers(state: UserState): Unit =
+  def findAllUsers(state: UsersActorState): Unit =
     sender ! UserService.MultipleUsers(state.findAllUsers)
 
-  def updatePassword(state: UserState, userId: User.Id, password: String): Unit = {
+  def updatePassword(state: UsersActorState, userId: User.Id, password: String): Unit = {
     if (state.userExists(userId)) {
       persist(UserService.PasswordUpdatedEvt(userId, password)) { event =>
         changeState(state.updated(event))
@@ -68,11 +69,11 @@ class UserActor(val id: String, val initState: UserState) extends PersistentStat
     }
   }
 
-  def findUserByLoginAndPassword(state: UserState, login: String, password: String): Unit = {
+  def findUserByLoginAndPassword(state: UsersActorState, login: String, password: String): Unit = {
     sender ! UserService.SingleUser(state.findUserByLoginAndPassword(login, password))
   }
 
-  def behavior(state: UserState): Receive = {
+  def behavior(state: UsersActorState): Receive = {
     case UserService.CreateUserCmd(entry, password) => createUser(state, entry, password)
     case UserService.UpdateUserCmd(entry) => updateUser(state, entry)
     case UserService.DeleteUserCmd(id) => deleteUser(state, id)

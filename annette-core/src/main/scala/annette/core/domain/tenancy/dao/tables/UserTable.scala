@@ -36,7 +36,7 @@ protected[dao] abstract class UserTable extends Table[UserTable, User] with Root
       lastname = lastname(row),
       email = email(row),
       phone = phone(row),
-      login = login(row),
+      username = login(row),
       defaultLanguage = defaultLanguage(row),
       id = id(row))
   }
@@ -50,7 +50,7 @@ protected[dao] abstract class UserTable extends Table[UserTable, User] with Root
       .value(_.lastname, user.lastname)
       .value(_.email, user.email)
       .value(_.phone, user.phone)
-      .value(_.login, user.login)
+      .value(_.login, user.username)
       .value(_.defaultLanguage, user.defaultLanguage)
       .future()
   }

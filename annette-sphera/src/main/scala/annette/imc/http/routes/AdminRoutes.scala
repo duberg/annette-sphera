@@ -14,7 +14,7 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 
 import scala.concurrent.Future
-import annette.core.domain.tenancy.model.{ Tenant, TenantUserRole, User, UserUpdate }
+import annette.core.domain.tenancy.model.{ Tenant, TenantUserRole, User, UpdateUser }
 import annette.core.exception.AnnetteException
 import annette.imc.notification.model._
 import annette.imc.notification._

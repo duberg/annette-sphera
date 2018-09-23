@@ -35,7 +35,7 @@ trait NewUser { _: PersistenceSpec with TestKit =>
       middlename = s"Middlename-${random.nextInt(100)}",
       email = email,
       phone = phone,
-      login = login,
+      username = login,
       defaultLanguage = s"Language-${random.nextInt(100)}",
       id = id)
   }

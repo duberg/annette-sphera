@@ -1,30 +1,30 @@
-package annette.core.domain.tenancy
+package annette.core.domain.tenancy.actor
 
-import annette.core.domain.tenancy.model._
+import annette.core.domain.tenancy._
+import annette.core.domain.tenancy.model.{User, UserProperty, UserRec, UpdateUser}
 import annette.core.persistence.Persistence
 import annette.core.persistence.Persistence.PersistentState
 import org.mindrot.jbcrypt.BCrypt
 
-case class UserState(
-                      userRecs: Map[User.Id, UserRec] = Map.empty,
-                      emailIndex: Map[String, User.Id] = Map.empty,
-                      phoneIndex: Map[String, User.Id] = Map.empty,
-                      loginIndex: Map[String, User.Id] = Map.empty,
-                      userProperties: Map[UserProperty.Id, UserProperty] = Map.empty
-  ) extends PersistentState[UserState] {
+case class UsersActorState(
+                            users: Map[User.Id, User] = Map.empty,
+                            emailIndex: Map[String, User.Id] = Map.empty,
+                            phoneIndex: Map[String, User.Id] = Map.empty,
+                            loginIndex: Map[String, User.Id] = Map.empty,
+                            userProperties: Map[UserProperty.Id, UserProperty] = Map.empty) extends PersistentState[UsersActorState] {
 
-  def createUser(entry: User, password: String): UserState = {
+  def createUser(entry: User, password: String): UsersActorState = {
     validateCreate(entry)
     val hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt())
     val newEmailIndex = entry.email.map{ email => emailIndex + (email.trim.toLowerCase -> entry.id)}.getOrElse(emailIndex)
     val newPhoneIndex = entry.phone.map{ phone => phoneIndex + (phone.trim.toLowerCase -> entry.id)}.getOrElse(phoneIndex)
-    val newLoginIndex = entry.login.map{ login => loginIndex + (login.trim.toLowerCase -> entry.id)}.getOrElse(loginIndex)
+    val newLoginIndex = entry.username.map{ login => loginIndex + (login.trim.toLowerCase -> entry.id)}.getOrElse(loginIndex)
     val userRec = entry.toUserRec(hashedPassword)
 
     println(s"User created: $userRec")
 
     copy(
-      userRecs = userRecs + (entry.id -> userRec),
+      users = users + (entry.id -> userRec),
       emailIndex = newEmailIndex ,
       phoneIndex= newPhoneIndex,
       loginIndex = newLoginIndex
@@ -34,23 +34,23 @@ case class UserState(
   def cleanse(user: User) = user.copy(
     email = user.email.map(_.trim.toLowerCase),
     phone = user.phone.map(_.trim.toLowerCase),
-    login = user.login.map(_.trim.toLowerCase),
+    username = user.username.map(_.trim.toLowerCase),
   )
 
   def validateCreate(entry: User): Unit = {
     // проверяем наличие mail'а, телефона или логина
-    if (entry.email.isEmpty && entry.phone.isEmpty && entry.login.isEmpty) throw new LoginRequired
+    if (entry.email.isEmpty && entry.phone.isEmpty && entry.username.isEmpty) throw new LoginRequired
     // проверяем существует ли в системе пользователь с таким же email'ом, телефоном или логином
     if (entry.email.exists(email => emailIndex.get(email.trim.toLowerCase).isDefined)) throw new EmailAlreadyExists(entry.email.get)
     if (entry.phone.exists(phone => phoneIndex.get(phone.trim.toLowerCase).isDefined)) throw new PhoneAlreadyExists(entry.phone.get)
-    if (entry.login.exists(login => loginIndex.get(login.trim.toLowerCase).isDefined)) throw new LoginAlreadyExists(entry.login.get)
+    if (entry.username.exists(login => loginIndex.get(login.trim.toLowerCase).isDefined)) throw new LoginAlreadyExists(entry.username.get)
     // проверяем существует ли пользователь с таким же id
-    if (userRecs.get(entry.id).isDefined) throw new UserAlreadyExists(entry.id)
+    if (users.get(entry.id).isDefined) throw new UserAlreadyExists(entry.id)
   }
 
 
-  def validateUpdate(entry: UserUpdate): UserRec = {
-    userRecs
+  def validateUpdate(entry: UpdateUser): UserRec = {
+    users
       .get(entry.id)
       .map{
         user =>
@@ -72,7 +72,7 @@ case class UserState(
       .getOrElse(throw new UserNotFound(entry.id))
   }
 
-  def updateUser(entry: UserUpdate): UserState = {
+  def updateUser(entry: UpdateUser): UsersActorState = {
     val userRec = validateUpdate(entry)
 
     val newEmailIndex = entry.email.map {
@@ -113,7 +113,7 @@ case class UserState(
       defaultLanguage = entry.defaultLanguage.getOrElse(userRec.defaultLanguage),
     )
     copy(
-      userRecs = userRecs + (entry.id -> updatedEntry),
+      users = users + (entry.id -> updatedEntry),
       emailIndex = newEmailIndex,
       phoneIndex = newPhoneIndex,
       loginIndex = newLoginIndex
@@ -121,31 +121,31 @@ case class UserState(
 
   }
 
-  def deleteUser(id: User.Id): UserState = {
-    userRecs.get(id).map {
+  def deleteUser(id: User.Id): UsersActorState = {
+    users.get(id).map {
       user =>
       val newEmailIndex = user.email.map{ email => emailIndex - email.trim.toLowerCase}.getOrElse(emailIndex)
       val newPhoneIndex = user.phone.map{ phone => phoneIndex - phone.trim.toLowerCase }.getOrElse(phoneIndex)
       val newLoginIndex = user.login.map{ login => loginIndex - login.trim.toLowerCase }.getOrElse(loginIndex)
-      copy(userRecs = userRecs - id)
+      copy(users = users - id)
     }.getOrElse( throw new UserNotFound(id) )
 
   }
 
-  def findUserById(id: User.Id): Option[User] = userRecs.get(id).map(_.toUser)
+  def findUserById(id: User.Id): Option[User] = users.get(id).map(_.toUser)
 
-  def findAllUsers: Map[User.Id, User] = userRecs.map(r => r._1 -> r._2.toUser)
+  def findAllUsers: Map[User.Id, User] = users.map(r => r._1 -> r._2.toUser)
 
-  def userExists(id: User.Id): Boolean = userRecs.get(id).isDefined
+  def userExists(id: User.Id): Boolean = users.get(id).isDefined
 
-  def updatePassword(userId: User.Id, password: String): UserState = {
-    userRecs
+  def updatePassword(userId: User.Id, password: String): UsersActorState = {
+    users
       .get(userId)
       .map{
         userRec =>
           val hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt())
           val newUserRec = userRec.copy(password = hashedPassword)
-          copy(userRecs = userRecs + (userId -> newUserRec))
+          copy(users = users + (userId -> newUserRec))
       }
       .getOrElse(throw new UserNotFound(userId))
   }
@@ -156,7 +156,7 @@ case class UserState(
     findUserId(cleanLogin)
       .flatMap{
         userId =>
-          userRecs.get(userId).map {
+          users.get(userId).map {
             case userRec if BCrypt.checkpw(password, userRec.password) =>
               Some(userRec.toUser)
             case _ =>

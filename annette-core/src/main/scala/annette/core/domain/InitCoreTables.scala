@@ -13,25 +13,25 @@
 package annette.core.domain
 
 import java.util.UUID
-import javax.inject._
 
+import javax.inject._
 import akka.actor.ActorSystem
-import akka.event.{ LogSource, Logging }
+import akka.event.{LogSource, Logging}
 import akka.http.scaladsl.util.FastFuture
 import annette.core.domain.application.ApplicationAlreadyExists
-import annette.core.domain.application.dao.{ ApplicationDao, ApplicationDb }
+import annette.core.domain.application.dao.{ApplicationDao, ApplicationDb}
 import annette.core.domain.application.model.Application
 import annette.core.domain.language.LanguageAlreadyExists
-import annette.core.domain.language.dao.{ LanguageDao, LanguageDb }
+import annette.core.domain.language.dao.{LanguageDao, LanguageDb}
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.dao._
-import annette.core.domain.tenancy.model.{ Tenant, TenantUserRole, User }
-import annette.core.domain.tenancy.{ EmailAlreadyExists, PhoneAlreadyExists, TenantAlreadyExists, UserAlreadyExists }
+import annette.core.domain.tenancy.model.{Tenant, TenantUserRole, User}
+import annette.core.domain.tenancy._
 import com.typesafe.config.Config
 
 import scala.collection.JavaConverters._
 import scala.concurrent.duration.Duration
-import scala.concurrent.{ Await, ExecutionContextExecutor, Future }
+import scala.concurrent.{Await, ExecutionContextExecutor, Future}
 import scala.util.Try
 
 /**
@@ -39,17 +39,17 @@ import scala.util.Try
  */
 @Singleton
 class InitCoreTables @Inject() (
-  config: Config,
-  tenancyDb: TenancyDb,
-  userDao: UserDao,
-  tenantDao: TenantDao,
-  tenantUserDao: TenantUserDao,
-  tenantUserRoleDao: TenantUserRoleDao,
-  languageDb: LanguageDb,
-  languageDao: LanguageDao,
-  applicationDb: ApplicationDb,
-  applicationDao: ApplicationDao,
-  system: ActorSystem) {
+                                 config: Config,
+                                 tenancyDb: TenancyDb,
+                                 userDao: UserService,
+                                 tenantDao: TenantDao,
+                                 tenantUserDao: TenantUserDao,
+                                 tenantUserRoleDao: TenantUserRoleDao,
+                                 languageDb: LanguageDb,
+                                 languageDao: LanguageDao,
+                                 applicationDb: ApplicationDb,
+                                 applicationDao: ApplicationDao,
+                                 system: ActorSystem) {
 
   implicit val myLogSourceType: LogSource[InitCoreTables] = (a: InitCoreTables) => "InitCoreTables"
 

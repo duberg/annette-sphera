@@ -258,7 +258,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
 
       "should not create new user if it already exists" in {
         val c1 = newUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
-        val c2 = c1.copy(email = Some("valery1@valery.com"), phone = Some("+7123451"), login = Some("valery1"))
+        val c2 = c1.copy(email = Some("valery1@valery.com"), phone = Some("+7123451"), username = Some("valery1"))
         val actor = newCoreServiceActor()
         for {
 
@@ -297,7 +297,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
       }
       "should not create new user if login already exists" in {
         val c1 = newUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
-        val c2 = newUser(login = c1.login)
+        val c2 = newUser(login = c1.username)
         val actor = newCoreServiceActor()
         for {
 
@@ -321,7 +321,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
           middlename = Some(c2.middlename),
           email = Some(c2.email),
           phone = Some(c2.phone),
-          login = Some(c2.login),
+          login = Some(c2.username),
           defaultLanguage = Some(c2.defaultLanguage),
           id = c1.id)
         val actor = newCoreServiceActor()
@@ -338,7 +338,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
 
       "update none data of user" in {
         val c1 = newUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
-        val u1 = UserUpdate(
+        val u1 = UpdateUser(
           id = c1.id)
         val actor = newCoreServiceActor()
         for {
@@ -354,7 +354,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
 
       "should not update user if there are no email & phone & login" in {
         val c1 = newUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
-        val u1 = UserUpdate(
+        val u1 = UpdateUser(
           email = Some(None),
           phone = Some(None),
           login = Some(None),
@@ -400,7 +400,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
       "should not update user if phone already exists" in {
         val c1 = newUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
         val c2 = newUser(email = Some("valery1@valery.com"), phone = Some("+7123451"), login = Some("valery1"))
-        val u2 = UserUpdate(
+        val u2 = UpdateUser(
           phone = Some(c1.phone),
           id = c2.id)
         val actor = newCoreServiceActor()
@@ -419,7 +419,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
         val c1 = newUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
         val c2 = newUser(email = Some("valery1@valery.com"), phone = Some("+7123451"), login = Some("valery1"))
         val u2 = UserUpdate(
-          login = Some(c1.login),
+          login = Some(c1.username),
           id = c2.id)
         val actor = newCoreServiceActor()
         for {
@@ -469,7 +469,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
           cc1 <- ask(actor, UserService.CreateUserCmd(c1, "abc"))
           cc2 <- ask(actor, UserService.FindUserByLoginAndPassword(c1.email.get.toUpperCase.trim + " ", "abc")).mapTo[UserService.SingleUser].map(_.maybeEntry.get)
           cc3 <- ask(actor, UserService.FindUserByLoginAndPassword(c1.phone.get.toUpperCase.trim + " ", "abc")).mapTo[UserService.SingleUser].map(_.maybeEntry.get)
-          cc4 <- ask(actor, UserService.FindUserByLoginAndPassword(c1.login.get.toUpperCase.trim + " ", "abc")).mapTo[UserService.SingleUser].map(_.maybeEntry.get)
+          cc4 <- ask(actor, UserService.FindUserByLoginAndPassword(c1.username.get.toUpperCase.trim + " ", "abc")).mapTo[UserService.SingleUser].map(_.maybeEntry.get)
         } yield {
           cc1 shouldBe Done
           cc2 shouldBe c1
@@ -486,7 +486,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
           cc1 <- ask(actor, UserService.CreateUserCmd(c1, "abc"))
           cc2 <- ask(actor, UserService.FindUserByLoginAndPassword(c1.email.get, "abc1")).mapTo[UserService.SingleUser].map(_.maybeEntry)
           cc3 <- ask(actor, UserService.FindUserByLoginAndPassword(c1.phone.get, "abc1")).mapTo[UserService.SingleUser].map(_.maybeEntry)
-          cc4 <- ask(actor, UserService.FindUserByLoginAndPassword(c1.login.get, "abc1")).mapTo[UserService.SingleUser].map(_.maybeEntry)
+          cc4 <- ask(actor, UserService.FindUserByLoginAndPassword(c1.username.get, "abc1")).mapTo[UserService.SingleUser].map(_.maybeEntry)
         } yield {
           cc1 shouldBe Done
           cc2 shouldBe None
@@ -518,7 +518,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
           cc5 <- ask(actor, UserService.UpdatePasswordCmd(c1.id, "abc1"))
           cc2 <- ask(actor, UserService.FindUserByLoginAndPassword(c1.email.get, "abc1")).mapTo[UserService.SingleUser].map(_.maybeEntry.get)
           cc3 <- ask(actor, UserService.FindUserByLoginAndPassword(c1.phone.get, "abc1")).mapTo[UserService.SingleUser].map(_.maybeEntry.get)
-          cc4 <- ask(actor, UserService.FindUserByLoginAndPassword(c1.login.get, "abc1")).mapTo[UserService.SingleUser].map(_.maybeEntry.get)
+          cc4 <- ask(actor, UserService.FindUserByLoginAndPassword(c1.username.get, "abc1")).mapTo[UserService.SingleUser].map(_.maybeEntry.get)
         } yield {
           cc1 shouldBe Done
           cc5 shouldBe Done

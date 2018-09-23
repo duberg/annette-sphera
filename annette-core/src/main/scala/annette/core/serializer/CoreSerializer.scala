@@ -1,9 +1,10 @@
 package annette.core.serializer
 
 import akka.serialization.SerializerWithStringManifest
-import annette.core.domain.tenancy.{ UserService, UserState }
+import annette.core.domain.tenancy.UserService
 import annette.core.domain.application.model._
-import annette.core.domain.application.{ ApplicationService, ApplicationState }
+import annette.core.domain.application.{ApplicationService, ApplicationState}
+import annette.core.domain.tenancy.actor.UsersActorState
 
 class CoreSerializer extends SerializerWithStringManifest
   with UserConverters
@@ -18,7 +19,7 @@ class CoreSerializer extends SerializerWithStringManifest
       case obj: UserService.UserCreatedEvt => toUserCreatedEvtBinary(obj)
       case obj: UserService.UserUpdatedEvt => toUserUpdateEvtBinary(obj)
       case obj: UserService.UserDeletedEvt => toUserDeleteEvtBinary(obj)
-      case obj: UserState => toUserStateBinary(obj)
+      case obj: UsersActorState => toUserStateBinary(obj)
 
       case obj: ApplicationService.ApplicationCreatedEvt => toApplicationCreatedEvtBinary(obj)
       case obj: ApplicationService.ApplicationUpdatedEvt => toApplicationUpdateEvtBinary(obj)
@@ -36,7 +37,7 @@ class CoreSerializer extends SerializerWithStringManifest
       case _: UserService.UserCreatedEvt => UserCreatedEvtManifestV1
       case _: UserService.UserUpdatedEvt => UserUpdatedEvtManifestV1
       case _: UserService.UserDeletedEvt => UserDeletedEvtManifestV1
-      case _: UserState => UserStateManifestV1
+      case _: UsersActorState => UserStateManifestV1
 
       case _: ApplicationService.ApplicationCreatedEvt => ApplicationCreatedEvtManifestV1
       case _: ApplicationService.ApplicationUpdatedEvt => ApplicationUpdatedEvtManifestV1

@@ -1,85 +1,104 @@
-/***************************************************************************************
-* Copyright (c) 2014-2017 by Valery Lobachev
-* Redistribution and use in source and binary forms, with or without
-* modification, are NOT permitted without written permission from Valery Lobachev.
-*
-* Copyright (c) 2014-2017 Валерий Лобачев
-* Распространение и/или использование в исходном или бинарном формате, с изменениями или без таковых,
-* запрещено без письменного разрешения правообладателя.
-****************************************************************************************/
-
 package annette.core.domain.tenancy.model
 
-import java.util.UUID
+import java.time.ZonedDateTime
+
+import annette.core.domain.application.model.Application
 
 /**
- * Created by valery on 16.12.16.
- */
-/**
- * Cодержит основные реквизиты пользователя
- *
- *
- * @param firstname  Имя пользователя
- * @param middlename Отчество или второе имя пользователя (опционально)
- * @param lastname   Фамилия пользователя
- * @param email      Адрес электронной почты (опционально)
- * @param phone      Телефон (опционально)
- * @param id         Уникальный идентификатор пользователя
- */
+ * Cодержит основные реквизиты пользователя.
+  *
+  * @param id Unique identifier for the user.
+  * @param username Login name for the user.
+  * @param name Display name for the user.
+  * @param firstName First name for the user.
+  * @param lastName Last name for the user.
+  * @param middleName
+  * @param email The email address for the user.
+  * @param url URL of the user.
+  * @param description Description of the user.
+  * @param phone
+  * @param locale Locale for the user.
+  * @param registeredDate Registration date for the user.
+  * @param roles Roles assigned to the user.
+  * @param password Password for the user (never included).
+  * @param avatarUrl Avatar URL for the user.
+  * @param meta Meta fields.
+  */
 case class User(
-  lastname: String,
-  firstname: String,
-  middlename: String,
-  email: Option[String] = None,
-  phone: Option[String] = None,
-  login: Option[String] = None,
-  defaultLanguage: String = "RU",
-  id: User.Id = UUID.randomUUID()) {
-  def toUserRec(password: String) = {
-    UserRec(
-      lastname = lastname,
-      firstname = firstname,
-      middlename = middlename,
-      email = email,
-      phone = phone,
-      login = login,
-      defaultLanguage = defaultLanguage,
-      password = password,
-      id = id)
-  }
-}
+                 id: User.Id,
+                 username: String,
+                 name: Option[String],
+                 firstName: String,
+                 lastName: String,
+                 middleName: Option[String],
+                 email: String,
+                 url: Option[String],
+                 description: Option[String],
+                 phone: Option[String],
+                 locale: Option[String],
+                 registeredDate: ZonedDateTime,
+                 tenants: Set[Tenant.Id],
+                 applications: Map[Application.Id, Tenant.Id],
+                 roles: Map[String, Tenant.Id],
+                 password: String,
+                 avatarUrl: Option[String],
+                 sphere: Option[String],
+                 company: Option[String],
+                 position: Option[String],
+                 rank: Option[String],
+                 additionalTel: Option[String],
+                 additionalMail: Option[String],
+                 meta: Map[String, String],
+                 deactivated: Boolean)
 
-case class UserUpdate(
-  lastname: Option[String] = None,
-  firstname: Option[String] = None,
-  middlename: Option[String] = None,
-  email: Option[Option[String]] = None,
-  phone: Option[Option[String]] = None,
-  login: Option[Option[String]] = None,
-  defaultLanguage: Option[String] = None,
-  id: User.Id)
+case class CreateUser(
+                 username: String,
+                 name: Option[String],
+                 firstName: String,
+                 lastName: String,
+                 middleName: Option[String],
+                 email: String,
+                 url: Option[String],
+                 description: Option[String],
+                 phone: Option[String],
+                 locale: Option[String],
+                 roles: Map[String, Tenant.Id],
+                 password: String,
+                 avatarUrl: Option[String],
+                 sphere: Option[String],
+                 company: Option[String],
+                 position: Option[String],
+                 rank: Option[String],
+                 additionalTel: Option[String],
+                 additionalMail: Option[String],
+                 meta: Map[String, String],
+                 deactivated: Boolean)
+
+case class UpdateUser(
+                       id: User.Id,
+                       username: Option[String],
+                       name: Option[String],
+                       firstName: Option[String],
+                       lastName: Option[String],
+                       middleName: Option[Option[String]],
+                       email: Option[String],
+                       url: Option[Option[String]],
+                       description: Option[Option[String]],
+                       phone: Option[Option[String]],
+                       locale: Option[Option[String]],
+                       roles: Option[Map[String, Tenant.Id]],
+                       password: Option[String],
+                       avatarUrl: Option[Option[String]],
+                       sphere: Option[Option[String]],
+                       company: Option[Option[String]],
+                       position: Option[Option[String]],
+                       rank: Option[Option[String]],
+                       additionalTel: Option[Option[String]],
+                       additionalMail: Option[Option[String]],
+                       meta: Option[Map[String, String]],
+                       deactivated: Boolean
+                     )
 
 object User {
-  type Id = UUID
-}
-
-case class UserRec(
-  lastname: String,
-  firstname: String,
-  middlename: String,
-  email: Option[String],
-  phone: Option[String],
-  login: Option[String],
-  defaultLanguage: String,
-  password: String,
-  id: User.Id) {
-  def toUser = User(
-    lastname = lastname,
-    firstname = firstname,
-    middlename = middlename,
-    email = email,
-    phone = phone,
-    login = login,
-    defaultLanguage = defaultLanguage,
-    id = id)
+  type Id = Int
 }

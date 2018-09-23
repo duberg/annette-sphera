@@ -1,6 +1,7 @@
-package annette.core.domain.tenancy
+package annette.core.domain.tenancy.actor
 
-import annette.core.domain.tenancy.model._
+import annette.core.domain.tenancy.LastSessionService
+import annette.core.domain.tenancy.model.{LastSession, User}
 import annette.core.persistence.Persistence
 import annette.core.persistence.Persistence.PersistentState
 

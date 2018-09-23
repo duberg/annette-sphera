@@ -1,8 +1,9 @@
 package annette.core.domain.tenancy
 
 import akka.actor.Props
+import annette.core.domain.tenancy.actor.{LastSessionActor, LastSessionState}
 import annette.core.domain.tenancy.model._
-import annette.core.persistence.Persistence.{ PersistentCommand, PersistentEvent, PersistentQuery }
+import annette.core.persistence.Persistence.{PersistentCommand, PersistentEvent, PersistentQuery}
 
 object LastSessionService {
 
