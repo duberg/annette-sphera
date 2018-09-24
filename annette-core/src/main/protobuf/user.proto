@@ -25,9 +25,9 @@ message UserV1 {
     optional string phone = 10;
     optional string locale = 11;
     required string registeredDate = 12;
-    repeated string tenants = 13;
-    map<string, string> applications = 14;
-    map<string, string> roles = 15;
+    //repeated string tenants = 13;
+    //map<string, string> applications = 14;
+    //map<string, string> roles = 15;
     required string password = 16;
     optional string avatarUrl = 17;
     optional string sphere = 18;
@@ -53,9 +53,9 @@ message UpdateUserV1 {
     optional string phone = 10;
     optional string locale = 11;
     optional string registeredDate = 12;
-    repeated string tenants = 13;
-    map<string, string> applications = 14;
-    map<string, string> roles = 15;
+    //repeated string tenants = 13;
+    //map<string, string> applications = 14;
+    //map<string, string> roles = 15;
     optional string password = 16;
     optional string avatarUrl = 17;
     optional string sphere = 18;

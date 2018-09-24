@@ -32,6 +32,7 @@ export class UserProfileComponent implements OnInit {
 
 	fullname$: BehaviorSubject<string> = new BehaviorSubject('');
 	email$: BehaviorSubject<string> = new BehaviorSubject('');
+	avatarUrl$: BehaviorSubject<string> = new BehaviorSubject('');
 
 	constructor(
 		private router: Router,
@@ -50,6 +51,7 @@ export class UserProfileComponent implements OnInit {
 	public update(user: User): User {
 		this.fullname$.next(`${user.firstName} ${user.lastName}`);
 		this.email$.next(user.email);
+		this.avatarUrl$.next(user.avatarUrl);
 		return user;
 	}
 

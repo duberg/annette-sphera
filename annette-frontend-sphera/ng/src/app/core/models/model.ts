@@ -40,12 +40,14 @@ export interface Language {
 }
 
 export interface User {
-  lastName: string;
-  firstName: string;
-  middleName?: string;
-  email?: string;
-  phone?: string;
-  id?: string;
+	id: string;
+  	lastName: string;
+  	firstName: string;
+  	middleName?: string;
+  	avatarUrl?: string;
+  	email?: string;
+ 	phone?: string;
+
 }
 
 export interface SetApplicationState {

@@ -4,6 +4,7 @@ import java.time.ZonedDateTime
 import java.util.UUID
 
 import annette.core.domain.application.model.Application
+import annette.core.domain.authorization.model.Role
 
 /**
  * Cодержит основные реквизиты пользователя.
@@ -38,9 +39,9 @@ case class User(
   phone: Option[String],
   locale: Option[String],
   registeredDate: ZonedDateTime,
-  tenants: Set[Tenant.Id],
-  applications: Map[Application.Id, Tenant.Id],
-  roles: Map[String, Tenant.Id],
+  //tenants: Set[Tenant.Id],
+  //applications: Map[Application.Id, Set[Tenant.Id]],
+  //roles: Map[Role.Id, Set[Tenant.Id]],
   password: String,
   avatarUrl: Option[String],
   sphere: Option[String],
@@ -63,9 +64,9 @@ case class CreateUser(
   description: Option[String],
   phone: Option[String],
   locale: Option[String],
-  tenants: Set[Tenant.Id],
-  applications: Map[Application.Id, Tenant.Id],
-  roles: Map[String, Tenant.Id],
+  //tenants: Set[Tenant.Id],
+  //applications: Map[Application.Id, Set[Tenant.Id]],
+  //roles: Map[Role.Id, Set[Tenant.Id]],
   password: String,
   avatarUrl: Option[String],
   sphere: Option[String],
@@ -89,9 +90,9 @@ case class UpdateUser(
   description: Option[Option[String]],
   phone: Option[Option[String]],
   locale: Option[Option[String]],
-  tenants: Option[Set[Tenant.Id]],
-  applications: Option[Map[Application.Id, Tenant.Id]],
-  roles: Option[Map[String, Tenant.Id]],
+  //tenants: Option[Set[Tenant.Id]],
+  //applications: Option[Map[Application.Id, Set[Tenant.Id]]],
+  //roles: Option[Map[Role.Id, Set[Tenant.Id]]],
   password: Option[String],
   avatarUrl: Option[Option[String]],
   sphere: Option[Option[String]],

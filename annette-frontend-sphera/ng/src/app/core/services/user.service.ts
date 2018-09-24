@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {Observable, of} from "rxjs";
 import {User} from "../models/model";
 import {JsonPipe} from "@angular/common";
+import {map} from "rxjs/operators";
 
 @Injectable()
 export class UserService {
@@ -19,6 +20,10 @@ export class UserService {
 			return of(JSON.parse(user));
 		} catch (e) {}
 
+	}
+
+	public getAvatarUrl(): Observable<string> {
+		return this.getCurrentUser().pipe(map(x => x.avatarUrl));
 	}
 
 	public setCurrentUser(user: User): UserService {

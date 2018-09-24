@@ -21,6 +21,7 @@ case class Role(
   description: String,
   activated: Boolean,
   permissionObjects: Map[Permission.Id, PermissionObject])
+
 object Role {
   type Id = String
 }
