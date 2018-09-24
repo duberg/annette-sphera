@@ -1,11 +1,11 @@
-package annette.core.http.api
+package annette.core.http.routes
 
 import akka.actor.ActorRef
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.server.{ Directives, Route }
 import akka.http.scaladsl.settings.RoutingSettings
-import akka.pattern.ask
+import akka.pattern.AskSupport
 import akka.util.Timeout
 import annette.core.domain.application.model.Application
 import annette.core.domain.language.dao.LanguageDao
@@ -18,22 +18,29 @@ import com.typesafe.config.Config
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import io.circe.java8.time.TimeInstances
 
-import scala.concurrent.ExecutionContextExecutor
-import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext
 import scala.util.{ Failure, Success }
+import scala.concurrent.duration._
 
-class AuthApi(
-  languageDao: LanguageDao,
-  authenticationService: ActorRef,
-  annetteSecurityDirectives: AnnetteSecurityDirectives,
-  config: Config)(implicit ec: ExecutionContextExecutor) extends TimeInstances {
+trait AuthRoutes extends Directives with AskSupport with TimeInstances {
 
-  implicit val serviceTimeout: Timeout = 30.seconds // TODO: заменить на конфигурацию
+  val languageDao: LanguageDao
+  val authenticationService: ActorRef
+  val annetteSecurityDirectives: AnnetteSecurityDirectives
+  val config: Config
+  implicit val c: ExecutionContext
+  //implicit val t: Timeout = 30.seconds // TODO: заменить на конфигурацию
 
   import FailFastCirceSupport._
-  import annetteSecurityDirectives._
   import io.circe.generic.auto._
   import io.circe.java8.time.TimeInstances
+
+  import annetteSecurityDirectives._
+
+  case class SetApplicationState(
+    tenantId: Tenant.Id,
+    applicationId: Application.Id,
+    languageId: Language.Id)
 
   private def loginRoutes = (path("login") & post) {
     (entity(as[AuthenticationService.LoginData]) & extractClientIP) {
@@ -86,9 +93,7 @@ class AuthApi(
     get {
       maybeAuthenticated {
         maybeSession =>
-          import FailFastCirceSupport._
-          import io.circe.generic.auto._
-          import io.circe.java8.time.TimeInstances
+
           val applicationStateFuture = authenticationService
             .ask(AuthenticationService.GetApplicationState(maybeSession))
             .mapTo[ApplicationState]
@@ -108,9 +113,7 @@ class AuthApi(
     } ~
       (post & authenticated & entity(as[SetApplicationState])) {
         case (sessionData, SetApplicationState(tenantId, applicationId, languageId)) =>
-          import FailFastCirceSupport._
-          import io.circe.generic.auto._
-          import io.circe.java8.time.TimeInstances
+
           val applicationStateFuture = authenticationService
             .ask(AuthenticationService.SetApplicationState(sessionData, tenantId, applicationId, languageId))
             .mapTo[ApplicationState]
@@ -155,8 +158,3 @@ class AuthApi(
   }
 
 }
-
-case class SetApplicationState(
-  tenantId: Tenant.Id,
-  applicationId: Application.Id,
-  languageId: Language.Id)
