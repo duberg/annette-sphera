@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 
 @Injectable()
-export class ErrorHandler {
-
+export class HttpErrorHandler {
 	constructor(
 		public snackbar: MatSnackBar,
 	) {}

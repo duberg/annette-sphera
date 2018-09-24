@@ -47,8 +47,8 @@ import { environment } from '../environments/environment';
 import {enableProdMode} from '@angular/core';
 
 import 'hammerjs';
-import {ErrorInterceptor} from "./core/utils/error-interceptor";
-import {ErrorHandler} from "./core/utils/error-handler";
+import {RequestInterceptor} from "./core/auth/request.interceptor";
+import {HttpErrorHandler} from "./core/auth/http-error-handler.service";
 import {JwtModule} from "@auth0/angular-jwt";
 import {TokenStorage} from "./core/auth/token-storage.service";
 import {UsersService} from "./core/services/users.service";
@@ -120,10 +120,10 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
 			provide: HAMMER_GESTURE_CONFIG,
 			useClass: GestureConfig
 		},
-		ErrorHandler,
+		HttpErrorHandler,
 		{
 			provide: HTTP_INTERCEPTORS,
-			useClass: ErrorInterceptor,
+			useClass: RequestInterceptor,
 			multi: true,
 		},
 	],

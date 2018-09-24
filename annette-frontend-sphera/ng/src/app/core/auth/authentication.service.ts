@@ -118,14 +118,11 @@ export class AuthenticationService implements AuthService {
 	}
 
 	public login2(credential: Credential2): Observable<any> {
-		console.info("Try to login...");
-		console.info(credential);
-
-		const headers = new HttpHeaders({'Content-Type':'application/json; charset=utf-8'});
+		//const headers = new HttpHeaders({'Content-Type':'application/json; charset=utf-8'});
 		const b = JSON.stringify(credential);
-		const h = { headers: headers };
-		console.info(this.API_URL + this.API_ENDPOINT_LOGIN);
-		return this.http.post<AccessData>(this.API_URL + this.API_ENDPOINT_LOGIN, b, h).pipe(
+		//const h = { headers: headers };
+
+		return this.http.post<AccessData>(this.API_URL + this.API_ENDPOINT_LOGIN, b).pipe(
 			map((result: any) => {
 				console.log("result: " + result);
 				if (result instanceof Array) {
@@ -136,18 +133,6 @@ export class AuthenticationService implements AuthService {
 			tap(this.saveAccessData.bind(this)),
 			catchError(this.handleError('login', []))
 		);
-
-
-		// get<AccessData>(this.API_URL + this.API_ENDPOINT_LOGIN + '?' + this.util.urlParam(credential)).pipe(
-		// 	map((result: any) => {
-		// 		if (result instanceof Array) {
-		// 			return result.pop();
-		// 		}
-		// 		return result;
-		// 	}),
-		// 	tap(this.saveAccessData.bind(this)),
-		// 	catchError(this.handleError('login', []))
-		// );
 	}
 
 	/**

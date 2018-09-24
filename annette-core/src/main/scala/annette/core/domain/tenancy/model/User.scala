@@ -11,7 +11,7 @@ import annette.core.domain.authorization.model.Role
  *
  * @param id Unique identifier for the user.
  * @param username Login name for the user.
- * @param name Display name for the user.
+ * @param displayName Display name for the user.
  * @param firstName First name for the user.
  * @param lastName Last name for the user.
  * @param middleName
@@ -29,7 +29,7 @@ import annette.core.domain.authorization.model.Role
 case class User(
   id: User.Id,
   username: Option[String],
-  name: Option[String],
+  displayName: Option[String],
   firstName: String,
   lastName: String,
   middleName: Option[String],
@@ -55,7 +55,7 @@ case class User(
 
 case class CreateUser(
   username: Option[String],
-  name: Option[String],
+  displayName: Option[String],
   firstName: String,
   lastName: String,
   middleName: Option[String],
@@ -81,7 +81,7 @@ case class CreateUser(
 case class UpdateUser(
   id: User.Id,
   username: Option[Option[String]],
-  name: Option[Option[String]],
+  displayName: Option[Option[String]],
   firstName: Option[String],
   lastName: Option[String],
   middleName: Option[Option[String]],

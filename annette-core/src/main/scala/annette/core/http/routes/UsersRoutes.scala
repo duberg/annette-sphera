@@ -706,7 +706,7 @@ trait UsersRoutes extends Directives with TimeInstances {
   //  }
   //
 
-  val userRoutes: Route = (pathPrefix("users") & auth) { implicit session =>
+  val userRoutes: Route = (pathPrefix("users") & authenticated) { implicit session =>
     createUser ~ getUser ~ updateUser ~ deleteUser ~ listUsers
   }
 }

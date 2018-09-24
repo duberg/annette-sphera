@@ -31,7 +31,7 @@ class UsersActor(val id: String, val initState: UsersState) extends PersistentSt
       val user = User(
         id = userId,
         username = x.username,
-        name = x.name,
+        displayName = x.displayName,
         firstName = x.firstName,
         lastName = x.lastName,
         middleName = x.middleName,

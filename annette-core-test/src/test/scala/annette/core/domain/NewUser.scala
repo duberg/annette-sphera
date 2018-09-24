@@ -21,7 +21,7 @@ trait NewUser { _: PersistenceSpec with TestKit =>
   def newCreateUser(id: UUID = UUID.randomUUID(), email: Option[String] = None, phone: Option[String] = None, login: Option[String] = None) = {
     CreateUser(
       username = login,
-      name = None,
+      displayName = None,
       firstName = generateString(),
       lastName = generateString(),
       middleName = genStrOpt,

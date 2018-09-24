@@ -86,7 +86,7 @@ class AnnetteSecurityDirectives @Inject() (
         else tokenValidation(maybeJwtToken)
     }
 
-  val auth: Directive1[Session] = authOpt.flatMap {
+  val authenticated: Directive1[Session] = authOpt.flatMap {
     case Some(sessionData) => provide(sessionData)
     case _ => authReject
   }

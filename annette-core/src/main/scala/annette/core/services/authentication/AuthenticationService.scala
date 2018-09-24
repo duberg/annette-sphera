@@ -39,8 +39,8 @@ object AuthenticationService {
    */
   final val name = "AuthenticationService"
 
-  sealed class Message
-  sealed class Response
+  class Message
+  class Response
   case class FailureResponse(throwable: Throwable) extends Response
 
   /**
@@ -66,7 +66,7 @@ object AuthenticationService {
     messageCode: Option[Map[String, String]]) extends Response
 
   case class Logout(token: UUID) extends Message
-  case class LoggedOut(token: UUID) extends Message
+  case class LoggedOut(token: UUID) extends Response
 
   /**
    * Запрос проверки аутентификаци по токену в сессии пользоватея

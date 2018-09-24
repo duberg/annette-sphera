@@ -10,7 +10,8 @@ import akka.util.Timeout
 import annette.core.domain.application.model.Application
 import annette.core.domain.language.dao.LanguageDao
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.model.Tenant
+import annette.core.domain.tenancy.UserService
+import annette.core.domain.tenancy.model.{ CreateUser, Tenant, UpdateUser }
 import annette.core.exception.AnnetteException
 import annette.core.http.security.AnnetteSecurityDirectives
 import annette.core.services.authentication.{ ApplicationState, AuthenticationService, ForbiddenException }
@@ -23,7 +24,7 @@ import scala.util.{ Failure, Success }
 import scala.concurrent.duration._
 
 trait AuthRoutes extends Directives with AskSupport with TimeInstances {
-
+  val userDao: UserService
   val languageDao: LanguageDao
   val authenticationService: ActorRef
   val annetteSecurityDirectives: AnnetteSecurityDirectives
@@ -42,7 +43,7 @@ trait AuthRoutes extends Directives with AskSupport with TimeInstances {
     applicationId: Application.Id,
     languageId: Language.Id)
 
-  private def loginRoutes = (path("login") & post) {
+  def login: Route = (path("login") & post) {
     (entity(as[AuthenticationService.LoginData]) & extractClientIP) {
       (loginData, clientIp) =>
         val future = authenticationService
@@ -69,24 +70,20 @@ trait AuthRoutes extends Directives with AskSupport with TimeInstances {
     }
   }
 
-  private def logoutRoutes = path("logout") {
-    post {
-      complete(StatusCodes.NotImplemented)
-    }
-    get {
-      authOpt {
-        case Some(sessionData) =>
-          val logoutFuture = authenticationService
-            .ask(AuthenticationService.Logout(sessionData.sessionId))
-          onComplete(logoutFuture) {
-            _ =>
-              redirect("/auth/login", StatusCodes.TemporaryRedirect)
+  def logout: Route = (path("logout") & post & authOpt) {
+    case Some(sessionData) =>
+      complete(authenticationService
+        .ask(AuthenticationService.Logout(sessionData.sessionId))
+        .mapTo[AuthenticationService.Response])
+    case None =>
+      complete("logged out")
+  }
 
-          }
-        case None =>
-          redirect("/auth/login", StatusCodes.TemporaryRedirect)
-      }
-    }
+  def register: Route = {
+
+    (path("register") & post & entity(as[CreateUser])) { x =>
+      complete(userDao.create(x))
+    } ~ (path("register") & post)(complete("ff"))
   }
 
   private def applicationStateRoutes = path("applicationState") {
@@ -111,7 +108,7 @@ trait AuthRoutes extends Directives with AskSupport with TimeInstances {
       }
 
     } ~
-      (post & auth & entity(as[SetApplicationState])) {
+      (post & authenticated & entity(as[SetApplicationState])) {
         case (sessionData, SetApplicationState(tenantId, applicationId, languageId)) =>
 
           val applicationStateFuture = authenticationService
@@ -141,7 +138,7 @@ trait AuthRoutes extends Directives with AskSupport with TimeInstances {
     }
   }
 
-  private def heartbeatRoute = (put & path("heartbeat" / Segment) & auth) {
+  private def heartbeatRoute = (put & path("heartbeat" / Segment) & authenticated) {
     case (live, sessionData) =>
       import FailFastCirceSupport._
       if (live == "true") {
@@ -152,9 +149,7 @@ trait AuthRoutes extends Directives with AskSupport with TimeInstances {
   }
 
   def authRoutes = pathPrefix("auth") {
-    implicit val routingSettings = RoutingSettings(config)
-    Route.seal(
-      loginRoutes ~ logoutRoutes ~ applicationStateRoutes ~ heartbeatRoute ~ languagesRoute)
+    login ~ logout ~ register ~ applicationStateRoutes ~ heartbeatRoute ~ languagesRoute
   }
 
 }

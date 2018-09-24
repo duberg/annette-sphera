@@ -67,7 +67,7 @@ trait UserConverters {
     User(
       id = x.id,
       username = x.username,
-      name = x.name,
+      displayName = x.name,
       firstName = x.firstName,
       lastName = x.lastName,
       middleName = x.middleName,
@@ -96,7 +96,7 @@ trait UserConverters {
     UserV1(
       id = x.id,
       username = x.username,
-      name = x.name,
+      name = x.displayName,
       firstName = x.firstName,
       lastName = x.lastName,
       middleName = x.middleName,
@@ -125,7 +125,7 @@ trait UserConverters {
     UpdateUser(
       id = x.id,
       username = x.username,
-      name = x.name,
+      displayName = x.name,
       firstName = x.firstName,
       lastName = x.lastName,
       middleName = x.middleName,
@@ -153,7 +153,7 @@ trait UserConverters {
     UpdateUserV1(
       id = x.id,
       username = x.username,
-      name = x.name,
+      name = x.displayName,
       firstName = x.firstName,
       lastName = x.lastName,
       middleName = x.middleName,

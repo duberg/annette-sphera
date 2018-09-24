@@ -122,14 +122,14 @@ class LoginActor(
         openSession.languageId)
       val jwtToken = encodeSessionData(sessionData)
       ApplicationState(
-        true,
-        language,
-        languages,
-        Some(user),
-        Some(tenant),
-        Some(application),
-        userTenants,
-        Some(jwtToken))
+        authenticated = true,
+        language = language,
+        languages = languages,
+        user = Some(user),
+        tenant = Some(tenant),
+        application = Some(application),
+        tenantData = userTenants,
+        jwtToken = Some(jwtToken))
 
     }
 

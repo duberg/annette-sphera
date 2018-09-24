@@ -106,7 +106,7 @@ class UsersActorSpec extends TestKit(ActorSystem("UserActorSpec"))
             UpdateUser(
               id = cc1.id,
               username = Some(c2.username),
-              name = None,
+              displayName = None,
               firstName = Some(c2.firstName),
               lastName = Some(c2.lastName),
               middleName = Some(c2.middleName),
@@ -146,7 +146,7 @@ class UsersActorSpec extends TestKit(ActorSystem("UserActorSpec"))
             UpdateUser(
               id = user.id,
               username = Some(None),
-              name = None,
+              displayName = None,
               firstName = Some(c2.firstName),
               lastName = Some(c2.lastName),
               middleName = Some(c2.middleName),
@@ -187,7 +187,7 @@ class UsersActorSpec extends TestKit(ActorSystem("UserActorSpec"))
           cc3 <- ask(actor, UserService.UpdateUserCmd(UpdateUser(
             id = cc2.id,
             username = None,
-            name = None,
+            displayName = None,
             firstName = Some(c2.firstName),
             lastName = Some(c2.lastName),
             middleName = Some(c2.middleName),

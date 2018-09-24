@@ -11,26 +11,27 @@ import {
 import {Observable, throwError} from "rxjs";
 import {tap, catchError} from "rxjs/operators";
 
-import { ErrorHandler } from './error-handler';
+import { HttpErrorHandler } from './http-error-handler.service';
 import {UNAUTHORIZED} from "http-status-codes";
 import {Router} from "@angular/router";
-import {AuthenticationService} from "../auth/authentication.service";
+import {AuthenticationService} from "./authentication.service";
 
 @Injectable()
-export class ErrorInterceptor implements HttpInterceptor {
-
+export class RequestInterceptor implements HttpInterceptor {
 	constructor(
-		private errorHandler : ErrorHandler,
+		private httpErrorHandler : HttpErrorHandler,
 		private router: Router,
 		private authService: AuthenticationService
 	) {}
 
 	intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-		return next.handle(request).pipe(
+		const h = request.headers.set('Content-Type', 'application/json; charset=utf-8');
+		const r = request.clone({headers: h});
+		return next.handle(r).pipe(
 			catchError((err: HttpErrorResponse) => {
 				if (this.router.url !== '/login') {
-					if (err.status === 401) this.authService.logout(true);
-					else this.errorHandler.handleError(err);
+					if (err.status === UNAUTHORIZED) this.authService.logout(true);
+					else this.httpErrorHandler.handleError(err);
 				}
 				return throwError(err);
 			})

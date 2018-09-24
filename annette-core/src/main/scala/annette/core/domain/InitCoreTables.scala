@@ -184,7 +184,7 @@ class InitCoreTables @Inject() (
         }
         val x = CreateUser(
           username = opt(conf.getString("username")),
-          name = opt(conf.getString("name")),
+          displayName = opt(conf.getString("name")),
           firstName = opt(conf.getString("firstName")).getOrElse(""),
           lastName = opt(conf.getString("lastName")).getOrElse(""),
           middleName = opt(conf.getString("middleName")),

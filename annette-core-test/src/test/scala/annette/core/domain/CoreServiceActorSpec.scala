@@ -324,7 +324,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
             UpdateUser(
               id = user.id,
               username = Some(c2.username),
-              name = None,
+              displayName = None,
               firstName = Some(c2.firstName),
               lastName = Some(c2.lastName),
               middleName = Some(c2.middleName),
@@ -367,7 +367,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
             UpdateUser(
               id = user.id,
               username = Some(None),
-              name = None,
+              displayName = None,
               firstName = Some(c2.firstName),
               lastName = Some(c2.lastName),
               middleName = Some(c2.middleName),
@@ -408,7 +408,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
           cc3 <- ask(actor, UserService.UpdateUserCmd(UpdateUser(
             id = cc2.id,
             username = None,
-            name = None,
+            displayName = None,
             firstName = Some(c2.firstName),
             lastName = Some(c2.lastName),
             middleName = Some(c2.middleName),
@@ -444,7 +444,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
           cc3 <- ask(actor, UserService.UpdateUserCmd(UpdateUser(
             id = cc2.id,
             username = None,
-            name = None,
+            displayName = None,
             firstName = Some(c2.firstName),
             lastName = Some(c2.lastName),
             middleName = Some(c2.middleName),
@@ -480,7 +480,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
           cc3 <- ask(actor, UserService.UpdateUserCmd(UpdateUser(
             id = cc2.id,
             username = Some(c1.username),
-            name = None,
+            displayName = None,
             firstName = Some(c2.firstName),
             lastName = Some(c2.lastName),
             middleName = Some(c2.middleName),

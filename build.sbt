@@ -134,7 +134,9 @@ lazy val annetteSpheraServer = Project(
     commonSettings,
     name := "annette-sphera-server",
     version := imcVersion,
-    packageName in Universal := "annette-sphera-server"
+    packageName in Universal := "annette-sphera-server",
+    baseDirectory in reStart := (baseDirectory in root).value
   ).dependsOn(annetteSphera, annetteFrontendSphera)
 
 mainClass in Compile := Some("annette.core.server.AnnetteApplication")
+mainClass in reStart := Some("annette.core.server.AnnetteApplication")
