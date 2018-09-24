@@ -71,9 +71,11 @@ class AnnetteHttpServer(coreModule: CoreModule) {
       getFromResource("dist/index.html")
     }*/
 
-    routes ~ (path(Segments) & get) { any =>
-      getFromResource("dist/index.html")
-    }
+    routes
+    //    ~
+    //      (path(Segments) & get) { any =>
+    //        getFromResource("dist/index.html")
+    //      }
 
   }
 

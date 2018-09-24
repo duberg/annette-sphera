@@ -151,7 +151,7 @@ trait AuthRoutes extends Directives with AskSupport with TimeInstances {
       complete(true)
   }
 
-  def routes = pathPrefix("auth" / "api") {
+  def authRoutes = pathPrefix("auth" / "api") {
     implicit val routingSettings = RoutingSettings(config)
     Route.seal(
       loginRoutes ~ logoutRoutes ~ applicationStateRoutes ~ heartbeatRoute ~ languagesRoute)
