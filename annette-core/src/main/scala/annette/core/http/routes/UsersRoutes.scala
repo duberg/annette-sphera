@@ -17,10 +17,10 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 
 import scala.concurrent.{ ExecutionContext, Future }
-import annette.core.domain.tenancy.model.{ Tenant, TenantUserRole, UpdateUser, User }
+import annette.core.domain.tenancy.model._
 import annette.core.exception.AnnetteException
 import annette.core.http.security.AnnetteSecurityDirectives
-import annette.core.services.authentication.SessionData
+import annette.core.services.authentication.Session
 
 import scala.util.{ Failure, Success }
 import annette.core.utils.Generator
@@ -28,7 +28,7 @@ import com.typesafe.config.Config
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import io.circe.java8.time.TimeInstances
 
-trait UserRoutes extends Directives with TimeInstances {
+trait UsersRoutes extends Directives with TimeInstances {
   implicit val c: ExecutionContext
   val annetteSecurityDirectives: AnnetteSecurityDirectives
   val userDao: UserService
@@ -92,124 +92,124 @@ trait UserRoutes extends Directives with TimeInstances {
   //
   //  }
   //
-  //  private val userAdd = (path("user" / "add") & post & auth & entity(as[UpdateUser])) {
-  //    (sessionData, updateUser) =>
+  //    private val userAdd = (path("user" / "add") & post & authenticated & entity(as[CreateUser])) {
+  //      (sessionData, createUser) =>
   //
-  //      val userFuture = getUserRoled(sessionData.userId).mapTo[Option[UserRoled]]
+  //        val userFuture = getUserRoled(sessionData.userId).mapTo[Option[UserRoled]]
   //
-  //      val f = for {
+  //        val f = for {
   //
-  //        u <- userFuture
-  //        _ <- predicate(u.exists(_.admin))(new Exception("must be in role of admin"))
+  //          u <- userFuture
+  //          _ <- predicate(u.exists(_.admin))(new Exception("must be in role of admin"))
   //
-  //      } yield {
+  //        } yield {
   //
-  //        val id = UUID.randomUUID()
+  //          val id = UUID.randomUUID()
   //
-  //        //val password = Tools.generatePass
-  //        val password = updateUser.password.getOrElse(Tools.generatePass)
-  //        val emailOpt = updateUser.user.email
-  //        val phoneOpt = updateUser.user.phone
-  //        val language = updateUser.user.defaultLanguage
-  //        val u = User(
-  //          id = id,
-  //          lastName = updateUser.user.lastName,
-  //          firstName = updateUser.user.firstName,
-  //          middleName = updateUser.user.middleName,
-  //          email = emailOpt,
-  //          phone = phoneOpt,
-  //          defaultLanguage = language)
+  //          //val password = Tools.generatePass
+  //          val password = updateUser.password.getOrElse(Tools.generatePass)
+  //          val emailOpt = updateUser.user.email
+  //          val phoneOpt = updateUser.user.phone
+  //          val language = updateUser.user.defaultLanguage
+  //          val u = User(
+  //            id = id,
+  //            lastName = updateUser.user.lastName,
+  //            firstName = updateUser.user.firstName,
+  //            middleName = updateUser.user.middleName,
+  //            email = emailOpt,
+  //            phone = phoneOpt,
+  //            defaultLanguage = language)
   //
-  //        coreModule.userDao.create(u, password).map(_ => coreModule.tenantUserDao.create("IMC", id))
+  //          coreModule.userDao.create(u, password).map(_ => coreModule.tenantUserDao.create("IMC", id))
   //
-  //        val imcUser = ImcUser(
-  //          id,
-  //          updateUser.sphere,
-  //          updateUser.company,
-  //          updateUser.position,
-  //          updateUser.rank)
+  //          val imcUser = ImcUser(
+  //            id,
+  //            updateUser.sphere,
+  //            updateUser.company,
+  //            updateUser.position,
+  //            updateUser.rank)
   //
-  //        imcUserActor ! ImcUserActor.CreateCmd(imcUser)
+  //          imcUserActor ! ImcUserActor.CreateCmd(imcUser)
   //
-  //        emailOpt.foreach(email => {
-  //          for {
-  //            allUsers: Set[User] <- getUsersAll
-  //            allUserRole: Set[TenantUserRole] <- getUserRoleAll
-  //            allImcUsers: Map[UUID, ImcUser] <- getAllImcUsers
-  //          } yield {
-  //            val user = s"${u.lastName} ${u.firstName.take(1)}.${
-  //              u.middleName match {
-  //                case x: String if x.isEmpty => ""
-  //                case x: String => x.take(1) + "."
+  //          emailOpt.foreach(email => {
+  //            for {
+  //              allUsers: Set[User] <- getUsersAll
+  //              allUserRole: Set[TenantUserRole] <- getUserRoleAll
+  //              allImcUsers: Map[UUID, ImcUser] <- getAllImcUsers
+  //            } yield {
+  //              val user = s"${u.lastName} ${u.firstName.take(1)}.${
+  //                u.middleName match {
+  //                  case x: String if x.isEmpty => ""
+  //                  case x: String => x.take(1) + "."
+  //                }
+  //              }"
+  //              val userFull = s"${u.lastName} ${u.firstName}${
+  //                u.middleName match {
+  //                  case x: String if x.isEmpty => ""
+  //                  case x: String => " " + x
+  //                }
+  //              }"
+  //
+  //              val x = for (user <- allUsers) yield {
+  //                val roles = allUserRole.find(_.userId == user.id).map(_.roles)
+  //                val imcUser = allImcUsers.get(user.id)
+  //
+  //                FullUser(
+  //                  user.id,
+  //                  user.lastName,
+  //                  user.firstName,
+  //                  user.middleName,
+  //                  imcUser.flatMap(_.company),
+  //                  imcUser.flatMap(_.position),
+  //                  imcUser.flatMap(_.rank),
+  //                  roles.exists(_.contains("admin")),
+  //                  roles.exists(_.contains("secretar")),
+  //                  roles.exists(_.contains("manager")),
+  //                  roles.exists(_.contains("chairman")),
+  //                  roles.exists(_.contains("expert")),
+  //                  roles.exists(_.contains("additional")))
   //              }
-  //            }"
-  //            val userFull = s"${u.lastName} ${u.firstName}${
-  //              u.middleName match {
-  //                case x: String if x.isEmpty => ""
-  //                case x: String => " " + x
-  //              }
-  //            }"
   //
-  //            val x = for (user <- allUsers) yield {
-  //              val roles = allUserRole.find(_.userId == user.id).map(_.roles)
-  //              val imcUser = allImcUsers.get(user.id)
+  //              val chairman = x.find(_.chairman)
+  //              val chairmanName = chairman.map(x => s"${x.firstName} ${x.lastName} ${x.middleName}").getOrElse("")
+  //              val p = Map(
+  //                "Date" -> LocalDate.now(),
+  //                "User" -> user,
+  //                "UserFull" -> userFull,
+  //                "ChairmanOfTheExpertCouncil" -> chairmanName).mapValues(_.toString)
   //
-  //              FullUser(
-  //                user.id,
-  //                user.lastName,
-  //                user.firstName,
-  //                user.middleName,
-  //                imcUser.flatMap(_.company),
-  //                imcUser.flatMap(_.position),
-  //                imcUser.flatMap(_.rank),
-  //                roles.exists(_.contains("admin")),
-  //                roles.exists(_.contains("secretar")),
-  //                roles.exists(_.contains("manager")),
-  //                roles.exists(_.contains("chairman")),
-  //                roles.exists(_.contains("expert")),
-  //                roles.exists(_.contains("additional")))
+  //              notificationService.addNotificationAsync(MailNotification.Password(
+  //                id = UUID.randomUUID(),
+  //                email = email,
+  //                password = password,
+  //                language = language,
+  //                templateParameters = p))
   //            }
+  //          })
   //
-  //            val chairman = x.find(_.chairman)
-  //            val chairmanName = chairman.map(x => s"${x.firstName} ${x.lastName} ${x.middleName}").getOrElse("")
-  //            val p = Map(
-  //              "Date" -> LocalDate.now(),
-  //              "User" -> user,
-  //              "UserFull" -> userFull,
-  //              "ChairmanOfTheExpertCouncil" -> chairmanName).mapValues(_.toString)
-  //
-  //            notificationService.addNotificationAsync(MailNotification.Password(
+  //          phoneOpt.foreach(phone => {
+  //            notificationService.addNotificationAsync(SmsNotification.Password(
   //              id = UUID.randomUUID(),
-  //              email = email,
+  //              phone = phone,
   //              password = password,
-  //              language = language,
-  //              templateParameters = p))
-  //          }
-  //        })
+  //              language = language))
+  //          })
   //
-  //        phoneOpt.foreach(phone => {
-  //          notificationService.addNotificationAsync(SmsNotification.Password(
-  //            id = UUID.randomUUID(),
-  //            phone = phone,
-  //            password = password,
-  //            language = language))
-  //        })
+  //        }
   //
-  //      }
+  //        onComplete(f) {
   //
-  //      onComplete(f) {
+  //          case Success(_) => complete("Done")
+  //          case Failure(throwable) =>
+  //            throwable match {
+  //              case annetteException: AnnetteException =>
+  //                complete(StatusCodes.InternalServerError -> annetteException.exceptionMessage)
+  //              case _ =>
+  //                complete(StatusCodes.InternalServerError -> Map("code" -> throwable.getMessage))
+  //            }
+  //        }
   //
-  //        case Success(_) => complete("Done")
-  //        case Failure(throwable) =>
-  //          throwable match {
-  //            case annetteException: AnnetteException =>
-  //              complete(StatusCodes.InternalServerError -> annetteException.exceptionMessage)
-  //            case _ =>
-  //              complete(StatusCodes.InternalServerError -> Map("code" -> throwable.getMessage))
-  //          }
-  //      }
-  //
-  //  }
+  //    }
   //
   //  private val userRestore = (path("user" / "restore" / JavaUUID) & get & auth) {
   //    (id, sessionData) =>
@@ -586,48 +586,40 @@ trait UserRoutes extends Directives with TimeInstances {
   //      }
   //  }
   //
-  private val getAllUsers = (path("all") & get & authenticated) {
-    sessionData =>
-    {
-        //val userFuture = getUserRoled(sessionData.userId).mapTo[Option[UserRoled]]
-        val ff = for {
-          //          u <- userFuture
-          //          _ <- predicate(u.exists(x => x.admin || x.chairman))(new Exception("must be in role of admin or chairman"))
-          f <- userDao.selectAll
-          r <- tenantUserRoleDao.selectAll
-        } yield (f, r)
 
-        onComplete(ff) {
-          case Success((x, y)) =>
+  def createUser(implicit session: Session): Route = post {
+    ???
+  }
 
-            //            val z = x.map { user =>
-            //              val roles = y.find(_.userId == user.id).map(_.roles)
-            //
-            //              UserRoled(
-            //                user.id,
-            //                user.lastName,
-            //                user.firstName,
-            //                user.middleName.getOrElse(),
-            //                user.email,
-            //                roles.exists(_.contains("admin")),
-            //                roles.exists(_.contains("secretar")),
-            //                roles.exists(_.contains("manager")),
-            //                roles.exists(_.contains("chairman")),
-            //                roles.exists(_.contains("expert")),
-            //                roles.exists(_.contains("additional")))
-            //            }
+  def getUser(implicit session: Session): Route = (path(JavaUUID) & get) { userId =>
+    ???
+  }
 
-            complete(x)
-          case Success(_) => complete(StatusCodes.InternalServerError)
-          case Failure(throwable) =>
-            throwable match {
-              case annetteException: AnnetteException =>
-                complete(StatusCodes.InternalServerError -> annetteException.exceptionMessage)
-              case _ =>
-                complete(StatusCodes.InternalServerError -> Map("code" -> throwable.getMessage))
-            }
+  def updateUser(implicit session: Session): Route = (path(JavaUUID) & post) { userId =>
+    ???
+  }
+
+  def deleteUser(implicit session: Session): Route = (path(JavaUUID) & delete) { userId =>
+    ???
+  }
+
+  def listUsers(implicit session: Session): Route = get {
+    val ff = for {
+      f <- userDao.selectAll
+      r <- tenantUserRoleDao.selectAll
+    } yield (f, r)
+
+    onComplete(ff) {
+      case Success((x, y)) => complete(x)
+      case Success(_) => complete(StatusCodes.InternalServerError)
+      case Failure(throwable) =>
+        throwable match {
+          case annetteException: AnnetteException =>
+            complete(StatusCodes.InternalServerError -> annetteException.exceptionMessage)
+          case _ =>
+            complete(StatusCodes.InternalServerError -> Map("code" -> throwable.getMessage))
         }
-      }
+    }
   }
 
   //  private val getManagers = (pathPrefix("user" / "managers") & get & auth) {
@@ -713,10 +705,8 @@ trait UserRoutes extends Directives with TimeInstances {
   //
   //  }
   //
-  def userRoutes: Route = pathPrefix("api" / "users") {
-    implicit val routingSettings = RoutingSettings(config)
-    Route.seal(getAllUsers)
-    //userUpdate ~ userAdd ~ userRestore ~ changeRole ~ userRemove ~
-    //changeManager ~ getUser ~ getAllUsers ~ getManagers ~ currentUser ~ passRestore
+
+  val userRoutes: Route = (pathPrefix("users") & auth) { implicit session =>
+    createUser ~ getUser ~ updateUser ~ deleteUser ~ listUsers
   }
 }

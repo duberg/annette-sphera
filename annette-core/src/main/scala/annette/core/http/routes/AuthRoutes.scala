@@ -74,7 +74,7 @@ trait AuthRoutes extends Directives with AskSupport with TimeInstances {
       complete(StatusCodes.NotImplemented)
     }
     get {
-      maybeAuthenticated {
+      authOpt {
         case Some(sessionData) =>
           val logoutFuture = authenticationService
             .ask(AuthenticationService.Logout(sessionData.sessionId))
@@ -91,7 +91,7 @@ trait AuthRoutes extends Directives with AskSupport with TimeInstances {
 
   private def applicationStateRoutes = path("applicationState") {
     get {
-      maybeAuthenticated {
+      authOpt {
         maybeSession =>
 
           val applicationStateFuture = authenticationService
@@ -111,7 +111,7 @@ trait AuthRoutes extends Directives with AskSupport with TimeInstances {
       }
 
     } ~
-      (post & authenticated & entity(as[SetApplicationState])) {
+      (post & auth & entity(as[SetApplicationState])) {
         case (sessionData, SetApplicationState(tenantId, applicationId, languageId)) =>
 
           val applicationStateFuture = authenticationService
@@ -141,7 +141,7 @@ trait AuthRoutes extends Directives with AskSupport with TimeInstances {
     }
   }
 
-  private def heartbeatRoute = (put & path("heartbeat" / Segment) & authenticated) {
+  private def heartbeatRoute = (put & path("heartbeat" / Segment) & auth) {
     case (live, sessionData) =>
       import FailFastCirceSupport._
       if (live == "true") {
@@ -151,7 +151,7 @@ trait AuthRoutes extends Directives with AskSupport with TimeInstances {
       complete(true)
   }
 
-  def authRoutes = pathPrefix("auth" / "api") {
+  def authRoutes = pathPrefix("auth") {
     implicit val routingSettings = RoutingSettings(config)
     Route.seal(
       loginRoutes ~ logoutRoutes ~ applicationStateRoutes ~ heartbeatRoute ~ languagesRoute)

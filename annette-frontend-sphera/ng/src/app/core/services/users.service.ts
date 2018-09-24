@@ -8,7 +8,7 @@ import {HttpUtilsService} from "../../content/pages/components/users/_core/utils
 import {QueryParamsModel} from "../../content/pages/components/users/_core/models/query-models/query-params.model";
 import {QueryResultsModel} from "../../content/pages/components/users/_core/models/query-models/query-results.model";
 
-const API_CUSTOMERS_URL = `${environment.server_addr}/api/users/all`;
+const API_CUSTOMERS_URL = `${environment.server_addr}/api/v1/users`;
 
 @Injectable()
 export class UsersService {

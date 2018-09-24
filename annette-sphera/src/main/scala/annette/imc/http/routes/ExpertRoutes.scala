@@ -9,7 +9,7 @@ import io.circe._
 import io.circe.generic.auto._
 import io.circe.syntax._
 import annette.core.exception.AnnetteException
-import annette.core.services.authentication.SessionData
+import annette.core.services.authentication.Session
 import annette.imc.user.model.UserRoled
 
 import scala.util.{ Failure, Success }
@@ -18,7 +18,7 @@ import annette.imc.utils.Implicits._
 trait ExpertRoutes { self: APIContext with API =>
 
   private val add = (path("add" / JavaUUID / JavaUUID) & get & auth) {
-    (apId, expertId, sessionData: SessionData) =>
+    (apId, expertId, sessionData: Session) =>
       {
         val userFuture = getUserRoled(sessionData.userId).mapTo[Option[UserRoled]]
 
@@ -48,7 +48,7 @@ trait ExpertRoutes { self: APIContext with API =>
   }
 
   private val remove = (path("remove" / JavaUUID / JavaUUID) & get & auth) {
-    (apId, expertId, sessionData: SessionData) =>
+    (apId, expertId, sessionData: Session) =>
       {
         val userFuture = getUserRoled(sessionData.userId).mapTo[Option[UserRoled]]
 

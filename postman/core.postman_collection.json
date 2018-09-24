@@ -1,0 +1,57 @@
+{
+	"variables": [],
+	"info": {
+		"name": "core",
+		"_postman_id": "045597e1-7382-acdb-fa37-21a48e536b48",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "login",
+			"request": {
+				"url": "http://localhost:9000/auth/api/login",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "X-Tenant",
+						"value": "IMC",
+						"description": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"login\":\"valery.lobachev@gmail.com\",\n\t\"password\":\"abc\",\n\t\"rememberMe\":false,\n\t\"selectTenant\": false,\n\t\"tenant\": \"IMC\",\n\t\"application\": \"IMC\"\n}"
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
+			"name": "list users",
+			"request": {
+				"url": "http://localhost:9000/api/v1/users/",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJjMmUwMWZkYi01ZDAwLTQ4YWQtOTllZS0yMTZlZTVlNTAyZDQiLCJVaWQiOiJkOGY2OWYwNS04NjJkLTRjNjMtYjI4NS01Y2NhMTYwNGQ5ZjgiLCJUaWQiOiJJTUMiLCJBaWQiOiJJTUMiLCJMaWQiOiJSVSJ9.HnKwLrE3B-3PYqEL85zoQzRtj2P2bMCeuwIPESNeCd4",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n \"user\": {\n  \"lastname\": \"david\",\n  \"firstname\": \"david\",\n  \"middlename\": \"david\",\n  \"email\": \"it@kantemirov.ru\",\n  \"phone\": \"89166633683\"\n },\n \"password\": \"flexer123\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

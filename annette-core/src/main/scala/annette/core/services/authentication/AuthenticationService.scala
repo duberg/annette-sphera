@@ -74,16 +74,16 @@ object AuthenticationService {
    */
   case class Authenticate(jwtToken: String) extends Message
 
-  case class Authenticated(sessionData: SessionData) extends Response
+  case class Authenticated(sessionData: Session) extends Response
   case class AuthenticationFailed() extends Response
 
   case class UpdateLastOpTimestamp(
     sessionId: UUID) extends Message
 
-  case class GetApplicationState(maybeSessionData: Option[SessionData]) extends Message
+  case class GetApplicationState(maybeSessionData: Option[Session]) extends Message
 
   case class SetApplicationState(
-    sessionData: SessionData,
+    sessionData: Session,
     tenantId: Tenant.Id,
     applicationId: Application.Id,
     languageId: Language.Id)

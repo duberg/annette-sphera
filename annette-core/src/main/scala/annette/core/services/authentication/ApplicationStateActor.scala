@@ -50,7 +50,7 @@ class ApplicationStateActor(
       setApplicationState(sessionData, tenantId, applicationId, languageId) pipeTo sender
   }
 
-  def getApplicationState(maybeSessionData: Option[SessionData]): Future[ApplicationState] = {
+  def getApplicationState(maybeSessionData: Option[Session]): Future[ApplicationState] = {
     maybeSessionData
       .map {
         sessionData =>
@@ -88,7 +88,7 @@ class ApplicationStateActor(
   }
 
   def setApplicationState(
-    sessionData: SessionData,
+    sessionData: Session,
     tenantId: Tenant.Id,
     applicationId: Application.Id,
     languageId: Language.Id): Future[ApplicationState] = {

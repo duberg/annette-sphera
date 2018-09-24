@@ -5,7 +5,7 @@ import akka.http.scaladsl.server.Directive1
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import annette.core.CoreModule
-import annette.core.services.authentication.SessionData
+import annette.core.services.authentication.Session
 import annette.imc.ImcContext
 import annette.imc.notification.NotificationService
 
@@ -14,7 +14,7 @@ import scala.concurrent.duration._
 trait APIContext {
   val coreModule: CoreModule
   val ctx: ImcContext
-  val auth: Directive1[SessionData]
+  val auth: Directive1[Session]
   val imcUserActor: ActorRef
   val apsActor: ActorRef
   val notificationService: NotificationService

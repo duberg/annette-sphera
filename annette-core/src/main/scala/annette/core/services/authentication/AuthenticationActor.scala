@@ -61,7 +61,7 @@ class AuthenticationActor(
           future.failed.foreach { _ => requestor ! AuthenticationService.AuthenticationFailed() }
       }
   }
-  private def validateSession(sessionData: SessionData): Future[OpenSession] = {
+  private def validateSession(sessionData: Session): Future[OpenSession] = {
     for {
       openSessionOpt <- sessionDao.getOpenSessionById(sessionData.sessionId)
     } yield {
@@ -75,7 +75,7 @@ class AuthenticationActor(
     }
   }
 
-  private def validateAssignments(session: OpenSession, sessionData: SessionData) = {
+  private def validateAssignments(session: OpenSession, sessionData: Session) = {
     val tenantId = sessionData.tenantId
     val applicationId = sessionData.applicationId
     for {

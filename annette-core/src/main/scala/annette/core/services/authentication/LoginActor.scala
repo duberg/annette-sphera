@@ -114,7 +114,7 @@ class LoginActor(
       // 8. Если все проверки прошли создаём сессию:
       openSession <- createOpenSession(tenant, user, application, language, msg.loginData.rememberMe, msg.ip)
     } yield {
-      val sessionData = SessionData(
+      val sessionData = Session(
         openSession.id,
         openSession.userId,
         openSession.tenantId,

@@ -9,7 +9,7 @@
   * ***************************************************************************************/
 package annette.core.services.authentication.jwt
 
-import annette.core.services.authentication.SessionData
+import annette.core.services.authentication.Session
 import io.igl.jwt._
 
 import scala.util.Success
@@ -18,7 +18,7 @@ trait JwtHelper {
 
   val secret: String
 
-  def decodeSessionData(token: String): Option[SessionData] = {
+  def decodeSessionData(token: String): Option[Session] = {
     val decodedTry = DecodedJwt.validateEncodedJwt(
       token, // An encoded jwt as a string
       secret, // The key to validate the signature against
@@ -35,7 +35,7 @@ trait JwtHelper {
           tid <- decoded.getClaim[Tid]
           aid <- decoded.getClaim[Aid]
           lid <- decoded.getClaim[Lid]
-        } yield SessionData(
+        } yield Session(
           sid.value,
           uid.value,
           tid.value,
@@ -47,7 +47,7 @@ trait JwtHelper {
     }
   }
 
-  def encodeSessionData(sessionData: SessionData): String = {
+  def encodeSessionData(sessionData: Session): String = {
     val data = Seq(
       Sid(sessionData.sessionId),
       Uid(sessionData.userId),

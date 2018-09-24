@@ -11,7 +11,7 @@ import akka.util.ByteString
 import annette.core.CoreModule
 import annette.core.akkaguice.AkkaModule
 import annette.core.server.AnnetteServerModule
-import annette.core.services.authentication.SessionData
+import annette.core.services.authentication.Session
 import annette.core.test.InMemoryCleanup
 import annette.imc.http.ImcApi
 import annette.imc.model.ApFile.FileType
@@ -44,9 +44,9 @@ class ImcApiSpec extends WordSpec
 
   val ctx = ImcContext(system, ConfigFactory.load(), System.getProperty("java.io.tmpdir"), getUserRoled(system.dispatcher))
 
-  val sd: SessionData = SessionData(UUID.randomUUID(), UUID.randomUUID(), "IBM", "imc", "Ru")
+  val sd: Session = Session(UUID.randomUUID(), UUID.randomUUID(), "IBM", "imc", "Ru")
 
-  val authent: Directive1[SessionData] = provide(sd)
+  val authent: Directive1[Session] = provide(sd)
 
   val injector = Guice.createInjector(new AkkaModule())
 

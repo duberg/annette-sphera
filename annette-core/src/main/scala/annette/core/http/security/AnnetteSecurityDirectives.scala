@@ -14,7 +14,7 @@ import akka.http.scaladsl.server.{ AuthenticationFailedRejection, Directive, Dir
 import akka.http.scaladsl.util.FastFuture
 import akka.pattern.ask
 import akka.util.Timeout
-import annette.core.services.authentication.{ AuthenticationService, SessionData }
+import annette.core.services.authentication.{ AuthenticationService, Session }
 import com.typesafe.config.Config
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -43,7 +43,7 @@ class AnnetteSecurityDirectives @Inject() (
 
   val log = Logging(system, this)
 
-  private def tokenValidation(maybeJwtToken: Option[String]): Directive[Tuple1[Option[SessionData]]] = {
+  private def tokenValidation(maybeJwtToken: Option[String]): Directive[Tuple1[Option[Session]]] = {
     onComplete(getAndValidateSessionData(maybeJwtToken)).flatMap {
       case Success(sessionDataOpt) =>
         provide(sessionDataOpt)
@@ -52,7 +52,7 @@ class AnnetteSecurityDirectives @Inject() (
     }
   }
 
-  private def fakeTokenValidation(maybeJwtToken: Option[String]): Directive[Tuple1[Option[SessionData]]] = {
+  private def fakeTokenValidation(maybeJwtToken: Option[String]): Directive[Tuple1[Option[Session]]] = {
     log.warning("FakeTokenValidation has been used.")
     val (sessionId, userId, tenantId, applicationId, languageId) = maybeJwtToken.map {
       token =>
@@ -65,7 +65,7 @@ class AnnetteSecurityDirectives @Inject() (
         (sessionId, userId, tenantId, applicationId, languageId)
     }.getOrElse((UUID.randomUUID(), debugUserId, debugTenantId, debugApplicationId, debugLanguageId))
     if (userId.isDefined && tenantId.isDefined && applicationId.isDefined && languageId.isDefined) {
-      provide(Some(SessionData(
+      provide(Some(Session(
         sessionId = sessionId,
         userId = userId.get,
         tenantId = tenantId.get,
@@ -74,27 +74,24 @@ class AnnetteSecurityDirectives @Inject() (
     } else provide(None)
   }
 
-  val maybeAuthenticated: Directive1[Option[SessionData]] = optionalHeaderValueByName("Authorization")
+  private val authReject = reject(
+    AuthenticationFailedRejection.apply(
+      AuthenticationFailedRejection.CredentialsMissing,
+      HttpChallenge("Auth", Some("Annette"))))
+
+  val authOpt: Directive1[Option[Session]] = optionalHeaderValueByName("Authorization")
     .flatMap {
       maybeJwtToken =>
         if (debugMode) fakeTokenValidation(maybeJwtToken)
         else tokenValidation(maybeJwtToken)
     }
 
-  val authenticated: Directive1[SessionData] = maybeAuthenticated
-    .flatMap {
-      case Some(sessionData) =>
-        provide(sessionData)
-      case _ =>
-        authReject
-    }
+  val auth: Directive1[Session] = authOpt.flatMap {
+    case Some(sessionData) => provide(sessionData)
+    case _ => authReject
+  }
 
-  private val authReject = reject(
-    AuthenticationFailedRejection.apply(
-      AuthenticationFailedRejection.CredentialsMissing,
-      HttpChallenge("Auth", Some("Annette"))))
-
-  private def getAndValidateSessionData(maybeJwtToken: Option[String]): Future[Option[SessionData]] = {
+  private def getAndValidateSessionData(maybeJwtToken: Option[String]): Future[Option[Session]] = {
     maybeJwtToken
       .map {
         token =>

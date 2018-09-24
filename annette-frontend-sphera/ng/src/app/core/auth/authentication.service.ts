@@ -16,7 +16,7 @@ import {UserService} from "../services/user.service";
 
 @Injectable()
 export class AuthenticationService implements AuthService {
-	API_URL = `${environment.server_addr}/auth/api`;
+	API_URL = `${environment.server_addr}/api/v1/auth`;
 	API_ENDPOINT_LOGIN = '/login';
 	API_ENDPOINT_REFRESH = '/refresh';
 	API_ENDPOINT_REGISTER = '/register';

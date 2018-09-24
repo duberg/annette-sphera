@@ -10,10 +10,10 @@ import annette.core.domain.application.dao.{ApplicationDao, ApplicationDb}
 import annette.core.domain.language.dao.{LanguageDao, LanguageDb}
 import annette.core.domain.tenancy.UserService
 import annette.core.domain.tenancy.dao._
-import annette.core.http.routes.{AuthRoutes, UserRoutes}
+import annette.core.http.routes.{AuthRoutes, UsersRoutes}
 import annette.core.http.security.AnnetteSecurityDirectives
 import annette.core.modularize.AnnetteHttpModule
-import annette.core.services.authentication.AuthenticationService
+import annette.core.services.authentication.{AuthenticationService, Session}
 import com.typesafe.config.Config
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
@@ -35,7 +35,7 @@ class CoreModule @Inject() (
                              val sessionDao: SessionDao,
                              val annetteSecurityDirectives: AnnetteSecurityDirectives,
                              @Named(AuthenticationService.name) val authenticationService: ActorRef,
-  ) extends AnnetteHttpModule with AuthRoutes with UserRoutes {
+  ) extends AnnetteHttpModule with AuthRoutes with UsersRoutes {
   System.setProperty("logback.configurationFile", "conf/logback.xml")
 
   implicit val sys: ActorSystem = system
@@ -48,7 +48,9 @@ class CoreModule @Inject() (
 
   override def init(): Future[Unit] = Future.successful()
 
-  //implicit val routingSettings: RoutingSettings = RoutingSettings(config)
+  implicit val routingSettings: RoutingSettings = RoutingSettings(config)
 
-  override def routes = authRoutes ~ userRoutes
+  override def routes = Route.seal(pathPrefix("api" / "v1") {
+     authRoutes ~ userRoutes
+  })
 }

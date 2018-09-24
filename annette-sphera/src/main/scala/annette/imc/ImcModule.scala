@@ -56,7 +56,7 @@ class ImcModule extends AnnetteHttpModule {
 
   override def routes = {
     val ctx = ImcContext(coreModule.system, coreModule.config, "file-storage", getUserRoled(coreModule.system.dispatcher))
-    val imcApi = new ImcApi(coreModule, ctx, coreModule.annetteSecurityDirectives.authenticated)
+    val imcApi = new ImcApi(coreModule, ctx, coreModule.annetteSecurityDirectives.auth)
     imcApi.routes
   }
 
