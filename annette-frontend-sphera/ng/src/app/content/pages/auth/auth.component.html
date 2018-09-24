@@ -33,15 +33,15 @@
 		<!--begin::Head-->
 		<div class="m-login__head">
 			<span translate="AUTH.GENERAL.NO_ACCOUNT">Don't have an account?</span>
-			<a href="javascript:;" (click)="register()" class="m-link m--font-danger" translate="AUTH.GENERAL.SIGNUP_BUTTON">Sign Up</a>
+			<a href="javascript:;" (click)="signUp()" class="m-link m--font-danger" translate="AUTH.GENERAL.SIGNUP_BUTTON">Sign Up</a>
 		</div>
 		<!--end::Head-->
 
 		<!--begin::Body-->
 		<div class="m-login__body">
-			<m-login *ngIf="action === 'login'" [(action)]="action"></m-login>
+			<m-login *ngIf="action === 'signIn'" [(action)]="action"></m-login>
 
-			<m-register *ngIf="action === 'register'" [(action)]="action"></m-register>
+			<m-register *ngIf="action === 'signUp'" [(action)]="action"></m-register>
 
 			<m-forgot-password *ngIf="action === 'forgot-password'" [(action)]="action"></m-forgot-password>
 		</div>

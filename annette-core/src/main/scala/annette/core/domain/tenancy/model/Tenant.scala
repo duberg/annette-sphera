@@ -17,17 +17,17 @@ import annette.core.domain.language.model.Language
  * Содержит основные реквизиты организации
  *
  * @param name          Наименование
- * @param applicationId Приложение по умолчанию
+ * @param defaultApplicationId Приложение по умолчанию
  * @param applications  Приложения присвоенные организации
- * @param languageId    Язык по умолчанию
+ * @param defaultLanguageId    Язык по умолчанию
  * @param languages     Языки присвоенные организации
  * @param id            Уникальный идентификатор
  */
 case class Tenant(
   name: String,
-  applicationId: Application.Id,
+  defaultApplicationId: Application.Id,
   applications: Set[Application.Id],
-  languageId: Language.Id,
+  defaultLanguageId: Language.Id,
   languages: Set[Language.Id],
   id: Tenant.Id)
 

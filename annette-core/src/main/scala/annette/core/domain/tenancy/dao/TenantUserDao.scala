@@ -116,8 +116,8 @@ class TenantUserDao @Inject() (
           val langs = tenant.languages
             .map(a => langMap.get(a))
             .flatten.toSeq
-          val lang = langMap.get(tenant.languageId).get
-          TenantData(tenant.name, apps, lang, langs, appMap.get(tenant.applicationId).get, tenant.id)
+          val lang = langMap.get(tenant.defaultLanguageId).get
+          TenantData(tenant.name, apps, lang, langs, appMap.get(tenant.defaultApplicationId).get, tenant.id)
       }
     }
 

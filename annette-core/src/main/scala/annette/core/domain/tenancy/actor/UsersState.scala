@@ -106,7 +106,7 @@ case class UsersState(
       middleName = x.middleName.getOrElse(user.middleName),
       email = x.email.getOrElse(user.email),
       phone = x.phone.getOrElse(user.phone),
-      locale = x.locale.getOrElse(user.locale)
+      language = x.language.getOrElse(user.language)
     )
 
     copy(

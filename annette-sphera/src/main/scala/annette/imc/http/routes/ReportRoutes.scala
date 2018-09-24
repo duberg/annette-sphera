@@ -39,7 +39,7 @@ trait ReportRoutes
             val format = ReportFormatType(x)
             val f = for {
               user <- coreModule.userDao.getById(userId).map(_.get)
-              x <- reportService.generate(reportId, apId, userId, Map.empty, format, user.locale.getOrElse(""))
+              x <- reportService.generate(reportId, apId, userId, Map.empty, format, user.language.getOrElse(""))
             } yield x
             onComplete(f) {
               case Success(source: Source[ByteString, Future[IOResult]]) =>
@@ -66,7 +66,7 @@ trait ReportRoutes
             val format = ReportFormatType(x)
             val f = for {
               user <- coreModule.userDao.getById(userId).map(_.get)
-              x <- reportService.generate(reportId, apId, userId, parameters, format, user.locale.getOrElse(""))
+              x <- reportService.generate(reportId, apId, userId, parameters, format, user.language.getOrElse(""))
             } yield x
             onComplete(f) {
               case Success(source) =>
@@ -91,7 +91,7 @@ trait ReportRoutes
           val format = ReportFormatType("pdf")
           val f = for {
             user <- coreModule.userDao.getById(expertId).map(_.get)
-            x <- reportService.generate(reportId, apId, expertId, Map.empty, format, user.locale.getOrElse(""))
+            x <- reportService.generate(reportId, apId, expertId, Map.empty, format, user.language.getOrElse(""))
           } yield x
           onComplete(f) {
             case Success(source: Source[ByteString, Future[IOResult]]) =>

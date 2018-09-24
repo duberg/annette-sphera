@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthComponent } from './auth.component';
-import { LoginComponent } from './login/login.component';
+import { SigninComponent } from './signin/signin.component';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { RegisterComponent } from './register/register.component';
+import { SignupComponent } from './signup/signup.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import {
 	MatButtonModule,
@@ -36,8 +36,8 @@ import { AuthNoticeComponent } from './auth-notice/auth-notice.component';
 	providers: [],
 	declarations: [
 		AuthComponent,
-		LoginComponent,
-		RegisterComponent,
+		SigninComponent,
+		SignupComponent,
 		ForgotPasswordComponent,
 		AuthNoticeComponent
 	]

@@ -110,7 +110,7 @@ trait StatusRoutes
                       }
                     }"
 
-                    val applicantName = applicant(ap, u.locale.getOrElse(""))
+                    val applicantName = applicant(ap, u.language.getOrElse(""))
 
                     val p = Map(
                       "Id" -> apId,
@@ -124,7 +124,7 @@ trait StatusRoutes
                     notificationService.addNotificationAsync(MailNotification.ToReview(
                       id = UUID.randomUUID(),
                       email = email,
-                      language = u.locale.getOrElse(""),
+                      language = u.language.getOrElse(""),
                       templateParameters = p))
                   }
 
@@ -132,7 +132,7 @@ trait StatusRoutes
                     notificationService.addNotificationAsync(SmsNotification.ToReview(
                       id = UUID.randomUUID(),
                       phone = phone,
-                      language = u.locale.getOrElse("")))
+                      language = u.language.getOrElse("")))
                   }
               }
             }
@@ -197,7 +197,7 @@ trait StatusRoutes
                       }
                     }"
 
-                    val applicantName = applicant(ap, u.locale.getOrElse(""))
+                    val applicantName = applicant(ap, u.language.getOrElse(""))
 
                     val p = Map(
                       "Id" -> apId,
@@ -211,14 +211,14 @@ trait StatusRoutes
                     notificationService.addNotificationAsync(MailNotification.ToReview(
                       id = UUID.randomUUID(),
                       email = email,
-                      language = u.locale.getOrElse(""),
+                      language = u.language.getOrElse(""),
                       templateParameters = p))
                   }
                   u.phone.foreach { phone =>
                     notificationService.addNotificationAsync(SmsNotification.ToReview(
                       id = UUID.randomUUID(),
                       phone = phone,
-                      language = u.locale.getOrElse("")))
+                      language = u.language.getOrElse("")))
                   }
               }
 
@@ -387,7 +387,7 @@ trait StatusRoutes
               ap <- getApById(apId)
             } yield {
               experts.foreach { u =>
-                val language = u.locale
+                val language = u.language
 
                 u.email.foreach { email =>
                   val expert = s"${u.lastName} ${u.firstName.take(1)}.${
@@ -403,7 +403,7 @@ trait StatusRoutes
                     }
                   }"
 
-                  val applicantName = applicant(ap, u.locale.getOrElse("RU"))
+                  val applicantName = applicant(ap, u.language.getOrElse("RU"))
 
                   val x = for (user <- allUsers) yield {
                     val roles = allUserRole.find(_.userId == user.id).map(_.roles)

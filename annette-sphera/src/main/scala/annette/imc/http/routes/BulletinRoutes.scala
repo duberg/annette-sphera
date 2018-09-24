@@ -43,7 +43,7 @@ trait BulletinRoutes
 
             val f = for {
               user <- coreModule.userDao.getById(userId).map(_.get) if user.phone.nonEmpty
-              x <- notificationService.addSmsVerificationVoted(user.phone.get, apId, bulletin, user.locale.getOrElse(""))
+              x <- notificationService.addSmsVerificationVoted(user.phone.get, apId, bulletin, user.language.getOrElse(""))
             } yield x
             onComplete(f) {
               case Success(x) => complete(x.id)

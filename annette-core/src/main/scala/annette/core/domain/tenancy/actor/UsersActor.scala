@@ -39,7 +39,7 @@ class UsersActor(val id: String, val initState: UsersState) extends PersistentSt
         url = x.url,
         description = x.description,
         phone = x.phone,
-        locale = x.locale,
+        language = x.language,
         registeredDate = ZonedDateTime.now(),
         //tenants = x.tenants,
         //applications = x.applications,

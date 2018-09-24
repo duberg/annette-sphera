@@ -1,7 +1,7 @@
 package annette.core.domain.tenancy.model
 
 import java.time.ZonedDateTime
-import java.util.UUID
+import java.util.{ Locale, UUID }
 
 import annette.core.domain.application.model.Application
 import annette.core.domain.authorization.model.Role
@@ -19,7 +19,7 @@ import annette.core.domain.authorization.model.Role
  * @param url URL of the user.
  * @param description Description of the user.
  * @param phone
- * @param locale Locale for the user.
+ * @param language Locale for the user.
  * @param registeredDate Registration date for the user.
  * @param roles Roles assigned to the user.
  * @param password Password for the user (never included).
@@ -37,7 +37,7 @@ case class User(
   url: Option[String],
   description: Option[String],
   phone: Option[String],
-  locale: Option[String],
+  language: Option[String],
   registeredDate: ZonedDateTime,
   //tenants: Set[Tenant.Id],
   //applications: Map[Application.Id, Set[Tenant.Id]],
@@ -51,7 +51,16 @@ case class User(
   additionalTel: Option[String],
   additionalMail: Option[String],
   meta: Map[String, String],
-  deactivated: Boolean)
+  deactivated: Boolean) {
+}
+
+case class SignUpUser(
+  email: String,
+  firstName: String,
+  lastName: String,
+  password: String,
+  language: Option[String],
+  tenants: Set[Tenant.Id])
 
 case class CreateUser(
   username: Option[String],
@@ -63,7 +72,7 @@ case class CreateUser(
   url: Option[String],
   description: Option[String],
   phone: Option[String],
-  locale: Option[String],
+  language: Option[String],
   //tenants: Set[Tenant.Id],
   //applications: Map[Application.Id, Set[Tenant.Id]],
   //roles: Map[Role.Id, Set[Tenant.Id]],
@@ -89,7 +98,7 @@ case class UpdateUser(
   url: Option[Option[String]],
   description: Option[Option[String]],
   phone: Option[Option[String]],
-  locale: Option[Option[String]],
+  language: Option[Option[String]],
   //tenants: Option[Set[Tenant.Id]],
   //applications: Option[Map[Application.Id, Set[Tenant.Id]]],
   //roles: Option[Map[Role.Id, Set[Tenant.Id]]],

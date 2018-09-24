@@ -91,7 +91,7 @@ class LoginActor(
       _ = if (!tenant.applications.contains(applicationId)) throw new ApplicationNotAssignedToTenantException()
 
       // Проверки языка в организации
-      languageId = msg.loginData.language.getOrElse(tenant.languageId)
+      languageId = msg.loginData.language.getOrElse(tenant.defaultLanguageId)
       _ = if (!tenant.languages.contains(languageId)) throw new LanguageNotAssignedToTenantException()
 
       // 6. Проверки пользователя в организации:

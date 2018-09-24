@@ -24,7 +24,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	// tslint:disable-next-line:max-line-length
 	classses: any = 'm-grid m-grid--hor m-grid--root m-page';
 
-	@Input() action = 'login';
+	@Input() action = 'signIn';
 	today: number = Date.now();
 
 	constructor(
@@ -49,7 +49,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 		this.layoutConfigService.reloadSavedConfig();
 	}
 
-	register() {
-		this.action = 'register';
+	signUp() {
+		this.action = 'signUp';
 	}
 }

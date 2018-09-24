@@ -37,11 +37,13 @@ export const locale = {
 			REGISTER: {
 				TITLE: 'Sign Up',
 				DESC: 'Enter your details to create your account',
-				SUCCESS: 'Your account has been successfuly registered. Please use your registered account to login.'
+				SUCCESS: 'Your account has been successfuly registered. Please use your registered account to login.',
+				FAILURE: 'Internal error',
 			},
 			INPUT: {
 				EMAIL: 'Email',
-				FULLNAME: 'Fullname',
+				FIRSTNAME: 'FirstName',
+				LASTNAME: 'LastName',
 				PASSWORD: 'Password',
 				CONFIRM_PASSWORD: 'Confirm Password',
 			},

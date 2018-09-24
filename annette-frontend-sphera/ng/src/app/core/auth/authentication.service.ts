@@ -13,13 +13,15 @@ import {Credential2} from "./credential2";
 import * as HttpStatus from "http-status-codes";
 import { environment } from 'environments/environment';
 import {UserService} from "../services/user.service";
+import {SignUpUser} from "../models/user.model";
+import {UNAUTHORIZED} from "http-status-codes";
 
 @Injectable()
 export class AuthenticationService implements AuthService {
-	API_URL = `${environment.server_addr}/api/v1/auth`;
-	API_ENDPOINT_LOGIN = '/login';
+	API_URL = `${environment.server_addr}/api/auth`;
+	API_ENDPOINT_SIGNIN = '/signin';
+	API_ENDPOINT_SIGNUP = '/signup';
 	API_ENDPOINT_REFRESH = '/refresh';
-	API_ENDPOINT_REGISTER = '/register';
 
 	public onCredentialUpdated$: Subject<AccessData>;
 
@@ -86,7 +88,7 @@ export class AuthenticationService implements AuthService {
 	 * @returns {boolean}
 	 */
 	public refreshShouldHappen(response: HttpErrorResponse): boolean {
-		return response.status === 401;
+		return response.status === UNAUTHORIZED;
 	}
 
 	/**
@@ -104,25 +106,9 @@ export class AuthenticationService implements AuthService {
 	 * @param {Credential} credential
 	 * @returns {Observable<any>}
 	 */
-	public login(credential: Credential): Observable<any> {
-		return this.http.get<AccessData>(this.API_URL + this.API_ENDPOINT_LOGIN + '?' + this.util.urlParam(credential)).pipe(
-			map((result: any) => {
-				if (result instanceof Array) {
-					return result.pop();
-				}
-				return result;
-			}),
-			tap(this.saveAccessData.bind(this)),
-			catchError(this.handleError('login', []))
-		);
-	}
-
-	public login2(credential: Credential2): Observable<any> {
-		//const headers = new HttpHeaders({'Content-Type':'application/json; charset=utf-8'});
-		const b = JSON.stringify(credential);
-		//const h = { headers: headers };
-
-		return this.http.post<AccessData>(this.API_URL + this.API_ENDPOINT_LOGIN, b).pipe(
+	public signIn(credential: Credential2): Observable<any> {
+		const x = JSON.stringify(credential);
+		return this.http.post<AccessData>(this.API_URL + this.API_ENDPOINT_SIGNIN, x).pipe(
 			map((result: any) => {
 				console.log("result: " + result);
 				if (result instanceof Array) {
@@ -131,7 +117,7 @@ export class AuthenticationService implements AuthService {
 				return result;
 			}),
 			tap(this.saveAccessData.bind(this)),
-			catchError(this.handleError('login', []))
+			catchError(this.handleError('signIn'))
 		);
 	}
 
@@ -141,9 +127,8 @@ export class AuthenticationService implements AuthService {
 	 * @param operation - name of the operation that failed
 	 * @param result - optional value to return as the observable result
 	 */
-	private handleError<T>(operation = 'operation', result?: any) {
-		return (error: HttpErrorResponse): Observable<any> => {
-
+	private handleError<T>(operation = 'operation', result?: any): (error: HttpErrorResponse) => Observable<number> {
+		return (error: HttpErrorResponse): Observable<number> => {
 			return from([error.status]);
 
 			// if (error.status == HttpStatus.UNAUTHORIZED) {
@@ -173,7 +158,7 @@ export class AuthenticationService implements AuthService {
 	 * @private
 	 * @param {AccessData} accessData
 	 */
-	private saveAccessData(accessData: AccessData) {
+	private saveAccessData(accessData: AccessData): void {
 		if (typeof accessData !== 'undefined') {
 			this.tokenStorage
 				.setAccessToken(accessData.jwtToken)
@@ -186,21 +171,9 @@ export class AuthenticationService implements AuthService {
 		}
 	}
 
-	/**
-	 * Submit registration request
-	 * @param {Credential} credential
-	 * @returns {Observable<any>}
-	 */
-	public register(credential: Credential): Observable<any> {
-		// dummy token creation
-		credential = Object.assign({}, credential, {
-			accessToken: 'access-token-' + Math.random(),
-			refreshToken: 'access-token-' + Math.random(),
-			roles: ['USER'],
-		});
-		return this.http.post(this.API_URL + this.API_ENDPOINT_REGISTER, credential)
-			.pipe(catchError(this.handleError('register', []))
-		);
+	public signUp(x: SignUpUser): Observable<any> {
+		return this.http.post(this.API_URL + this.API_ENDPOINT_SIGNUP, x)
+			.pipe(catchError(this.handleError('signUp')));
 	}
 
 	/**
@@ -209,7 +182,7 @@ export class AuthenticationService implements AuthService {
 	 * @returns {Observable<any>}
 	 */
 	public requestPassword(credential: Credential): Observable<any> {
-		return this.http.get(this.API_URL + this.API_ENDPOINT_LOGIN + '?' + this.util.urlParam(credential))
+		return this.http.get(this.API_URL + this.API_ENDPOINT_SIGNIN + '?' + this.util.urlParam(credential))
 			.pipe(catchError(this.handleError('forgot-password', []))
 		);
 	}

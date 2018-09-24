@@ -4,7 +4,7 @@ import {
 	Input,
 	Output,
 	ViewChild,
-	ElementRef
+	ElementRef, ChangeDetectorRef
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { AuthenticationService } from '../../../../core/auth/authentication.service';
@@ -13,14 +13,21 @@ import * as objectPath from 'object-path';
 import { AuthNoticeService } from '../../../../core/auth/auth-notice.service';
 import { SpinnerButtonOptions } from '../../../partials/content/general/spinner-button/button-options.interface';
 import { TranslateService } from '@ngx-translate/core';
+import {SignUpUser} from "../../../../core/models/user.model";
 
 @Component({
 	selector: 'm-register',
-	templateUrl: './register.component.html',
-	styleUrls: ['./register.component.scss']
+	templateUrl: './signup.component.html',
+	styleUrls: ['./signup.component.scss']
 })
-export class RegisterComponent implements OnInit {
-	public model: any = { email: '' };
+export class SignupComponent implements OnInit {
+	public model: SignUpUser = {
+		email: '',
+		lastName: '',
+		firstName: '',
+		password: ''
+	};
+
 	@Input() action: string;
 	@Output() actionChange = new Subject<string>();
 	public loading = false;
@@ -40,25 +47,31 @@ export class RegisterComponent implements OnInit {
 	constructor(
 		private authService: AuthenticationService,
 		public authNoticeService: AuthNoticeService,
-		private translate: TranslateService
+		private translate: TranslateService,
+		private cdr: ChangeDetectorRef
 	) {}
 
 	ngOnInit() {}
 
-	loginPage(event: Event) {
+	backToSignInPage(event: Event) {
 		event.preventDefault();
-		this.action = 'login';
+		this.action = 'signIn';
 		this.actionChange.next(this.action);
 	}
 
 	submit() {
 		this.spinner.active = true;
 		if (this.validate(this.f)) {
-			this.authService.register(this.model).subscribe(response => {
-				this.action = 'login';
-				this.actionChange.next(this.action);
+			this.authService.signUp(this.model).subscribe(response => {
+				if (response !== 'undefined' && !(Number.isInteger(response))) {
+					this.action = 'signIn';
+					this.actionChange.next(this.action);
+					this.authNoticeService.setNotice(this.translate.instant('AUTH.REGISTER.SUCCESS'), 'success');
+				}
+				else this.authNoticeService.setNotice(this.translate.instant('AUTH.REGISTER.FAILURE'), 'error');
+
 				this.spinner.active = false;
-				this.authNoticeService.setNotice(this.translate.instant('AUTH.REGISTER.SUCCESS'), 'success');
+				this.cdr.detectChanges();
 			});
 		}
 	}
@@ -69,10 +82,13 @@ export class RegisterComponent implements OnInit {
 		}
 
 		this.errors = [];
-		if (objectPath.get(f, 'form.controls.fullname.errors.required')) {
-			this.errors.push(this.translate.instant('AUTH.VALIDATION.REQUIRED', {name: this.translate.instant('AUTH.INPUT.FULLNAME')}));
-		}
 
+		if (objectPath.get(f, 'form.controls.firstName.errors.required')) {
+			this.errors.push(this.translate.instant('AUTH.VALIDATION.REQUIRED', {name: this.translate.instant('AUTH.INPUT.FIRSTNAME')}));
+		}
+		if (objectPath.get(f, 'form.controls.lastName.errors.required')) {
+			this.errors.push(this.translate.instant('AUTH.VALIDATION.REQUIRED', {name: this.translate.instant('AUTH.INPUT.LASTNAME')}));
+		}
 		if (objectPath.get(f, 'form.controls.email.errors.email')) {
 			this.errors.push(this.translate.instant('AUTH.VALIDATION.INVALID', {name: this.translate.instant('AUTH.INPUT.EMAIL')}));
 		}

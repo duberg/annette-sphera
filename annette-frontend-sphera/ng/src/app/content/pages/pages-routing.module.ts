@@ -15,7 +15,7 @@ const routes: Routes = [
 			permissions: {
 				only: ['ADMIN', 'USER'],
 				except: ['GUEST'],
-				redirectTo: '/login'
+				redirectTo: '/signin'
 			}
 		},
 		children: [
@@ -70,7 +70,7 @@ const routes: Routes = [
 		]
 	},
 	{
-		path: 'login',
+		path: 'signin',
 		canActivate: [NgxPermissionsGuard],
 		loadChildren: './auth/auth.module#AuthModule',
 		data: {

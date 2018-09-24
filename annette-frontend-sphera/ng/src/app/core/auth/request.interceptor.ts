@@ -29,7 +29,7 @@ export class RequestInterceptor implements HttpInterceptor {
 		const r = request.clone({headers: h});
 		return next.handle(r).pipe(
 			catchError((err: HttpErrorResponse) => {
-				if (this.router.url !== '/login') {
+				if (this.router.url !== '/signin') {
 					if (err.status === UNAUTHORIZED) this.authService.logout(true);
 					else this.httpErrorHandler.handleError(err);
 				}

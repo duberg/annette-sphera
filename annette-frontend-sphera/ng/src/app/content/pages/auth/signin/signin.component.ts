@@ -20,11 +20,11 @@ import {log} from "util";
 
 @Component({
 	selector: 'm-login',
-	templateUrl: './login.component.html',
-	styleUrls: ['./login.component.scss'],
+	templateUrl: './signin.component.html',
+	styleUrls: ['./signin.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LoginComponent implements OnInit, OnDestroy {
+export class SigninComponent implements OnInit, OnDestroy {
 	public model: any = {
 		login: 'valery.lobachev@gmail.com',
 		password: 'abc',
@@ -62,7 +62,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 	submit() {
 		this.spinner.active = true;
 		if (this.validate(this.f)) {
-			this.authService.login2(this.model).subscribe(response => {
+			this.authService.signIn(this.model).subscribe(response => {
 				if (response !== 'undefined' && !(Number.isInteger(response))) {
 					this.router.navigate(['/']);
 				} else {

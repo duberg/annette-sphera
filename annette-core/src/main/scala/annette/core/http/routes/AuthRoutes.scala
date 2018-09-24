@@ -11,7 +11,8 @@ import annette.core.domain.application.model.Application
 import annette.core.domain.language.dao.LanguageDao
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.UserService
-import annette.core.domain.tenancy.model.{ CreateUser, Tenant, UpdateUser }
+import annette.core.domain.tenancy.dao.{ TenantDao, TenantUserDao, TenantUserRoleDao }
+import annette.core.domain.tenancy.model._
 import annette.core.exception.AnnetteException
 import annette.core.http.security.AnnetteSecurityDirectives
 import annette.core.services.authentication.{ ApplicationState, AuthenticationService, ForbiddenException }
@@ -19,11 +20,14 @@ import com.typesafe.config.Config
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import io.circe.java8.time.TimeInstances
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.{ Failure, Success }
 import scala.concurrent.duration._
 
 trait AuthRoutes extends Directives with AskSupport with TimeInstances {
+  val tenantDao: TenantDao
+  val tenantUserDao: TenantUserDao
+  val tenantUserRoleDao: TenantUserRoleDao
   val userDao: UserService
   val languageDao: LanguageDao
   val authenticationService: ActorRef
@@ -43,7 +47,7 @@ trait AuthRoutes extends Directives with AskSupport with TimeInstances {
     applicationId: Application.Id,
     languageId: Language.Id)
 
-  def login: Route = (path("login") & post) {
+  def signIn: Route = (path("signin") & post) {
     (entity(as[AuthenticationService.LoginData]) & extractClientIP) {
       (loginData, clientIp) =>
         val future = authenticationService
@@ -70,20 +74,55 @@ trait AuthRoutes extends Directives with AskSupport with TimeInstances {
     }
   }
 
-  def logout: Route = (path("logout") & post & authOpt) {
+  def signOut: Route = (path("signout") & post & authOpt) {
     case Some(sessionData) =>
       complete(authenticationService
         .ask(AuthenticationService.Logout(sessionData.sessionId))
         .mapTo[AuthenticationService.Response])
     case None =>
-      complete("logged out")
+      complete("signout")
   }
 
-  def register: Route = {
+  def signUp: Route = (path("signup") & post & entity(as[SignUpUser])) { x =>
+    def createUser = tenantDao.listIds.flatMap(tenantIds => {
+      if (x.tenants.isEmpty) throw new AnnetteException(s"empty tent")
+      val unknownTenants = (Set[Tenant.Id]() /: x.tenants)({
+        case (acc, tenantId) if x.tenants.contains(tenantId) => acc
+        case (acc, tenantId) => acc + tenantId
+      })
+      if (unknownTenants.nonEmpty) throw new AnnetteException(s"$unknownTenants")
+      else {
+        // todo: add email verification (aka account activation)
+        val createUser = CreateUser(
+          username = None,
+          displayName = Some(s"${x.lastName} ${x.firstName}"),
+          firstName = x.firstName,
+          lastName = x.lastName,
+          middleName = None,
+          email = Some(x.email),
+          url = None,
+          description = None,
+          phone = None,
+          language = None,
+          password = x.password,
+          avatarUrl = None,
+          sphere = None,
+          company = None,
+          position = None,
+          rank = None,
+          additionalTel = None,
+          additionalMail = None,
+          meta = Map.empty,
+          deactivated = true)
 
-    (path("register") & post & entity(as[CreateUser])) { x =>
-      complete(userDao.create(x))
-    } ~ (path("register") & post)(complete("ff"))
+        for {
+          x1 <- userDao.create(createUser)
+          x2 <- Future.sequence(x.tenants.map(tenantUserDao.create(_, x1.id)))
+          x3 <- Future.sequence(x.tenants.map(tenantId => tenantUserRoleDao.store(TenantUserRole(tenantId, x1.id, Set("user")))))
+        } yield x1
+      }
+    })
+    complete(createUser)
   }
 
   private def applicationStateRoutes = path("applicationState") {
@@ -149,7 +188,7 @@ trait AuthRoutes extends Directives with AskSupport with TimeInstances {
   }
 
   def authRoutes = pathPrefix("auth") {
-    login ~ logout ~ register ~ applicationStateRoutes ~ heartbeatRoute ~ languagesRoute
+    signIn ~ signOut ~ signUp ~ applicationStateRoutes ~ heartbeatRoute ~ languagesRoute
   }
 
 }

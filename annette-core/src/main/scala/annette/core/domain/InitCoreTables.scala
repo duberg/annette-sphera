@@ -151,9 +151,9 @@ class InitCoreTables @Inject() (
         val languages = opt(conf.getStringList("languages").asScala.toList).getOrElse(Set.empty[String])
         Tenant(
           name = opt(conf.getString("name")).getOrElse(""),
-          applicationId = opt(conf.getString("applicationId")).getOrElse(applications.head),
+          defaultApplicationId = opt(conf.getString("applicationId")).getOrElse(applications.head),
           applications = applications.toSet,
-          languageId = opt(conf.getString("languageId")).getOrElse(languages.head),
+          defaultLanguageId = opt(conf.getString("languageId")).getOrElse(languages.head),
           languages = languages.toSet,
           id = opt(conf.getString("id")).getOrElse("ID"))
     }
@@ -192,7 +192,7 @@ class InitCoreTables @Inject() (
           url = opt(conf.getString("url")),
           description = opt(conf.getString("description")),
           phone = opt(conf.getString("phone")),
-          locale = opt(conf.getString("locale")),
+          language = opt(conf.getString("locale")),
           //tenants = tenantsAndRoles.map(_._1).toSet,
           //applications = Map.empty,
           //roles = Map.empty,

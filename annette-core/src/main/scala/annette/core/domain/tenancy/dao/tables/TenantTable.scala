@@ -38,9 +38,9 @@ protected[dao] abstract class TenantTable extends Table[TenantTable, Tenant] wit
     insert
       .value(_.id, entity.id)
       .value(_.name, entity.name)
-      .value(_.applicationId, entity.applicationId)
+      .value(_.applicationId, entity.defaultApplicationId)
       .value(_.applications, entity.applications)
-      .value(_.languageId, entity.languageId)
+      .value(_.languageId, entity.defaultLanguageId)
       .value(_.languages, entity.languages)
       .future()
   }
