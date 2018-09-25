@@ -62,15 +62,18 @@ export class SigninComponent implements OnInit, OnDestroy {
 	submit() {
 		this.spinner.active = true;
 		if (this.validate(this.f)) {
-			this.authService.signIn(this.model).subscribe(response => {
-				if (response !== 'undefined' && !(Number.isInteger(response))) {
+			this.authService.signIn(this.model).subscribe(
+				response => {
 					this.router.navigate(['/']);
-				} else {
+					this.spinner.active = false;
+					this.cdr.detectChanges();
+				},
+				(error: Error) => {
 					this.authNoticeService.setNotice(this.translate.instant('AUTH.VALIDATION.INVALID_LOGIN'), 'error');
+					this.spinner.active = false;
+					this.cdr.detectChanges();
 				}
-				this.spinner.active = false;
-				this.cdr.detectChanges();
-			});
+			);
 		}
 	}
 

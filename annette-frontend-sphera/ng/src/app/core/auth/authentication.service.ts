@@ -109,15 +109,7 @@ export class AuthenticationService implements AuthService {
 	public signIn(credential: Credential2): Observable<any> {
 		const x = JSON.stringify(credential);
 		return this.http.post<AccessData>(this.API_URL + this.API_ENDPOINT_SIGNIN, x).pipe(
-			map((result: any) => {
-				console.log("result: " + result);
-				if (result instanceof Array) {
-					return result.pop();
-				}
-				return result;
-			}),
-			tap(this.saveAccessData.bind(this)),
-			catchError(this.handleError('signIn'))
+			tap(this.saveAccessData.bind(this))
 		);
 	}
 
@@ -173,7 +165,6 @@ export class AuthenticationService implements AuthService {
 
 	public signUp(x: SignUpUser): Observable<any> {
 		return this.http.post(this.API_URL + this.API_ENDPOINT_SIGNUP, x)
-			.pipe(catchError(this.handleError('signUp')));
 	}
 
 	/**

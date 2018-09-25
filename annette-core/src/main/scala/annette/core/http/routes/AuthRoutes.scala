@@ -7,6 +7,7 @@ import akka.http.scaladsl.server.{ Directives, Route }
 import akka.http.scaladsl.settings.RoutingSettings
 import akka.pattern.AskSupport
 import akka.util.Timeout
+import annette.core.{ RequiredValueNotProvided, TenantNotFoundException }
 import annette.core.domain.application.model.Application
 import annette.core.domain.language.dao.LanguageDao
 import annette.core.domain.language.model.Language
@@ -85,12 +86,14 @@ trait AuthRoutes extends Directives with AskSupport with TimeInstances {
 
   def signUp: Route = (path("signup") & post & entity(as[SignUpUser])) { x =>
     def createUser = tenantDao.listIds.flatMap(tenantIds => {
-      if (x.tenants.isEmpty) throw new AnnetteException(s"empty tent")
-      val unknownTenants = (Set[Tenant.Id]() /: x.tenants)({
-        case (acc, tenantId) if x.tenants.contains(tenantId) => acc
-        case (acc, tenantId) => acc + tenantId
-      })
-      if (unknownTenants.nonEmpty) throw new AnnetteException(s"$unknownTenants")
+      // if empty tenants
+      if (x.tenants.isEmpty) throw RequiredValueNotProvided("tenants")
+
+      val unknownTenants = x.tenants diff tenantIds
+
+      // if unknown tenants
+      if (unknownTenants.nonEmpty) throw TenantNotFoundException(unknownTenants)
+
       else {
         // todo: add email verification (aka account activation)
         val createUser = CreateUser(

@@ -2,6 +2,14 @@
 export const locale = {
 	lang: 'en',
 	data: {
+		core: {
+			exceptions: {
+				HttpError: 'Http error',
+				UnknownException: 'Unknown exception',
+				TenantNotFoundException: 'Tenant {{tenantIds}} not found',
+				RequiredValueNotProvided: 'Required value "{{field}}" not provided'
+			}
+		},
 		TRANSLATOR: {
 			SELECT: 'Select your language',
 		},
@@ -38,7 +46,6 @@ export const locale = {
 				TITLE: 'Sign Up',
 				DESC: 'Enter your details to create your account',
 				SUCCESS: 'Your account has been successfuly registered. Please use your registered account to login.',
-				FAILURE: 'Internal error',
 			},
 			INPUT: {
 				EMAIL: 'Email',

@@ -1,5 +1,6 @@
 package annette.core.http
 
+import annette.core.CoreException
 import annette.core.exception.AnnetteException
 //
 //import annette.bpm.Exception._

@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpParams, HttpHeaders } from '@angular/common/http';
+import {HttpParams, HttpHeaders, HttpErrorResponse} from '@angular/common/http';
+import {TranslateService} from "@ngx-translate/core";
 
 @Injectable()
 export class UtilsService {
-	constructor() {}
+	constructor(private translate: TranslateService) {}
 
 	/**
 	 * Build url parameters key and value pairs from array or object
@@ -82,8 +83,13 @@ export class UtilsService {
 			headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 		};
 	}
-}
 
+	httpErrorResponseToString(err: HttpErrorResponse): string {
+		const code = err.error.code;
+		const parameters = err.error.parameters;
+		return this.translate.instant(code, parameters)
+	}
+}
 
 export function isInteger(value: any): value is number {
 	return typeof value === 'number' && isFinite(value) && Math.floor(value) === value;

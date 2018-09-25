@@ -14,6 +14,7 @@ export interface SignUpUser {
 	lastName: string;
 	firstName: string;
 	password: string;
+	tenants: string[];
 }
 
 

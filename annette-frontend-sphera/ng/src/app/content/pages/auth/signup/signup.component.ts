@@ -25,7 +25,8 @@ export class SignupComponent implements OnInit {
 		email: '',
 		lastName: '',
 		firstName: '',
-		password: ''
+		password: '',
+		tenants: ['IMC']
 	};
 
 	@Input() action: string;
@@ -62,17 +63,20 @@ export class SignupComponent implements OnInit {
 	submit() {
 		this.spinner.active = true;
 		if (this.validate(this.f)) {
-			this.authService.signUp(this.model).subscribe(response => {
-				if (response !== 'undefined' && !(Number.isInteger(response))) {
+			this.authService.signUp(this.model).subscribe(
+				response => {
 					this.action = 'signIn';
 					this.actionChange.next(this.action);
 					this.authNoticeService.setNotice(this.translate.instant('AUTH.REGISTER.SUCCESS'), 'success');
+					this.spinner.active = false;
+					this.cdr.detectChanges();
+				},
+				(error: Error) => {
+					this.authNoticeService.setNotice(error.message, 'error');
+					this.spinner.active = false;
+					this.cdr.detectChanges();
 				}
-				else this.authNoticeService.setNotice(this.translate.instant('AUTH.REGISTER.FAILURE'), 'error');
-
-				this.spinner.active = false;
-				this.cdr.detectChanges();
-			});
+			);
 		}
 	}
 
