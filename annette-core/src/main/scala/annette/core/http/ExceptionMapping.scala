@@ -1,11 +1,10 @@
 package annette.core.http
 
-import annette.core.CoreException
-import annette.core.exception.AnnetteException
+import annette.core.{ AnnetteException, CoreException }
 //
 //import annette.bpm.Exception._
 //import annette.bpm.model.EntityType
-//import annette.core.exception.AnnetteException
+//import annette.core.AnnetteException
 //
 
 trait ExceptionMapping {

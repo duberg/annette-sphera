@@ -15,10 +15,10 @@ import io.circe._
 import io.circe.generic.auto._
 import io.circe.syntax._
 import akka.http.scaladsl.model.headers._
+import annette.core.AnnetteException
+import annette.core.security.authentication.Session
 
 import scala.concurrent.duration._
-import annette.core.exception.AnnetteException
-import annette.core.services.authentication.Session
 import annette.imc.model.{ ApStatus, _ }
 import annette.imc.notification.model._
 import annette.imc.notification._

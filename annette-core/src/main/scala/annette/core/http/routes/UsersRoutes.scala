@@ -8,7 +8,8 @@ import akka.http.scaladsl.server.Directives.{ entity, pathPrefix, _ }
 import akka.http.scaladsl.server.{ Directive1, Directives, Route }
 import akka.http.scaladsl.settings.RoutingSettings
 import akka.pattern.ask
-import annette.core.CoreModule
+import annette.core.security.authentication.Session
+import annette.core.{ AnnetteException, CoreModule }
 import annette.core.domain.tenancy.UserService
 import annette.core.domain.tenancy.dao.{ TenantDao, TenantUserDao, TenantUserRoleDao }
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
@@ -18,9 +19,7 @@ import io.circe.syntax._
 
 import scala.concurrent.{ ExecutionContext, Future }
 import annette.core.domain.tenancy.model._
-import annette.core.exception.AnnetteException
-import annette.core.http.security.AnnetteSecurityDirectives
-import annette.core.services.authentication.Session
+import annette.core.security.AnnetteSecurityDirectives
 
 import scala.util.{ Failure, Success }
 import annette.core.utils.Generator

@@ -34,7 +34,7 @@ lazy val commonSettings = Seq(
   ),
   updateOptions := updateOptions.value.withLatestSnapshots(false),
 
-  mainClass in Compile := Some("annette.core.server.AnnetteApplication"),
+  mainClass in Compile := Some("annette.core.AnnetteApplication"),
 
   fork in run := false
 )
@@ -138,5 +138,5 @@ lazy val annetteSpheraServer = Project(
     baseDirectory in reStart := (baseDirectory in root).value
   ).dependsOn(annetteSphera, annetteFrontendSphera)
 
-mainClass in Compile := Some("annette.core.server.AnnetteApplication")
-mainClass in reStart := Some("annette.core.server.AnnetteApplication")
+mainClass in Compile := Some("annette.core.AnnetteApplication")
+mainClass in reStart := Some("annette.core.AnnetteApplication")

@@ -8,7 +8,6 @@ import io.circe._
 import io.circe.generic.auto._
 import io.circe.syntax._
 import akka.http.scaladsl.model.headers._
-import annette.core.exception.AnnetteException
 import annette.imc.report.ReportService
 
 import scala.util.{ Failure, Success }
@@ -17,6 +16,7 @@ import ContentDispositionTypes._
 import akka.stream.IOResult
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
+import annette.core.AnnetteException
 import annette.core.utils.Generator
 import annette.imc.report.model.ReportFormatType
 

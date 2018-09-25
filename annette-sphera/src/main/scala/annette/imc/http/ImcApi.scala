@@ -5,8 +5,8 @@ import akka.http.scaladsl.server.{ Directive1, Route }
 import akka.http.scaladsl.settings.RoutingSettings
 import akka.stream.ActorMaterializer
 import annette.core.CoreModule
+import annette.core.security.authentication.Session
 import annette.imc.{ ApsActor, ApsState, ApsStorage, ImcContext }
-import annette.core.services.authentication.Session
 import annette.imc.notification._
 import annette.imc.report.ReportService
 import annette.imc.user.{ ImcUserActor, ImcUserState }

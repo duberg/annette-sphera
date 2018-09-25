@@ -4,9 +4,9 @@
 //import java.util.UUID
 //
 //import annette.core.CoreModule
-//import annette.core.akkaguice.AkkaModule
+//import annette.core.inject.AkkaModule
 //import annette.core.domain.tenancy.model.User
-//import annette.core.server.AnnetteServerModule
+//import annette.core.inject.AnnetteServerModule
 //import annette.core.test.PersistenceSpec
 //import com.google.inject.Guice
 //

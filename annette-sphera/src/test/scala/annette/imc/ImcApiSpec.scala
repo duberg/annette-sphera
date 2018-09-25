@@ -9,9 +9,8 @@ import akka.http.scaladsl.testkit.ScalatestRouteTest
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
 import annette.core.CoreModule
-import annette.core.akkaguice.AkkaModule
-import annette.core.server.AnnetteServerModule
-import annette.core.services.authentication.Session
+import annette.core.security.authentication.Session
+import annette.core.inject.AkkaModule
 import annette.core.test.InMemoryCleanup
 import annette.imc.http.ImcApi
 import annette.imc.model.ApFile.FileType
@@ -21,12 +20,12 @@ import annette.imc.utils.Implicits._
 import com.google.inject.Guice
 import com.typesafe.config.ConfigFactory
 import io.circe.parser._
-import org.scalatest.{ Matchers, WordSpec }
+import org.scalatest.{Matchers, WordSpec}
 import com.google.inject.Guice
-import com.typesafe.config.{ Config, ConfigException }
+import com.typesafe.config.{Config, ConfigException}
 import net.codingwell.scalaguice.InjectorExtensions._
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 class ImcApiSpec extends WordSpec
   with Matchers

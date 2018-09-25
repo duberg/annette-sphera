@@ -15,7 +15,7 @@
 //
 //import scala.concurrent.Future
 //import annette.core.domain.tenancy.model.{ Tenant, TenantUserRole, User, UpdateUser }
-//import annette.core.exception.AnnetteException
+//import annette.core.AnnetteException
 //import annette.imc.notification.model._
 //import annette.imc.notification._
 //import annette.imc.user.ImcUserActor.SingleEntry

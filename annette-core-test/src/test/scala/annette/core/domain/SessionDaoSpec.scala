@@ -6,6 +6,7 @@ import akka.Done
 import akka.actor.{ ActorRef, ActorSystem }
 import akka.pattern.ask
 import akka.testkit.TestKit
+import annette.core.AnnetteException
 import annette.core.domain.application.ApplicationService
 import annette.core.domain.application.model.{ Application, ApplicationUpdate }
 import annette.core.domain.language.LanguageService
@@ -13,7 +14,6 @@ import annette.core.domain.language.model.{ Language, LanguageUpdate }
 import annette.core.domain.tenancy._
 import annette.core.domain.tenancy.dao.SessionDao
 import annette.core.domain.tenancy.model._
-import annette.core.exception.AnnetteException
 import annette.core.test.PersistenceSpec
 import org.joda.time.DateTime
 

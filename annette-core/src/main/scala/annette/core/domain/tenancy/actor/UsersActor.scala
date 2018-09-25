@@ -4,10 +4,10 @@ import java.time.ZonedDateTime
 import java.util.UUID
 
 import akka.Done
+import annette.core.AnnetteMessageException
 import annette.core.domain.tenancy.UserService.CreateUserSuccess
 import annette.core.domain.tenancy.model._
 import annette.core.domain.tenancy.{ UserNotFoundMsg, UserService }
-import annette.core.exception.AnnetteMessageException
 import annette.core.persistence.Persistence._
 import com.outworkers.phantom.builder.QueryBuilder.Create
 import org.mindrot.jbcrypt.BCrypt

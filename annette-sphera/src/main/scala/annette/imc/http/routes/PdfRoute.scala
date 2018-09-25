@@ -8,13 +8,12 @@ import io.circe._
 import io.circe.generic.auto._
 import io.circe.syntax._
 import akka.http.scaladsl.model.headers._
-import annette.core.exception.AnnetteException
 import annette.imc.report.ReportService
 
 import scala.util.{ Failure, Success }
 import CacheDirectives._
 import ContentDispositionTypes._
-import annette.core.CoreModule
+import annette.core.{ AnnetteException, CoreModule }
 import annette.core.utils.Generator
 import annette.imc.report.model.{ ReportFormatType, TemplateDataB }
 import io.github.cloudify.scala.spdf._

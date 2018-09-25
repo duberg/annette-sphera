@@ -5,7 +5,7 @@ import akka.http.scaladsl.server.Directive1
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import annette.core.CoreModule
-import annette.core.services.authentication.Session
+import annette.core.security.authentication.Session
 import annette.imc.ImcContext
 import annette.imc.notification.NotificationService
 

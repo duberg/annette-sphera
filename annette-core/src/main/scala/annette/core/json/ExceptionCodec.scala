@@ -1,7 +1,6 @@
 package annette.core.json
 
-import annette.core.CoreException
-import annette.core.exception.AnnetteException
+import annette.core.{ AnnetteException, CoreException }
 import annette.core.http.ExceptionMapping
 import io.circe._
 

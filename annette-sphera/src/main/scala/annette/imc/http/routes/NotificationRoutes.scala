@@ -8,7 +8,7 @@ import io.circe._
 import io.circe.generic.auto._
 import io.circe.syntax._
 import akka.http.scaladsl.model.headers._
-import annette.core.exception.AnnetteException
+import annette.core.AnnetteException
 import annette.imc.notification._
 
 import scala.util.{ Failure, Success }

@@ -7,6 +7,7 @@ import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.settings.RoutingSettings
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
+import annette.core.security.authentication.{AuthenticationService, Session}
 import annette.core.domain.DB
 import annette.core.domain.application.dao.{ApplicationDao, ApplicationDb}
 import annette.core.domain.language.dao.{LanguageDao, LanguageDb}
@@ -14,9 +15,7 @@ import annette.core.domain.tenancy.UserService
 import annette.core.domain.tenancy.dao._
 import annette.core.http.ExceptionHandler
 import annette.core.http.routes.{ApiRoutes, AuthRoutes, UsersRoutes}
-import annette.core.http.security.AnnetteSecurityDirectives
-import annette.core.modularize.AnnetteHttpModule
-import annette.core.services.authentication.{AuthenticationService, Session}
+import annette.core.security.AnnetteSecurityDirectives
 import com.typesafe.config.Config
 
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}

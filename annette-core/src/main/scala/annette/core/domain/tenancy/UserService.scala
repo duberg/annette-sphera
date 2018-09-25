@@ -5,7 +5,6 @@ import akka.actor.{ ActorRef, Props }
 import akka.util.Timeout
 import annette.core.domain.tenancy.model.User.Id
 import annette.core.domain.tenancy.model._
-import annette.core.exception.AnnetteMessage
 import annette.core.persistence.Persistence.{ PersistentCommand, PersistentEvent, PersistentQuery }
 import javax.inject.{ Inject, Named, Singleton }
 
@@ -14,11 +13,11 @@ import akka.Done
 import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
+import annette.core.AnnetteMessage
 import annette.core.domain.tenancy.UserService.{ CreateUserSuccess, CreatedUserEvt }
 import annette.core.domain.tenancy.actor.{ UsersActor, UsersState }
 import annette.core.domain.tenancy.model.User.Id
 import annette.core.domain.tenancy.model.{ UpdateUser, User }
-import annette.core.exception.AnnetteMessage
 import javax.inject._
 
 import scala.concurrent.{ ExecutionContext, Future }

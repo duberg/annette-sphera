@@ -3,7 +3,7 @@
 //import java.time.LocalDate
 //
 //import annette.core.CoreModule
-//import annette.core.akkaguice.AkkaModule
+//import annette.core.inject.AkkaModule
 //import annette.core.test.PersistenceSpec
 //import annette.imc.model.Ap
 //import annette.imc.report.model.{ TemplateDataA, TemplateDataB, TemplateDataC }
