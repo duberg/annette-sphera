@@ -2,6 +2,7 @@
 import { ConfigModel } from '../core/interfaces/config';
 
 // tslint:disable-next-line:no-shadowed-variable
+
 export class MenuConfig implements ConfigModel {
 	public config: any = {};
 
@@ -461,7 +462,7 @@ export class MenuConfig implements ConfigModel {
 						root: true,
 						icon: 'flaticon-line-graph',
 						page: '/',
-						badge: {type: 'm-badge--danger', value: '2'},
+						//badge: {type: 'm-badge--danger', value: '2'},
 						translate: 'MENU.DASHBOARD'
 					},
 					{
@@ -470,7 +471,7 @@ export class MenuConfig implements ConfigModel {
 						root: true,
 						icon: 'flaticon-users',
 						page: '/users',
-						badge: {type: 'm-badge--danger', value: '12'},
+						badge: {type: 'm-badge--danger', value: '0'},
 						translate: 'MENU.USERS'
 					},
 					{section: 'Components'},

@@ -13,8 +13,7 @@ export class UserService {
 	public getCurrentUser(): Observable<User> {
 		const user = localStorage.getItem(this.USER_KEY);
 
-		console.log("dddddd");
-		console.log(<User>JSON.parse(user));
+		//console.log(<User>JSON.parse(user));
 
 		try {
 			return of(JSON.parse(user));
@@ -27,7 +26,6 @@ export class UserService {
 	}
 
 	public setCurrentUser(user: User): UserService {
-		console.log("1dddddd1");
 		localStorage.setItem(this.USER_KEY, JSON.stringify(user));
 		return this;
 	}

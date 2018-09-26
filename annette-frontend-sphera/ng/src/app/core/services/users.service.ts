@@ -12,8 +12,7 @@ const API_CUSTOMERS_URL = `${environment.server_addr}/api/users`;
 
 @Injectable()
 export class UsersService {
-	constructor(private http: HttpClient,
-		private httpUtils: HttpUtilsService) { }
+	constructor(private http: HttpClient, private httpUtils: HttpUtilsService) { }
 
 	// CREATE =>  POST: add a new customer to the server
 	createCustomer(customer: CustomerModel): Observable<CustomerModel> {

@@ -66,16 +66,16 @@ export class DataTableDataSource implements DataSource<DataTableItemModel> {
 
     loadItems(queryParams: QueryParamsModel) {
 		this.loadingSubject.next(true);
-		this.dataTableService.getAllItems().pipe(
-			tap(res => {
-				const result = this.baseFilter(res, queryParams);
-				this.entitySubject.next(result.items);
-				this.paginatorTotalSubject.next(result.totalCount);
-
-			}),
-			catchError(err => of(new QueryResultsModel([], err))),
-			finalize(() => this.loadingSubject.next(false))
-		).subscribe();
+		// this.dataTableService.getAllItems().pipe(
+		// 	tap(res => {
+		// 		const result = this.baseFilter(res, queryParams);
+		// 		this.entitySubject.next(result.items);
+		// 		this.paginatorTotalSubject.next(result.totalCount);
+		//
+		// 	}),
+		// 	catchError(err => of(new QueryResultsModel([], err))),
+		// 	finalize(() => this.loadingSubject.next(false))
+		// ).subscribe();
     }
 
 	sortArray(_incomingArray: any[], _sortField: string = '', _sortOrder: string = 'asc'): any[] {

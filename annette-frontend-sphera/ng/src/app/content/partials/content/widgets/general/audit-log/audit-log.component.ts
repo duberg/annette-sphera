@@ -14,8 +14,8 @@ export class AuditLogComponent implements OnInit {
 	constructor(private logsService: LogsService) {}
 
 	ngOnInit() {
-		this.logList = this.logsService.getData();
-		this.logList2 = this.logsService.getData({ types: 'event' });
-		this.logList3 = this.logsService.getData({ types: 'alert' });
+		//this.logList = this.logsService.getData();
+		//this.logList2 = this.logsService.getData({ types: 'event' });
+		//this.logList3 = this.logsService.getData({ types: 'alert' });
 	}
 }
