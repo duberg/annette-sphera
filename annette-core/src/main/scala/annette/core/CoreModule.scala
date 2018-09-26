@@ -15,6 +15,7 @@ import annette.core.domain.tenancy.UserManager
 import annette.core.domain.tenancy.dao._
 import annette.core.http.ExceptionHandler
 import annette.core.http.routes.{ ApiRoutes, AuthRoutes, UserRoutes }
+import annette.core.notification.NotificationManager
 import annette.core.security.AnnetteSecurityDirectives
 import com.typesafe.config.Config
 
@@ -37,6 +38,7 @@ class CoreModule @Inject() (
   val tenantUserRoleDao: TenantUserRoleDao,
   val sessionDao: SessionDao,
   val annetteSecurityDirectives: AnnetteSecurityDirectives,
+  val notificationManager: NotificationManager,
   @Named(AuthenticationService.name) val authenticationService: ActorRef) extends AnnetteHttpModule with ApiRoutes with ExceptionHandler {
   System.setProperty("logback.configurationFile", "conf/logback.xml")
 

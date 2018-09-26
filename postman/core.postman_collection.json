@@ -8,50 +8,259 @@
 	},
 	"item": [
 		{
-			"name": "login",
-			"request": {
-				"url": "http://localhost:9000/auth/api/login",
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
+			"name": "auth",
+			"description": "",
+			"item": [
+				{
+					"name": "signIn",
+					"request": {
+						"url": "http://localhost:9000/api/auth/signin",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-Tenant",
+								"value": "IMC",
+								"description": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"login\":\"valery.lobachev@gmail.com\",\n\t\"password\":\"abc\",\n\t\"rememberMe\":false,\n\t\"selectTenant\": false,\n\t\"tenant\": \"IMC\",\n\t\"application\": \"IMC\"\n}"
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "signUp",
+					"request": {
+						"url": "http://localhost:9000/api/auth/signup",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-Tenant",
+								"value": "IMC",
+								"description": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"gfhfgh\",\n\t\"firstName\":\"Давид\",\n\t\"lastName\":\"Кантемиров\",\n\t\"password\":\"abc\",\n\t\"tenants\": [\"IMC\"]\n}"
+						},
 						"description": ""
 					},
-					{
-						"key": "X-Tenant",
-						"value": "IMC",
-						"description": "",
-						"disabled": true
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"login\":\"valery.lobachev@gmail.com\",\n\t\"password\":\"abc\",\n\t\"rememberMe\":false,\n\t\"selectTenant\": false,\n\t\"tenant\": \"IMC\",\n\t\"application\": \"IMC\"\n}"
+					"response": []
 				},
-				"description": null
-			},
-			"response": []
+				{
+					"name": "logout",
+					"request": {
+						"url": "http://localhost:9000/api/v1/auth/logout",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiI5ZjIzMTk2Ny0wZmU5LTRlZTEtYTQ5Ny0yNTY2NThjN2YyODciLCJVaWQiOiIxMzEzZGVkMi1lZjMzLTQ2NGMtOGYyMC1jMjZjNThkY2Q4M2UiLCJUaWQiOiJJTUMiLCJBaWQiOiJJTUMiLCJMaWQiOiJSVSJ9.RCDoyO3-pLFVJvutOcSWLGrzx2X4kFSNvIyr_CMd4xI",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"login\":\"valery.lobachev@gmail.com\",\n\t\"password\":\"abc\",\n\t\"rememberMe\":false,\n\t\"selectTenant\": false,\n\t\"tenant\": \"IMC\",\n\t\"application\": \"IMC\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"name": "list users",
-			"request": {
-				"url": "http://localhost:9000/api/v1/users/",
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJjMmUwMWZkYi01ZDAwLTQ4YWQtOTllZS0yMTZlZTVlNTAyZDQiLCJVaWQiOiJkOGY2OWYwNS04NjJkLTRjNjMtYjI4NS01Y2NhMTYwNGQ5ZjgiLCJUaWQiOiJJTUMiLCJBaWQiOiJJTUMiLCJMaWQiOiJSVSJ9.HnKwLrE3B-3PYqEL85zoQzRtj2P2bMCeuwIPESNeCd4",
+			"name": "users",
+			"description": "",
+			"item": [
+				{
+					"name": "list",
+					"request": {
+						"url": "http://localhost:9000/api/v1/users/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJjMmUwMWZkYi01ZDAwLTQ4YWQtOTllZS0yMTZlZTVlNTAyZDQiLCJVaWQiOiJkOGY2OWYwNS04NjJkLTRjNjMtYjI4NS01Y2NhMTYwNGQ5ZjgiLCJUaWQiOiJJTUMiLCJBaWQiOiJJTUMiLCJMaWQiOiJSVSJ9.HnKwLrE3B-3PYqEL85zoQzRtj2P2bMCeuwIPESNeCd4",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n \"user\": {\n  \"lastname\": \"david\",\n  \"firstname\": \"david\",\n  \"middlename\": \"david\",\n  \"email\": \"it@kantemirov.ru\",\n  \"phone\": \"89166633683\"\n },\n \"password\": \"flexer123\"\n}"
+						},
 						"description": ""
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n \"user\": {\n  \"lastname\": \"david\",\n  \"firstname\": \"david\",\n  \"middlename\": \"david\",\n  \"email\": \"it@kantemirov.ru\",\n  \"phone\": \"89166633683\"\n },\n \"password\": \"flexer123\"\n}"
+					},
+					"response": []
 				},
-				"description": ""
-			},
-			"response": []
+				{
+					"name": "delete",
+					"request": {
+						"url": "http://localhost:9000/api/users/f0df7c43-634b-4ae1-817b-53d39b7a3489",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiIwM2VlYjM5ZC0wYjhiLTQ2OTMtYTkwNi0xYzFkNmJiOGNmODgiLCJVaWQiOiIxNGFkN2U3YS1lNTI4LTRjN2YtODY1ZC0zZTk5NDQ5NGI0MzAiLCJUaWQiOiJJTUMiLCJBaWQiOiJJTUMiLCJMaWQiOiJSVSJ9.nA3rbVuCnw26ZqYusFqaDXov3kQekbpnS2FKJQA52A4",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n \"user\": {\n  \"lastname\": \"david\",\n  \"firstname\": \"david\",\n  \"middlename\": \"david\",\n  \"email\": \"it@kantemirov.ru\",\n  \"phone\": \"89166633683\"\n },\n \"password\": \"flexer123\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "notifications",
+			"description": "",
+			"item": [
+				{
+					"name": "Create [email]",
+					"request": {
+						"url": "http://localhost:9000/api/push/notifications",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiI2YTQ1YjFlNi05NzllLTQzN2MtODVlOC1hNWUwOWU0OGQ3MGYiLCJVaWQiOiIxNGFkN2U3YS1lNTI4LTRjN2YtODY1ZC0zZTk5NDQ5NGI0MzAiLCJUaWQiOiJJTUMiLCJBaWQiOiJJTUMiLCJMaWQiOiJSVSJ9.fxpxznGNX_zgZ2x495tdMO4KONyfJMnGe3rcgnd3GfE",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\" : \"david.kantemirov@aniklab.com\",\n  \"subject\" : \"Нет блокирующих операций как в среде\",\n  \"message\" : \"Нет блокирующих операций как в среде\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Create [sms]",
+					"request": {
+						"url": "http://localhost:9000/bpm/api/notifications",
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Token",
+								"value": "::OXY:BPM:EN",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"phone\" : \"+79166690153\",\n  \"subject\" : \"lfbxqa6aqc\",\n  \"message\" : \"qrvoqnfuva\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "verifications",
+			"description": "",
+			"item": [
+				{
+					"name": "Create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.environment.set(\"verificationId\", jsonData.entityId);",
+									"",
+									"pm.test(\"Status code is 202\", function () {",
+									"    pm.response.to.have.status(202);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "http://localhost:9000/api/push/verifications/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiI0N2E4MjY1Ny1iNmI0LTRhNTctOTU3Yi0wNjdjNGQ4NjRhZTciLCJVaWQiOiIxNGFkN2U3YS1lNTI4LTRjN2YtODY1ZC0zZTk5NDQ5NGI0MzAiLCJUaWQiOiJJTUMiLCJBaWQiOiJJTUMiLCJMaWQiOiJSVSJ9.CBAOOOgEEk_A3VJ6KK1j8M-6UO1UlEI3jfR4t3ss9o0",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"phone\" : \"+79166621213\",\n  \"subject\" : \"vvorezwmgp\",\n  \"message\" : \"43deoikqah\",\n  \"code\" : \"5173\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Verify",
+					"request": {
+						"url": "http://localhost:9000/bpm/api/verifications/{{verificationId}}",
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Token",
+								"value": "::OXY:BPM:EN"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\"5173\""
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

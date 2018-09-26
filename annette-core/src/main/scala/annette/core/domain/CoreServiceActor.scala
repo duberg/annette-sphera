@@ -1,16 +1,22 @@
 package annette.core.domain
 
 import javax.inject.{ Named, Singleton }
-
 import akka.actor.{ Actor, ActorLogging, ActorRef, Props }
+import akka.util.Timeout
+import annette.core.akkaext.actor.ActorId
 import annette.core.domain.application._
 import annette.core.domain.language.LanguageService
 import annette.core.domain.tenancy.{ LastSessionService, OpenSessionService, SessionHistoryService, UserManager }
+import annette.core.notification.actor.NotificationManagerActor
+import com.typesafe.config.Config
+
+import scala.concurrent.ExecutionContext
+import annette.core.domain.CoreService._
+import annette.core.notification.actor._
 
 @Singleton
 @Named("CoreService")
-class CoreServiceActor extends Actor with ActorLogging {
-
+class CoreServiceActor(config: Config)(implicit c: ExecutionContext, t: Timeout) extends Actor with ActorLogging {
   val applicationActor: ActorRef = context.actorOf(ApplicationManager.props("core-application"), "application")
   val languageActor: ActorRef = context.actorOf(LanguageService.props("core-language"), "language")
   val userActor: ActorRef = context.actorOf(UserManager.props("core-user"), "user")
@@ -19,7 +25,13 @@ class CoreServiceActor extends Actor with ActorLogging {
   val sessionHistoryActor: ActorRef = context.actorOf(SessionHistoryService.props("core-session-history"), "session-history")
   val openSessionActor: ActorRef = context.actorOf(OpenSessionService.props("core-open-session", lastSessionActor, sessionHistoryActor), "open-session")
 
-  override def receive: PartialFunction[Any, Unit] = {
+  val coreId = ActorId("core")
+  val notificationManagerId = coreId / NotificationManagerActorName
+  val notificationManagerActor: ActorRef = context.actorOf(
+    props = NotificationManagerActor.props(notificationManagerId, config),
+    name = NotificationManagerActorName)
+
+  def receive: PartialFunction[Any, Unit] = {
     case msg: Application.Command =>
       applicationActor forward msg
     case msg: Application.Query =>
@@ -44,11 +56,23 @@ class CoreServiceActor extends Actor with ActorLogging {
       sessionHistoryActor forward msg
     case msg: SessionHistoryService.Query =>
       sessionHistoryActor forward msg
+
+    case x: MailNotificationActor.Command => notificationManagerActor forward x
+    case x: SmsNotificationActor.Command => notificationManagerActor forward x
+    case x: SmsVerificationActor.Command => notificationManagerActor forward x
+    case x: WebSocketNotificationActor.Command => notificationManagerActor forward x
+
+    case x: MailNotificationActor.Query => notificationManagerActor forward x
+    case x: SmsNotificationActor.Query => notificationManagerActor forward x
+    case x: SmsVerificationActor.Query => notificationManagerActor forward x
+    case x: WebSocketNotificationActor.Query => notificationManagerActor forward x
   }
 }
 
 object CoreService {
+  val NotificationManagerActorName = "notification"
+
   val name = "core"
 
-  def props = Props(classOf[CoreServiceActor])
+  def props(config: Config)(implicit c: ExecutionContext, t: Timeout) = Props(new CoreServiceActor(config))
 }

@@ -47,7 +47,13 @@ object Dependencies {
 
     "org.mindrot" % "jbcrypt" % "0.3m",
 
-    "com.carrotsearch" % "java-sizeof" % "0.0.5"
+    "com.carrotsearch" % "java-sizeof" % "0.0.5",
+
+     "com.sun.mail" % "javax.mail" % "1.6.0",
+     "org.scalaj" %% "scalaj-http" % Version.scalaj,
+      "com.roundeights" %% "hasher" % "1.2.0",
+
+    "org.scalamock" %% "scalamock-scalatest-support" % Version.scalamock % Test
   ) ++ test ++ guice ++ reflect
 
   /**
