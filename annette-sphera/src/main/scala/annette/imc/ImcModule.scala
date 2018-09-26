@@ -23,7 +23,7 @@ class ImcModule extends AnnetteHttpModule {
   def getUserRoled(ec: ExecutionContext)(userId: UUID) = {
     implicit val e: ExecutionContext = ec
     for {
-      x <- coreModule.userDao.getById(userId)
+      x <- coreModule.userManager.getById(userId)
       y <- coreModule.tenantUserRoleDao.getByIds("IMC", userId)
     } yield {
       x.map { user =>

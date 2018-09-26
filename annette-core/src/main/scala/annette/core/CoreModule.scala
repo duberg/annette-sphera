@@ -11,10 +11,10 @@ import annette.core.security.authentication.{ AuthenticationService, Session }
 import annette.core.domain.DB
 import annette.core.domain.application.ApplicationManager
 import annette.core.domain.language.dao.{ LanguageDao, LanguageDb }
-import annette.core.domain.tenancy.UserService
+import annette.core.domain.tenancy.UserManager
 import annette.core.domain.tenancy.dao._
 import annette.core.http.ExceptionHandler
-import annette.core.http.routes.{ ApiRoutes, AuthRoutes, UsersRoutes }
+import annette.core.http.routes.{ ApiRoutes, AuthRoutes, UserRoutes }
 import annette.core.security.AnnetteSecurityDirectives
 import com.typesafe.config.Config
 
@@ -28,7 +28,7 @@ class CoreModule @Inject() (
   val config: Config,
   val db: DB,
   val tenancyDb: TenancyDb,
-  val userDao: UserService,
+  val userManager: UserManager,
   val tenantDao: TenantDao,
   val tenantUserDao: TenantUserDao,
   val languageDb: LanguageDb,

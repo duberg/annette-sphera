@@ -77,17 +77,17 @@ class AnnetteSecurityDirectives @Inject() (
   private val authReject = reject(
     AuthenticationFailedRejection.apply(
       AuthenticationFailedRejection.CredentialsMissing,
-      HttpChallenge("Auth", Some("Annette"))))
+      HttpChallenge("Basic", Some("Annette"))))
 
-  val authOpt: Directive1[Option[Session]] = optionalHeaderValueByName("Authorization")
+  val authenticatedOpt: Directive1[Option[Session]] = optionalHeaderValueByName("Authorization")
     .flatMap {
       maybeJwtToken =>
         if (debugMode) fakeTokenValidation(maybeJwtToken)
         else tokenValidation(maybeJwtToken)
     }
 
-  val authenticated: Directive1[Session] = authOpt.flatMap {
-    case Some(sessionData) => provide(sessionData)
+  val authenticated: Directive1[Session] = authenticatedOpt.flatMap {
+    case Some(session) => provide(session)
     case _ => authReject
   }
 

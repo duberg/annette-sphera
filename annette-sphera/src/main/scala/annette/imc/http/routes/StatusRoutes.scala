@@ -40,7 +40,7 @@ trait StatusRoutes
             case class UserWithRoles(u: User, isSecretar: Boolean, isChairman: Boolean)
 
             for {
-              allUsers <- coreModule.userDao.selectAll.map(_.toSet)
+              allUsers <- coreModule.userManager.selectAll.map(_.toSet)
               allUserRole <- coreModule.tenantUserRoleDao.selectAll.map(_.toSet)
               ap <- getApById(apId)
             } yield {
@@ -168,7 +168,7 @@ trait StatusRoutes
             case class UserWithRoles(u: User, isSecretar: Boolean, isChairman: Boolean)
 
             for {
-              allUsers <- coreModule.userDao.selectAll.map(_.toSet)
+              allUsers <- coreModule.userManager.selectAll.map(_.toSet)
               allUserRole <- coreModule.tenantUserRoleDao.selectAll.map(_.toSet)
               ap <- getApById(apId)
             } yield {
@@ -294,8 +294,8 @@ trait StatusRoutes
           a <- apsActor.ask(GetApById(apId)).mapTo[ApFound].map(_.ap)
           name <- Future(a.apData.name.map(_.ru).getOrElse("Наименование на русском не указано"))
           id <- Future(a.projectManager)
-          u <- coreModule.userDao.getById(id)
-          sender <- coreModule.userDao.getById(userId)
+          u <- coreModule.userManager.getById(id)
+          sender <- coreModule.userManager.getById(userId)
         } yield (name, u, sender)
 
         onComplete(f) {
@@ -383,7 +383,7 @@ trait StatusRoutes
               expertIds <- apsActor.ask(GetApById(apId))
                 .mapTo[ApFound]
                 .map(_.ap.expertise.experts)
-              experts <- coreModule.userDao.selectAll.map(_.filter(expertIds contains _.id))
+              experts <- coreModule.userManager.selectAll.map(_.filter(expertIds contains _.id))
               allUsers: Set[User] <- getUsersAll
               allUserRole: Set[TenantUserRole] <- getUserRoleAll
               allImcUsers: Map[UUID, ImcUser] <- getAllImcUsers

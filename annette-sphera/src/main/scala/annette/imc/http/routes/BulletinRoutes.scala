@@ -44,7 +44,7 @@ trait BulletinRoutes
             // ========= Verification =========
 
             val f = for {
-              user <- coreModule.userDao.getById(userId).map(_.get) if user.phone.nonEmpty
+              user <- coreModule.userManager.getById(userId).map(_.get) if user.phone.nonEmpty
               x <- notificationService.addSmsVerificationVoted(user.phone.get, apId, bulletin, user.language.getOrElse(""))
             } yield x
             onComplete(f) {

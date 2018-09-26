@@ -10,12 +10,12 @@ import annette.core.domain.application.ApplicationManager
 import annette.core.domain.application._
 import annette.core.domain.language.LanguageService
 import annette.core.domain.language.model.{ Language, LanguageUpdate }
-import annette.core.domain.tenancy.UserService.CreateUserSuccess
-import annette.core.domain.tenancy.{ UserService, _ }
+import annette.core.domain.tenancy.UserManager.CreateUserSuccess
+import annette.core.domain.tenancy.{ UserManager, _ }
 import annette.core.domain.tenancy.model._
 import annette.core.test.PersistenceSpec
 
-class UserServiceSpec extends TestKit(ActorSystem("UserActorSpec"))
+class UserManagerSpec extends TestKit(ActorSystem("UserActorSpec"))
   with PersistenceSpec
   with NewApplication
   with NewLanguage
@@ -26,9 +26,9 @@ class UserServiceSpec extends TestKit(ActorSystem("UserActorSpec"))
     system.actorOf(CoreService.props, s"CoreService-$uuid")
   }
 
-  def newUserDao(): UserService = {
+  def newUserDao(): UserManager = {
     val coreServiceActor = newCoreServiceActor()
-    new UserService(coreServiceActor)
+    new UserManager(coreServiceActor)
   }
 
   "A UserDao" when {

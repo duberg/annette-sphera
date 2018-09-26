@@ -10,9 +10,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { LayoutUtilsService, MessageType } from '../../apps/e-commerce/_core/utils/layout-utils.service';
 // Models
 import { QueryParamsModel } from '../../apps/e-commerce/_core/models/query-models/query-params.model';
-import { CustomerModel } from '../../apps/e-commerce/_core/models/customer.model';
 import { CustomersDataSource } from '../_core/models/data-sources/customers.datasource';
 import {UsersService} from "../../../../../core/services/users.service";
+import {UserEditDialogComponent} from "../user-edit/user-edit-dialog.component";
+import {UserModel} from "../_core/models/user.model";
 // Components
 //import { UserEditComponent } from '../user-edit/user-edit.component';
 
@@ -32,8 +33,8 @@ export class UsersListComponent implements OnInit {
 	filterStatus: string = '';
 	filterType: string = '';
 	// Selection
-	selection = new SelectionModel<CustomerModel>(true, []);
-	customersResult: CustomerModel[] = [];
+	selection = new SelectionModel<UserModel>(true, []);
+	customersResult: UserModel[] = [];
 
 	constructor(
 		private customersService: UsersService,
@@ -119,7 +120,7 @@ export class UsersListComponent implements OnInit {
 
 	/** ACTIONS */
 	/** Delete */
-	deleteCustomer(_item: CustomerModel) {
+	deleteCustomer(_item: UserModel) {
 		const _title: string = this.translate.instant('ECOMMERCE.CUSTOMERS.DELETE_CUSTOMER_SIMPLE.TITLE');
 		const _description: string = this.translate.instant('ECOMMERCE.CUSTOMERS.DELETE_CUSTOMER_SIMPLE.DESCRIPTION');
 		const _waitDesciption: string = this.translate.instant('ECOMMERCE.CUSTOMERS.DELETE_CUSTOMER_SIMPLE.WAIT_DESCRIPTION');
@@ -150,7 +151,7 @@ export class UsersListComponent implements OnInit {
 				return;
 			}
 
-			const idsForDeletion: number[] = [];
+			const idsForDeletion: string[] = [];
 			for (let i = 0; i < this.selection.selected.length; i++) {
 				idsForDeletion.push(this.selection.selected[i].id);
 			}
@@ -212,26 +213,26 @@ export class UsersListComponent implements OnInit {
 	}
 
 	addCustomer() {
-		const newCustomer = new CustomerModel();
+		const newCustomer = new UserModel();
 		newCustomer.clear(); // Set all defaults fields
 		this.editCustomer(newCustomer);
 	}
 
 	/** Edit */
-	editCustomer(customer: CustomerModel) {
-		// let saveMessageTranslateParam = 'ECOMMERCE.CUSTOMERS.EDIT.';
-		// saveMessageTranslateParam += customer.id > 0 ? 'UPDATE_MESSAGE' : 'ADD_MESSAGE';
-		// const _saveMessage = this.translate.instant(saveMessageTranslateParam);
-		// const _messageType = customer.id > 0 ? MessageType.Update : MessageType.Create;
-		// const dialogRef = this.dialog.open(UserEditComponent, { data: { customer } });
-		// dialogRef.afterClosed().subscribe(res => {
-		// 	if (!res) {
-		// 		return;
-		// 	}
-		//
-		// 	this.layoutUtilsService.showActionNotification(_saveMessage, _messageType, 10000, true, false);
-		// 	this.loadCustomersList();
-		// });
+	editCustomer(user: UserModel) {
+		let saveMessageTranslateParam = 'ECOMMERCE.CUSTOMERS.EDIT.';
+		saveMessageTranslateParam += user.id > '' ? 'UPDATE_MESSAGE' : 'ADD_MESSAGE';
+		const _saveMessage = this.translate.instant(saveMessageTranslateParam);
+		const _messageType = user.id > '' ? MessageType.Update : MessageType.Create;
+		const dialogRef = this.dialog.open(UserEditDialogComponent, { data: { user: user } });
+		dialogRef.afterClosed().subscribe(res => {
+			if (!res) {
+				return;
+			}
+
+			this.layoutUtilsService.showActionNotification(_saveMessage, _messageType, 10000, true, false);
+			this.loadCustomersList();
+		});
 	}
 
 	/** SELECTION */

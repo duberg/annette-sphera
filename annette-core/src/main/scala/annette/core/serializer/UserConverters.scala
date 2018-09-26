@@ -4,7 +4,7 @@ import java.time.ZonedDateTime
 import java.util.UUID
 
 import annette.core.domain.tenancy.model._
-import annette.core.domain.tenancy.{ UserService, actor }
+import annette.core.domain.tenancy.{ UserManager, actor }
 import annette.core.domain.tenancy.actor.UsersState
 import annette.core.serializer.proto.user._
 import Implicits._
@@ -16,15 +16,15 @@ trait UserConverters {
   val DeletedUserEvtManifestV1 = "DeletedUserEvt.v1"
   val UsersStateManifestV1 = "UsersState.v1"
 
-  def toCreatedUserEvtBinary(obj: UserService.CreatedUserEvt) = {
+  def toCreatedUserEvtBinary(obj: UserManager.CreatedUserEvt) = {
     CreatedUserEvtV1(obj.x).toByteArray
   }
 
-  def toUpdateUserEvtBinary(obj: UserService.UpdatedUserEvt): Array[Byte] = {
+  def toUpdateUserEvtBinary(obj: UserManager.UpdatedUserEvt): Array[Byte] = {
     UpdatedUserEvtV1(obj.x).toByteArray
   }
 
-  def toDeleteUserEvtBinary(obj: UserService.DeletedUserEvt) = {
+  def toDeleteUserEvtBinary(obj: UserManager.DeletedUserEvt) = {
     DeletedUserEvtV1(obj.userId).toByteArray
   }
 
@@ -37,19 +37,19 @@ trait UserConverters {
       userProperties = obj.userProperties.map({ case (x, y) => x.toString -> fromUserProperty(y) })).toByteArray
   }
 
-  def fromCreatedUserEvtV1(bytes: Array[Byte]): UserService.CreatedUserEvt = {
+  def fromCreatedUserEvtV1(bytes: Array[Byte]): UserManager.CreatedUserEvt = {
     val x = CreatedUserEvtV1.parseFrom(bytes).x
-    UserService.CreatedUserEvt(x)
+    UserManager.CreatedUserEvt(x)
   }
 
-  def fromUpdatedUserEvtV1(bytes: Array[Byte]): UserService.UpdatedUserEvt = {
+  def fromUpdatedUserEvtV1(bytes: Array[Byte]): UserManager.UpdatedUserEvt = {
     val x = UpdatedUserEvtV1.parseFrom(bytes).x
-    UserService.UpdatedUserEvt(x)
+    UserManager.UpdatedUserEvt(x)
   }
 
-  def fromDeletedUserEvtV1(bytes: Array[Byte]): UserService.DeletedUserEvt = {
+  def fromDeletedUserEvtV1(bytes: Array[Byte]): UserManager.DeletedUserEvt = {
     val userId = DeletedUserEvtV1.parseFrom(bytes).userId
-    UserService.DeletedUserEvt(userId)
+    UserManager.DeletedUserEvt(userId)
   }
 
   def fromUsersStateV1(bytes: Array[Byte]): UsersState = {

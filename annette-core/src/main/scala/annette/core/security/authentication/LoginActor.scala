@@ -11,7 +11,7 @@ import annette.core.security.authentication.jwt.JwtHelper
 import annette.core.domain.application._
 import annette.core.domain.language.dao.LanguageDao
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.UserService
+import annette.core.domain.tenancy.UserManager
 import annette.core.domain.tenancy.dao._
 import annette.core.domain.tenancy.model.{ OpenSession, Tenant, User }
 import org.joda.time.DateTime
@@ -19,7 +19,7 @@ import org.joda.time.DateTime
 import scala.concurrent.Future
 
 class LoginActor(
-  userDao: UserService,
+  userDao: UserManager,
   sessionDao: SessionDao,
   tenantDao: TenantDao,
   tenantUserDao: TenantUserDao,
@@ -43,7 +43,7 @@ class LoginActor(
 
   override def receive: Receive = LoggingReceive {
     case msg: AuthenticationService.Login =>
-      if (msg.loginData.selectTenant) provideUserTenantData(sender, msg, None)
+      if (msg.credentials.selectTenant) provideUserTenantData(sender, msg, None)
       else login(msg)
   }
 
@@ -56,12 +56,12 @@ class LoginActor(
 
     val future = for {
       // 1. Проверки пользователя:
-      user <- validateUser(msg.loginData.login, msg.loginData.password)
+      user <- validateUser(msg.credentials.login, msg.credentials.password)
 
       userTenants <- tenantUserDao.getUserTenantData(user.id)
       // получить организацию и приложение для входа
       (tenantId, applicationId) <- {
-        val r = getTenantAndApplication(user.id, userTenants, msg.loginData.tenant, msg.loginData.application)
+        val r = getTenantAndApplication(user.id, userTenants, msg.credentials.tenant, msg.credentials.application)
         r.foreach { case (tenantId, applicationId) => context.system.log.debug(s"getTenantAndApplication: tenantId: $tenantId, applicationId: $applicationId") }
         r.failed.foreach(th => context.system.log.debug(s"getTenantAndApplication: ${th.getMessage}"))
         r
@@ -78,7 +78,7 @@ class LoginActor(
       _ = if (!tenant.applications.contains(applicationId)) throw new ApplicationNotAssignedToTenantException()
 
       // Проверки языка в организации
-      languageId = msg.loginData.language.getOrElse(tenant.defaultLanguageId)
+      languageId = msg.credentials.language.getOrElse(tenant.defaultLanguageId)
       _ = if (!tenant.languages.contains(languageId)) throw new LanguageNotAssignedToTenantException()
 
       // 6. Проверки пользователя в организации:
@@ -99,7 +99,7 @@ class LoginActor(
       languages <- languageDao.selectAll
 
       // 8. Если все проверки прошли создаём сессию:
-      openSession <- createOpenSession(tenant, user, application, language, msg.loginData.rememberMe, msg.ip)
+      openSession <- createOpenSession(tenant, user, application, language, msg.credentials.rememberMe, msg.ip)
     } yield {
       val sessionData = Session(
         openSession.id,
@@ -191,7 +191,7 @@ class LoginActor(
   def provideUserTenantData(requestor: ActorRef, msg: Login, exOpt: Option[AuthenticationException]): Unit =
     provideUserTenantData(
       // 1. Проверки пользователя:
-      validateUser(msg.loginData.login, msg.loginData.password),
+      validateUser(msg.credentials.login, msg.credentials.password),
       requestor,
       exOpt)
 

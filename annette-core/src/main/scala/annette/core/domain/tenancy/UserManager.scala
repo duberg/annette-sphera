@@ -14,7 +14,7 @@ import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
 import annette.core.AnnetteMessage
-import annette.core.domain.tenancy.UserService.{ CreateUserSuccess, CreatedUserEvt }
+import annette.core.domain.tenancy.UserManager.{ CreateUserSuccess, CreatedUserEvt }
 import annette.core.domain.tenancy.actor.{ UsersActor, UsersState }
 import annette.core.domain.tenancy.model.User.Id
 import annette.core.domain.tenancy.model.{ UpdateUser, User }
@@ -24,12 +24,12 @@ import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration._
 
 @Singleton
-class UserService @Inject() (@Named("CoreService") actor: ActorRef) {
+class UserManager @Inject() (@Named("CoreService") actor: ActorRef) {
   implicit def t: Timeout = 3.minutes
 
   def create(x: CreateUser)(implicit ec: ExecutionContext): Future[User] = {
     for {
-      f <- ask(actor, UserService.CreateUserCmd(x))
+      f <- ask(actor, UserManager.CreateUserCmd(x))
     } yield {
       f match {
         case CreateUserSuccess(u) => u
@@ -40,7 +40,7 @@ class UserService @Inject() (@Named("CoreService") actor: ActorRef) {
 
   def update(x: UpdateUser)(implicit ec: ExecutionContext): Future[Unit] = {
     for {
-      f <- ask(actor, UserService.UpdateUserCmd(x))
+      f <- ask(actor, UserManager.UpdateUserCmd(x))
     } yield {
       f match {
         case Done => println("--ss---")
@@ -52,7 +52,7 @@ class UserService @Inject() (@Named("CoreService") actor: ActorRef) {
 
   def setPassword(userId: Id, password: String)(implicit ec: ExecutionContext): Future[Boolean] = {
     for {
-      f <- ask(actor, UserService.UpdatePasswordCmd(userId, password))
+      f <- ask(actor, UserManager.UpdatePasswordCmd(userId, password))
     } yield {
       f match {
         case Done => true
@@ -63,7 +63,7 @@ class UserService @Inject() (@Named("CoreService") actor: ActorRef) {
 
   def delete(userId: Id)(implicit ec: ExecutionContext): Future[Boolean] = {
     for {
-      f <- ask(actor, UserService.DeleteUserCmd(userId))
+      f <- ask(actor, UserManager.DeleteUserCmd(userId))
     } yield {
       f match {
         case Done => true
@@ -73,19 +73,19 @@ class UserService @Inject() (@Named("CoreService") actor: ActorRef) {
   }
 
   def getById(id: Id)(implicit ec: ExecutionContext): Future[Option[User]] = {
-    ask(actor, UserService.FindUserById(id)).mapTo[UserService.SingleUser].map(_.maybeEntry)
+    ask(actor, UserManager.FindUserById(id)).mapTo[UserManager.SingleUser].map(_.maybeEntry)
   }
 
   def selectAll(implicit ec: ExecutionContext): Future[List[User]] = {
-    ask(actor, UserService.FindAllUsers).mapTo[UserService.MultipleUsers].map(_.entries.values.toList)
+    ask(actor, UserManager.FindAllUsers).mapTo[UserManager.MultipleUsers].map(_.entries.values.toList)
   }
 
   def getByLoginAndPassword(login: String, password: String)(implicit ec: ExecutionContext): Future[Option[User]] = {
-    ask(actor, UserService.FindUserByLoginAndPassword(login, password)).mapTo[UserService.SingleUser].map(_.maybeEntry)
+    ask(actor, UserManager.FindUserByLoginAndPassword(login, password)).mapTo[UserManager.SingleUser].map(_.maybeEntry)
   }
 }
 
-object UserService {
+object UserManager {
 
   sealed trait Command extends PersistentCommand
   sealed trait Query extends PersistentQuery

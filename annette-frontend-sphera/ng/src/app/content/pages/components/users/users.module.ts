@@ -53,6 +53,9 @@ import {
 } from '@angular/material';
 import {JwtModule} from "@auth0/angular-jwt";
 import {TokenStorage} from "../../../../core/auth/token-storage.service";
+import {UserEditDialogComponent} from "./user-edit/user-edit-dialog.component";
+import {AlertComponent} from "./_shared/alert/alert.component";
+import {TypesUtilsService} from "./_core/utils/types-utils.service";
 
 const routes: Routes = [
 	{
@@ -113,18 +116,18 @@ const routes: Routes = [
 			}
 		},
 		HttpUtilsService,
-		UsersService
+		UsersService,
 		//OrdersService,
 		//ProductRemarksService,
 		//ProductSpecificationsService,
 		//ProductsService,
 		//SpecificationsService,
-		//TypesUtilsService,
+		TypesUtilsService,
 		//LayoutUtilsService
 	],
 	entryComponents: [
 		//ActionNotificationComponent,
-		//UserEditComponent,
+		UserEditDialogComponent,
 		//DeleteEntityDialogComponent,
 		//FetchEntityDialogComponent,
 		//UpdateStatusDialogComponent
@@ -136,10 +139,10 @@ const routes: Routes = [
 		//DeleteEntityDialogComponent,
 		//FetchEntityDialogComponent,
 		//UpdateStatusDialogComponent,
-		//AlertComponent,
+		AlertComponent,
 		// Customers
 		UsersListComponent,
-		//UserEditComponent
+		UserEditDialogComponent
 	]
 })
 export class UsersModule { }

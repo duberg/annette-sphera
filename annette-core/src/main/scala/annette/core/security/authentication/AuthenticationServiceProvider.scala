@@ -7,7 +7,7 @@ import akka.routing.FromConfig
 import annette.core.domain.InitCoreTables
 import annette.core.domain.application.ApplicationManager
 import annette.core.domain.language.dao.LanguageDao
-import annette.core.domain.tenancy.UserService
+import annette.core.domain.tenancy.UserManager
 import annette.core.domain.tenancy.dao.{ SessionDao, TenantDao, TenantUserDao }
 import com.google.inject.Provider
 import com.typesafe.config.Config
@@ -22,7 +22,7 @@ class AuthenticationServiceProvider @Inject() (
   sessionDao: SessionDao,
   tenantDao: TenantDao,
   applicationDao: ApplicationManager,
-  userDao: UserService,
+  userDao: UserManager,
   tenantUserDao: TenantUserDao,
   languageDao: LanguageDao,
   config: Config,

@@ -12,7 +12,7 @@ import annette.core.{ AnnetteException, RequiredValueNotProvided, TenantNotFound
 import annette.core.domain.application.Application
 import annette.core.domain.language.dao.LanguageDao
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.UserService
+import annette.core.domain.tenancy.UserManager
 import annette.core.domain.tenancy.dao.{ TenantDao, TenantUserDao, TenantUserRoleDao }
 import annette.core.domain.tenancy.model._
 import annette.core.security.AnnetteSecurityDirectives
@@ -27,7 +27,7 @@ trait AuthRoutes extends Directives with AskSupport {
   val tenantDao: TenantDao
   val tenantUserDao: TenantUserDao
   val tenantUserRoleDao: TenantUserRoleDao
-  val userDao: UserService
+  val userManager: UserManager
   val languageDao: LanguageDao
   val authenticationService: ActorRef
   val annetteSecurityDirectives: AnnetteSecurityDirectives
@@ -46,7 +46,7 @@ trait AuthRoutes extends Directives with AskSupport {
     languageId: Language.Id)
 
   def signIn: Route = (path("signin") & post) {
-    (entity(as[AuthenticationService.LoginData]) & extractClientIP) {
+    (entity(as[AuthenticationService.Credentials]) & extractClientIP) {
       (loginData, clientIp) =>
         val future = authenticationService
           .ask(AuthenticationService.Login(loginData, clientIp.toOption.map(_.toString).getOrElse("")))
@@ -72,7 +72,7 @@ trait AuthRoutes extends Directives with AskSupport {
     }
   }
 
-  def signOut: Route = (path("signout") & post & authOpt) {
+  def signOut: Route = (path("signout") & post & authenticatedOpt) {
     case Some(sessionData) =>
       complete(authenticationService
         .ask(AuthenticationService.Logout(sessionData.sessionId))
@@ -82,7 +82,7 @@ trait AuthRoutes extends Directives with AskSupport {
   }
 
   def signUp: Route = (path("signup") & post & entity(as[SignUpUser])) { x =>
-    def createUser = tenantDao.listIds.flatMap(tenantIds => {
+    def f = tenantDao.listIds.flatMap(tenantIds => {
       // if empty tenants
       if (x.tenants.isEmpty) throw RequiredValueNotProvided("tenants")
 
@@ -116,18 +116,18 @@ trait AuthRoutes extends Directives with AskSupport {
           deactivated = true)
 
         for {
-          x1 <- userDao.create(createUser)
+          x1 <- userManager.create(createUser)
           x2 <- Future.sequence(x.tenants.map(tenantUserDao.create(_, x1.id)))
           x3 <- Future.sequence(x.tenants.map(tenantId => tenantUserRoleDao.store(TenantUserRole(tenantId, x1.id, Set("user")))))
         } yield x1
       }
     })
-    complete(createUser)
+    complete(f)
   }
 
   private def applicationStateRoutes = path("applicationState") {
     get {
-      authOpt {
+      authenticatedOpt {
         maybeSession =>
 
           val applicationStateFuture = authenticationService

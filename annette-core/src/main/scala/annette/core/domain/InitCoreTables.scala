@@ -27,7 +27,7 @@ import scala.util.Try
 class InitCoreTables @Inject() (
   config: Config,
   tenancyDb: TenancyDb,
-  userDao: UserService,
+  userDao: UserManager,
   tenantDao: TenantDao,
   tenantUserDao: TenantUserDao,
   tenantUserRoleDao: TenantUserRoleDao,

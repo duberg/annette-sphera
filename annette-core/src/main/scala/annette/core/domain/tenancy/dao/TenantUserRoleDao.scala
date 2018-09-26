@@ -5,7 +5,7 @@ import javax.inject._
 import annette.core.domain.application.Application
 import annette.core.domain.language.dao.LanguageDao
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.{ UserService, _ }
+import annette.core.domain.tenancy.{ UserManager, _ }
 import annette.core.domain.tenancy.model.{ Tenant, TenantUserRole, User }
 
 import scala.concurrent.{ ExecutionContext, Future }
@@ -16,7 +16,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 @Singleton
 class TenantUserRoleDao @Inject() (
   db: TenancyDb,
-  userDao: UserService) {
+  userDao: UserManager) {
 
   private def validateStore(tenantId: Tenant.Id, userId: User.Id)(implicit ec: ExecutionContext) = {
     for {

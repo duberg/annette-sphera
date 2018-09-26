@@ -166,10 +166,10 @@ case class UsersState(
 
   override def updated(event: Persistence.PersistentEvent) = {
     event match {
-      case UserService.CreatedUserEvt(x) => createUser(x)
-      case UserService.UpdatedUserEvt(x) => updateUser(x)
-      case UserService.DeletedUserEvt(x) => deleteUser(x)
-      case UserService.UpdatedPasswordEvt(x, y) => updatePassword(x, y)
+      case UserManager.CreatedUserEvt(x) => createUser(x)
+      case UserManager.UpdatedUserEvt(x) => updateUser(x)
+      case UserManager.DeletedUserEvt(x) => deleteUser(x)
+      case UserManager.UpdatedPasswordEvt(x, y) => updatePassword(x, y)
     }
   }
 }

@@ -5,7 +5,7 @@ import javax.inject.{ Named, Singleton }
 import akka.actor.{ Actor, ActorLogging, ActorRef, Props }
 import annette.core.domain.application._
 import annette.core.domain.language.LanguageService
-import annette.core.domain.tenancy.{ LastSessionService, OpenSessionService, SessionHistoryService, UserService }
+import annette.core.domain.tenancy.{ LastSessionService, OpenSessionService, SessionHistoryService, UserManager }
 
 @Singleton
 @Named("CoreService")
@@ -13,7 +13,7 @@ class CoreServiceActor extends Actor with ActorLogging {
 
   val applicationActor: ActorRef = context.actorOf(ApplicationManager.props("core-application"), "application")
   val languageActor: ActorRef = context.actorOf(LanguageService.props("core-language"), "language")
-  val userActor: ActorRef = context.actorOf(UserService.props("core-user"), "user")
+  val userActor: ActorRef = context.actorOf(UserManager.props("core-user"), "user")
 
   val lastSessionActor: ActorRef = context.actorOf(LastSessionService.props("core-last-session"), "last-session")
   val sessionHistoryActor: ActorRef = context.actorOf(SessionHistoryService.props("core-session-history"), "session-history")
@@ -28,9 +28,9 @@ class CoreServiceActor extends Actor with ActorLogging {
       languageActor forward msg
     case msg: LanguageService.Query =>
       languageActor forward msg
-    case msg: UserService.Command =>
+    case msg: UserManager.Command =>
       userActor forward msg
-    case msg: UserService.Query =>
+    case msg: UserManager.Query =>
       userActor forward msg
     case msg: OpenSessionService.Command =>
       openSessionActor forward msg

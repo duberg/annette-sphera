@@ -17,7 +17,7 @@ import akka.Done
 import akka.actor.ActorSystem
 import akka.pattern.ask
 import akka.testkit.TestKit
-import annette.core.domain.tenancy.UserService.CreateUserSuccess
+import annette.core.domain.tenancy.UserManager.CreateUserSuccess
 import annette.core.domain.tenancy._
 import annette.core.domain.tenancy.model._
 import annette.core.test.PersistenceSpec
@@ -32,9 +32,9 @@ class UsersActorSpec extends TestKit(ActorSystem("UserActorSpec"))
         val c2 = newCreateUser(email = Some("valery1@valery.com"), phone = Some("+7123451"), login = Some("valery1"))
         val actor = newUserActor()
         for {
-          cc1 <- ask(actor, UserService.CreateUserCmd(c1)).mapTo[CreateUserSuccess].map(_.x)
-          cc2 <- ask(actor, UserService.CreateUserCmd(c2)).mapTo[CreateUserSuccess].map(_.x)
-          ccs <- ask(actor, UserService.FindAllUsers).mapTo[UserService.MultipleUsers].map(_.entries)
+          cc1 <- ask(actor, UserManager.CreateUserCmd(c1)).mapTo[CreateUserSuccess].map(_.x)
+          cc2 <- ask(actor, UserManager.CreateUserCmd(c2)).mapTo[CreateUserSuccess].map(_.x)
+          ccs <- ask(actor, UserManager.FindAllUsers).mapTo[UserManager.MultipleUsers].map(_.entries)
         } yield {
           ccs(cc1.id) shouldBe a[User]
           ccs(cc2.id) shouldBe a[User]
@@ -45,7 +45,7 @@ class UsersActorSpec extends TestKit(ActorSystem("UserActorSpec"))
         val c1 = newCreateUser()
         val actor = newUserActor()
         for {
-          cc1 <- ask(actor, UserService.CreateUserCmd(c1))
+          cc1 <- ask(actor, UserManager.CreateUserCmd(c1))
         } yield {
           cc1 shouldBe a[LoginRequiredMsg]
         }
@@ -66,8 +66,8 @@ class UsersActorSpec extends TestKit(ActorSystem("UserActorSpec"))
         val c2 = newCreateUser(email = c1.email)
         val actor = newUserActor()
         for {
-          cc1 <- ask(actor, UserService.CreateUserCmd(c1))
-          cc2 <- ask(actor, UserService.CreateUserCmd(c2))
+          cc1 <- ask(actor, UserManager.CreateUserCmd(c1))
+          cc2 <- ask(actor, UserManager.CreateUserCmd(c2))
         } yield cc2 shouldBe a[EmailAlreadyExistsMsg]
       }
       "should not create new user if phone already exists" in {
@@ -76,8 +76,8 @@ class UsersActorSpec extends TestKit(ActorSystem("UserActorSpec"))
         val actor = newUserActor()
         for {
 
-          cc1 <- ask(actor, UserService.CreateUserCmd(c1))
-          cc2 <- ask(actor, UserService.CreateUserCmd(c2))
+          cc1 <- ask(actor, UserManager.CreateUserCmd(c1))
+          cc2 <- ask(actor, UserManager.CreateUserCmd(c2))
         } yield cc2 shouldBe a[PhoneAlreadyExistsMsg]
       }
       "should not create new user if login already exists" in {
@@ -86,8 +86,8 @@ class UsersActorSpec extends TestKit(ActorSystem("UserActorSpec"))
         val actor = newUserActor()
         for {
 
-          cc1 <- ask(actor, UserService.CreateUserCmd(c1))
-          cc2 <- ask(actor, UserService.CreateUserCmd(c2))
+          cc1 <- ask(actor, UserManager.CreateUserCmd(c1))
+          cc2 <- ask(actor, UserManager.CreateUserCmd(c2))
         } yield cc2 shouldBe a[LoginAlreadyExistsMsg]
       }
 
@@ -101,8 +101,8 @@ class UsersActorSpec extends TestKit(ActorSystem("UserActorSpec"))
         val actor = newUserActor()
 
         for {
-          cc1 <- ask(actor, UserService.CreateUserCmd(c1)).mapTo[CreateUserSuccess].map(_.x)
-          cc2 <- ask(actor, UserService.UpdateUserCmd(
+          cc1 <- ask(actor, UserManager.CreateUserCmd(c1)).mapTo[CreateUserSuccess].map(_.x)
+          cc2 <- ask(actor, UserManager.UpdateUserCmd(
             UpdateUser(
               id = cc1.id,
               username = Some(c2.username),
@@ -128,7 +128,7 @@ class UsersActorSpec extends TestKit(ActorSystem("UserActorSpec"))
               additionalMail = None,
               meta = None,
               deactivated = None)))
-          ccs <- ask(actor, UserService.FindUserById(cc1.id)).mapTo[UserService.SingleUser].map(_.maybeEntry.get)
+          ccs <- ask(actor, UserManager.FindUserById(cc1.id)).mapTo[UserManager.SingleUser].map(_.maybeEntry.get)
         } yield {
           ccs shouldBe a[User]
         }
@@ -139,7 +139,7 @@ class UsersActorSpec extends TestKit(ActorSystem("UserActorSpec"))
 
         val actor = newUserActor()
 
-        val f1 = ask(actor, UserService.CreateUserCmd(c2))
+        val f1 = ask(actor, UserManager.CreateUserCmd(c2))
           .mapTo[CreateUserSuccess]
           .map(_.x)
           .map(user => {
@@ -172,7 +172,7 @@ class UsersActorSpec extends TestKit(ActorSystem("UserActorSpec"))
 
         for {
           cc1 <- f1
-          cc2 <- ask(actor, UserService.UpdateUserCmd(cc1))
+          cc2 <- ask(actor, UserManager.UpdateUserCmd(cc1))
         } yield cc2 shouldBe a[LoginRequiredMsg]
       }
 
@@ -182,9 +182,9 @@ class UsersActorSpec extends TestKit(ActorSystem("UserActorSpec"))
         val actor = newUserActor()
 
         for {
-          cc1 <- ask(actor, UserService.CreateUserCmd(c1))
-          cc2 <- ask(actor, UserService.CreateUserCmd(c2)).mapTo[CreateUserSuccess].map(_.x)
-          cc3 <- ask(actor, UserService.UpdateUserCmd(UpdateUser(
+          cc1 <- ask(actor, UserManager.CreateUserCmd(c1))
+          cc2 <- ask(actor, UserManager.CreateUserCmd(c2)).mapTo[CreateUserSuccess].map(_.x)
+          cc3 <- ask(actor, UserManager.UpdateUserCmd(UpdateUser(
             id = cc2.id,
             username = None,
             displayName = None,
@@ -220,16 +220,16 @@ class UsersActorSpec extends TestKit(ActorSystem("UserActorSpec"))
         val c2 = newCreateUser(email = Some("valery1@valery.com"), phone = Some("+7123451"), login = Some("valery1"))
         val actor = newUserActor()
         for {
-          cc1 <- ask(actor, UserService.CreateUserCmd(c1)).mapTo[CreateUserSuccess].map(_.x)
-          cc2 <- ask(actor, UserService.DeleteUserCmd(cc1.id))
-          ccs <- ask(actor, UserService.FindAllUsers).mapTo[UserService.MultipleUsers].map(_.entries)
+          cc1 <- ask(actor, UserManager.CreateUserCmd(c1)).mapTo[CreateUserSuccess].map(_.x)
+          cc2 <- ask(actor, UserManager.DeleteUserCmd(cc1.id))
+          ccs <- ask(actor, UserManager.FindAllUsers).mapTo[UserManager.MultipleUsers].map(_.entries)
         } yield ccs.size shouldBe 0
       }
 
       "should not delete if user not exists" in {
         val actor = newUserActor()
         for {
-          cc1 <- ask(actor, UserService.DeleteUserCmd(UUID.randomUUID()))
+          cc1 <- ask(actor, UserManager.DeleteUserCmd(UUID.randomUUID()))
         } yield cc1 shouldBe a[UserNotFoundMsg]
       }
     }
@@ -239,10 +239,10 @@ class UsersActorSpec extends TestKit(ActorSystem("UserActorSpec"))
         val c1 = newCreateUser(email = Some("   valery@valery.com   "), phone = Some("   +712345   "), login = Some("   valery   ")).copy(password = "abc")
         val actor = newUserActor()
         for {
-          cc1 <- ask(actor, UserService.CreateUserCmd(c1))
-          cc2 <- ask(actor, UserService.FindUserByLoginAndPassword(c1.email.get.toUpperCase.trim + " ", "abc")).mapTo[UserService.SingleUser].map(_.maybeEntry.get)
-          cc3 <- ask(actor, UserService.FindUserByLoginAndPassword(c1.phone.get.toUpperCase.trim + " ", "abc")).mapTo[UserService.SingleUser].map(_.maybeEntry.get)
-          cc4 <- ask(actor, UserService.FindUserByLoginAndPassword(c1.username.get.toUpperCase.trim + " ", "abc")).mapTo[UserService.SingleUser].map(_.maybeEntry.get)
+          cc1 <- ask(actor, UserManager.CreateUserCmd(c1))
+          cc2 <- ask(actor, UserManager.FindUserByLoginAndPassword(c1.email.get.toUpperCase.trim + " ", "abc")).mapTo[UserManager.SingleUser].map(_.maybeEntry.get)
+          cc3 <- ask(actor, UserManager.FindUserByLoginAndPassword(c1.phone.get.toUpperCase.trim + " ", "abc")).mapTo[UserManager.SingleUser].map(_.maybeEntry.get)
+          cc4 <- ask(actor, UserManager.FindUserByLoginAndPassword(c1.username.get.toUpperCase.trim + " ", "abc")).mapTo[UserManager.SingleUser].map(_.maybeEntry.get)
         } yield {
           cc2 shouldBe a[User]
           cc3 shouldBe a[User]

@@ -1,7 +1,7 @@
 package annette.core.serializer
 
 import akka.serialization.SerializerWithStringManifest
-import annette.core.domain.tenancy.UserService
+import annette.core.domain.tenancy.UserManager
 import annette.core.domain.application._
 import annette.core.domain.application.{ ApplicationManager, ApplicationManagerState }
 import annette.core.domain.tenancy.actor.UsersState
@@ -16,9 +16,9 @@ class CoreSerializer extends SerializerWithStringManifest
 
   override def toBinary(o: AnyRef): Array[Byte] = {
     o match {
-      case obj: UserService.CreatedUserEvt => toCreatedUserEvtBinary(obj)
-      case obj: UserService.UpdatedUserEvt => toUpdateUserEvtBinary(obj)
-      case obj: UserService.DeletedUserEvt => toDeleteUserEvtBinary(obj)
+      case obj: UserManager.CreatedUserEvt => toCreatedUserEvtBinary(obj)
+      case obj: UserManager.UpdatedUserEvt => toUpdateUserEvtBinary(obj)
+      case obj: UserManager.DeletedUserEvt => toDeleteUserEvtBinary(obj)
       case obj: UsersState => toUserStatesBinary(obj)
 
       case obj: Application.ApplicationCreatedEvt => toApplicationCreatedEvtBinary(obj)
@@ -34,9 +34,9 @@ class CoreSerializer extends SerializerWithStringManifest
 
   override def manifest(o: AnyRef): String = {
     o match {
-      case _: UserService.CreatedUserEvt => CreatedUserEvtManifestV1
-      case _: UserService.UpdatedUserEvt => UpdatedUserEvtManifestV1
-      case _: UserService.DeletedUserEvt => DeletedUserEvtManifestV1
+      case _: UserManager.CreatedUserEvt => CreatedUserEvtManifestV1
+      case _: UserManager.UpdatedUserEvt => UpdatedUserEvtManifestV1
+      case _: UserManager.DeletedUserEvt => DeletedUserEvtManifestV1
       case _: UsersState => UsersStateManifestV1
 
       case _: Application.ApplicationCreatedEvt => ApplicationCreatedEvtManifestV1

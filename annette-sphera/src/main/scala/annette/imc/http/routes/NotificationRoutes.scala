@@ -23,7 +23,7 @@ trait NotificationRoutes
         (path("add-status-verification") & get & auth) { sessionData =>
           val userId = sessionData.userId
           val f = for {
-            user <- coreModule.userDao.getById(userId).map(_.get) if user.phone.nonEmpty
+            user <- coreModule.userManager.getById(userId).map(_.get) if user.phone.nonEmpty
             x <- notificationService.addSmsVerificationStatus(user.phone.get, user.language.getOrElse(""))
           } yield x
           onComplete(f) {

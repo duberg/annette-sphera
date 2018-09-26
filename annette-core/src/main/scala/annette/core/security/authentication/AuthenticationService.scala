@@ -11,7 +11,7 @@ import annette.core.domain.application.ApplicationManager
 import annette.core.domain.application._
 import annette.core.domain.language.dao.LanguageDao
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.UserService
+import annette.core.domain.tenancy.UserManager
 import annette.core.domain.tenancy.dao._
 import annette.core.domain.tenancy.model.Tenant
 import com.typesafe.config.Config
@@ -34,11 +34,9 @@ object AuthenticationService {
    *
    * @param ip IP адрес пользователя
    */
-  case class Login(
-    loginData: LoginData,
-    ip: String) extends Message
+  case class Login(credentials: Credentials, ip: String) extends Message
 
-  case class LoginData(
+  case class Credentials(
     login: String, // логин пользователя: телефон или email
     password: String, // пароль пользователя
     rememberMe: Boolean, // если индикатор rememberMe = false, то создаётся сессионный cookie, иначе постоянный
@@ -78,7 +76,7 @@ object AuthenticationService {
     sessionDao: SessionDao,
     tenantDao: TenantDao,
     applicationDao: ApplicationManager,
-    userDao: UserService,
+    userDao: UserManager,
     tenantUserDao: TenantUserDao,
     languageDao: LanguageDao,
     config: Config) = Props(
@@ -97,7 +95,7 @@ class AuthenticationService(
   sessionDao: SessionDao,
   tenantDao: TenantDao,
   applicationDao: ApplicationManager,
-  userDao: UserService,
+  userDao: UserManager,
   tenantUserDao: TenantUserDao,
   languageDao: LanguageDao,
   config: Config)

@@ -1,31 +1,32 @@
 import { Component, OnInit, Inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TypesUtilsService } from '../../_core/utils/types-utils.service';
-import { CustomersService } from '../../_core/services/customers.service';
-import { CustomerModel } from '../../_core/models/customer.model';
+import { TypesUtilsService } from '../_core/utils/types-utils.service';
+import { UserModel } from '../_core/models/user.model';
+import {UsersService} from "../../../../../core/services/users.service";
 
 @Component({
 	selector: 'm-customers-edit-dialog',
-	templateUrl: './customer-edit.dialog.component.html',
+	templateUrl: './user-edit-dialog.component.html',
 	// changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CustomerEditDialogComponent implements OnInit {
-	customer: CustomerModel;
+export class UserEditDialogComponent implements OnInit {
+	user: UserModel;
 	customerForm: FormGroup;
 	hasFormErrors: boolean = false;
 	viewLoading: boolean = false;
 	loadingAfterSubmit: boolean = false;
 
-	constructor(public dialogRef: MatDialogRef<CustomerEditDialogComponent>,
+	constructor(public dialogRef: MatDialogRef<UserEditDialogComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: any,
 		private fb: FormBuilder,
-		private customerService: CustomersService,
+		private customerService: UsersService,
 		private typesUtilsService: TypesUtilsService) { }
 
 	/** LOAD DATA */
 	ngOnInit() {
-		this.customer = this.data.user;
+		console.log(this.data.user);
+		this.user = this.data.user;
 		this.createForm();
 
 		/* Server loading imitation. Remove this on real code */
@@ -36,27 +37,27 @@ export class CustomerEditDialogComponent implements OnInit {
 	}
 
 	createForm() {
-		this.customer.dob = this.typesUtilsService.getDateFromString(this.customer.dateOfBbirth);
+		this.user.dob = this.typesUtilsService.getDateFromString(this.user.dateOfBbirth);
 		this.customerForm = this.fb.group({
-			firstName: [this.customer.firstName, Validators.required],
-			lastName: [this.customer.lastName, Validators.required],
+			firstName: [this.user.firstName, Validators.required],
+			lastName: [this.user.lastName, Validators.required],
 			email: [
-				this.customer.email,
+				this.user.email,
 				[Validators.required, Validators.email]
 			],
-			dob: [this.customer.dob, Validators.nullValidator],
-			userName: [this.customer.userName, Validators.required],
-			gender: [this.customer.gender, Validators.required],
-			ipAddress: [this.customer.ipAddress, Validators.required],
-			type: [this.customer.type.toString(), Validators.required]
+			dob: [this.user.dob, Validators.nullValidator],
+			userName: [this.user.userName, Validators.required],
+			gender: [this.user.gender, Validators.required],
+			ipAddress: [this.user.ipAddress, Validators.required],
+			//type: [this.user.type.toString(), Validators.required]
 		});
 	}
 
 	/** UI */
 	getTitle(): string {
-		if (this.customer.id > 0) {
-			return `Edit customer '${this.customer.firstName} ${
-				this.customer.lastName
+		if (this.user.id > '') {
+			return `Edit customer '${this.user.firstName} ${
+				this.user.lastName
 			}'`;
 		}
 
@@ -70,10 +71,10 @@ export class CustomerEditDialogComponent implements OnInit {
 	}
 
 	/** ACTIONS */
-	prepareCustomer(): CustomerModel {
+	prepareCustomer(): UserModel {
 		const controls = this.customerForm.controls;
-		const _customer = new CustomerModel();
-		_customer.id = this.customer.id;
+		const _customer = new UserModel();
+		_customer.id = this.user.id;
 		_customer.dateOfBbirth = this.typesUtilsService.dateCustomFormat(controls['dob'].value);
 		_customer.firstName = controls['firstName'].value;
 		_customer.lastName = controls['lastName'].value;
@@ -82,7 +83,7 @@ export class CustomerEditDialogComponent implements OnInit {
 		_customer.gender = controls['gender'].value;
 		_customer.ipAddress = controls['ipAddress'].value;
 		_customer.type = +controls['type'].value;
-		_customer.status = this.customer.status;
+		_customer.status = this.user.status;
 		return _customer;
 	}
 
@@ -101,14 +102,14 @@ export class CustomerEditDialogComponent implements OnInit {
 		}
 
 		const editedCustomer = this.prepareCustomer();
-		if (editedCustomer.id > 0) {
+		if (editedCustomer.id > '0') {
 			this.updateCustomer(editedCustomer);
 		} else {
 			this.createCustomer(editedCustomer);
 		}
 	}
 
-	updateCustomer(_customer: CustomerModel) {
+	updateCustomer(_customer: UserModel) {
 		this.loadingAfterSubmit = true;
 		this.viewLoading = true;
 		this.customerService.updateCustomer(_customer).subscribe(res => {
@@ -122,7 +123,7 @@ export class CustomerEditDialogComponent implements OnInit {
 		});
 	}
 
-	createCustomer(_customer: CustomerModel) {
+	createCustomer(_customer: UserModel) {
 		this.loadingAfterSubmit = true;
 		this.viewLoading = true;
 		this.customerService.createCustomer(_customer).subscribe(res => {

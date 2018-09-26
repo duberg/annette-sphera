@@ -1,7 +1,7 @@
 import { BaseModel } from './_base.model';
 
-export class CustomerModel  extends BaseModel {
-	id: number;
+export class UserModel extends BaseModel {
+	id: string;
 	firstName: string;
 	lastName: string;
 	email: string;

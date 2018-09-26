@@ -10,7 +10,7 @@ import akka.http.scaladsl.settings.RoutingSettings
 import akka.pattern.ask
 import annette.core.security.authentication.Session
 import annette.core.{ AnnetteException, CoreModule }
-import annette.core.domain.tenancy.UserService
+import annette.core.domain.tenancy.UserManager
 import annette.core.domain.tenancy.dao.{ TenantDao, TenantUserDao, TenantUserRoleDao }
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import io.circe._
@@ -26,10 +26,10 @@ import annette.core.utils.Generator
 import com.typesafe.config.Config
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 
-trait UsersRoutes extends Directives {
+trait UserRoutes extends Directives {
   implicit val c: ExecutionContext
   val annetteSecurityDirectives: AnnetteSecurityDirectives
-  val userDao: UserService
+  val userManager: UserManager
   val tenantDao: TenantDao
   val tenantUserDao: TenantUserDao
   val tenantUserRoleDao: TenantUserRoleDao
@@ -584,8 +584,8 @@ trait UsersRoutes extends Directives {
   //  }
   //
 
-  def createUser(implicit session: Session): Route = post {
-    ???
+  def createUser(implicit session: Session): Route = (post & entity(as[CreateUser])) { x =>
+    complete(userManager.create(x))
   }
 
   def getUser(implicit session: Session): Route = (path(JavaUUID) & get) { userId =>
@@ -597,12 +597,12 @@ trait UsersRoutes extends Directives {
   }
 
   def deleteUser(implicit session: Session): Route = (path(JavaUUID) & delete) { userId =>
-    ???
+    complete(userManager.delete(userId))
   }
 
   def listUsers(implicit session: Session): Route = get {
     val ff = for {
-      f <- userDao.selectAll
+      f <- userManager.selectAll
       r <- tenantUserRoleDao.selectAll
     } yield (f, r)
 
