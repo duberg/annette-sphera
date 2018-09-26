@@ -1,23 +1,38 @@
 package annette.core.test
 
+import java.util.concurrent.{ ExecutorService, Executors }
+
 import akka.actor.{ ActorRef, Props }
-import akka.testkit.{ DefaultTimeout, TestKit, TestProbe }
+import akka.pattern.{ AskSupport, PipeToSupport }
+import akka.testkit.{ TestKit, TestProbe }
+import akka.util.Timeout
 import annette.core.utils.Generator
 import org.scalatest.{ AsyncWordSpecLike, Matchers }
 
-import scala.concurrent.Future
+import scala.concurrent.duration._
+import scala.concurrent.{ ExecutionContext, Future }
 
 /**
  * Base trait for idiomatic Persistence tests.
  */
 trait PersistenceSpec extends AsyncWordSpecLike
   with Generator
-  with DefaultTimeout
   with Matchers
   with ShutdownAfterAll
   with InMemoryCleanup
   with AfterWords
-  with PersistenceUtils { _: TestKit =>
+  with PersistenceUtils
+  with AskSupport
+  with PipeToSupport { _: TestKit =>
+  implicit def log = system.log
+  implicit val t: Timeout = 5 minute
+
+  override implicit val executionContext: ExecutionContext = new ExecutionContext {
+    val threadPool: ExecutorService = Executors.newFixedThreadPool(50)
+    def execute(runnable: Runnable): Unit = threadPool.submit(runnable)
+    def reportFailure(t: Throwable) {}
+  }
+
   /**
    * Create new TestProbe.
    */

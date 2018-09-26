@@ -1,6 +1,6 @@
 package annette.core.domain.tenancy.dao
 
-import annette.core.domain.application.model.Application
+import annette.core.domain.application.Application
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.model._
 

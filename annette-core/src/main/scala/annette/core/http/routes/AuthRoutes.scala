@@ -9,7 +9,7 @@ import akka.pattern.AskSupport
 import akka.util.Timeout
 import annette.core.security.authentication.{ ApplicationState, AuthenticationService, ForbiddenException }
 import annette.core.{ AnnetteException, RequiredValueNotProvided, TenantNotFoundException }
-import annette.core.domain.application.model.Application
+import annette.core.domain.application.Application
 import annette.core.domain.language.dao.LanguageDao
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.UserService
@@ -18,13 +18,12 @@ import annette.core.domain.tenancy.model._
 import annette.core.security.AnnetteSecurityDirectives
 import com.typesafe.config.Config
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
-import io.circe.java8.time.TimeInstances
 
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.{ Failure, Success }
 import scala.concurrent.duration._
 
-trait AuthRoutes extends Directives with AskSupport with TimeInstances {
+trait AuthRoutes extends Directives with AskSupport {
   val tenantDao: TenantDao
   val tenantUserDao: TenantUserDao
   val tenantUserRoleDao: TenantUserRoleDao
@@ -38,7 +37,6 @@ trait AuthRoutes extends Directives with AskSupport with TimeInstances {
 
   import FailFastCirceSupport._
   import io.circe.generic.auto._
-  import io.circe.java8.time.TimeInstances
 
   import annetteSecurityDirectives._
 

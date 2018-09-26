@@ -2,7 +2,7 @@ package annette.core.domain.tenancy.model
 
 import java.util.UUID
 
-import annette.core.domain.application.model.Application
+import annette.core.domain.application.Application
 import annette.core.domain.language.model.Language
 import org.joda.time.DateTime
 

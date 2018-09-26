@@ -7,8 +7,8 @@ import akka.actor.{ ActorRef, ActorSystem }
 import akka.pattern.ask
 import akka.testkit.TestKit
 import annette.core.AnnetteException
-import annette.core.domain.application.ApplicationService
-import annette.core.domain.application.model.{ Application, ApplicationUpdate }
+import annette.core.domain.application.ApplicationManager
+import annette.core.domain.application._
 import annette.core.domain.language.LanguageService
 import annette.core.domain.language.model.{ Language, LanguageUpdate }
 import annette.core.domain.tenancy._
@@ -33,7 +33,7 @@ class SessionDaoSpec extends TestKit(ActorSystem("SessionDaoSpec"))
     new SessionDao(coreServiceActor, system)
   }
 
-  "A SessionDao" when call {
+  "A SessionDao" when {
     "createSession" must {
       "create new openSession" in {
         val s1 = newOpenSession

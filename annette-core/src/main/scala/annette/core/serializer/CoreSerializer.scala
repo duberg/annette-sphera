@@ -2,8 +2,8 @@ package annette.core.serializer
 
 import akka.serialization.SerializerWithStringManifest
 import annette.core.domain.tenancy.UserService
-import annette.core.domain.application.model._
-import annette.core.domain.application.{ ApplicationService, ApplicationState }
+import annette.core.domain.application._
+import annette.core.domain.application.{ ApplicationManager, ApplicationManagerState }
 import annette.core.domain.tenancy.actor.UsersState
 
 class CoreSerializer extends SerializerWithStringManifest
@@ -21,10 +21,10 @@ class CoreSerializer extends SerializerWithStringManifest
       case obj: UserService.DeletedUserEvt => toDeleteUserEvtBinary(obj)
       case obj: UsersState => toUserStatesBinary(obj)
 
-      case obj: ApplicationService.ApplicationCreatedEvt => toApplicationCreatedEvtBinary(obj)
-      case obj: ApplicationService.ApplicationUpdatedEvt => toApplicationUpdateEvtBinary(obj)
-      case obj: ApplicationService.ApplicationDeletedEvt => toApplicationDeleteEvtBinary(obj)
-      case obj: ApplicationState => toApplicationStateBinary(obj)
+      case obj: Application.ApplicationCreatedEvt => toApplicationCreatedEvtBinary(obj)
+      case obj: Application.ApplicationUpdatedEvt => toApplicationUpdateEvtBinary(obj)
+      case obj: Application.ApplicationDeletedEvt => toApplicationDeleteEvtBinary(obj)
+      case obj: ApplicationManagerState => toApplicationStateBinary(obj)
 
       case _ =>
         val errorMsg = s"Can't serialize an object using $className [${o.toString}]"
@@ -39,10 +39,10 @@ class CoreSerializer extends SerializerWithStringManifest
       case _: UserService.DeletedUserEvt => DeletedUserEvtManifestV1
       case _: UsersState => UsersStateManifestV1
 
-      case _: ApplicationService.ApplicationCreatedEvt => ApplicationCreatedEvtManifestV1
-      case _: ApplicationService.ApplicationUpdatedEvt => ApplicationUpdatedEvtManifestV1
-      case _: ApplicationService.ApplicationDeletedEvt => ApplicationDeletedEvtManifestV1
-      case _: ApplicationState => ApplicationStateManifestV1
+      case _: Application.ApplicationCreatedEvt => ApplicationCreatedEvtManifestV1
+      case _: Application.ApplicationUpdatedEvt => ApplicationUpdatedEvtManifestV1
+      case _: Application.ApplicationDeletedEvt => ApplicationDeletedEvtManifestV1
+      case _: ApplicationManagerState => ApplicationStateManifestV1
 
       case _ =>
         val errorMsg = s"Can't create manifest for object using $className [${o.toString}]"

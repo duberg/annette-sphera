@@ -1,23 +1,22 @@
 package annette.core.domain.tenancy.dao
 
+import annette.core.domain.application.ApplicationManager
 import javax.inject._
-import annette.core.domain.application.dao.ApplicationDao
-import annette.core.domain.application.model.Application
+import annette.core.domain.application.Application
 import annette.core.domain.language.dao.LanguageDao
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.{UserService, _}
-import annette.core.domain.tenancy.model.{Tenant, TenantUserRole, User}
+import annette.core.domain.tenancy.{ UserService, _ }
+import annette.core.domain.tenancy.model.{ Tenant, TenantUserRole, User }
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 /**
  * Created by valery on 18.12.16.
  */
 @Singleton
 class TenantUserRoleDao @Inject() (
-                                    db: TenancyDb,
-                                    userDao: UserService,
-                                  ) {
+  db: TenancyDb,
+  userDao: UserService) {
 
   private def validateStore(tenantId: Tenant.Id, userId: User.Id)(implicit ec: ExecutionContext) = {
     for {

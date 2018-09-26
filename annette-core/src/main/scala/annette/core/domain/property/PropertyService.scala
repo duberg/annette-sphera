@@ -1,10 +1,10 @@
 package annette.core.domain.property
 import java.util.UUID
 
-import annette.core.domain.application.model.Application
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.model.{ Tenant, User }
 import akka.actor.Props
+import annette.core.domain.application.Application
 import annette.core.persistence.Persistence.{ PersistentCommand, PersistentEvent, PersistentQuery }
 import annette.core.domain.property.model._
 import annette.core.utils.{ AnyValue, FilterOption, NoValue }

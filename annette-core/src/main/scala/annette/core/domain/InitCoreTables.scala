@@ -6,9 +6,7 @@ import javax.inject._
 import akka.actor.ActorSystem
 import akka.event.{ LogSource, Logging }
 import akka.http.scaladsl.util.FastFuture
-import annette.core.domain.application.ApplicationAlreadyExists
-import annette.core.domain.application.dao.{ ApplicationDao, ApplicationDb }
-import annette.core.domain.application.model.Application
+import annette.core.domain.application.{ Application, ApplicationAlreadyExists, ApplicationManager }
 import annette.core.domain.language.LanguageAlreadyExists
 import annette.core.domain.language.dao.{ LanguageDao, LanguageDb }
 import annette.core.domain.language.model.Language
@@ -35,8 +33,7 @@ class InitCoreTables @Inject() (
   tenantUserRoleDao: TenantUserRoleDao,
   languageDb: LanguageDb,
   languageDao: LanguageDao,
-  applicationDb: ApplicationDb,
-  applicationDao: ApplicationDao,
+  applicationDao: ApplicationManager,
   system: ActorSystem) {
 
   implicit val myLogSourceType: LogSource[InitCoreTables] = (a: InitCoreTables) => "InitCoreTables"
@@ -84,8 +81,8 @@ class InitCoreTables @Inject() (
     val createFuture = for {
       res1 <- languageDb.createAsync()
       res2 <- tenancyDb.createAsync()
-      res3 <- applicationDb.createAsync()
-    } yield (res1, res2, res3)
+      //res3 <- applicationDb.createAsync()
+    } yield (res1, res2)
     createFuture.failed.foreach {
       case th: Throwable =>
         log.error("Create table failure: ")

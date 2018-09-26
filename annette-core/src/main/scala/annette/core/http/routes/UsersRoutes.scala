@@ -25,9 +25,8 @@ import scala.util.{ Failure, Success }
 import annette.core.utils.Generator
 import com.typesafe.config.Config
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
-import io.circe.java8.time.TimeInstances
 
-trait UsersRoutes extends Directives with TimeInstances {
+trait UsersRoutes extends Directives {
   implicit val c: ExecutionContext
   val annetteSecurityDirectives: AnnetteSecurityDirectives
   val userDao: UserService
@@ -38,7 +37,6 @@ trait UsersRoutes extends Directives with TimeInstances {
 
   import FailFastCirceSupport._
   import io.circe.generic.auto._
-  import io.circe.java8.time.TimeInstances
   import annetteSecurityDirectives._
 
   //

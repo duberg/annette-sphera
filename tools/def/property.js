@@ -7,7 +7,7 @@ obj = {
   stateName: 'PropertyState',
   objectName: 'PropertyService',
 
-  imports: ['annette.core.domain.application.model.Application',
+  imports: ['annette.core.domain.application.Application',
     'annette.core.domain.language.model.Language',
     'annette.core.domain.tenancy.model.{Tenant, User}'],
 

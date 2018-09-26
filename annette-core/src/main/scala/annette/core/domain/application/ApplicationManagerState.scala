@@ -1,17 +1,15 @@
 package annette.core.domain.application
 
-import annette.core.domain.application.model._
-import annette.core.persistence.Persistence
-import annette.core.persistence.Persistence.PersistentState
+import annette.core.akkaext.actor.CqrsState
+import annette.core.domain.application.Application._
 
-case class ApplicationState(applications: Map[Application.Id, Application] = Map.empty) extends PersistentState[ApplicationState] {
-
-  def createApplication(entry: Application): ApplicationState = {
+case class ApplicationManagerState(applications: Map[Application.Id, Application] = Map.empty) extends CqrsState {
+  def createApplication(entry: Application): ApplicationManagerState = {
     if (applications.get(entry.id).isDefined) throw new IllegalArgumentException
     else copy(applications = applications + (entry.id -> entry))
   }
 
-  def updateApplication(entry: ApplicationUpdate): ApplicationState = {
+  def updateApplication(entry: UpdateApplication): ApplicationManagerState = {
     applications
       .get(entry.id)
       .map {
@@ -24,7 +22,7 @@ case class ApplicationState(applications: Map[Application.Id, Application] = Map
       .getOrElse(throw new IllegalArgumentException)
   }
 
-  def deleteApplication(id: Application.Id): ApplicationState = {
+  def deleteApplication(id: Application.Id): ApplicationManagerState = {
     if (applications.get(id).isEmpty) throw new IllegalArgumentException
     else copy(applications = applications - id)
   }
@@ -35,11 +33,9 @@ case class ApplicationState(applications: Map[Application.Id, Application] = Map
 
   def applicationExists(id: Application.Id): Boolean = applications.get(id).isDefined
 
-  override def updated(event: Persistence.PersistentEvent) = {
-    event match {
-      case ApplicationService.ApplicationCreatedEvt(entry) => createApplication(entry)
-      case ApplicationService.ApplicationUpdatedEvt(entry) => updateApplication(entry)
-      case ApplicationService.ApplicationDeletedEvt(id) => deleteApplication(id)
-    }
+  def update: Update = {
+    case ApplicationCreatedEvt(entry) => createApplication(entry)
+    case ApplicationUpdatedEvt(entry) => updateApplication(entry)
+    case ApplicationDeletedEvt(id) => deleteApplication(id)
   }
 }

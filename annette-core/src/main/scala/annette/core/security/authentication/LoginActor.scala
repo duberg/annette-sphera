@@ -5,10 +5,10 @@ import java.util.UUID
 import akka.actor.{ Actor, ActorLogging, ActorRef }
 import akka.event.LoggingReceive
 import akka.http.scaladsl.util.FastFuture
+import annette.core.domain.application.ApplicationManager
 import annette.core.security.authentication.AuthenticationService.{ FailureResponse, Login }
 import annette.core.security.authentication.jwt.JwtHelper
-import annette.core.domain.application.dao.ApplicationDao
-import annette.core.domain.application.model.Application
+import annette.core.domain.application._
 import annette.core.domain.language.dao.LanguageDao
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.UserService
@@ -23,7 +23,7 @@ class LoginActor(
   sessionDao: SessionDao,
   tenantDao: TenantDao,
   tenantUserDao: TenantUserDao,
-  applicationDao: ApplicationDao,
+  applicationDao: ApplicationManager,
   languageDao: LanguageDao,
   rememberMeSessionTimeout: Int,
   sessionTimeout: Int,

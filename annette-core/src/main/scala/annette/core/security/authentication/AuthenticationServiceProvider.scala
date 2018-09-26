@@ -5,7 +5,7 @@ import akka.cluster.Cluster
 import akka.event.{ LogSource, Logging }
 import akka.routing.FromConfig
 import annette.core.domain.InitCoreTables
-import annette.core.domain.application.dao.ApplicationDao
+import annette.core.domain.application.ApplicationManager
 import annette.core.domain.language.dao.LanguageDao
 import annette.core.domain.tenancy.UserService
 import annette.core.domain.tenancy.dao.{ SessionDao, TenantDao, TenantUserDao }
@@ -21,7 +21,7 @@ class AuthenticationServiceProvider @Inject() (
   system: ActorSystem,
   sessionDao: SessionDao,
   tenantDao: TenantDao,
-  applicationDao: ApplicationDao,
+  applicationDao: ApplicationManager,
   userDao: UserService,
   tenantUserDao: TenantUserDao,
   languageDao: LanguageDao,

@@ -1,6 +1,9 @@
 val imcVersion = "3.1.7-SNAPSHOT"
 val coreVersion = "4.0.28-SNAPSHOT"
 
+// the library is available in Bintray's JCenter
+resolvers += Resolver.jcenterRepo
+
 lazy val commonSettings = Seq(
 
 
@@ -14,7 +17,8 @@ lazy val commonSettings = Seq(
 //  },
   // disable publishing the main sources jar
   publishArtifact in(Compile, packageSrc) := false,
-
+  // the library is available in Bintray's JCenter
+  resolvers += Resolver.jcenterRepo,
   organization := "com.aniklab",
   scalaVersion := Dependencies.Version.scala,
   logLevel := Level.Warn,

@@ -2,9 +2,9 @@ package annette.core.http
 
 import akka.event.LoggingAdapter
 import akka.http.scaladsl.model.StatusCodes._
-import akka.http.scaladsl.model.{ContentType, HttpEntity, HttpResponse, MediaTypes}
-import akka.http.scaladsl.server.{Directives, ExceptionHandler => AkkaExceptionHandler}
-import annette.core.{AnnetteException, CoreException}
+import akka.http.scaladsl.model.{ ContentType, HttpEntity, HttpResponse, MediaTypes }
+import akka.http.scaladsl.server.{ Directives, ExceptionHandler => AkkaExceptionHandler }
+import annette.core.{ AnnetteException, CoreException }
 import annette.core.json._
 import io.circe.generic.AutoDerivation
 import io.circe.generic.auto._
@@ -36,8 +36,7 @@ trait ExceptionHandler extends Directives {
 
         complete {
           val annetteException = new AnnetteException(
-            code = "bpm2.exceptions.UnknownException",
-          )
+            code = "bpm2.exceptions.UnknownException")
           HttpResponse(
             entity = HttpEntity(
               ContentType(MediaTypes.`application/json`),

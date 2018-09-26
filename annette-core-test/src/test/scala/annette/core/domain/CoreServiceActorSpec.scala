@@ -1,14 +1,3 @@
-/**
- * *************************************************************************************
- * Copyright (c) 2014-2017 by Valery Lobachev
- * Redistribution and use in source and binary forms, with or without
- * modification, are NOT permitted without written permission from Valery Lobachev.
- *
- * Copyright (c) 2014-2017 Валерий Лобачев
- * Распространение и/или использование в исходном или бинарном формате, с изменениями или без таковых,
- * запрещено без письменного разрешения правообладателя.
- * **************************************************************************************
- */
 package annette.core.domain
 
 import java.util.UUID
@@ -17,8 +6,8 @@ import akka.Done
 import akka.actor.{ ActorRef, ActorSystem }
 import akka.pattern.ask
 import akka.testkit.TestKit
-import annette.core.domain.application.ApplicationService
-import annette.core.domain.application.model.{ Application, ApplicationUpdate }
+import annette.core.domain.application.ApplicationManager
+import annette.core.domain.application._
 import annette.core.domain.language.LanguageService
 import annette.core.domain.language.model.{ Language, LanguageUpdate }
 import annette.core.domain.tenancy._
@@ -50,12 +39,10 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
         val c2 = Application("App2", "app2", "APP2")
         val a = newCoreServiceActor()
         for {
-          cc1 <- ask(a, ApplicationService.CreateApplicationCmd(c1))
-          cc2 <- ask(a, ApplicationService.CreateApplicationCmd(c2))
-          ccs <- ask(a, ApplicationService.FindAllApplications).mapTo[ApplicationService.MultipleApplications].map(_.entries)
+          cc1 <- ask(a, Application.CreateApplicationCmd(c1))
+          cc2 <- ask(a, Application.CreateApplicationCmd(c2))
+          ccs <- ask(a, Application.ListApplications).mapTo[Application.ApplicationsMap].map(_.x)
         } yield {
-          cc1 shouldBe Done
-          cc2 shouldBe Done
           ccs(c1.id) shouldBe c1
           ccs(c2.id) shouldBe c2
         }
@@ -65,12 +52,9 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
         val a = newCoreServiceActor()
         for {
 
-          cc1 <- ask(a, ApplicationService.CreateApplicationCmd(c1))
-          cc2 <- ask(a, ApplicationService.CreateApplicationCmd(c1))
-        } yield {
-          cc1 shouldBe Done
-          cc2 shouldBe ApplicationService.EntryAlreadyExists
-        }
+          cc1 <- ask(a, Application.CreateApplicationCmd(c1))
+          cc2 <- ask(a, Application.CreateApplicationCmd(c1))
+        } yield cc2 shouldBe Application.EntryAlreadyExists
       }
     }
 
@@ -81,24 +65,18 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
         val a = newCoreServiceActor()
         for {
 
-          cc1 <- ask(a, ApplicationService.CreateApplicationCmd(c1))
-          cc2 <- ask(a, ApplicationService.UpdateApplicationCmd(ApplicationUpdate(Some(c2.name), Some(c2.code), c1.id)))
-          ccs <- ask(a, ApplicationService.FindApplicationById(c1.id)).mapTo[ApplicationService.SingleApplication].map(_.maybeEntry)
-        } yield {
-          cc1 shouldBe Done
-          cc2 shouldBe Done
-          ccs shouldBe Some(c2)
-        }
+          cc1 <- ask(a, Application.CreateApplicationCmd(c1))
+          cc2 <- ask(a, Application.UpdateApplicationCmd(UpdateApplication(Some(c2.name), Some(c2.code), c1.id)))
+          ccs <- ask(a, Application.GetApplicationById(c1.id)).mapTo[Application.ApplicationOpt].map(_.x)
+        } yield ccs shouldBe Some(c2)
       }
       "should not update application if it doesn't exist" in {
         val c1 = Application("App1", "app1", "APP1")
         val c2 = Application("App2", "app2", "APP2")
         val a = newCoreServiceActor()
         for {
-          cc1 <- ask(a, ApplicationService.UpdateApplicationCmd(ApplicationUpdate(Some(c2.name), Some(c2.code), c1.id)))
-        } yield {
-          cc1 shouldBe ApplicationService.EntryNotFound
-        }
+          cc1 <- ask(a, Application.UpdateApplicationCmd(UpdateApplication(Some(c2.name), Some(c2.code), c1.id)))
+        } yield cc1 shouldBe Application.EntryNotFound
       }
     }
 
@@ -108,17 +86,17 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
         val c2 = Application("App2", "app2", "APP2")
         val a = newCoreServiceActor()
         for {
-          cc1 <- ask(a, ApplicationService.CreateApplicationCmd(c1))
-          cc2 <- ask(a, ApplicationService.CreateApplicationCmd(c2))
-          ccs <- ask(a, ApplicationService.FindAllApplications).mapTo[ApplicationService.MultipleApplications].map(_.entries)
-          d1 <- ask(a, ApplicationService.DeleteApplicationCmd(c1.id))
-          ccr <- ask(a, ApplicationService.FindAllApplications).mapTo[ApplicationService.MultipleApplications].map(_.entries)
+          cc1 <- ask(a, Application.CreateApplicationCmd(c1))
+          cc2 <- ask(a, Application.CreateApplicationCmd(c2))
+          ccs <- ask(a, Application.ListApplications).mapTo[Application.ApplicationsMap].map(_.x)
+          d1 <- ask(a, Application.DeleteApplicationCmd(c1.id))
+          ccr <- ask(a, Application.ListApplications).mapTo[Application.ApplicationsMap].map(_.x)
         } yield {
-          cc1 shouldBe Done
-          cc2 shouldBe Done
+          // cc1 shouldBe Done
+          //cc2 shouldBe Done
           ccs(c1.id) shouldBe c1
           ccs(c2.id) shouldBe c2
-          d1 shouldBe Done
+          //d1 shouldBe Done
           ccr(c2.id) shouldBe c2
           ccr.size shouldBe 1
         }
@@ -127,9 +105,9 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
         val c1 = Application("App1", "app1", "APP1")
         val a = newCoreServiceActor()
         for {
-          d1 <- ask(a, ApplicationService.DeleteApplicationCmd(c1.id))
+          d1 <- ask(a, Application.DeleteApplicationCmd(c1.id))
         } yield {
-          d1 shouldBe ApplicationService.EntryNotFound
+          d1 shouldBe Application.EntryNotFound
         }
       }
     }
@@ -147,8 +125,6 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
           cc2 <- ask(a, LanguageService.CreateLanguageCmd(c2))
           ccs <- ask(a, LanguageService.FindAllLanguages).mapTo[LanguageService.MultipleLanguages].map(_.entries)
         } yield {
-          cc1 shouldBe Done
-          cc2 shouldBe Done
           ccs(c1.id) shouldBe c1
           ccs(c2.id) shouldBe c2
         }
@@ -161,7 +137,6 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
           cc1 <- ask(a, LanguageService.CreateLanguageCmd(c1))
           cc2 <- ask(a, LanguageService.CreateLanguageCmd(c1))
         } yield {
-          cc1 shouldBe Done
           cc2 shouldBe LanguageService.EntryAlreadyExists
         }
       }
@@ -207,11 +182,11 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
           d1 <- ask(a, LanguageService.DeleteLanguageCmd(c1.id))
           ccr <- ask(a, LanguageService.FindAllLanguages).mapTo[LanguageService.MultipleLanguages].map(_.entries)
         } yield {
-          cc1 shouldBe Done
-          cc2 shouldBe Done
+          //cc1 shouldBe Done
+          //cc2 shouldBe Done
           ccs(c1.id) shouldBe c1
           ccs(c2.id) shouldBe c2
-          d1 shouldBe Done
+          //d1 shouldBe Done
           ccr(c2.id) shouldBe c2
           ccr.size shouldBe 1
         }

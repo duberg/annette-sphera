@@ -1,20 +1,9 @@
-/**
- * *************************************************************************************
- * Copyright (c) 2014-2017 by Valery Lobachev
- * Redistribution and use in source and binary forms, with or without
- * modification, are NOT permitted without written permission from Valery Lobachev.
- *
- * Copyright (c) 2014-2017 Валерий Лобачев
- * Распространение и/или использование в исходном или бинарном формате, с изменениями или без таковых,
- * запрещено без письменного разрешения правообладателя.
- * **************************************************************************************
- */
 package annette.core.domain
 
 import javax.inject.{ Named, Singleton }
 
 import akka.actor.{ Actor, ActorLogging, ActorRef, Props }
-import annette.core.domain.application.ApplicationService
+import annette.core.domain.application._
 import annette.core.domain.language.LanguageService
 import annette.core.domain.tenancy.{ LastSessionService, OpenSessionService, SessionHistoryService, UserService }
 
@@ -22,7 +11,7 @@ import annette.core.domain.tenancy.{ LastSessionService, OpenSessionService, Ses
 @Named("CoreService")
 class CoreServiceActor extends Actor with ActorLogging {
 
-  val applicationActor: ActorRef = context.actorOf(ApplicationService.props("core-application"), "application")
+  val applicationActor: ActorRef = context.actorOf(ApplicationManager.props("core-application"), "application")
   val languageActor: ActorRef = context.actorOf(LanguageService.props("core-language"), "language")
   val userActor: ActorRef = context.actorOf(UserService.props("core-user"), "user")
 
@@ -31,9 +20,9 @@ class CoreServiceActor extends Actor with ActorLogging {
   val openSessionActor: ActorRef = context.actorOf(OpenSessionService.props("core-open-session", lastSessionActor, sessionHistoryActor), "open-session")
 
   override def receive: PartialFunction[Any, Unit] = {
-    case msg: ApplicationService.Command =>
+    case msg: Application.Command =>
       applicationActor forward msg
-    case msg: ApplicationService.Query =>
+    case msg: Application.Query =>
       applicationActor forward msg
     case msg: LanguageService.Command =>
       languageActor forward msg

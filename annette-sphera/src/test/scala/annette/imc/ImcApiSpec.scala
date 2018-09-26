@@ -20,12 +20,12 @@ import annette.imc.utils.Implicits._
 import com.google.inject.Guice
 import com.typesafe.config.ConfigFactory
 import io.circe.parser._
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.{ Matchers, WordSpec }
 import com.google.inject.Guice
-import com.typesafe.config.{Config, ConfigException}
+import com.typesafe.config.{ Config, ConfigException }
 import net.codingwell.scalaguice.InjectorExtensions._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 class ImcApiSpec extends WordSpec
   with Matchers

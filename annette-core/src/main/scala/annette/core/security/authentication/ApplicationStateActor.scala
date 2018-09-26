@@ -1,23 +1,11 @@
-/**
- * *************************************************************************************
- * Copyright (c) 2014-2017 by Valery Lobachev
- * Redistribution and use in source and binary forms, with or without
- * modification, are NOT permitted without written permission from Valery Lobachev.
- *
- * Copyright (c) 2014-2017 Валерий Лобачев
- * Распространение и/или использование в исходном или бинарном формате, с изменениями или без таковых,
- * запрещено без письменного разрешения правообладателя.
- * **************************************************************************************
- */
-
 package annette.core.security.authentication
 
 import akka.actor.{ Actor, ActorLogging }
 import akka.event.LoggingReceive
 import akka.pattern.pipe
+import annette.core.domain.application.ApplicationManager
 import annette.core.security.authentication.jwt.JwtHelper
-import annette.core.domain.application.dao.ApplicationDao
-import annette.core.domain.application.model.Application
+import annette.core.domain.application._
 import annette.core.domain.language.dao.LanguageDao
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.UserService
@@ -29,7 +17,7 @@ import scala.concurrent.Future
 class ApplicationStateActor(
   sessionDao: SessionDao,
   tenantDao: TenantDao,
-  applicationDao: ApplicationDao,
+  applicationDao: ApplicationManager,
   userDao: UserService,
   tenantUserDao: TenantUserDao,
   languageDao: LanguageDao,

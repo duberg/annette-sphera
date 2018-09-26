@@ -2,22 +2,20 @@ import sbt._
 
 object Dependencies {
   object Version {
-    val scala = "2.12.4"
-    val akka = "2.5.3"
-    val akkaPersistenceCassandra = "0.54"
-    val akkaPersistenceInmemoryVersion = "2.5.1.1"
-    val akkaHttp = "10.0.9"
+    val scala = "2.12.6"
+    val akka = "2.5.16"
+    val akkaPersistenceCassandra = "0.90"
+    val akkaPersistenceInmemoryVersion = "2.5.0.0"
+    val akkaHttp = "10.0.14"
     val phantom = "2.12.1"
     val protobuf = "3.2.0"
     val guice = "4.1.0"
     val jwt = "1.2.2"
-    val akkaHttpCircle = "1.17.0"
-    val circle = "0.8.0"
+    val akkaHttpCircle = "1.22.0"
+    val circle = "0.10.0"
     val scalaj = "2.3.0"
     val scalamock = "3.6.0"
     val apachePoi = "3.17"
-    val alpakka = "0.13"
-    val annetteCore = "4.0.28-SNAPSHOT"
   }
 
   //lazy val akkaBackend: Seq[sbt.ModuleID] = common ++ tests ++ guice ++ reflect //++ metrics

@@ -1,8 +1,8 @@
 package annette.core.domain.tenancy.dao
 
+import annette.core.domain.application.ApplicationManager
 import javax.inject._
-import annette.core.domain.application.dao.ApplicationDao
-import annette.core.domain.application.model.Application
+import annette.core.domain.application._
 import annette.core.domain.language.dao.LanguageDao
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.{ UserService, _ }
@@ -19,7 +19,7 @@ class TenantUserDao @Inject() (
   userDao: UserService,
   tenantDao: TenantDao,
   languageDao: LanguageDao,
-  applicationDao: ApplicationDao) {
+  applicationDao: ApplicationManager) {
 
   private def validateCreate(tenantId: Tenant.Id, userId: User.Id)(implicit ec: ExecutionContext) = {
     for {

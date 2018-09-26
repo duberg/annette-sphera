@@ -3,7 +3,7 @@ package annette.core.domain.tenancy.model
 import java.time.ZonedDateTime
 import java.util.{ Locale, UUID }
 
-import annette.core.domain.application.model.Application
+import annette.core.domain.application.Application
 import annette.core.domain.authorization.model.Role
 
 /**

@@ -2,8 +2,9 @@ package annette.core.serializer
 
 import java.util.UUID
 
-import annette.core.domain.application.model._
-import annette.core.domain.application.{ ApplicationService, ApplicationState }
+import annette.core.domain.application._
+import annette.core.domain.application.Application._
+import annette.core.domain.application.{ ApplicationManager, ApplicationManagerState }
 import annette.core.serializer.proto.application._
 
 trait ApplicationConverters {
@@ -12,41 +13,41 @@ trait ApplicationConverters {
   val ApplicationDeletedEvtManifestV1 = "Application.DeletedEvt.v1"
   val ApplicationStateManifestV1 = "Application.State.v1"
 
-  def toApplicationCreatedEvtBinary(obj: ApplicationService.ApplicationCreatedEvt) = {
-    ApplicationCreatedEvtV1(obj.entry).toByteArray
+  def toApplicationCreatedEvtBinary(obj: ApplicationCreatedEvt) = {
+    ApplicationCreatedEvtV1(obj.x).toByteArray
   }
 
-  def toApplicationUpdateEvtBinary(obj: ApplicationService.ApplicationUpdatedEvt): Array[Byte] = {
-    ApplicationUpdatedEvtV1(obj.entry).toByteArray
+  def toApplicationUpdateEvtBinary(obj: ApplicationUpdatedEvt): Array[Byte] = {
+    ApplicationUpdatedEvtV1(obj.x).toByteArray
   }
 
-  def toApplicationDeleteEvtBinary(obj: ApplicationService.ApplicationDeletedEvt) = {
-    ApplicationDeletedEvtV1(obj.id.toString).toByteArray
+  def toApplicationDeleteEvtBinary(obj: ApplicationDeletedEvt) = {
+    ApplicationDeletedEvtV1(obj.x.toString).toByteArray
   }
 
-  def toApplicationStateBinary(obj: ApplicationState): Array[Byte] = {
+  def toApplicationStateBinary(obj: ApplicationManagerState): Array[Byte] = {
     ApplicationStateV1(
       applications = obj.applications.mapValues(fromApplication)).toByteArray
   }
 
-  def fromApplicationCreatedEvtV1(bytes: Array[Byte]): ApplicationService.ApplicationCreatedEvt = {
+  def fromApplicationCreatedEvtV1(bytes: Array[Byte]): ApplicationCreatedEvt = {
     val x = ApplicationCreatedEvtV1.parseFrom(bytes)
-    ApplicationService.ApplicationCreatedEvt(x.entry)
+    ApplicationCreatedEvt(x.x)
   }
 
-  def fromApplicationUpdatedEvtV1(bytes: Array[Byte]): ApplicationService.ApplicationUpdatedEvt = {
+  def fromApplicationUpdatedEvtV1(bytes: Array[Byte]): ApplicationUpdatedEvt = {
     val x = ApplicationUpdatedEvtV1.parseFrom(bytes)
-    ApplicationService.ApplicationUpdatedEvt(x.entry)
+    ApplicationUpdatedEvt(x.x)
   }
 
-  def fromApplicationDeletedEvtV1(bytes: Array[Byte]): ApplicationService.ApplicationDeletedEvt = {
-    val id = ApplicationDeletedEvtV1.parseFrom(bytes).id
-    ApplicationService.ApplicationDeletedEvt(id)
+  def fromApplicationDeletedEvtV1(bytes: Array[Byte]): Application.ApplicationDeletedEvt = {
+    val id = ApplicationDeletedEvtV1.parseFrom(bytes).x
+    ApplicationDeletedEvt(id)
   }
 
-  def fromApplicationStateV1(bytes: Array[Byte]): ApplicationState = {
+  def fromApplicationStateV1(bytes: Array[Byte]): ApplicationManagerState = {
     val p = ApplicationStateV1.parseFrom(bytes)
-    ApplicationState(
+    ApplicationManagerState(
       applications = p.applications.mapValues(toApplication))
   }
 
@@ -63,15 +64,15 @@ trait ApplicationConverters {
       id = x.id)
   }
 
-  implicit def toApplicationUpdate(x: ApplicationUpdateV1): ApplicationUpdate = {
-    ApplicationUpdate(
+  implicit def toUpdateApplication(x: UpdateApplicationV1): UpdateApplication = {
+    UpdateApplication(
       name = x.name,
       code = x.code,
       id = x.id)
   }
 
-  implicit def fromApplicationUpdate(x: ApplicationUpdate): ApplicationUpdateV1 = {
-    ApplicationUpdateV1(
+  implicit def fromUpdateApplication(x: UpdateApplication): UpdateApplicationV1 = {
+    UpdateApplicationV1(
       name = x.name,
       code = x.code,
       id = x.id)

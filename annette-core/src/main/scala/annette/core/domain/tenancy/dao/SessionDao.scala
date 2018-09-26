@@ -2,7 +2,7 @@ package annette.core.domain.tenancy.dao
 
 import javax.inject._
 
-import annette.core.domain.application.model.Application
+import annette.core.domain.application.Application
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.model._
 import org.joda.time.DateTime

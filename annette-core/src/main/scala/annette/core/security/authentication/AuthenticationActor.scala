@@ -2,8 +2,8 @@ package annette.core.security.authentication
 
 import akka.actor.{ Actor, ActorLogging }
 import akka.event.LoggingReceive
+import annette.core.domain.application.ApplicationManager
 import annette.core.security.authentication.jwt.JwtHelper
-import annette.core.domain.application.dao.ApplicationDao
 import annette.core.domain.language.dao.LanguageDao
 import annette.core.domain.tenancy.UserService
 import annette.core.domain.tenancy.dao.{ SessionDao, TenantDao, TenantUserDao }
@@ -14,7 +14,7 @@ import scala.concurrent.Future
 class AuthenticationActor(
   sessionDao: SessionDao,
   tenantDao: TenantDao,
-  applicationDao: ApplicationDao,
+  applicationDao: ApplicationManager,
   userDao: UserService,
   tenantUserDao: TenantUserDao,
   languageDao: LanguageDao,

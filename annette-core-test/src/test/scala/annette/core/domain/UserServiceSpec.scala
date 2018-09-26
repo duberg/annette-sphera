@@ -1,14 +1,3 @@
-/**
- * *************************************************************************************
- * Copyright (c) 2014-2017 by Valery Lobachev
- * Redistribution and use in source and binary forms, with or without
- * modification, are NOT permitted without written permission from Valery Lobachev.
- *
- * Copyright (c) 2014-2017 Валерий Лобачев
- * Распространение и/или использование в исходном или бинарном формате, с изменениями или без таковых,
- * запрещено без письменного разрешения правообладателя.
- * **************************************************************************************
- */
 package annette.core.domain
 
 import java.util.UUID
@@ -17,8 +6,8 @@ import akka.Done
 import akka.actor.{ ActorRef, ActorSystem }
 import akka.pattern.ask
 import akka.testkit.TestKit
-import annette.core.domain.application.ApplicationService
-import annette.core.domain.application.model.{ Application, ApplicationUpdate }
+import annette.core.domain.application.ApplicationManager
+import annette.core.domain.application._
 import annette.core.domain.language.LanguageService
 import annette.core.domain.language.model.{ Language, LanguageUpdate }
 import annette.core.domain.tenancy.UserService.CreateUserSuccess
@@ -42,7 +31,7 @@ class UserServiceSpec extends TestKit(ActorSystem("UserActorSpec"))
     new UserService(coreServiceActor)
   }
 
-  "A UserDao" when call {
+  "A UserDao" when {
     "create" must {
       "create new user" in {
         val c1 = newCreateUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))

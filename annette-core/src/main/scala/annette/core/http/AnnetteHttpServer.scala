@@ -1,5 +1,6 @@
 package annette.core.http
 
+import akka.Done
 import akka.event.{ LogSource, Logging }
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
@@ -30,7 +31,7 @@ class AnnetteHttpServer(coreModule: CoreModule) {
     log.info(s"Listen to http://$host:$port")
   }
 
-  def stop(): Option[Future[Unit]] = {
+  def stop(): Option[Future[Done]] = {
     bindingFuture.map(_.flatMap(_.unbind()))
   }
 

@@ -1,14 +1,12 @@
 package annette.core.json
 
 import io.circe.generic.AutoDerivation
+
 //import io.circe.generic._
-import io.circe.java8.time.TimeInstances
 //import io.circe.syntax._
 
 trait Codec extends AutoDerivation
   // ExceptionMapping
-
-  with TimeInstances
   // with ProductCodec
   with FiniteDurationCodec // with ModelCodec
   with ExceptionCodec //with OperationCodec

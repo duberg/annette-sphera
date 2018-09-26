@@ -17,8 +17,8 @@ import akka.Done
 import akka.actor.{ ActorRef, ActorSystem }
 import akka.pattern.ask
 import akka.testkit.TestKit
-import annette.core.domain.application.ApplicationService
-import annette.core.domain.application.model.{ Application, ApplicationUpdate }
+import annette.core.domain.application.ApplicationManager
+import annette.core.domain.application._
 import annette.core.domain.language.{ LanguageAlreadyExists, LanguageNotFound, LanguageService }
 import annette.core.domain.language.dao.LanguageDao
 import annette.core.domain.language.model.{ Language, LanguageUpdate }
@@ -42,7 +42,7 @@ class LanguageDaoSpec extends TestKit(ActorSystem("UserActorSpec"))
     new LanguageDao(coreServiceActor)
   }
 
-  "The LanguageDao" when call {
+  "The LanguageDao" when {
     "create" must {
       "create new language" in {
         val c1 = Language("English", "EN")

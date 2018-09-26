@@ -1,15 +1,11 @@
 package annette.core.test
 
 import akka.actor.ActorRef
-import akka.pattern.ask
-import akka.testkit.{ DefaultTimeout, TestKit }
-import annette.core.persistence.Persistence._
+import annette.core.akkaext.actor.CqrsQuery._
 
 import scala.concurrent.Future
 
-trait PersistenceUtils { _: TestKit with DefaultTimeout =>
-  import system.dispatcher
-
+trait PersistenceUtils { _: PersistenceSpec =>
   def ping(x: ActorRef): Future[Any] = ask(x, Ping)
 
   def pingAll(x: Iterable[ActorRef]): Future[Seq[Any]] =
