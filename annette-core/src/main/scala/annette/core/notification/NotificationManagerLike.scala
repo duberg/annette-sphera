@@ -7,7 +7,8 @@ import annette.core._
 import annette.core.model.EntityType
 import annette.core.notification.actor._
 import annette.core.akkaext.actor.CqrsResponse
-import annette.core.notification.actor.VerificationActor.{CreateVerificationSuccess, VerificationAlreadyExists}
+import annette.core.security.verification._
+import annette.core.security.verification.VerificationActor.{CreateVerificationSuccess, VerificationAlreadyExists}
 import annette.core.utils.Generator
 
 import scala.concurrent.{ExecutionContext, Future}

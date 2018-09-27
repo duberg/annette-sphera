@@ -2,8 +2,9 @@ package annette.core.notification.actor
 
 import akka.actor.ActorRef
 import akka.testkit.TestProbe
-import annette.core.notification.{ Verification, VerifyBySmsNotification }
+import annette.core.notification.{Verification, VerifyBySmsNotification}
 import annette.core.akkaext.actor.ActorId
+import annette.core.security.verification.VerificationState
 import annette.core.test.PersistenceSpec
 import org.scalatest.Assertion
 
