@@ -94,12 +94,13 @@ object NotificationManagerActor extends NotificationConfig {
     id: NotificationManager.Id,
     config: Config)(implicit c: ExecutionContext, t: Timeout): Props = {
     val annetteConfig: Config = config.getConfig("annette")
-    val mailNotificationConfig = annetteConfig.mailNotificationEntry
+    val mailNotificationConfig = annetteConfig.emailNotificationEntry
+    println(mailNotificationConfig)
     val smsNotificationConfig = annetteConfig.smsNotificationEntry
     Props(new NotificationManagerActor(
       id = id,
       emailRetryInterval = mailNotificationConfig.retryInterval,
-      emailSettings = mailNotificationConfig.mail,
+      emailSettings = mailNotificationConfig.email,
       smsRetryInterval = smsNotificationConfig.retryInterval,
       smsSettings = smsNotificationConfig.sms))
   }

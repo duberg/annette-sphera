@@ -36,11 +36,11 @@ private class EmailNotificationActor(
     })
   }
 
-  def hideCredentials: PartialFunction[(EmailNotificationLike, Any), (EmailNotificationLike, Any)] = {
-    case (n: SendPasswordToEmailNotification, x) if !emailClient.settings.debug =>
-      (n.copy(password = hide(n.password)), x)
-    case x => x
-  }
+  def hideCredentials[T](x: (EmailNotificationLike, T)) = (x._1 match {
+    case n: VerifyByEmailNotification if !emailClient.settings.debug => n.copy(code = hide(n.code))
+    case n: SendPasswordToEmailNotification if !emailClient.settings.debug => n.copy(password = hide(n.password))
+    case n: EmailNotificationLike => n
+  }) -> x._2
 
   def processFailures(failures: Seq[ClientFailure]): Unit = {
     failures
@@ -55,7 +55,8 @@ private class EmailNotificationActor(
     success
       .map(hideCredentials)
       .foreach {
-        case (n: SendPasswordToEmailNotification, _) => log.info(s"${n.getClass.getSimpleName} [${n.id}, email:${n.email}, password: ${n.password}]")
+        case (n: SendPasswordToEmailNotification, _) => log.info(s"${n.getClass.getSimpleName} [${n.id}, email: ${n.email}, password: ${n.password}]")
+        case (n: VerifyByEmailNotification, _) => log.info(s"${n.getClass.getSimpleName} [${n.id}, email: ${n.email}, code: ${n.code}]")
         case (n, _) => log.info(s"${n.getClass.getSimpleName} [${n.id}, email:${n.email}]")
       }
   }
@@ -101,6 +102,12 @@ private class EmailNotificationActor(
         subject = y.subject,
         message = y.message,
         password = y.password)
+      case y: CreateVerifyByEmailNotification => VerifyByEmailNotification(
+        id = generateUUID,
+        email = y.email,
+        subject = y.subject,
+        message = y.message,
+        code = y.code)
       case y: CreateEmailNotificationLike => EmailNotification(
         id = generateUUID,
         email = y.email,

@@ -17,8 +17,8 @@ import scala.util.{ Failure, Success }
 trait NewEmailNotificationActor extends NotificationConfig with AsyncMockFactory { _: PersistenceSpec =>
   import EmailNotificationActor._
 
-  lazy val emailNotificationConfig: MailNotificationEntry =
-    ConfigFactory.load().getConfig("annette").mailNotificationEntry
+  lazy val emailNotificationConfig: EmailNotificationEntry =
+    ConfigFactory.load().getConfig("annette").emailNotificationEntry
 
   def createMailNotification(a: ActorRef, x: CreateEmailNotificationLike): Future[EmailNotificationLike] =
     ask(a, CreateNotificationCmd(x))
@@ -47,7 +47,7 @@ trait NewEmailNotificationActor extends NotificationConfig with AsyncMockFactory
   }
 
   def newEmailNotificationActor(id: ActorId = generateActorId, state: EmailNotificationState = EmailNotificationState.empty): Future[ActorRef] = Future {
-    system.actorOf(EmailNotificationActor.props(id, emailNotificationConfig.retryInterval, emailNotificationConfig.mail), id.name)
+    system.actorOf(EmailNotificationActor.props(id, emailNotificationConfig.retryInterval, emailNotificationConfig.email), id.name)
   }
 
   def stubbedEmailClient(settings: EmailSettings): EmailClient = {
@@ -92,27 +92,27 @@ trait NewEmailNotificationActor extends NotificationConfig with AsyncMockFactory
     system.actorOf(EmailNotificationActor.propsWithMailClient(
       id = id,
       retryInterval = 1 hour,
-      emailClient = stubbedEmailClient(emailNotificationConfig.mail)), id.name)
+      emailClient = stubbedEmailClient(emailNotificationConfig.email)), id.name)
   }
 
   def newStubbedSocketExceptionEmailNotificationActor(id: ActorId = generateActorId, state: EmailNotificationState = EmailNotificationState.empty): Future[ActorRef] = Future {
     system.actorOf(EmailNotificationActor.propsWithMailClient(
       id = id,
       retryInterval = 1 hour,
-      emailClient = stubbedSocketExceptionEmailClient(emailNotificationConfig.mail)), id.name)
+      emailClient = stubbedSocketExceptionEmailClient(emailNotificationConfig.email)), id.name)
   }
 
   def newStubbedSocketExceptionEmailNotificationActorInDebug(id: ActorId = generateActorId, state: EmailNotificationState = EmailNotificationState.empty): Future[ActorRef] = Future {
     system.actorOf(EmailNotificationActor.propsWithMailClient(
       id = id,
       retryInterval = 1 hour,
-      emailClient = stubbedSocketExceptionEmailClientInDebug(emailNotificationConfig.mail)), id.name)
+      emailClient = stubbedSocketExceptionEmailClientInDebug(emailNotificationConfig.email)), id.name)
   }
 
   def newStubbedConnectionRefusedEmailNotificationActor(id: ActorId = generateActorId, state: EmailNotificationState = EmailNotificationState.empty): Future[ActorRef] = Future {
     system.actorOf(EmailNotificationActor.propsWithMailClient(
       id = id,
       retryInterval = 1 hour,
-      emailClient = stubbedConnectionRefusedEmailClient(emailNotificationConfig.mail)), id.name)
+      emailClient = stubbedConnectionRefusedEmailClient(emailNotificationConfig.email)), id.name)
   }
 }

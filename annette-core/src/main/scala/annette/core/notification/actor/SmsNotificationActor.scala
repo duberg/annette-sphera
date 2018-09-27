@@ -69,9 +69,9 @@ private class SmsNotificationActor(
     success
       .map(hideCredentials)
       .foreach {
-        case (n: SendPasswordToPhoneNotification, _) => log.info(s"${n.getClass.getSimpleName} [${n.id}, phone:${n.phone}, password: ${n.password}]")
-        case (n: VerifyBySmsNotification, _) => log.info(s"${n.getClass.getSimpleName} [${n.id}, phone:${n.phone}, code:${n.code}]")
-        case (n, _) => log.info(s"${n.getClass.getSimpleName} [${n.id}, phone:${n.phone}]")
+        case (n: SendPasswordToPhoneNotification, _) => log.info(s"${n.getClass.getSimpleName} [${n.id}, phone: ${n.phone}, password: ${n.password}]")
+        case (n: VerifyBySmsNotification, _) => log.info(s"${n.getClass.getSimpleName} [${n.id}, phone: ${n.phone}, code: ${n.code}]")
+        case (n, _) => log.info(s"${n.getClass.getSimpleName} [${n.id}, phone: ${n.phone}]")
       }
 
   def notify(state: SmsNotificationState): Unit = {

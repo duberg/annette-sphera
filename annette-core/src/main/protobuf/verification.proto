@@ -2,7 +2,7 @@ syntax = "proto2";
 
 package imc;
 
-option java_package = "annette.bpm.serializer.proto";
+option java_package = "annette.core.serializer.proto";
 
 message VerificationStateV1 {
     map<string, VerificationV1> verifications = 1;

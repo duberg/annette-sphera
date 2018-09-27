@@ -12,7 +12,7 @@ trait NotificationConfig {
 
   implicit class RichConfig(val underlying: Config) extends ModuleConfig {
     def toMailNotificationEntry(config: Config): MailNotificationEntry = {
-      val retryInterval = config.getFiniteDuration("retry-interval")
+      //val retryInterval = config.getFiniteDuration("retry-interval")
       val mailConfig = config.getConfig("mail")
       val from = mailConfig.getString("from")
       val username = mailConfig.getString("username")
@@ -27,11 +27,11 @@ trait NotificationConfig {
         username = username,
         password = password,
         debug = debug)
-      MailNotificationEntry(retryInterval, mail)
+      MailNotificationEntry(6 second, mail)
     }
 
     def toSmsNotificationEntry(config: Config): SmsNotificationEntry = {
-      val retryInterval = config.getFiniteDuration("retry-interval")
+      //val retryInterval = config.getFiniteDuration("retry-interval")
       val smsConfig = config.getConfig("sms")
       val apiUrl = smsConfig.getString("api-url")
       val apiKey = smsConfig.getString("api-key")
@@ -46,7 +46,7 @@ trait NotificationConfig {
         route = route,
         fromExtension = fromExtension,
         debug = debug)
-      SmsNotificationEntry(retryInterval, sms)
+      SmsNotificationEntry(6 second, sms)
     }
 
     def mailNotificationEntry: MailNotificationEntry =

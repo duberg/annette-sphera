@@ -5,7 +5,7 @@ import java.util.UUID
 import annette.core.security.verification.Verification._
 import annette.core.security.verification._
 import Implicits._
-import annette.bpm.serializer.proto.verification._
+import annette.core.serializer.proto.verification._
 
 trait VerificationConverters {
   val VerificationStateManifestV1 = "VerificationState.v1"
@@ -13,7 +13,7 @@ trait VerificationConverters {
   val VerificationDeletedEvtManifestV1 = "VerificationDeletedEvt.v1"
 
   def toVerificationCreatedEvtBinary(obj: VerificationCreatedEvt): Array[Byte] =
-    CreatedVerificationEvtV1(toVerification(obj.x))
+    VerificationCreatedEvtV1(toVerification(obj.x))
       .toByteArray
 
   def toVerificationDeletedEvtBinary(obj: VerificationDeletedEvt): Array[Byte] =
