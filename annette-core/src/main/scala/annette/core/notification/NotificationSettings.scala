@@ -2,7 +2,7 @@ package annette.core.notification
 
 trait NotificationSettings
 
-case class MailSettings(
+case class EmailSettings(
   smtp: Map[String, AnyRef],
   from: String,
   username: String,

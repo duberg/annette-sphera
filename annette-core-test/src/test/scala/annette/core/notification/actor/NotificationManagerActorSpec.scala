@@ -9,9 +9,9 @@ import annette.core.test.PersistenceSpec
 class NotificationManagerActorSpec extends TestKit(ActorSystem("NotificationManagerActorSpec"))
   with PersistenceSpec
   with NewNotificationManager
-  with NewMailNotificationActor
+  with NewEmailNotificationActor
   with NewSmsNotificationActor
-  with NewSmsVerificationActor {
+  with NewVerificationActor {
   "A supervisor strategy of the NotificationManagerActor" when receive {
     "ArithmeticException" must {
       "resume actorRef " in {
@@ -51,8 +51,8 @@ class NotificationManagerActorSpec extends TestKit(ActorSystem("NotificationMana
         for {
           a <- newNotificationManagerActor()
           x <- generateMailNotificationPassword()
-          y <- ask(a, MailNotificationActor.CreateNotificationCmd(x))
-        } yield y shouldBe MailNotificationActor.Done
+          y <- ask(a, EmailNotificationActor.CreateNotificationCmd(x))
+        } yield y shouldBe EmailNotificationActor.Done
       }
     }
     "SmsNotificationManagerActor.Command" must {
@@ -69,8 +69,8 @@ class NotificationManagerActorSpec extends TestKit(ActorSystem("NotificationMana
         for {
           a <- newNotificationManagerActor()
           x <- generateSmsVerification()
-          y <- ask(a, SmsVerificationActor.CreateVerificationCmd(x))
-        } yield y shouldBe SmsVerificationActor.Done
+          y <- ask(a, VerificationActor.CreateVerificationCmd(x))
+        } yield y shouldBe VerificationActor.Done
       }
     }
   }

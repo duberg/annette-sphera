@@ -1,8 +1,8 @@
 package annette.core.notification.actor
 
-import akka.actor.{ ActorRef, Props, Terminated }
+import akka.actor.{ActorRef, Props, Terminated}
 import annette.core.notification.actor.WebSocketNotificationActor._
-import annette.core.notification.{ NotificationManager, WebSocketNotification }
+import annette.core.notification.{CreateWebSocketNotification, NotificationManager, WebSocketNotificationLike}
 import annette.core.akkaext.actor._
 import annette.core.akkaext.persistence._
 import annette.core.domain.tenancy.model.User
@@ -19,7 +19,7 @@ private class WebSocketNotificationActor(val id: NotificationManager.Id, val ini
     //removeSubscriber(self, x)
   }
 
-  def notify(x: WebSocketNotification): Unit = {
+  def notify(x: CreateWebSocketNotification): Unit = {
     // subscribersMap
     // .filter(x.userIds contains _._1)
     // .foreach(_._2 ! x)
@@ -40,7 +40,7 @@ object WebSocketNotificationActor {
   trait Event extends CqrsEvent
 
   case class ConnectCmd(x: User.Id, y: ActorRef) extends Query
-  case class NotifyCmd(x: WebSocketNotification) extends Query
+  case class NotifyCmd(x: CreateWebSocketNotification) extends Query
 
   case object Done extends CqrsResponse
 

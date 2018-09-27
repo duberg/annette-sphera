@@ -3,27 +3,30 @@ package annette.core.http.routes
 import akka.actor.ActorRef
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.{ Directives, Route }
+import akka.http.scaladsl.server.{Directives, Route}
 import akka.http.scaladsl.settings.RoutingSettings
 import akka.pattern.AskSupport
 import akka.util.Timeout
-import annette.core.security.authentication.{ ApplicationState, AuthenticationService, ForbiddenException }
-import annette.core.{ AnnetteException, RequiredValueNotProvided, TenantNotFoundException }
+import annette.core.security.authentication.{ApplicationState, AuthenticationService, ForbiddenException}
+import annette.core.{AnnetteException, RequiredValueNotProvided, TenantNotFoundException}
 import annette.core.domain.application.Application
 import annette.core.domain.language.dao.LanguageDao
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.UserManager
-import annette.core.domain.tenancy.dao.{ TenantDao, TenantUserDao, TenantUserRoleDao }
+import annette.core.domain.tenancy.dao.{TenantDao, TenantUserDao, TenantUserRoleDao}
 import annette.core.domain.tenancy.model._
+import annette.core.model.EntityType.Verification
+import annette.core.notification._
 import annette.core.security.AnnetteSecurityDirectives
+import annette.core.utils.Generator
 import com.typesafe.config.Config
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 
-import scala.concurrent.{ ExecutionContext, Future }
-import scala.util.{ Failure, Success }
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 import scala.concurrent.duration._
 
-trait AuthRoutes extends Directives with AskSupport {
+trait AuthRoutes extends Directives with AskSupport with Generator {
   val tenantDao: TenantDao
   val tenantUserDao: TenantUserDao
   val tenantUserRoleDao: TenantUserRoleDao
@@ -31,7 +34,9 @@ trait AuthRoutes extends Directives with AskSupport {
   val languageDao: LanguageDao
   val authenticationService: ActorRef
   val annetteSecurityDirectives: AnnetteSecurityDirectives
+  val notificationManager: NotificationManager
   val config: Config
+
   implicit val c: ExecutionContext
   //implicit val t: Timeout = 30.seconds // TODO: заменить на конфигурацию
 
@@ -82,7 +87,7 @@ trait AuthRoutes extends Directives with AskSupport {
   }
 
   def signUp: Route = (path("signup") & post & entity(as[SignUpUser])) { x =>
-    def f = tenantDao.listIds.flatMap(tenantIds => {
+    def f = tenantDao.listIds.flatMap(f = tenantIds => {
       // if empty tenants
       if (x.tenants.isEmpty) throw RequiredValueNotProvided("tenants")
 
@@ -92,7 +97,6 @@ trait AuthRoutes extends Directives with AskSupport {
       if (unknownTenants.nonEmpty) throw TenantNotFoundException(unknownTenants)
 
       else {
-        // todo: add email verification (aka account activation)
         val createUser = CreateUser(
           username = None,
           displayName = Some(s"${x.lastName} ${x.firstName}"),
@@ -116,10 +120,29 @@ trait AuthRoutes extends Directives with AskSupport {
           deactivated = true)
 
         for {
-          x1 <- userManager.create(createUser)
-          x2 <- Future.sequence(x.tenants.map(tenantUserDao.create(_, x1.id)))
-          x3 <- Future.sequence(x.tenants.map(tenantId => tenantUserRoleDao.store(TenantUserRole(tenantId, x1.id, Set("user")))))
-        } yield x1
+          user <- userManager.create(createUser)
+          tenantUser <- Future.sequence(x.tenants.map(tenantUserDao.create(_, user.id)))
+          tenantUserRole <- Future.sequence(x.tenants.map(tenantId => tenantUserRoleDao.store(TenantUserRole(tenantId, user.id, Set("user")))))
+          verification <- notificationManager.createVerification()
+        } yield {
+          /**
+            * = Email verification =
+            */
+          val apiUrl = "http://localhost:9000"
+          val verificationUrl = s"$apiUrl/notifications/verification/${verification.id}"
+          val template = html.ConfirmationEmail(verificationUrl)
+          val pin = verification.code
+
+          val notification = CreateVerifyByEmailNotification(
+            email = x.email,
+            subject = "Confirm your email address",
+            message = template.toString(),
+            code = pin)
+
+          notificationManager.push(notification)
+
+          user
+        }
       }
     })
     complete(f)

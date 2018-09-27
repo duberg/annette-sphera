@@ -57,14 +57,14 @@ class CoreServiceActor(config: Config)(implicit c: ExecutionContext, t: Timeout)
     case msg: SessionHistoryService.Query =>
       sessionHistoryActor forward msg
 
-    case x: MailNotificationActor.Command => notificationManagerActor forward x
+    case x: EmailNotificationActor.Command => notificationManagerActor forward x
     case x: SmsNotificationActor.Command => notificationManagerActor forward x
-    case x: SmsVerificationActor.Command => notificationManagerActor forward x
+    case x: VerificationActor.Command => notificationManagerActor forward x
     case x: WebSocketNotificationActor.Command => notificationManagerActor forward x
 
-    case x: MailNotificationActor.Query => notificationManagerActor forward x
+    case x: EmailNotificationActor.Query => notificationManagerActor forward x
     case x: SmsNotificationActor.Query => notificationManagerActor forward x
-    case x: SmsVerificationActor.Query => notificationManagerActor forward x
+    case x: VerificationActor.Query => notificationManagerActor forward x
     case x: WebSocketNotificationActor.Query => notificationManagerActor forward x
   }
 }

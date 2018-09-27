@@ -7,10 +7,11 @@ import annette.core._
 import annette.core.model.EntityType
 import annette.core.notification.actor._
 import annette.core.akkaext.actor.CqrsResponse
-import annette.core.notification.actor.SmsVerificationActor.VerificationAlreadyExists
+import annette.core.notification.actor.VerificationActor.{CreateVerificationSuccess, VerificationAlreadyExists}
 import annette.core.utils.Generator
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration._
 
 trait NotificationManagerLike extends Generator {
   implicit val c: ExecutionContext
@@ -18,51 +19,58 @@ trait NotificationManagerLike extends Generator {
 
   protected def notificationManagerActor: ActorRef
 
-  private def idOrThrow(verificationId: Verification.Id): PartialFunction[SmsVerificationActor.Response, Verification.Id] = {
-    case SmsVerificationActor.Done => verificationId
-    case SmsVerificationActor.InvalidCode => throw VerificationInvalidCodeException()
-    case SmsVerificationActor.VerificationNotFound => throw VerificationNotFoundException(verificationId)
-    case SmsVerificationActor.VerificationAlreadyExists => throw VerificationAlreadyExistsException(verificationId)
+  private def idOrThrow(verificationId: Notification.Id): PartialFunction[VerificationActor.Response, Notification.Id] = {
+    case VerificationActor.Done => verificationId
+    case VerificationActor.InvalidCode => throw VerificationInvalidCodeException()
+    case VerificationActor.VerificationNotFound => throw VerificationNotFoundException(verificationId)
+    case VerificationActor.VerificationAlreadyExists => throw VerificationAlreadyExistsException(verificationId)
   }
 
-  def getSmsNotifications: Future[Seq[SmsNotification]] =
+  def listSmsNotifications: Future[Seq[SmsNotificationLike]] =
     ask(notificationManagerActor, SmsNotificationActor.GetNotifications)
       .mapTo[SmsNotificationActor.NotificationMap]
       .map(_.x.values.toSeq)
 
-  def getSmsVerifications: Future[Seq[SmsVerification]] =
-    ask(notificationManagerActor, SmsVerificationActor.GetVerifications)
-      .mapTo[SmsVerificationActor.VerificationMap]
+  def listVerifications: Future[Seq[Verification]] =
+    ask(notificationManagerActor, VerificationActor.ListVerifications)
+      .mapTo[VerificationActor.VerificationMap]
       .map(_.x.values.toSeq)
 
   /**
    * Полностью асинхронный быстрый сброс уведомлений.
-   * При сбросе сообщения [[SmsNotification.Verification]] автоматически создается верификация.
+   * При сбросе сообщения [[Verification]] автоматически создается верификация.
    */
-  def push(x: Notification): Unit = x match {
-    case y: MailNotification => notificationManagerActor ! MailNotificationActor.CreateNotificationCmd(y)
-    case y: SmsNotification.Verification => notificationManagerActor ! SmsVerificationActor.CreateVerificationCmd(
-      SmsVerification(
-        id = y.id,
-        notification = y))
-    case y: SmsNotification => notificationManagerActor ! SmsNotificationActor.CreateNotificationCmd(y)
-    case y: WebSocketNotification => notificationManagerActor ! WebSocketNotificationActor.NotifyCmd(y)
+  def push(x: CreateNotification): Unit = x match {
+    case y: CreateEmailNotification => notificationManagerActor ! EmailNotificationActor.CreateNotificationCmd(y)
+    case y: CreateSmsNotification => notificationManagerActor ! SmsNotificationActor.CreateNotificationCmd(y)
+    case y: CreateWebSocketNotification => notificationManagerActor ! WebSocketNotificationActor.NotifyCmd(y)
   }
 
-  def send(x: Notification): Future[CqrsResponse] = {
+  def send(x: CreateNotification): Future[CqrsResponse] = {
     x match {
-      case y: MailNotification => notificationManagerActor.ask(MailNotificationActor.CreateNotificationCmd(y))
-      case y: SmsNotification.Verification => notificationManagerActor.ask(SmsVerificationActor.CreateVerificationCmd(
-        SmsVerification(
-          id = y.id,
-          notification = y)))
-      case y: SmsNotification => notificationManagerActor.ask(SmsNotificationActor.CreateNotificationCmd(y))
-      case y: WebSocketNotification => notificationManagerActor.ask(WebSocketNotificationActor.NotifyCmd(y))
+      case y: CreateEmailNotification => notificationManagerActor.ask(EmailNotificationActor.CreateNotificationCmd(y))
+      case y: CreateSmsNotification => notificationManagerActor.ask(SmsNotificationActor.CreateNotificationCmd(y))
+      case y: CreateWebSocketNotification => notificationManagerActor.ask(WebSocketNotificationActor.NotifyCmd(y))
     }
   }.mapTo[CqrsResponse]
 
+
+  def createVerification(): Future[Verification] = {
+    val x = CreateVerification(
+      code = generatePinString,
+      duration = 10.minutes
+    )
+
+    ask(notificationManagerActor, VerificationActor.CreateVerificationCmd(x))
+      .mapTo[VerificationActor.Response]
+      .map({
+        case VerificationAlreadyExists => throw ???
+        case CreateVerificationSuccess(x) => x
+      })
+  }
+
   def verify(verificationId: Verification.Id, code: String): Future[Verification.Id] =
-    ask(notificationManagerActor, SmsVerificationActor.VerifyCmd(verificationId, code))
-      .mapTo[SmsVerificationActor.Response]
+    ask(notificationManagerActor, VerificationActor.VerifyCmd(verificationId, code))
+      .mapTo[VerificationActor.Response]
       .map(idOrThrow(verificationId))
 }

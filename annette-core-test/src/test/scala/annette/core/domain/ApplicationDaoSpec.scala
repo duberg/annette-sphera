@@ -12,16 +12,18 @@ import annette.core.domain.language.model.{ Language, LanguageUpdate }
 import annette.core.domain.tenancy._
 import annette.core.domain.tenancy.model._
 import annette.core.test.PersistenceSpec
+import com.typesafe.config.{ Config, ConfigFactory }
 
 import scala.concurrent.Future
 
 class ApplicationDaoSpec extends TestKit(ActorSystem("ApplicationDaoSpec"))
   with PersistenceSpec
   with NewApplication {
+  lazy val config: Config = ConfigFactory.load()
 
   private def newCoreServiceActor(): ActorRef = {
     val uuid = UUID.randomUUID().toString
-    system.actorOf(CoreService.props, s"CoreService-$uuid")
+    system.actorOf(CoreService.props(config), s"CoreService-$uuid")
   }
 
   def newApplicationDao(): ApplicationManager = {

@@ -81,7 +81,7 @@ trait NotificationConverters extends ApConverters {
     val opt3 = x.notificationOneof.opt3
     val opt4 = x.notificationOneof.opt4
     Seq(opt1, opt2, opt3, opt4).flatten.head match {
-      case y: MailNotificationPasswordV1 => MailNotification.Password(
+      case y: MailNotificationPasswordV1 => SendPasswordToEmail(
         id = UUID.fromString(y.id),
         email = y.email,
         password = y.password,
@@ -225,7 +225,7 @@ trait NotificationConverters extends ApConverters {
   }
 
   def fromMailNotification(x: MailNotification): MailNotificationV1 = x match {
-    case y: MailNotification.Password =>
+    case y: SendPasswordToEmail =>
       MailNotificationV1.defaultInstance.withOpt1(
         MailNotificationPasswordV1(
           id = y.id.toString,

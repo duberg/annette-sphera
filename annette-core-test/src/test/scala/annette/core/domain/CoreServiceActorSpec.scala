@@ -16,6 +16,7 @@ import OpenSessionService.{ OpenSessionOpt, OpenSessionSeq }
 import annette.core.domain.tenancy.UserManager.{ CreateUserSuccess, SingleUser }
 import annette.core.domain.tenancy.model._
 import annette.core.test.PersistenceSpec
+import com.typesafe.config.{ Config, ConfigFactory }
 import org.joda.time.DateTime
 
 class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
@@ -26,10 +27,11 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
   with NewOpenSession
   with NewLastSession
   with NewSessionHistory {
+  lazy val config: Config = ConfigFactory.load()
 
   def newCoreServiceActor(): ActorRef = {
     val uuid = UUID.randomUUID().toString
-    system.actorOf(CoreService.props, s"CoreService-$uuid")
+    system.actorOf(CoreService.props(config), s"CoreService-$uuid")
   }
 
   "A CoreServiceActor with ApplicationActor" when receive {

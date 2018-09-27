@@ -71,8 +71,10 @@ lazy val annetteCore = Project(
 
     PB.deleteTargetDirectory := false,
 
+    sourceDirectories in (Compile, TwirlKeys.compileTemplates) +=
+      (scalaSource in Compile).value / "annette" / "core" / "notification" / "templates",
     commonSettings
-  )
+  ).enablePlugins(SbtTwirl)
 
 lazy val annetteCoreTest = Project(
   id = "annette-core-test",

@@ -7,7 +7,7 @@ import scala.collection.JavaConverters._
 import scala.concurrent.duration._
 
 trait NotificationConfig {
-  case class MailNotificationEntry(retryInterval: FiniteDuration, mail: MailSettings)
+  case class MailNotificationEntry(retryInterval: FiniteDuration, mail: EmailSettings)
   case class SmsNotificationEntry(retryInterval: FiniteDuration, sms: SmsSettings)
 
   implicit class RichConfig(val underlying: Config) extends ModuleConfig {
@@ -21,7 +21,7 @@ trait NotificationConfig {
       val smtp: Map[String, AnyRef] = mailConfig.getConfig("smtp").entrySet().asScala
         .map(entry => (s"mail.smtp.${entry.getKey}", entry.getValue.unwrapped()))
         .toMap
-      val mail = MailSettings(
+      val mail = EmailSettings(
         smtp = smtp,
         from = from,
         username = username,

@@ -1,7 +1,8 @@
 package annette.core
 
 import annette.core.domain.tenancy.model.Tenant
-import annette.core.notification.Verification
+import annette.core.notification.VerifyBySmsNotification
+import annette.core.notification.Notification
 
 sealed trait CoreException extends RuntimeException {
   val cause: Option[CoreException] = None
@@ -29,7 +30,7 @@ case class TenantNotFoundException(tenantIds: Set[Tenant.Id]) extends CoreExcept
   val message = s"Tenant [$p1] not found"
 }
 
-case class VerificationNotFoundException(verificationId: Verification.Id) extends CoreException {
+case class VerificationNotFoundException(verificationId: Notification.Id) extends CoreException {
   val code = "core.exceptions.VerificationNotFoundException"
   val p1 = verificationId.toString
   val parameters = Map("verificationId" -> p1)
@@ -45,7 +46,7 @@ case class VerificationInvalidCodeException() extends CoreException {
 /**
  * = AlreadyExistsExceptions =
  */
-case class VerificationAlreadyExistsException(verificationId: Verification.Id) extends CoreException {
+case class VerificationAlreadyExistsException(verificationId: Notification.Id) extends CoreException {
   val code = "core.exceptions.VerificationAlreadyExistsException"
   val p1 = verificationId.toString
   val parameters = Map("verificationId" -> p1)

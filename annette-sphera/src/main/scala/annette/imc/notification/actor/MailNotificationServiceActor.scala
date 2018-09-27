@@ -27,7 +27,7 @@ private class MailNotificationServiceActor(
   type ClientFailure = (MailNotification, Throwable)
 
   def send: PartialFunction[MailNotification, ClientResult] = {
-    case x: MailNotification.Password =>
+    case x: SendPasswordToEmail =>
       x -> mailClient.send(
         to = x.email,
         subject = MailTemplates.subject(x.language),
@@ -59,7 +59,7 @@ private class MailNotificationServiceActor(
   }
 
   def hideCredentials: PartialFunction[(MailNotification, Any), (MailNotification, Any)] = {
-    case (n: MailNotification.Password, x) if !mailClient.settings.debug =>
+    case (n: SendPasswordToEmail, x) if !mailClient.settings.debug =>
       (n.copy(password = hide(n.password)), x)
     case x => x
   }
@@ -71,7 +71,7 @@ private class MailNotificationServiceActor(
     failures
       .map(hideCredentials)
       .foreach {
-        case (n: MailNotification.Password, e) => log.warning(s"Failed ${n.getClass.getSimpleName} notification [id: ${n.id}, email:${n.email}, password: ${n.password}] [$e]")
+        case (n: SendPasswordToEmail, e) => log.warning(s"Failed ${n.getClass.getSimpleName} notification [id: ${n.id}, email:${n.email}, password: ${n.password}] [$e]")
         case (n, e) => log.warning(s"Failed ${n.getClass.getSimpleName} notification [id: ${n.id}, email:${n.email}] [$e]")
       }
   }
@@ -83,7 +83,7 @@ private class MailNotificationServiceActor(
     success
       .map(hideCredentials)
       .foreach {
-        case (n: MailNotification.Password, _) => log.info(s"${n.getClass.getSimpleName} notification [id: ${n.id}, email:${n.email}, password: ${n.password}]")
+        case (n: SendPasswordToEmail, _) => log.info(s"${n.getClass.getSimpleName} notification [id: ${n.id}, email:${n.email}, password: ${n.password}]")
         case (n, _) => log.info(s"${n.getClass.getSimpleName} notification [id: ${n.id}, email:${n.email}]")
       }
   }

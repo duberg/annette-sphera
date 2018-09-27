@@ -4,10 +4,10 @@ import akka.actor.ActorSystem
 import akka.testkit.TestKit
 import annette.core.test.PersistenceSpec
 
-class SmsVerificationActorSpec extends TestKit(ActorSystem("SmsVerificationActorSpec"))
+class VerificationActorSpec extends TestKit(ActorSystem("SmsVerificationActorSpec"))
   with PersistenceSpec
-  with NewSmsVerificationActor {
-  import SmsVerificationActor._
+  with NewVerificationActor {
+  import VerificationActor._
 
   "A SmsVerificationActor" when receive {
     "CreateVerificationCmd" must {

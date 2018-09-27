@@ -16,16 +16,16 @@ trait WebSocketRoute {
   implicit def system: ActorSystem
   implicit def notificationManagerActor: ActorRef
 
-  private def newConnection(userId: User.Id): Flow[Message, Message, NotUsed] = {
+  private def newConnection(userId: User.Id): Flow[WebSocketNotification, WebSocketNotification, NotUsed] = {
     val p = WebSocketClientActor.props(userId, notificationManagerActor)
     val a = system.actorOf(p, s"web-socket-client-$userId")
 
-    val in: Sink[Message, NotUsed] =
-      Flow[Message].map {
+    val in: Sink[WebSocketNotification, NotUsed] =
+      Flow[WebSocketNotification].map {
         case TextMessage.Strict(text) => WebSocketClientActor.IncomingMessage(text)
       }.to(Sink.actorRef(a, PoisonPill))
 
-    val out: Source[Message, NotUsed] =
+    val out: Source[WebSocketNotification, NotUsed] =
       Source
         .actorRef[WebSocketClientActor.OutgoingMessage](10, OverflowStrategy.dropHead)
         .mapMaterializedValue { x =>

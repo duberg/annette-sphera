@@ -1,30 +1,30 @@
 package annette.core.notification.actor
 
 import akka.actor.Props
-import annette.core.notification.actor.MailNotificationActor._
-import annette.core.notification.client.MailClient
-import annette.core.notification.{ MailNotification, MailSettings, Notification }
+import annette.core.notification.actor.EmailNotificationActor._
+import annette.core.notification.client.EmailClient
+import annette.core.notification._
 import annette.core.akkaext.actor._
 import annette.core.utils.Generator
 import javax.mail.AuthenticationFailedException
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.FiniteDuration
-import scala.util.{ Failure, Success, Try }
+import scala.util.{Failure, Success, Try}
 
-private class MailNotificationActor(
+private class EmailNotificationActor(
   val id: ActorId,
   val retryInterval: FiniteDuration,
-  val mailClient: MailClient,
-  val initState: MailNotificationState)(implicit val executor: ExecutionContext)
-  extends CqrsActor[MailNotificationState] with Generator {
+  val emailClient: EmailClient,
+  val initState: EmailNotificationState)(implicit val executor: ExecutionContext)
+  extends CqrsActor[EmailNotificationState] with Generator {
 
-  type ClientResult = (MailNotification, Try[MailClient.Response])
-  type ClientSuccess = (MailNotification, MailClient.Response)
-  type ClientFailure = (MailNotification, Throwable)
+  type ClientResult = (EmailNotificationLike, Try[EmailClient.Response])
+  type ClientSuccess = (EmailNotificationLike, EmailClient.Response)
+  type ClientFailure = (EmailNotificationLike, Throwable)
 
-  def send(x: MailNotification): ClientResult =
-    x -> mailClient.send(
+  def send(x: EmailNotificationLike): ClientResult =
+    x -> emailClient.send(
       to = x.email,
       subject = x.subject,
       message = x.message)
@@ -36,8 +36,8 @@ private class MailNotificationActor(
     })
   }
 
-  def hideCredentials: PartialFunction[(MailNotification, Any), (MailNotification, Any)] = {
-    case (n: MailNotification.Password, x) if !mailClient.settings.debug =>
+  def hideCredentials: PartialFunction[(EmailNotificationLike, Any), (EmailNotificationLike, Any)] = {
+    case (n: SendPasswordToEmailNotification, x) if !emailClient.settings.debug =>
       (n.copy(password = hide(n.password)), x)
     case x => x
   }
@@ -46,7 +46,7 @@ private class MailNotificationActor(
     failures
       .map(hideCredentials)
       .foreach {
-        case (n: MailNotification.Password, e) => log.warning(s"Failed ${n.getClass.getSimpleName} [${n.id}, email:${n.email}, password: ${n.password}] [$e]")
+        case (n: SendPasswordToEmailNotification, e) => log.warning(s"Failed ${n.getClass.getSimpleName} [${n.id}, email:${n.email}, password: ${n.password}] [$e]")
         case (n, e) => log.warning(s"Failed ${n.getClass.getSimpleName} [${n.id}, email:${n.email}] [$e]")
       }
   }
@@ -55,7 +55,7 @@ private class MailNotificationActor(
     success
       .map(hideCredentials)
       .foreach {
-        case (n: MailNotification.Password, _) => log.info(s"${n.getClass.getSimpleName} [${n.id}, email:${n.email}, password: ${n.password}]")
+        case (n: SendPasswordToEmailNotification, _) => log.info(s"${n.getClass.getSimpleName} [${n.id}, email:${n.email}, password: ${n.password}]")
         case (n, _) => log.info(s"${n.getClass.getSimpleName} [${n.id}, email:${n.email}]")
       }
   }
@@ -63,22 +63,22 @@ private class MailNotificationActor(
   def notify(state: State): Unit = {
     if (state.nonEmpty) {
       val notifications = state.v.values.toSeq
-      mailClient.connect() match {
+      emailClient.connect() match {
         case Success(_) =>
           val results: Seq[ClientResult] = notifications.map(send)
 
           val success: Seq[ClientSuccess] = results.collect {
-            case (n, Success(r: MailClient.Response)) => (n, r)
+            case (n, Success(r: EmailClient.Response)) => (n, r)
           }
 
           val failures: Seq[ClientFailure] = results.collect {
-            case (n, Failure(e: MailClient.Exception)) => (n, e)
+            case (n, Failure(e: EmailClient.Exception)) => (n, e)
           }
 
           processResults(state, results)
           processFailures(failures)
           processSuccesses(success)
-          mailClient.disconnect()
+          emailClient.disconnect()
         case Failure(e) =>
           changeState((state /: notifications) {
             case (s, n) => s.updated(UpdatedRetryEvt(n.id, n.retry - 1))
@@ -93,14 +93,14 @@ private class MailNotificationActor(
     replyDone()
   }
 
-  def createNotification(state: MailNotificationState, x: MailNotification): Unit = {
+  def createNotification(state: EmailNotificationState, x: CreateEmailNotification): Unit = {
     if (state.exists(x.id)) sender ! NotificationAlreadyExists else {
       changeState(state.updated(CreatedNotificationEvt(x)))
       replyDone()
     }
   }
 
-  def findNotifications(state: MailNotificationState): Unit =
+  def findNotifications(state: EmailNotificationState): Unit =
     sender() ! NotificationMap(state.v)
 
   def behavior(state: State): Receive = {
@@ -127,37 +127,37 @@ private class MailNotificationActor(
   }
 }
 
-object MailNotificationActor {
+object EmailNotificationActor {
   trait Command extends CqrsCommand
   trait Query extends CqrsQuery
   trait Response extends CqrsResponse
   trait Event extends CqrsEvent
 
   case object NotifyCmd extends Command
-  case class CreateNotificationCmd(x: MailNotification) extends Command
+  case class CreateNotificationCmd(x: CreateEmailNotification) extends Command
 
   case object GetNotifications extends CqrsQuery
 
-  case class CreatedNotificationEvt(x: MailNotification) extends Event
-  case class DeletedNotificationEvt(notificationId: Notification.Id) extends Event
-  case class UpdatedRetryEvt(notificationId: Notification.Id, retry: Int) extends Event
+  case class CreatedNotificationEvt(x: EmailNotificationLike) extends Event
+  case class DeletedNotificationEvt(x: Notification.Id) extends Event
+  case class UpdatedRetryEvt(x: Notification.Id, retry: Int) extends Event
 
   case object Done extends CqrsResponse
   case object NotificationAlreadyExists extends CqrsResponse
   case object NotificationNotFound extends CqrsResponse
-  case class NotificationMap(x: Map[Notification.Id, MailNotification]) extends CqrsResponse
+  case class NotificationMap(x: Map[Notification.Id, EmailNotificationLike]) extends CqrsResponse
 
   def props(
     id: ActorId,
     retryInterval: FiniteDuration,
-    settings: MailSettings,
-    state: MailNotificationState = MailNotificationState.empty)(implicit c: ExecutionContext): Props =
-    Props(new MailNotificationActor(id, retryInterval, new MailClient(settings), state))
+    settings: EmailSettings,
+    state: EmailNotificationState = EmailNotificationState.empty)(implicit c: ExecutionContext): Props =
+    Props(new EmailNotificationActor(id, retryInterval, new EmailClient(settings), state))
 
   def propsWithMailClient(
     id: ActorId,
     retryInterval: FiniteDuration,
-    mailClient: MailClient,
-    state: MailNotificationState = MailNotificationState.empty)(implicit c: ExecutionContext): Props =
-    Props(new MailNotificationActor(id, retryInterval, mailClient, state))
+    emailClient: EmailClient,
+    state: EmailNotificationState = EmailNotificationState.empty)(implicit c: ExecutionContext): Props =
+    Props(new EmailNotificationActor(id, retryInterval, emailClient, state))
 }

@@ -15,8 +15,6 @@ trait NewNotificationManager { _: PersistenceSpec with TestKit =>
   def generateNotificationManagerId = ActorId(s"notificationManager-$generateInt")
 
   def newNotificationManagerActor(id: NotificationManager.Id = generateNotificationManagerId): Future[ActorRef] = Future {
-    println("666666666666666666")
-    println(config.toString)
     system.actorOf(
       props = NotificationManagerActor.props(
         id = id,

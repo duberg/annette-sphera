@@ -12,21 +12,21 @@ import scala.concurrent.duration._
 
 class NotificationManagerActor(
   val id: NotificationManager.Id,
-  val mailRetryInterval: FiniteDuration,
-  val mailSettings: MailSettings,
+  val emailRetryInterval: FiniteDuration,
+  val emailSettings: EmailSettings,
   val smsRetryInterval: FiniteDuration,
   val smsSettings: SmsSettings)(implicit c: ExecutionContext, t: Timeout) extends Actor
   with ActorLogging
   with ActorLifecycleHooks {
   import NotificationManagerActor._
 
-  val mailNotificationActor: ActorRef = {
+  val emailNotificationActor: ActorRef = {
     context.actorOf(
-      props = MailNotificationActor.props(
-        id = id / MailNotificationActorName,
-        retryInterval = mailRetryInterval,
-        settings = mailSettings),
-      name = MailNotificationActorName)
+      props = EmailNotificationActor.props(
+        id = id / EmailNotificationActorName,
+        retryInterval = emailRetryInterval,
+        settings = emailSettings),
+      name = EmailNotificationActorName)
   }
 
   val smsNotificationActor: ActorRef = {
@@ -38,12 +38,10 @@ class NotificationManagerActor(
       name = SmsNotificationActorName)
   }
 
-  val smsVerificationActor: ActorRef = {
+  val verificationActor: ActorRef = {
     context.actorOf(
-      props = SmsVerificationActor.props(
-        id = id / SmsVerificationActorName,
-        smsNotificationServiceActor = smsNotificationActor),
-      name = SmsVerificationActorName)
+      props = VerificationActor.props(id = id / VerificationActorName),
+      name = VerificationActorName)
   }
 
   val webSocketNotificationActor: ActorRef = {
@@ -73,22 +71,22 @@ class NotificationManagerActor(
   }
 
   def receive: Receive = {
-    case x: MailNotificationActor.Command => mailNotificationActor forward x
+    case x: EmailNotificationActor.Command => emailNotificationActor forward x
     case x: SmsNotificationActor.Command => smsNotificationActor forward x
-    case x: SmsVerificationActor.Command => smsVerificationActor forward x
+    case x: VerificationActor.Command => verificationActor forward x
     case x: WebSocketNotificationActor.Command => webSocketNotificationActor forward x
 
-    case x: MailNotificationActor.Query => mailNotificationActor forward x
+    case x: EmailNotificationActor.Query => emailNotificationActor forward x
     case x: SmsNotificationActor.Query => smsNotificationActor forward x
-    case x: SmsVerificationActor.Query => smsVerificationActor forward x
+    case x: VerificationActor.Query => verificationActor forward x
     case x: WebSocketNotificationActor.Query => webSocketNotificationActor forward x
   }
 }
 
 object NotificationManagerActor extends NotificationConfig {
-  val MailNotificationActorName = "mail"
+  val EmailNotificationActorName = "email"
   val SmsNotificationActorName = "sms"
-  val SmsVerificationActorName = "smsVerification"
+  val VerificationActorName = "smsVerification"
   val WebSocketNotificationActorName = "ws"
 
   def props(
@@ -99,8 +97,8 @@ object NotificationManagerActor extends NotificationConfig {
     val smsNotificationConfig = annetteConfig.smsNotificationEntry
     Props(new NotificationManagerActor(
       id = id,
-      mailRetryInterval = mailNotificationConfig.retryInterval,
-      mailSettings = mailNotificationConfig.mail,
+      emailRetryInterval = mailNotificationConfig.retryInterval,
+      emailSettings = mailNotificationConfig.mail,
       smsRetryInterval = smsNotificationConfig.retryInterval,
       smsSettings = smsNotificationConfig.sms))
   }

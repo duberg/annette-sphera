@@ -2,13 +2,13 @@ package annette.core.notification
 
 import akka.actor.ActorSystem
 import akka.testkit.TestKit
-import annette.core.notification.actor.NewSmsVerificationActor
+import annette.core.notification.actor.NewVerificationActor
 import annette.core.test.PersistenceSpec
 
 class NotificationManagerSpec extends TestKit(ActorSystem("NotificationManagerSpec"))
   with PersistenceSpec
   with NewNotificationManager
-  with NewSmsVerificationActor {
+  with NewVerificationActor {
   "A NotificationManagerSpec" when {
     "push" must {
       "verify" in {

@@ -25,16 +25,18 @@ import annette.core.domain.language.model.{ Language, LanguageUpdate }
 import annette.core.domain.tenancy._
 import annette.core.domain.tenancy.model._
 import annette.core.test.PersistenceSpec
+import com.typesafe.config.{ Config, ConfigFactory }
 
 class LanguageDaoSpec extends TestKit(ActorSystem("UserActorSpec"))
   with PersistenceSpec
   with NewApplication
   with NewLanguage
   with NewUser {
+  lazy val config: Config = ConfigFactory.load()
 
   def newCoreServiceActor(): ActorRef = {
     val uuid = UUID.randomUUID().toString
-    system.actorOf(CoreService.props, s"CoreService-$uuid")
+    system.actorOf(CoreService.props(config), s"CoreService-$uuid")
   }
 
   def newLanguageDao(): LanguageDao = {

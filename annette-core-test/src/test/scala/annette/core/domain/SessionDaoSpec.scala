@@ -15,6 +15,7 @@ import annette.core.domain.tenancy._
 import annette.core.domain.tenancy.dao.SessionDao
 import annette.core.domain.tenancy.model._
 import annette.core.test.PersistenceSpec
+import com.typesafe.config.{ Config, ConfigFactory }
 import org.joda.time.DateTime
 
 import scala.concurrent.Future
@@ -22,10 +23,11 @@ import scala.concurrent.Future
 class SessionDaoSpec extends TestKit(ActorSystem("SessionDaoSpec"))
   with PersistenceSpec
   with NewOpenSession {
+  lazy val config: Config = ConfigFactory.load()
 
   def newCoreServiceActor(): ActorRef = {
     val uuid = UUID.randomUUID().toString
-    system.actorOf(CoreService.props, s"CoreService-$uuid")
+    system.actorOf(CoreService.props(config), s"CoreService-$uuid")
   }
 
   def newSessionDao(): SessionDao = {

@@ -4,7 +4,7 @@ import java.net.ConnectException
 
 import akka.actor.ActorRef
 import annette.core.notification.client.SmsClient
-import annette.core.notification.{ Notification, NotificationConfig, SmsNotification, SmsSettings }
+import annette.core.notification.{ Notification, NotificationConfig, SmsNotificationLike, SmsSettings }
 import annette.core.akkaext.actor.ActorId
 import annette.core.test.PersistenceSpec
 import com.typesafe.config.ConfigFactory
@@ -19,17 +19,17 @@ trait NewSmsNotificationActor extends NotificationConfig with AsyncMockFactory {
   lazy val smsNotificationConfig: SmsNotificationEntry =
     ConfigFactory.load().getConfig("annette").smsNotificationEntry
 
-  def createSmsNotification(a: ActorRef, x: SmsNotification): Future[Any] =
+  def createSmsNotification(a: ActorRef, x: SmsNotificationLike): Future[Any] =
     ask(a, CreateNotificationCmd(x))
 
-  def getSmsNotifications(a: ActorRef): Future[Map[Notification.Id, SmsNotification]] =
+  def getSmsNotifications(a: ActorRef): Future[Map[Notification.Id, SmsNotificationLike]] =
     ask(a, GetNotifications).mapTo[NotificationMap].map(_.x)
 
   def smsNotify(a: ActorRef): Future[Any] =
     ask(a, NotifyCmd)
 
-  def generateSmsNotificationPassword(id: Notification.Id = generateUUID): Future[SmsNotification.Password] = Future {
-    SmsNotification.Password(
+  def generateSmsNotificationPassword(id: Notification.Id = generateUUID): Future[SendPasswordToPhone] = Future {
+    SendPasswordToPhone(
       id = id,
       phone = generatePhone,
       subject = generateString(),
@@ -38,8 +38,8 @@ trait NewSmsNotificationActor extends NotificationConfig with AsyncMockFactory {
       retry = 2)
   }
 
-  def generateSmsNotificationVerification(id: Notification.Id = generateUUID): Future[SmsNotification.Verification] = Future {
-    SmsNotification.Verification(
+  def generateSmsNotificationVerification(id: Notification.Id = generateUUID): Future[SmsVerification] = Future {
+    SmsVerification(
       id = id,
       phone = generatePhone,
       subject = generateString(),
@@ -48,8 +48,8 @@ trait NewSmsNotificationActor extends NotificationConfig with AsyncMockFactory {
       retry = 2)
   }
 
-  def generateSmsNotificationTextMessage(id: Notification.Id = generateUUID): Future[SmsNotification.TextMessage] = Future {
-    SmsNotification.TextMessage(
+  def generateSmsNotificationTextMessage(id: Notification.Id = generateUUID): Future[SmsNotification] = Future {
+    SmsNotification(
       id = id,
       phone = generatePhone,
       subject = generateString(),

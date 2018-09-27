@@ -9,6 +9,9 @@ trait ApiRoutes extends Directives with AskSupport
   with NotificationRoutes {
 
   val apiRoutes: Route = pathPrefix("api") {
-    authRoutes ~ userRoutes ~ notificationRoutes
+    extractUri { uri =>
+      println(uri)
+      authRoutes ~ userRoutes ~ notificationRoutes
+    }
   }
 }

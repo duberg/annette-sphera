@@ -29,12 +29,12 @@ trait NotificationRoutes extends Directives with Generator {
         .head
 
       val notification = index match {
-        case 0 => MailNotification.TextMessage(
+        case 0 => EmailNotification(
           id = generateUUID,
           email = field,
           subject = x.subject,
           message = x.message)
-        case 1 => SmsNotification.TextMessage(
+        case 1 => SmsNotification(
           id = generateUUID,
           phone = field,
           subject = x.subject,
@@ -50,12 +50,12 @@ trait NotificationRoutes extends Directives with Generator {
   }
 
   /**
-   * При сбросе сообщения [[SmsNotification.Verification]] автоматически создается верификация.
+   * При сбросе сообщения [[Verification]] автоматически создается верификация.
    */
 
   def pushVer = (pathPrefix("verifications") & post & entity(as[JsonVerification]) & pathEndOrSingleSlash) { x =>
     complete {
-      val notification = SmsNotification.Verification(
+      val notification = SmsVerification(
         id = generateUUID,
         phone = x.phone,
         subject = x.subject,

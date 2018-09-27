@@ -1,7 +1,7 @@
 package annette.core.notification.actor
 
 import akka.actor.{ Actor, ActorRef, Props }
-import annette.core.notification.WebSocketNotification
+import annette.core.notification.WebSocketNotificationLike
 import annette.core.domain.tenancy.model.User
 
 class WebSocketClientActor(userId: User.Id, notificationManagerActor: ActorRef) extends Actor {
@@ -15,7 +15,7 @@ class WebSocketClientActor(userId: User.Id, notificationManagerActor: ActorRef) 
   }
   def connected(a: ActorRef): Receive = {
     case IncomingMessage(x) =>
-    case x: WebSocketNotification => a ! OutgoingMessage(x.message)
+    case x: WebSocketNotificationLike => a ! OutgoingMessage(x.message)
   }
   def receive: Receive = waiting
 }

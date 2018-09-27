@@ -1,13 +1,13 @@
 package annette.core.notification.actor
 
 import akka.actor.ActorRef
-import annette.core.notification.{ MailNotification, Notification, SmsNotification }
+import annette.core.notification.{ EmailNotificationLike, Notification, SmsNotificationLike }
 import annette.core.test.PersistenceSpec
 
 import scala.concurrent.Future
 
 trait NotificationActorBehavior extends NewSmsNotificationActor
-  with NewMailNotificationActor { _: PersistenceSpec =>
+  with NewEmailNotificationActor { _: PersistenceSpec =>
   def smsNotificationActor(): Unit = {
     createNotificationBehavior(newSmsNotificationActor(), generateSmsNotificationPassword())
     createNotificationBehavior(newSmsNotificationActor(), generateSmsNotificationVerification())
@@ -86,8 +86,8 @@ trait NotificationActorBehavior extends NewSmsNotificationActor
   }
 
   def createNotification(a: ActorRef, x: Notification): Future[Any] = x match {
-    case y: SmsNotification => createSmsNotification(a, y)
-    case y: MailNotification => createMailNotification(a, y)
+    case y: SmsNotificationLike => createSmsNotification(a, y)
+    case y: EmailNotificationLike => createMailNotification(a, y)
   }
 
   def addNotificationN(a: ActorRef, x: Seq[Notification]): Future[Seq[Any]] =
@@ -97,14 +97,14 @@ trait NotificationActorBehavior extends NewSmsNotificationActor
     Future.sequence((1 to n).map(_ => generate)).mapTo[Seq[Notification]]
 
   def getNotifications(a: ActorRef, x: Notification): Future[Map[Notification.Id, Notification]] = x match {
-    case y: SmsNotification => getSmsNotifications(a)
-    case y: MailNotification => getMailNotifications(a)
+    case y: SmsNotificationLike => getSmsNotifications(a)
+    case y: EmailNotificationLike => getMailNotifications(a)
   }
 
   def notify(a: ActorRef, x: Notification): Future[Any] =
     x match {
-      case y: SmsNotification => smsNotify(a)
-      case y: MailNotification => mailNotify(a)
+      case y: SmsNotificationLike => smsNotify(a)
+      case y: EmailNotificationLike => mailNotify(a)
     }
 
   /**

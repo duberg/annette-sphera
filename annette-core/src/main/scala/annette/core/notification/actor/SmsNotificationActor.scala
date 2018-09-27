@@ -3,14 +3,14 @@ package annette.core.notification.actor
 import akka.actor.Props
 import akka.util.Timeout
 import annette.core.notification.client.SmsClient
-import annette.core.notification.{ Notification, SmsNotification, SmsSettings }
+import annette.core.notification._
 import annette.core.akkaext.actor._
 import annette.core.akkaext.persistence._
 import annette.core.utils.Generator
 
 import scala.concurrent.ExecutionContext
-import scala.concurrent.duration.{ FiniteDuration, _ }
-import scala.util.{ Failure, Success, Try }
+import scala.concurrent.duration.{FiniteDuration, _}
+import scala.util.{Failure, Success, Try}
 
 private class SmsNotificationActor(
   val id: ActorId,
@@ -21,11 +21,11 @@ private class SmsNotificationActor(
   with Generator {
   import SmsNotificationActor._
 
-  type ClientResult = (SmsNotification, Try[SmsClient.Response])
-  type ClientSuccess = (SmsNotification, SmsClient.Response)
-  type ClientFailure = (SmsNotification, Throwable)
+  type ClientResult = (SmsNotificationLike, Try[SmsClient.Response])
+  type ClientSuccess = (SmsNotificationLike, SmsClient.Response)
+  type ClientFailure = (SmsNotificationLike, Throwable)
 
-  def send(x: SmsNotification): ClientResult =
+  def send(x: SmsNotificationLike): ClientResult =
     x -> smsClient.send(
       id = x.id,
       to = x.phone,
@@ -38,10 +38,10 @@ private class SmsNotificationActor(
       case (s, (n, Failure(_))) => s.updated(UpdatedRetryEvt(n.id, n.retry - 1))
     })
 
-  def hideCredentials: PartialFunction[(SmsNotification, Any), (SmsNotification, Any)] = {
-    case (n: SmsNotification.Verification, x) if !smsClient.settings.debug =>
+  def hideCredentials: PartialFunction[(SmsNotificationLike, Any), (SmsNotificationLike, Any)] = {
+    case (n: VerifyBySmsNotification, x) if !smsClient.settings.debug =>
       (n.copy(code = hide(n.code)), x)
-    case (n: SmsNotification.Password, x) if !smsClient.settings.debug =>
+    case (n: SendPasswordToPhoneNotification, x) if !smsClient.settings.debug =>
       (n.copy(password = hide(n.password)), x)
     case x => x
   }
@@ -60,7 +60,7 @@ private class SmsNotificationActor(
     otherExceptions
       .map(hideCredentials)
       .foreach {
-        case (n: SmsNotification.Password, e) => log.warning(s"Failed ${n.getClass.getSimpleName} [${n.id}, phone:${n.phone}, password: ${n.password}] [$e]")
+        case (n: SendPasswordToPhoneNotification, e) => log.warning(s"Failed ${n.getClass.getSimpleName} [${n.id}, phone:${n.phone}, password: ${n.password}] [$e]")
         case (n, e) => log.warning(s"Failed ${n.getClass.getSimpleName} [${n.id}, phone:${n.phone}] [$e]")
       }
   }
@@ -69,8 +69,8 @@ private class SmsNotificationActor(
     success
       .map(hideCredentials)
       .foreach {
-        case (n: SmsNotification.Password, _) => log.info(s"${n.getClass.getSimpleName} [${n.id}, phone:${n.phone}, password: ${n.password}]")
-        case (n: SmsNotification.Verification, _) => log.info(s"${n.getClass.getSimpleName} [${n.id}, phone:${n.phone}, code:${n.code}]")
+        case (n: SendPasswordToPhoneNotification, _) => log.info(s"${n.getClass.getSimpleName} [${n.id}, phone:${n.phone}, password: ${n.password}]")
+        case (n: VerifyBySmsNotification, _) => log.info(s"${n.getClass.getSimpleName} [${n.id}, phone:${n.phone}, code:${n.code}]")
         case (n, _) => log.info(s"${n.getClass.getSimpleName} [${n.id}, phone:${n.phone}]")
       }
 
@@ -96,7 +96,7 @@ private class SmsNotificationActor(
     replyDone()
   }
 
-  def createNotification(state: SmsNotificationState, x: SmsNotification): Unit = {
+  def createNotification(state: SmsNotificationState, x: CreateSmsNotification): Unit = {
     if (state.exists(x.id)) sender ! NotificationAlreadyExists else {
       changeState(state.updated(CreatedNotificationEvt(x)))
       replyDone()
@@ -136,11 +136,11 @@ object SmsNotificationActor {
   trait Event extends CqrsEvent
 
   case object NotifyCmd extends Query
-  case class CreateNotificationCmd(x: SmsNotification) extends Command
+  case class CreateNotificationCmd(x: CreateSmsNotification) extends Command
 
   case object GetNotifications extends Query
 
-  case class CreatedNotificationEvt(x: SmsNotification) extends Event
+  case class CreatedNotificationEvt(x: SmsNotificationLike) extends Event
   case class DeletedNotificationEvt(notificationId: Notification.Id) extends Event
   case class UpdatedRetryEvt(notificationId: Notification.Id, retry: Int) extends Event
 
@@ -148,7 +148,7 @@ object SmsNotificationActor {
   case object NotifyTimeoutException extends Response
   case object NotificationAlreadyExists extends Response
   case object NotificationNotFound extends Response
-  case class NotificationMap(x: Map[Notification.Id, SmsNotification]) extends Response
+  case class NotificationMap(x: Map[Notification.Id, SmsNotificationLike]) extends Response
 
   def props(
     id: ActorId,

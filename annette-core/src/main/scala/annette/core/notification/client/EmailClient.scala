@@ -2,24 +2,24 @@ package annette.core.notification.client
 
 import java.util.Properties
 
-import annette.core.notification.MailSettings
-import annette.core.notification.client.MailClient._
+import annette.core.notification.EmailSettings
+import annette.core.notification.client.EmailClient._
 import annette.core.akkaext.actor.CqrsResponse
 import javax.mail._
 import javax.mail.internet.{ InternetAddress, MimeMessage }
 
 import scala.util.{ Failure, Success, Try }
 
-class MailClient(val s: MailSettings) {
+class EmailClient(val s: EmailSettings) {
   private var sessionOpt: Option[Session] = None
   private var transportOpt: Option[Transport] = None
 
-  def settings: MailSettings = s
+  def settings: EmailSettings = s
   def session: Session = sessionOpt.get
   def connect(): Try[Response] = {
     if (!settings.debug) {
       transportOpt match {
-        case Some(t) => Failure(MailClient.TransportException("Transport already connected"))
+        case Some(t) => Failure(EmailClient.TransportException("Transport already connected"))
         case None => Try {
           val props = new Properties()
           settings.smtp.foreach({ case (k, v) => props.put(k, v) })
@@ -58,7 +58,7 @@ class MailClient(val s: MailSettings) {
           t.sendMessage(m, m.getAllRecipients)
           SendSuccess
         }
-        case None => Failure(MailClient.TransportException("Transport doesn'template connected"))
+        case None => Failure(EmailClient.TransportException("Transport doesn'template connected"))
       }
     } else Success(SendSuccess)
   }
@@ -74,7 +74,7 @@ class MailClient(val s: MailSettings) {
   }
 }
 
-object MailClient {
+object EmailClient {
   trait Response extends CqrsResponse
   case object SendSuccess extends Response
   case object Connected extends Response

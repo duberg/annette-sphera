@@ -166,7 +166,7 @@
 //              "UserFull" -> userFull,
 //              "ChairmanOfTheExpertCouncil" -> chairmanName).mapValues(_.toString)
 //
-//            notificationService.addNotificationAsync(MailNotification.Password(
+//            notificationService.addNotificationAsync(SendPasswordToEmail(
 //              id = UUID.randomUUID(),
 //              email = email,
 //              password = password,
@@ -268,7 +268,7 @@
 //                "UserFull" -> userFull,
 //                "ChairmanOfTheExpertCouncil" -> chairmanName).mapValues(_.toString)
 //
-//              notificationService.addNotificationAsync(MailNotification.Password(
+//              notificationService.addNotificationAsync(SendPasswordToEmail(
 //                id = UUID.randomUUID(),
 //                email = email,
 //                password = password,
@@ -368,7 +368,7 @@
 //              "UserFull" -> userFull,
 //              "ChairmanOfTheExpertCouncil" -> chairmanName).mapValues(_.toString)
 //
-//            notificationService.addNotificationAsync(MailNotification.Password(
+//            notificationService.addNotificationAsync(SendPasswordToEmail(
 //              id = UUID.randomUUID(),
 //              email = email,
 //              password = password,

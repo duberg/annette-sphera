@@ -46,7 +46,7 @@ trait NewMailNotificationService extends NotificationConfig with AsyncMockFactor
       "ChairmanOfTheExpertCouncil" -> generateString()).mapValues(_.toString)
 
   def generateMailNotificationPassword(id: Notification.Id = generateUUID): Future[MailNotification] = Future {
-    MailNotification.Password(
+    SendPasswordToEmail(
       id = id,
       email = generateEmail,
       password = generatePassword,
