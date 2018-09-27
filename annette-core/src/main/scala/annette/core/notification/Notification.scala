@@ -41,7 +41,7 @@ case class EmailNotification(
   email: String,
   subject: String,
   message: String,
-  retry: Int = 10) extends EmailNotificationLike
+  retry: Int = 2) extends EmailNotificationLike
 
 case class CreateEmailNotification(
   email: String,
@@ -58,7 +58,7 @@ case class SendPasswordToEmailNotification(
   subject: String,
   message: String,
   password: String,
-  retry: Int = 10) extends EmailNotificationLike
+  retry: Int = 2) extends EmailNotificationLike
 
 case class CreateSendPasswordToEmailNotification(
   email: String,
@@ -76,7 +76,7 @@ case class VerifyByEmailNotification(
   subject: String,
   message: String,
   code: String,
-  retry: Int = 10) extends EmailNotificationLike
+  retry: Int = 2) extends EmailNotificationLike
 
 case class CreateVerifyByEmailNotification(
   email: String,
@@ -101,9 +101,9 @@ case class SendPasswordToPhoneNotification(
   subject: String,
   message: String,
   password: String,
-  retry: Int = 10) extends SmsNotificationLike
+  retry: Int = 2) extends SmsNotificationLike
 
-case class CreatePasswordToPhoneNotification(
+case class CreateSendPasswordToPhoneNotification(
   phone: String,
   subject: String,
   message: String,
@@ -117,7 +117,7 @@ case class SmsNotification(
   phone: String,
   subject: String,
   message: String,
-  retry: Int = 10) extends SmsNotificationLike
+  retry: Int = 2) extends SmsNotificationLike
 
 case class CreateSmsNotification(
   phone: String,
@@ -130,7 +130,7 @@ case class VerifyBySmsNotification(
   subject: String,
   message: String,
   code: String,
-  retry: Int = 10) extends SmsNotificationLike
+  retry: Int = 2) extends SmsNotificationLike
 
 case class CreateVerifyBySmsNotification(
   phone: String,
@@ -149,4 +149,4 @@ case class WebSocketNotification(
   id: Notification.Id,
   userIds: Set[User.Id],
   message: String,
-  retry: Int = 10) extends WebSocketNotificationLike
+  retry: Int = 2) extends WebSocketNotificationLike

@@ -62,7 +62,7 @@ private class EmailNotificationActor(
 
   def notify(state: EmailNotificationState): Unit = {
     if (state.nonEmpty) {
-      val notifications = state.v.values.toSeq
+      val notifications = state.notifications.values.toSeq
       emailClient.connect() match {
         case Success(_) =>
           val results: Seq[ClientResult] = notifications.map(send)
@@ -112,7 +112,7 @@ private class EmailNotificationActor(
   }
 
   def listNotifications(state: EmailNotificationState): Unit =
-    sender() ! NotificationsMap(state.v)
+    sender() ! NotificationsMap(state.notifications)
 
   def behavior(state: EmailNotificationState): Receive = {
     case NotifyCmd => notify(state)

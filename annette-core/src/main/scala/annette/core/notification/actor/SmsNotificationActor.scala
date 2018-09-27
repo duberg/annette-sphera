@@ -76,7 +76,7 @@ private class SmsNotificationActor(
 
   def notify(state: SmsNotificationState): Unit = {
     if (state.nonEmpty) {
-      val notifications = state.v.values.toSeq
+      val notifications = state.notifications.values.toSeq
 
       val results: Seq[ClientResult] = notifications.map(send)
 
@@ -98,7 +98,7 @@ private class SmsNotificationActor(
 
   def createNotification(state: SmsNotificationState, x: CreateSmsNotificationLike): Unit = {
     val notification = x match {
-      case y: CreatePasswordToPhoneNotification => SendPasswordToPhoneNotification(
+      case y: CreateSendPasswordToPhoneNotification => SendPasswordToPhoneNotification(
         id = generateUUID,
         phone = y.phone,
         subject = y.subject,
@@ -117,11 +117,11 @@ private class SmsNotificationActor(
         message = y.message)
     }
     changeState(state.updated(CreatedNotificationEvt(notification)))
-    sender ! CreateSmsNotificationSuccess(notification)
+    sender ! CreateNotificationSuccess(notification)
   }
 
   def listNotifications(state: SmsNotificationState): Unit =
-    sender() ! NotificationMap(state.v)
+    sender() ! NotificationMap(state.notifications)
 
   def behavior(state: SmsNotificationState): Receive = {
     case NotifyCmd => notify(state)
@@ -162,7 +162,7 @@ object SmsNotificationActor {
   case class UpdatedRetryEvt(notificationId: Notification.Id, retry: Int) extends Event
 
   case object Done extends Response
-  case class CreateSmsNotificationSuccess(x: SmsNotificationLike)
+  case class CreateNotificationSuccess(x: SmsNotificationLike)
   case object NotifyTimeoutException extends Response
   case object NotificationAlreadyExists extends Response
   case object NotificationNotFound extends Response
