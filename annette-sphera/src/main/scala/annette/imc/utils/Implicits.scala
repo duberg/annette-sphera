@@ -24,12 +24,13 @@ object Implicits {
 
 object Files {
   def downloadFile(file: String): Route = {
-    val f = Paths.get(file)
-    val responseEntity = HttpEntity(
-      MediaTypes.`application/octet-stream`,
-      Paths.get(file).toFile.length(),
-      FileIO.fromPath(f, 262144))
-
-    complete(responseEntity)
+    //    val f = Paths.get(file)
+    //    val responseEntity = HttpEntity(
+    //      MediaTypes.`application/octet-stream`,
+    //      Paths.get(file).toFile.length(),
+    //      FileIO.fromPath(f, 262144))
+    //
+    //    complete(responseEntity)
+    ???
   }
 }

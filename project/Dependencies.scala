@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
   object Version {
-    val scala = "2.12.6"
+    val scala = "2.12.4"
     val akka = "2.5.16"
     val akkaPersistenceCassandra = "0.90"
     val akkaPersistenceInmemoryVersion = "2.5.0.0"

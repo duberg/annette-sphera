@@ -9,21 +9,17 @@ import annette.core.security.verification.Verification._
 import scala.concurrent.ExecutionContext
 
 private class VerificationActor(
-                                 val id: ActorId,
-                                 val initState: VerificationState)(implicit val executor: ExecutionContext, val timeout: Timeout) extends CqrsPersistentActor[VerificationState] {
+  val id: ActorId,
+  val initState: VerificationState)(implicit val executor: ExecutionContext, val timeout: Timeout) extends CqrsPersistentActor[VerificationState] {
 
   def createVerification(state: VerificationState, x: CreateVerification): Unit = {
-    if (state.verificationExists(x.id)) sender ! VerificationAlreadyExists else {
-      persist(CreatedVerificationEvt(x)) { event =>
-        changeState(state.updated(event))
-
-
-
-
-        //smsNotificationActor ! SmsNotificationActor.CreateNotificationCmd(x.notification)
-        context.system.scheduler.scheduleOnce(x.duration, self, DeleteVerificationCmd(x.id))
-        sender ! Done
-      }
+    val verification = Verification(
+      id = generateUUID,
+      code = x.code,
+      duration = x.duration)
+    persist(state, CreatedVerificationEvt(verification)) { (state, event) =>
+      context.system.scheduler.scheduleOnce(x.duration, self, DeleteVerificationCmd(verification.id))
+      sender ! CreateVerificationSuccess(verification)
     }
   }
 
@@ -64,8 +60,6 @@ private class VerificationActor(
 }
 
 object VerificationActor {
-
-
   def props(
     id: ActorId,
     state: VerificationState = VerificationState.empty)(implicit c: ExecutionContext, t: Timeout): Props =

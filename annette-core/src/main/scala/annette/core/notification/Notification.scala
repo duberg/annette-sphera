@@ -20,10 +20,18 @@ sealed trait EmailNotificationLike extends Notification {
   def message: String
 }
 
-trait CreateNotification
-trait CreateEmailNotification
-trait CreateSmsNotification
-trait CreateWebSocketNotification
+trait CreateNotification {
+  def message: String
+  def subject: String
+}
+
+trait CreateEmailNotificationLike extends CreateNotification {
+  def email: String
+}
+trait CreateSmsNotificationLike extends CreateNotification {
+  def phone: String
+}
+trait CreateWebSocketNotificationLike extends CreateNotification
 
 /**
  * Обычное текстовое уведомление
@@ -34,6 +42,11 @@ case class EmailNotification(
   subject: String,
   message: String,
   retry: Int = 10) extends EmailNotificationLike
+
+case class CreateEmailNotification(
+  email: String,
+  subject: String,
+  message: String) extends CreateEmailNotificationLike
 
 /**
  * Уведомление с паролем
@@ -48,10 +61,10 @@ case class SendPasswordToEmailNotification(
   retry: Int = 10) extends EmailNotificationLike
 
 case class CreateSendPasswordToEmailNotification(
-                                            email: String,
-                                            subject: String,
-                                            message: String,
-                                            password: String) extends CreateEmailNotification
+  email: String,
+  subject: String,
+  message: String,
+  password: String) extends CreateEmailNotificationLike
 
 /**
  * Уведомление с подтверждением
@@ -66,10 +79,10 @@ case class VerifyByEmailNotification(
   retry: Int = 10) extends EmailNotificationLike
 
 case class CreateVerifyByEmailNotification(
-                          email: String,
-                          subject: String,
-                          message: String,
-                          code: String) extends CreateEmailNotification
+  email: String,
+  subject: String,
+  message: String,
+  code: String) extends CreateEmailNotificationLike
 
 sealed trait SmsNotificationLike extends Notification {
   def phone: String
@@ -90,6 +103,12 @@ case class SendPasswordToPhoneNotification(
   password: String,
   retry: Int = 10) extends SmsNotificationLike
 
+case class CreatePasswordToPhoneNotification(
+  phone: String,
+  subject: String,
+  message: String,
+  password: String) extends CreateSmsNotificationLike
+
 /**
  * Обычное текстовое уведомление
  */
@@ -100,6 +119,11 @@ case class SmsNotification(
   message: String,
   retry: Int = 10) extends SmsNotificationLike
 
+case class CreateSmsNotification(
+  phone: String,
+  subject: String,
+  message: String) extends CreateSmsNotificationLike
+
 case class VerifyBySmsNotification(
   id: Notification.Id,
   phone: String,
@@ -107,6 +131,12 @@ case class VerifyBySmsNotification(
   message: String,
   code: String,
   retry: Int = 10) extends SmsNotificationLike
+
+case class CreateVerifyBySmsNotification(
+  phone: String,
+  subject: String,
+  message: String,
+  code: String) extends CreateSmsNotificationLike
 
 sealed trait WebSocketNotificationLike extends Notification {
   def userIds: Set[User.Id]

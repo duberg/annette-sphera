@@ -3,17 +3,17 @@ package annette.core.http.routes
 import akka.actor.ActorRef
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.{Directives, Route}
+import akka.http.scaladsl.server.{ Directives, Route }
 import akka.http.scaladsl.settings.RoutingSettings
 import akka.pattern.AskSupport
 import akka.util.Timeout
-import annette.core.security.authentication.{ApplicationState, AuthenticationService, ForbiddenException}
-import annette.core.{AnnetteException, RequiredValueNotProvided, TenantNotFoundException}
+import annette.core.security.authentication.{ ApplicationState, AuthenticationService, ForbiddenException }
+import annette.core.{ AnnetteException, RequiredValueNotProvided, TenantNotFoundException }
 import annette.core.domain.application.Application
 import annette.core.domain.language.dao.LanguageDao
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.UserManager
-import annette.core.domain.tenancy.dao.{TenantDao, TenantUserDao, TenantUserRoleDao}
+import annette.core.domain.tenancy.dao.{ TenantDao, TenantUserDao, TenantUserRoleDao }
 import annette.core.domain.tenancy.model._
 import annette.core.model.EntityType.Verification
 import annette.core.notification._
@@ -22,8 +22,8 @@ import annette.core.utils.Generator
 import com.typesafe.config.Config
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
+import scala.concurrent.{ ExecutionContext, Future }
+import scala.util.{ Failure, Success }
 import scala.concurrent.duration._
 
 trait AuthRoutes extends Directives with AskSupport with Generator {
@@ -126,8 +126,8 @@ trait AuthRoutes extends Directives with AskSupport with Generator {
           verification <- notificationManager.createVerification()
         } yield {
           /**
-            * = Email verification =
-            */
+           * = Email verification =
+           */
           val apiUrl = "http://localhost:9000"
           val verificationUrl = s"$apiUrl/notifications/verification/${verification.id}"
           val template = html.ConfirmationEmail(verificationUrl)

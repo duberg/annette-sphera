@@ -9,8 +9,8 @@ import annette.core.akkaext.persistence._
 import annette.core.utils.Generator
 
 import scala.concurrent.ExecutionContext
-import scala.concurrent.duration.{FiniteDuration, _}
-import scala.util.{Failure, Success, Try}
+import scala.concurrent.duration.{ FiniteDuration, _ }
+import scala.util.{ Failure, Success, Try }
 
 private class SmsNotificationActor(
   val id: ActorId,
@@ -96,20 +96,37 @@ private class SmsNotificationActor(
     replyDone()
   }
 
-  def createNotification(state: SmsNotificationState, x: CreateSmsNotification): Unit = {
-    if (state.exists(x.id)) sender ! NotificationAlreadyExists else {
-      changeState(state.updated(CreatedNotificationEvt(x)))
-      replyDone()
+  def createNotification(state: SmsNotificationState, x: CreateSmsNotificationLike): Unit = {
+    val notification = x match {
+      case y: CreatePasswordToPhoneNotification => SendPasswordToPhoneNotification(
+        id = generateUUID,
+        phone = y.phone,
+        subject = y.subject,
+        message = y.message,
+        password = y.password)
+      case y: CreateVerifyBySmsNotification => VerifyBySmsNotification(
+        id = generateUUID,
+        phone = y.phone,
+        subject = y.subject,
+        message = y.message,
+        code = y.code)
+      case y: CreateSmsNotificationLike => SmsNotification(
+        id = generateUUID,
+        phone = y.phone,
+        subject = y.subject,
+        message = y.message)
     }
+    changeState(state.updated(CreatedNotificationEvt(notification)))
+    sender ! CreateSmsNotificationSuccess(notification)
   }
 
-  def findNotifications(state: SmsNotificationState): Unit =
+  def listNotifications(state: SmsNotificationState): Unit =
     sender() ! NotificationMap(state.v)
 
   def behavior(state: SmsNotificationState): Receive = {
     case NotifyCmd => notify(state)
     case CreateNotificationCmd(x) => createNotification(state, x)
-    case GetNotifications => findNotifications(state)
+    case ListNotifications => listNotifications(state)
   }
 
   def notifyAfterRetry(): Unit =
@@ -136,15 +153,16 @@ object SmsNotificationActor {
   trait Event extends CqrsEvent
 
   case object NotifyCmd extends Query
-  case class CreateNotificationCmd(x: CreateSmsNotification) extends Command
+  case class CreateNotificationCmd(x: CreateSmsNotificationLike) extends Command
 
-  case object GetNotifications extends Query
+  case object ListNotifications extends Query
 
   case class CreatedNotificationEvt(x: SmsNotificationLike) extends Event
   case class DeletedNotificationEvt(notificationId: Notification.Id) extends Event
   case class UpdatedRetryEvt(notificationId: Notification.Id, retry: Int) extends Event
 
   case object Done extends Response
+  case class CreateSmsNotificationSuccess(x: SmsNotificationLike)
   case object NotifyTimeoutException extends Response
   case object NotificationAlreadyExists extends Response
   case object NotificationNotFound extends Response

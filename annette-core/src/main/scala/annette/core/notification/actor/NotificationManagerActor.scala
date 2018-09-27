@@ -6,6 +6,7 @@ import akka.util.Timeout
 import annette.core.notification._
 import annette.core.akkaext.actor.ActorLifecycleHooks
 import com.typesafe.config.Config
+import annette.core.security.verification.{ Verification, VerificationActor }
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
@@ -73,12 +74,12 @@ class NotificationManagerActor(
   def receive: Receive = {
     case x: EmailNotificationActor.Command => emailNotificationActor forward x
     case x: SmsNotificationActor.Command => smsNotificationActor forward x
-    case x: VerificationActor.Command => verificationActor forward x
+    case x: Verification.Command => verificationActor forward x
     case x: WebSocketNotificationActor.Command => webSocketNotificationActor forward x
 
     case x: EmailNotificationActor.Query => emailNotificationActor forward x
     case x: SmsNotificationActor.Query => smsNotificationActor forward x
-    case x: VerificationActor.Query => verificationActor forward x
+    case x: Verification.Query => verificationActor forward x
     case x: WebSocketNotificationActor.Query => webSocketNotificationActor forward x
   }
 }

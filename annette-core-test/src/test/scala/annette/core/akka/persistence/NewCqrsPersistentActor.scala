@@ -37,9 +37,9 @@ class TestCqrsPersistentActor(
   val id: ActorId,
   val initState: TestCqrsPersistentState)(implicit val c: ExecutionContext, val t: Timeout) extends CqrsPersistentActor[TestCqrsPersistentState] {
   var snapshotCreated: Boolean = false
-  var recoveredState: Option[State] = None
+  var recoveredState: Option[TestCqrsPersistentState] = None
 
-  def create(state: State, x: String): Unit = {
+  def create(state: TestCqrsPersistentState, x: String): Unit = {
     if (state.exists(x)) sender ! EntryAlreadyExists
     else {
       val event = CreatedEvt(x)
@@ -62,7 +62,7 @@ class TestCqrsPersistentActor(
     //    }
   }
 
-  def create1(state: State, x: String): Unit = {
+  def create1(state: TestCqrsPersistentState, x: String): Unit = {
     if (state.exists(x)) sender ! EntryAlreadyExists
     else {
       val event = CreatedEvt(x)
@@ -73,7 +73,7 @@ class TestCqrsPersistentActor(
     }
   }
 
-  def create2(state: State, x: String): Unit = {
+  def create2(state: TestCqrsPersistentState, x: String): Unit = {
     if (state.exists(x)) sender ! EntryAlreadyExists
     else {
       val event = CreatedEvt(x)
@@ -86,7 +86,7 @@ class TestCqrsPersistentActor(
     }
   }
 
-  def create3(state: State, x: String): Unit = {
+  def create3(state: TestCqrsPersistentState, x: String): Unit = {
     if (state.exists(x)) sender ! EntryAlreadyExists
     else {
       val event = CreatedEvt(x)
@@ -99,7 +99,7 @@ class TestCqrsPersistentActor(
     }
   }
 
-  def behavior(state: State): Receive = {
+  def behavior(state: TestCqrsPersistentState): Receive = {
     case CreateCmd(x) => create(state, x)
     case CreateCmd1(x) => create1(state, x)
     case CreateCmd2(x) => create2(state, x)

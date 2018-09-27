@@ -1,7 +1,7 @@
 package annette.core.notification.actor
 
 import annette.core.notification.actor.EmailNotificationActor._
-import annette.core.notification.{EmailNotification, EmailNotificationLike, Notification, SendPasswordToEmailNotification}
+import annette.core.notification._
 import annette.core.akkaext.actor.CqrsState
 
 case class EmailNotificationState(v: Map[Notification.Id, EmailNotificationLike]) extends CqrsState {
@@ -12,6 +12,7 @@ case class EmailNotificationState(v: Map[Notification.Id, EmailNotificationLike]
   def getById(id: Notification.Id): Option[EmailNotificationLike] = v.get(id)
   def copyWithRetry(x: EmailNotificationLike, r: Int): EmailNotificationLike = x match {
     case x: SendPasswordToEmailNotification => x.copy(retry = r)
+    case x: VerifyByEmailNotification => x.copy(retry = r)
     case x: EmailNotification => x.copy(retry = r)
   }
   def updateRetry(id: Notification.Id, r: Int): EmailNotificationState = {

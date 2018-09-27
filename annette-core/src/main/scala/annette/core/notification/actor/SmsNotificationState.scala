@@ -14,7 +14,7 @@ case class SmsNotificationState(v: Map[Notification.Id, SmsNotificationLike]) ex
   def ids: Seq[Notification.Id] = v.keys.toSeq
   def copyWithRetry(x: SmsNotificationLike, r: Int): SmsNotificationLike = x match {
     case x: SendPasswordToPhoneNotification => x.copy(retry = r)
-    case x: Verification => x.copy(retry = r)
+    case x: VerifyBySmsNotification => x.copy(retry = r)
     case x: SmsNotification => x.copy(retry = r)
   }
   def updateRetry(id: Notification.Id, r: Int): SmsNotificationState = {

@@ -11,6 +11,7 @@ import annette.core.utils.Generator
 import scala.concurrent.ExecutionContext
 import annette.core.json._
 import annette.core.security.AnnetteSecurityDirectives
+import annette.core.security.verification.Verification
 
 trait NotificationRoutes extends Directives with Generator {
   implicit val c: ExecutionContext
@@ -29,13 +30,11 @@ trait NotificationRoutes extends Directives with Generator {
         .head
 
       val notification = index match {
-        case 0 => EmailNotification(
-          id = generateUUID,
+        case 0 => CreateEmailNotification(
           email = field,
           subject = x.subject,
           message = x.message)
-        case 1 => SmsNotification(
-          id = generateUUID,
+        case 1 => CreateSmsNotification(
           phone = field,
           subject = x.subject,
           message = x.message)
@@ -43,9 +42,7 @@ trait NotificationRoutes extends Directives with Generator {
 
       notificationManager.push(notification)
 
-      Accepted -> Response(
-        entityId = notification.id.toString,
-        status = ResponseStatus.Pending)
+      Accepted
     }
   }
 
@@ -53,22 +50,22 @@ trait NotificationRoutes extends Directives with Generator {
    * При сбросе сообщения [[Verification]] автоматически создается верификация.
    */
 
-  def pushVer = (pathPrefix("verifications") & post & entity(as[JsonVerification]) & pathEndOrSingleSlash) { x =>
-    complete {
-      val notification = SmsVerification(
-        id = generateUUID,
-        phone = x.phone,
-        subject = x.subject,
-        message = x.message,
-        code = x.code)
-
-      notificationManager.push(notification)
-
-      Accepted -> Response(
-        entityId = notification.id.toString,
-        status = ResponseStatus.Pending)
-    }
-  }
+  //  def pushVer = (pathPrefix("verifications") & post & entity(as[JsonVerification]) & pathEndOrSingleSlash) { x =>
+  //    complete {
+  //      val notification = SmsVerification(
+  //        id = generateUUID,
+  //        phone = x.phone,
+  //        subject = x.subject,
+  //        message = x.message,
+  //        code = x.code)
+  //
+  //      notificationManager.push(notification)
+  //
+  //      Accepted -> Response(
+  //        entityId = notification.id.toString,
+  //        status = ResponseStatus.Pending)
+  //    }
+  //  }
 
   def verify = (pathPrefix("verifications" / JavaUUID) & entity(as[String]) & post & pathEndOrSingleSlash) { (x, y) =>
     complete(notificationManager.verify(x, y).map(_.asJson))
@@ -78,6 +75,8 @@ trait NotificationRoutes extends Directives with Generator {
   //def email = pathPrefix("email")
 
   def notificationRoutes: Route = (pathPrefix("push") & authenticated) { implicit session =>
-    push ~ pushVer ~ verify
+    push ~
+      // pushVer ~
+      verify
   }
 }

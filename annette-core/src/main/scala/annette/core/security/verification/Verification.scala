@@ -2,18 +2,18 @@ package annette.core.security.verification
 
 import java.util.UUID
 
-import annette.core.akkaext.actor.{CqrsCommand, CqrsEvent, CqrsQuery, CqrsResponse}
+import annette.core.akkaext.actor.{ CqrsCommand, CqrsEvent, CqrsQuery, CqrsResponse }
 
-import scala.concurrent.duration.{FiniteDuration, _}
+import scala.concurrent.duration.{ FiniteDuration, _ }
 
 case class Verification(
-                         id: Verification.Id,
-                         code: String,
-                         duration: FiniteDuration)
+  id: Verification.Id,
+  code: String,
+  duration: FiniteDuration)
 
 case class CreateVerification(
-                         code: String,
-                         duration: FiniteDuration)
+  code: String,
+  duration: FiniteDuration)
 
 object Verification {
   type Id = UUID

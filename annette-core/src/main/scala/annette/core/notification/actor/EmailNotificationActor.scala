@@ -10,7 +10,7 @@ import javax.mail.AuthenticationFailedException
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.FiniteDuration
-import scala.util.{Failure, Success, Try}
+import scala.util.{ Failure, Success, Try }
 
 private class EmailNotificationActor(
   val id: ActorId,
@@ -29,10 +29,10 @@ private class EmailNotificationActor(
       subject = x.subject,
       message = x.message)
 
-  def processResults(state: State, x: Seq[ClientResult]): Unit = {
+  def processResults(state: EmailNotificationState, x: Seq[ClientResult]): Unit = {
     changeState((state /: x) {
-      case (s, (n, Success(_))) => s.updated(DeletedNotificationEvt(n.id)).asInstanceOf[State]
-      case (s, (n, Failure(_))) => s.updated(UpdatedRetryEvt(n.id, n.retry - 1)).asInstanceOf[State]
+      case (s, (n, Success(_))) => s.updated(DeletedNotificationEvt(n.id))
+      case (s, (n, Failure(_))) => s.updated(UpdatedRetryEvt(n.id, n.retry - 1))
     })
   }
 
@@ -60,7 +60,7 @@ private class EmailNotificationActor(
       }
   }
 
-  def notify(state: State): Unit = {
+  def notify(state: EmailNotificationState): Unit = {
     if (state.nonEmpty) {
       val notifications = state.v.values.toSeq
       emailClient.connect() match {
@@ -93,20 +93,31 @@ private class EmailNotificationActor(
     replyDone()
   }
 
-  def createNotification(state: EmailNotificationState, x: CreateEmailNotification): Unit = {
-    if (state.exists(x.id)) sender ! NotificationAlreadyExists else {
-      changeState(state.updated(CreatedNotificationEvt(x)))
-      replyDone()
+  def createNotification(state: EmailNotificationState, x: CreateEmailNotificationLike): Unit = {
+    val notification = x match {
+      case y: CreateSendPasswordToEmailNotification => SendPasswordToEmailNotification(
+        id = generateUUID,
+        email = y.email,
+        subject = y.subject,
+        message = y.message,
+        password = y.password)
+      case y: CreateEmailNotificationLike => EmailNotification(
+        id = generateUUID,
+        email = y.email,
+        subject = y.subject,
+        message = y.message)
     }
+    changeState(state.updated(CreatedNotificationEvt(notification)))
+    sender() ! CreateNotificationSuccess(notification)
   }
 
-  def findNotifications(state: EmailNotificationState): Unit =
-    sender() ! NotificationMap(state.v)
+  def listNotifications(state: EmailNotificationState): Unit =
+    sender() ! NotificationsMap(state.v)
 
-  def behavior(state: State): Receive = {
+  def behavior(state: EmailNotificationState): Receive = {
     case NotifyCmd => notify(state)
     case CreateNotificationCmd(x) => createNotification(state, x)
-    case GetNotifications => findNotifications(state)
+    case ListNotifications => listNotifications(state)
   }
 
   def notifyAfterRetry(): Unit =
@@ -134,18 +145,19 @@ object EmailNotificationActor {
   trait Event extends CqrsEvent
 
   case object NotifyCmd extends Command
-  case class CreateNotificationCmd(x: CreateEmailNotification) extends Command
+  case class CreateNotificationCmd(x: CreateEmailNotificationLike) extends Command
 
-  case object GetNotifications extends CqrsQuery
+  case object ListNotifications extends CqrsQuery
 
   case class CreatedNotificationEvt(x: EmailNotificationLike) extends Event
   case class DeletedNotificationEvt(x: Notification.Id) extends Event
   case class UpdatedRetryEvt(x: Notification.Id, retry: Int) extends Event
 
   case object Done extends CqrsResponse
+  case class CreateNotificationSuccess(x: EmailNotificationLike) extends Response
   case object NotificationAlreadyExists extends CqrsResponse
   case object NotificationNotFound extends CqrsResponse
-  case class NotificationMap(x: Map[Notification.Id, EmailNotificationLike]) extends CqrsResponse
+  case class NotificationsMap(x: Map[Notification.Id, EmailNotificationLike]) extends CqrsResponse
 
   def props(
     id: ActorId,

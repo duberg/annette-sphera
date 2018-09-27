@@ -6,7 +6,7 @@ import annette.core.akka.persistence.TestCqrsPersistentActor._
 import annette.core.akkaext.actor.ActorId
 import annette.core.akkaext.actor.CqrsQuery._
 import annette.core.akkaext.actor.CqrsResponse._
-import annette.core.akkaext.persistence.CqrsPersistentActorLike._
+import annette.core.akkaext.persistence.CqrsPersistentActor._
 import annette.core.test.PersistenceSpec
 
 import scala.concurrent.Future

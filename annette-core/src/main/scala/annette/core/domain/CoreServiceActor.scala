@@ -13,6 +13,7 @@ import com.typesafe.config.Config
 import scala.concurrent.ExecutionContext
 import annette.core.domain.CoreService._
 import annette.core.notification.actor._
+import annette.core.security.verification.Verification
 
 @Singleton
 @Named("CoreService")
@@ -59,12 +60,12 @@ class CoreServiceActor(config: Config)(implicit c: ExecutionContext, t: Timeout)
 
     case x: EmailNotificationActor.Command => notificationManagerActor forward x
     case x: SmsNotificationActor.Command => notificationManagerActor forward x
-    case x: VerificationActor.Command => notificationManagerActor forward x
+    case x: Verification.Command => notificationManagerActor forward x
     case x: WebSocketNotificationActor.Command => notificationManagerActor forward x
 
     case x: EmailNotificationActor.Query => notificationManagerActor forward x
     case x: SmsNotificationActor.Query => notificationManagerActor forward x
-    case x: VerificationActor.Query => notificationManagerActor forward x
+    case x: Verification.Query => notificationManagerActor forward x
     case x: WebSocketNotificationActor.Query => notificationManagerActor forward x
   }
 }

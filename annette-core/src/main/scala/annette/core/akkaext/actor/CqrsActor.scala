@@ -7,8 +7,8 @@ import scala.concurrent.{ ExecutionContext, Future }
 /**
  * Functional actor
  */
-trait CqrsActorLike extends CqrsActorBase {
-  def receiveContext(state: State): Receive =
+trait CqrsActor[A <: CqrsState] extends CqrsActorBase[A] {
+  def activeContext(state: A): Receive =
     defaultBehavior(state)
       .orElse(afterBehavior(state))
       .orElse(getStateBehavior(state))
@@ -19,9 +19,5 @@ trait CqrsActorLike extends CqrsActorBase {
       .orElse(terminateBehavior)
       .orElse(notMatchedBehavior)
 
-  def receive: Receive = receiveContext(initState)
-}
-
-trait CqrsActor[S <: CqrsState] extends CqrsActorLike {
-  type State = S
+  def receive: Receive = activeContext(initState)
 }

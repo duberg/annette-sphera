@@ -1,11 +1,19 @@
 package annette.core.akkaext.actor
 
-import akka.actor.{ ActorRef, Props }
+import akka.actor.{ Actor, ActorRef, Props }
+import akka.pattern.{ AskSupport, PipeToSupport }
+import akka.util.Timeout
 import annette.core.akkaext.actor.CqrsQuery._
 import annette.core.akkaext.actor.CqrsResponse.{ ChildOpt, Pong, Success, Terminated }
 
-trait DefaultBehaviors { _: CqrsActorBase =>
+import scala.concurrent.{ ExecutionContext, Future }
+
+trait DefaultBehaviors[State <: CqrsState] extends PipeToSupport with AskSupport { _: Actor =>
   protected var terminateOpt: Option[(ActorRef, Any)] = None
+
+  def changeState(state: State): Unit
+
+  def getChildOpt(childId: ActorId): Option[ActorRef]
 
   def throwableBehavior: Receive = { case e: Exception => throw e }
 
@@ -43,6 +51,17 @@ trait DefaultBehaviors { _: CqrsActorBase =>
       context.stop(self)
       terminateOpt = Option(sender() -> Terminated)
   }
+  def exceptionHandler: PartialFunction[Throwable, Unit] = {
+    case e: Throwable => self ! e
+  }
+  def replySuccess(): Unit = if (sender() != self) sender() ! Success
+
+  /**
+   * PipeTo self command after Future result.
+   */
+  def after[R](f: Future[R], cmd: CqrsCommand)(implicit c: ExecutionContext, t: Timeout): Unit = {
+    f map { response => cmd } recover exceptionHandler pipeTo self
+  }
 
   /**
    * Поведение: Оповещение о новом [[CqrsEvent]] событии.
@@ -67,4 +86,25 @@ trait DefaultBehaviors { _: CqrsActorBase =>
       x.handler(x.result, state)
       sender() ! Success
   }
+
+  case class AfterCmd[T](result: T, handler: (T, State) => Unit) extends CqrsCommand
+  case class AfterNoReplyCmd[T](result: T, handler: (T, State) => Unit) extends CqrsCommand
+  /**
+   * Run handler after Future result.
+   *
+   * Must send sender() ! reply in handler.
+   */
+  def after[R](f: Future[R])(handler: (R, State) => Unit)(implicit c: ExecutionContext, t: Timeout): Unit = {
+    f flatMap { response => self.ask(AfterCmd(response, handler)) } recover exceptionHandler pipeTo sender()
+  }
+
+  /**
+   * Run handler after Future result.
+   *
+   * Will not reply to sender() in handler block.
+   */
+  def afterNoReply[R](f: Future[R])(handler: (R, State) => Unit)(implicit c: ExecutionContext, t: Timeout): Unit = {
+    f flatMap { response => self.ask(AfterNoReplyCmd(response, handler)) } recover exceptionHandler
+  }
+
 }

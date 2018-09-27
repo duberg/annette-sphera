@@ -2,7 +2,7 @@ package annette.core.notification
 
 import akka.actor.ActorSystem
 import akka.testkit.TestKit
-import annette.core.notification.actor.NewVerificationActor
+import annette.core.security.verification.NewVerificationActor
 import annette.core.test.PersistenceSpec
 
 class NotificationManagerSpec extends TestKit(ActorSystem("NotificationManagerSpec"))
