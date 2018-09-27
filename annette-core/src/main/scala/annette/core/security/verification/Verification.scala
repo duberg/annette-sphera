@@ -30,8 +30,8 @@ object Verification {
   case class GetVerification(x: Verification.Id) extends Query
   case object ListVerifications extends Query
 
-  case class CreatedVerificationEvt(x: Verification) extends Event
-  case class DeletedVerificationEvt(x: Verification.Id) extends Event
+  case class VerificationCreatedEvt(x: Verification) extends Event
+  case class VerificationDeletedEvt(x: Verification.Id) extends Event
 
   case object Done extends Response
   case class CreateVerificationSuccess(x: Verification) extends Response

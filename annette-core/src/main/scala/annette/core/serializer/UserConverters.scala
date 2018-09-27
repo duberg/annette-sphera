@@ -37,17 +37,17 @@ trait UserConverters {
       userProperties = obj.userProperties.map({ case (x, y) => x.toString -> fromUserProperty(y) })).toByteArray
   }
 
-  def fromCreatedUserEvtV1(bytes: Array[Byte]): UserManager.CreatedUserEvt = {
+  def fromCreatedUserEvt(bytes: Array[Byte]): UserManager.CreatedUserEvt = {
     val x = CreatedUserEvtV1.parseFrom(bytes).x
     UserManager.CreatedUserEvt(x)
   }
 
-  def fromUpdatedUserEvtV1(bytes: Array[Byte]): UserManager.UpdatedUserEvt = {
+  def fromUpdatedUserEvt(bytes: Array[Byte]): UserManager.UpdatedUserEvt = {
     val x = UpdatedUserEvtV1.parseFrom(bytes).x
     UserManager.UpdatedUserEvt(x)
   }
 
-  def fromDeletedUserEvtV1(bytes: Array[Byte]): UserManager.DeletedUserEvt = {
+  def fromDeletedUserEvt(bytes: Array[Byte]): UserManager.DeletedUserEvt = {
     val userId = DeletedUserEvtV1.parseFrom(bytes).userId
     UserManager.DeletedUserEvt(userId)
   }

@@ -17,7 +17,7 @@ private class VerificationActor(
       id = generateUUID,
       code = x.code,
       duration = x.duration)
-    persist(state, CreatedVerificationEvt(verification)) { (state, event) =>
+    persist(state, VerificationCreatedEvt(verification)) { (state, event) =>
       context.system.scheduler.scheduleOnce(x.duration, self, DeleteVerificationCmd(verification.id))
       sender ! CreateVerificationSuccess(verification)
     }
@@ -25,7 +25,7 @@ private class VerificationActor(
 
   def deleteVerification(state: VerificationState, id: Verification.Id): Unit = {
     if (state.verificationExists(id)) {
-      persist(DeletedVerificationEvt(id)) { event =>
+      persist(VerificationDeletedEvt(id)) { event =>
         changeState(state.updated(event))
         sender ! Done
       }

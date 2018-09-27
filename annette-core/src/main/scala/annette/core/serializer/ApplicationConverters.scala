@@ -30,17 +30,17 @@ trait ApplicationConverters {
       applications = obj.applications.mapValues(fromApplication)).toByteArray
   }
 
-  def fromApplicationCreatedEvtV1(bytes: Array[Byte]): ApplicationCreatedEvt = {
+  def fromApplicationCreatedEvt(bytes: Array[Byte]): ApplicationCreatedEvt = {
     val x = ApplicationCreatedEvtV1.parseFrom(bytes)
     ApplicationCreatedEvt(x.x)
   }
 
-  def fromApplicationUpdatedEvtV1(bytes: Array[Byte]): ApplicationUpdatedEvt = {
+  def fromApplicationUpdatedEvt(bytes: Array[Byte]): ApplicationUpdatedEvt = {
     val x = ApplicationUpdatedEvtV1.parseFrom(bytes)
     ApplicationUpdatedEvt(x.x)
   }
 
-  def fromApplicationDeletedEvtV1(bytes: Array[Byte]): Application.ApplicationDeletedEvt = {
+  def fromApplicationDeletedEvt(bytes: Array[Byte]): Application.ApplicationDeletedEvt = {
     val id = ApplicationDeletedEvtV1.parseFrom(bytes).x
     ApplicationDeletedEvt(id)
   }

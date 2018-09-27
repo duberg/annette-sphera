@@ -21,8 +21,8 @@ case class VerificationState(verifications: Map[Verification.Id, Verification]) 
   def verificationsIds: Seq[Verification.Id] = verifications.keys.toSeq
 
   def update = {
-    case CreatedVerificationEvt(x) => createVerification(x)
-    case DeletedVerificationEvt(x) => deleteVerification(x)
+    case VerificationCreatedEvt(x) => createVerification(x)
+    case VerificationDeletedEvt(x) => deleteVerification(x)
   }
 }
 
