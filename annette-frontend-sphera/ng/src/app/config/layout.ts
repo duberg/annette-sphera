@@ -62,7 +62,7 @@ export class LayoutConfig implements ConfigModel {
 			left: {
 				display: true, //  Display or hide  left aside
 				fixed: true, //  Set fixed left aside mode
-				skin: 'dark', //  Select left aside skin from available options:  light|dark
+				skin: 'light', //  Select left aside skin from available options:  light|dark
 				push_footer: true, //  Pull left aside to the bottom and push the footer to the right
 
 				//  Left aside minimize toggle
