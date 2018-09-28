@@ -1,5 +1,7 @@
 package annette.core.notification
 
+import java.util.UUID
+
 import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
@@ -24,7 +26,7 @@ trait NotificationManagerLike extends Generator {
       .mapTo[SmsNotificationActor.NotificationMap]
       .map(_.x.values.toSeq)
 
-  def listVerifications: Future[Seq[Verification]] =
+  def listVerifications: Future[Seq[VerificationLike]] =
     ask(notificationManagerActor, Verification.ListVerifications)
       .mapTo[Verification.VerificationMap]
       .map(_.x.values.toSeq)
@@ -47,18 +49,22 @@ trait NotificationManagerLike extends Generator {
     }
   }.mapTo[CqrsResponse]
 
-  def createVerification(): Future[Verification] = {
-    val x = CreateVerification(
-      code = generatePinString,
-      duration = 10.minutes)
-
+  def createVerification(x: CreateVerificationLike): Future[VerificationLike] =
     ask(notificationManagerActor, Verification.CreateVerificationCmd(x))
       .mapTo[Verification.CreateVerificationSuccess]
       .map(_.x)
-  }
 
   def verify(verificationId: Verification.Id, code: String): Future[Verification.Id] =
     ask(notificationManagerActor, Verification.VerifyCmd(verificationId, code))
+      .mapTo[Verification.Response]
+      .map {
+        case Verification.Done => verificationId
+        case Verification.InvalidCode => throw VerificationInvalidCodeException()
+        case Verification.VerificationNotFound => throw VerificationNotFoundException(verificationId)
+      }
+
+  def verify(verificationId: Verification.Id, code: UUID): Future[Verification.Id] =
+    ask(notificationManagerActor, Verification.VerifyCmd(verificationId, code.toString))
       .mapTo[Verification.Response]
       .map {
         case Verification.Done => verificationId

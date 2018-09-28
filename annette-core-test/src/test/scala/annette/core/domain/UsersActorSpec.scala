@@ -127,7 +127,7 @@ class UsersActorSpec extends TestKit(ActorSystem("UserActorSpec"))
               additionalTel = None,
               additionalMail = None,
               meta = None,
-              deactivated = None)))
+              status = None)))
           ccs <- ask(actor, UserManager.FindUserById(cc1.id)).mapTo[UserManager.SingleUser].map(_.maybeEntry.get)
         } yield {
           ccs shouldBe a[User]
@@ -167,7 +167,7 @@ class UsersActorSpec extends TestKit(ActorSystem("UserActorSpec"))
               additionalTel = None,
               additionalMail = None,
               meta = None,
-              deactivated = None)
+              status = None)
           })
 
         for {
@@ -208,7 +208,7 @@ class UsersActorSpec extends TestKit(ActorSystem("UserActorSpec"))
             additionalTel = None,
             additionalMail = None,
             meta = None,
-            deactivated = None)))
+            status = None)))
         } yield cc3 shouldBe a[EmailAlreadyExistsMsg]
       }
 

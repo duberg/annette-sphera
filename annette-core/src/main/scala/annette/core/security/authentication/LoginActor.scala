@@ -32,12 +32,17 @@ class LoginActor(
 
   implicit val ec = context.dispatcher
 
-  def validateUser(login: String, password: String) = {
+  def validateUser(login: String, password: String): Future[User] = {
     for {
       userOpt <- userDao.getByLoginAndPassword(login, password)
     } yield {
       context.system.log.debug(s"validateUser: $userOpt")
-      userOpt.getOrElse(throw new AuthenticationFailedException())
+
+      userOpt match {
+        case Some(x) if x.status != 0 => x
+        case Some(x) => throw new AccountDeactivatedException()
+        case None => throw new AuthenticationFailedException()
+      }
     }
   }
 

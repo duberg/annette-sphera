@@ -9,7 +9,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 
 trait NewVerificationActor { _: PersistenceSpec =>
-  def createVerification(a: ActorRef): Future[Verification] = {
+  def createVerification(a: ActorRef): Future[VerificationLike] = {
     val verification = CreateVerification(
       code = generatePinString,
       duration = 1.second)
@@ -21,16 +21,19 @@ trait NewVerificationActor { _: PersistenceSpec =>
   def deleteVerification(a: ActorRef, id: Verification.Id): Future[Any] =
     ask(a, DeleteVerificationCmd(id))
 
-  def getVerification(a: ActorRef): Future[Verification] =
+  def getVerification(a: ActorRef): Future[VerificationLike] =
     ask(a, GetVerification).mapTo[VerificationOpt].map(_.x.get)
 
-  def listVerifications(a: ActorRef): Future[Map[Verification.Id, Verification]] =
+  def listVerifications(a: ActorRef): Future[Map[Verification.Id, VerificationLike]] =
     ask(a, ListVerifications).mapTo[VerificationMap].map(_.x)
 
   def verify(a: ActorRef, id: Verification.Id, code: String): Future[Any] =
     ask(a, VerifyCmd(id, code))
 
   def newVerificationActor(id: ActorId = generateActorId, state: VerificationState = VerificationState.empty): Future[ActorRef] = Future {
-    system.actorOf(VerificationActor.props(id, state), id.name)
+    system.actorOf(VerificationActor.props(
+      id = id,
+      bus = new VerificationBus,
+      state = state), id.name)
   }
 }

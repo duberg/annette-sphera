@@ -13,23 +13,27 @@ import com.typesafe.config.Config
 import scala.concurrent.ExecutionContext
 import annette.core.domain.CoreService._
 import annette.core.notification.actor._
-import annette.core.security.verification.Verification
+import annette.core.security.verification.{ Verification, VerificationBus }
 
 @Singleton
 @Named("CoreService")
-class CoreServiceActor(config: Config)(implicit c: ExecutionContext, t: Timeout) extends Actor with ActorLogging {
+class CoreServiceActor(config: Config, verificationBus: VerificationBus)(implicit c: ExecutionContext, t: Timeout) extends Actor with ActorLogging {
   val applicationActor: ActorRef = context.actorOf(ApplicationManager.props("core-application"), "application")
   val languageActor: ActorRef = context.actorOf(LanguageService.props("core-language"), "language")
-  val userActor: ActorRef = context.actorOf(UserManager.props("core-user"), "user")
+  val userActor: ActorRef = context.actorOf(UserManager.props(id = "core-user", verificationBus = verificationBus), "user")
 
   val lastSessionActor: ActorRef = context.actorOf(LastSessionService.props("core-last-session"), "last-session")
   val sessionHistoryActor: ActorRef = context.actorOf(SessionHistoryService.props("core-session-history"), "session-history")
   val openSessionActor: ActorRef = context.actorOf(OpenSessionService.props("core-open-session", lastSessionActor, sessionHistoryActor), "open-session")
 
   val coreId = ActorId("core")
+
   val notificationManagerId = coreId / NotificationManagerActorName
   val notificationManagerActor: ActorRef = context.actorOf(
-    props = NotificationManagerActor.props(notificationManagerId, config),
+    props = NotificationManagerActor.props(
+      id = notificationManagerId,
+      config,
+      verificationBus = verificationBus),
     name = NotificationManagerActorName)
 
   def receive: PartialFunction[Any, Unit] = {
@@ -75,5 +79,6 @@ object CoreService {
 
   val name = "core"
 
-  def props(config: Config)(implicit c: ExecutionContext, t: Timeout) = Props(new CoreServiceActor(config))
+  def props(config: Config, verificationBus: VerificationBus)(implicit c: ExecutionContext, t: Timeout) =
+    Props(new CoreServiceActor(config = config, verificationBus = verificationBus))
 }

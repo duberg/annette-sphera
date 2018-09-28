@@ -15,6 +15,7 @@ import LastSessionService.LastSessionOpt
 import OpenSessionService.{ OpenSessionOpt, OpenSessionSeq }
 import annette.core.domain.tenancy.UserManager.{ CreateUserSuccess, SingleUser }
 import annette.core.domain.tenancy.model._
+import annette.core.security.verification.VerificationBus
 import annette.core.test.PersistenceSpec
 import com.typesafe.config.{ Config, ConfigFactory }
 import org.joda.time.DateTime
@@ -31,7 +32,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
 
   def newCoreServiceActor(): ActorRef = {
     val uuid = UUID.randomUUID().toString
-    system.actorOf(CoreService.props(config), s"CoreService-$uuid")
+    system.actorOf(CoreService.props(config, new VerificationBus), s"CoreService-$uuid")
   }
 
   "A CoreServiceActor with ApplicationActor" when receive {
@@ -322,7 +323,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
               additionalTel = None,
               additionalMail = None,
               meta = None,
-              deactivated = None)
+              status = None)
           })
 
         for {
@@ -365,7 +366,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
               additionalTel = None,
               additionalMail = None,
               meta = None,
-              deactivated = None)
+              status = None)
           })
 
         for {
@@ -406,7 +407,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
             additionalTel = None,
             additionalMail = None,
             meta = None,
-            deactivated = None)))
+            status = None)))
         } yield cc3 shouldBe a[EmailAlreadyExistsMsg]
       }
 
@@ -442,7 +443,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
             additionalTel = None,
             additionalMail = None,
             meta = None,
-            deactivated = None)))
+            status = None)))
         } yield cc3 shouldBe a[PhoneAlreadyExistsMsg]
       }
 
@@ -478,7 +479,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
             additionalTel = None,
             additionalMail = None,
             meta = None,
-            deactivated = None)))
+            status = None)))
         } yield cc3 shouldBe a[LoginAlreadyExistsMsg]
       }
 

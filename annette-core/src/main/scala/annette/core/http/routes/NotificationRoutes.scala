@@ -67,16 +67,14 @@ trait NotificationRoutes extends Directives with Generator {
   //    }
   //  }
 
-  def verify = (pathPrefix("verifications" / JavaUUID) & entity(as[String]) & post & pathEndOrSingleSlash) { (x, y) =>
-    complete(notificationManager.verify(x, y).map(_.asJson))
-  }
+  //  def verify = (pathPrefix("verifications" / JavaUUID) & entity(as[String]) & post & pathEndOrSingleSlash) { (x, y) =>
+  //    complete(notificationManager.verify(x, y).map(_.asJson))
+  //  }
 
   // def sms = ???
   //def email = pathPrefix("email")
 
   def notificationRoutes: Route = (pathPrefix("push") & authenticated) { implicit session =>
-    push ~
-      // pushVer ~
-      verify
+    push
   }
 }

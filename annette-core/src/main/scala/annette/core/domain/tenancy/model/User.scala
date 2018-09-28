@@ -51,7 +51,7 @@ case class User(
   additionalTel: Option[String],
   additionalMail: Option[String],
   meta: Map[String, String],
-  deactivated: Boolean) {
+  status: Int) {
 }
 
 case class SignUpUser(
@@ -85,7 +85,7 @@ case class CreateUser(
   additionalTel: Option[String],
   additionalMail: Option[String],
   meta: Map[String, String],
-  deactivated: Boolean)
+  status: Int)
 
 case class UpdateUser(
   id: User.Id,
@@ -111,7 +111,7 @@ case class UpdateUser(
   additionalTel: Option[Option[String]],
   additionalMail: Option[Option[String]],
   meta: Option[Map[String, String]],
-  deactivated: Option[Boolean])
+  status: Option[Int])
 
 object User {
   type Id = UUID

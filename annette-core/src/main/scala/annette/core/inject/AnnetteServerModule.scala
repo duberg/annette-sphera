@@ -5,6 +5,7 @@ import akka.util.Timeout
 import annette.core.CoreModule
 import annette.core.domain.{ CoreService, InitCoreTables }
 import annette.core.security.authentication.{ AuthenticationService, AuthenticationServiceProvider }
+import annette.core.security.verification.VerificationBus
 import com.google.inject.name.Names
 import com.google.inject.{ AbstractModule, Provides }
 import com.typesafe.config.Config
@@ -23,7 +24,9 @@ class AnnetteServerModule extends AbstractModule with ScalaModule {
   @Provides
   @Singleton
   @Named("CoreService")
-  def getCoreService(actorSystem: ActorSystem, config: Config)(implicit c: ExecutionContext, t: Timeout) = {
-    actorSystem.actorOf(props = CoreService.props(config), name = CoreService.name)
+  def getCoreService(actorSystem: ActorSystem, config: Config, verificationBus: VerificationBus)(implicit c: ExecutionContext, t: Timeout) = {
+    actorSystem.actorOf(props = CoreService.props(
+      config = config,
+      verificationBus = verificationBus), name = CoreService.name)
   }
 }

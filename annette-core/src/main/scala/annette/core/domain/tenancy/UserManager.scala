@@ -18,6 +18,7 @@ import annette.core.domain.tenancy.UserManager.{ CreateUserSuccess, CreatedUserE
 import annette.core.domain.tenancy.actor.{ UsersActor, UsersState }
 import annette.core.domain.tenancy.model.User.Id
 import annette.core.domain.tenancy.model.{ UpdateUser, User }
+import annette.core.security.verification.VerificationBus
 import javax.inject._
 
 import scala.concurrent.{ ExecutionContext, Future }
@@ -105,10 +106,15 @@ object UserManager {
   case class UpdatedUserEvt(x: UpdateUser) extends Event
   case class UpdatedPasswordEvt(userId: User.Id, password: String) extends Event
   case class DeletedUserEvt(userId: User.Id) extends Event
+  case class ActivatedUserEvt(userId: User.Id) extends Event
 
   case class CreateUserSuccess(x: User) extends Response
   case class SingleUser(maybeEntry: Option[User]) extends Response
   case class MultipleUsers(entries: Map[User.Id, User]) extends Response
 
-  def props(id: String, state: UsersState = UsersState()) = Props(classOf[UsersActor], id, state)
+  def props(id: String, verificationBus: VerificationBus, state: UsersState = UsersState()) =
+    Props(new UsersActor(
+      id = id,
+      verificationBus = verificationBus,
+      initState = state))
 }

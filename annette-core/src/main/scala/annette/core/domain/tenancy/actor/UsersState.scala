@@ -142,7 +142,6 @@ case class UsersState(
 
   def findUserByLoginAndPassword(login: String, password: String): Option[User] = {
     val cleanLogin = login.toLowerCase.trim
-    println(cleanLogin)
     findUserId(cleanLogin)
       .flatMap {
         userId =>
@@ -156,6 +155,8 @@ case class UsersState(
       }
   }
 
+  def findUserByEmail(email: String): Option[User] = emailIndex.get(email).flatMap(findUserById)
+
   private def findUserId(login: String): Option[User.Id] = {
     val cleanLogin = login.toLowerCase.trim
     emailIndex.get(cleanLogin).map(Some(_))
@@ -164,12 +165,18 @@ case class UsersState(
           .getOrElse(usernameIndex.get(cleanLogin)))
   }
 
+  def activateUser(x: User.Id): UsersState = {
+    val user = users(x).copy(status = 1)
+    copy(users = users + (user.id -> user))
+  }
+
   override def updated(event: Persistence.PersistentEvent) = {
     event match {
       case UserManager.CreatedUserEvt(x) => createUser(x)
       case UserManager.UpdatedUserEvt(x) => updateUser(x)
       case UserManager.DeletedUserEvt(x) => deleteUser(x)
       case UserManager.UpdatedPasswordEvt(x, y) => updatePassword(x, y)
+      case UserManager.ActivatedUserEvt(x) => activateUser(x)
     }
   }
 }

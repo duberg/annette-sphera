@@ -4,6 +4,7 @@ import akka.actor.ActorRef
 import akka.testkit.TestKit
 import annette.core.notification.actor.NotificationManagerActor
 import annette.core.akkaext.actor.ActorId
+import annette.core.security.verification.VerificationBus
 import annette.core.test.PersistenceSpec
 import com.typesafe.config.{ Config, ConfigFactory }
 
@@ -18,7 +19,8 @@ trait NewNotificationManager { _: PersistenceSpec with TestKit =>
     system.actorOf(
       props = NotificationManagerActor.props(
         id = id,
-        config = config),
+        config = config,
+        verificationBus = new VerificationBus),
       name = id.name)
   }
 

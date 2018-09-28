@@ -8,28 +8,40 @@ import annette.core.security.verification.Verification._
 
 import scala.concurrent.ExecutionContext
 
-private class VerificationActor(
+class VerificationActor(
   val id: ActorId,
-  val initState: VerificationState)(implicit val executor: ExecutionContext, val timeout: Timeout) extends CqrsPersistentActor[VerificationState] {
+  val bus: VerificationBus,
+  val initState: VerificationState)(implicit val c: ExecutionContext, val t: Timeout) extends CqrsPersistentActor[VerificationState] {
 
-  def createVerification(state: VerificationState, x: CreateVerification): Unit = {
-    val verification = Verification(
-      id = generateUUID,
-      code = x.code,
-      duration = x.duration)
+  def createVerification(state: VerificationState, x: CreateVerificationLike): Unit = {
+    val verification = x match {
+      case y: CreateVerification => Verification(
+        id = generateUUID,
+        code = y.code,
+        duration = y.duration)
+      case y: CreateEmailVerification => EmailVerification(
+        id = generateUUID,
+        code = y.code,
+        email = y.email,
+        duration = y.duration)
+    }
+
     persist(state, VerificationCreatedEvt(verification)) { (state, event) =>
       context.system.scheduler.scheduleOnce(x.duration, self, DeleteVerificationCmd(verification.id))
       sender ! CreateVerificationSuccess(verification)
     }
   }
 
-  def deleteVerification(state: VerificationState, id: Verification.Id): Unit = {
-    if (state.verificationExists(id)) {
-      persist(VerificationDeletedEvt(id)) { event =>
-        changeState(state.updated(event))
+  def deleteVerification(state: VerificationState, x: Verification.Id): Unit = {
+    state.getVerificationById(x).fold(sender ! VerificationNotFound) { y =>
+      persist(state, VerificationDeletedEvt(y.id)) { (state, event) =>
+        y match {
+          case z: Verification => bus.publish(VerifiedEvt(z))
+          case z: EmailVerification => bus.publish(EmailVerifiedEvt(z))
+        }
         sender ! Done
       }
-    } else sender ! VerificationNotFound
+    }
   }
 
   def findVerification(state: VerificationState, id: Verification.Id): Unit =
@@ -62,7 +74,8 @@ private class VerificationActor(
 object VerificationActor {
   def props(
     id: ActorId,
+    bus: VerificationBus,
     state: VerificationState = VerificationState.empty)(implicit c: ExecutionContext, t: Timeout): Props =
-    Props(new VerificationActor(id, state))
+    Props(new VerificationActor(id, bus, state))
 }
 

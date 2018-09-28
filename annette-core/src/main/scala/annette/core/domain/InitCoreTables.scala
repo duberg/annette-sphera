@@ -202,7 +202,7 @@ class InitCoreTables @Inject() (
           additionalTel = opt(conf.getString("additionalTel")),
           additionalMail = opt(conf.getString("additionalMail")),
           meta = Map.empty,
-          deactivated = false)
+          status = 1)
 
         (x, tenantsAndRoles)
     }

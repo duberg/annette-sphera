@@ -6,7 +6,7 @@ import akka.util.Timeout
 import annette.core.notification._
 import annette.core.akkaext.actor.ActorLifecycleHooks
 import com.typesafe.config.Config
-import annette.core.security.verification.{ Verification, VerificationActor }
+import annette.core.security.verification.{ Verification, VerificationActor, VerificationBus }
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
@@ -16,7 +16,8 @@ class NotificationManagerActor(
   val emailRetryInterval: FiniteDuration,
   val emailSettings: EmailSettings,
   val smsRetryInterval: FiniteDuration,
-  val smsSettings: SmsSettings)(implicit c: ExecutionContext, t: Timeout) extends Actor
+  val smsSettings: SmsSettings,
+  val verificationBus: VerificationBus)(implicit c: ExecutionContext, t: Timeout) extends Actor
   with ActorLogging
   with ActorLifecycleHooks {
   import NotificationManagerActor._
@@ -41,7 +42,7 @@ class NotificationManagerActor(
 
   val verificationActor: ActorRef = {
     context.actorOf(
-      props = VerificationActor.props(id = id / VerificationActorName),
+      props = VerificationActor.props(id = id / VerificationActorName, bus = verificationBus),
       name = VerificationActorName)
   }
 
@@ -92,7 +93,8 @@ object NotificationManagerActor extends NotificationConfig {
 
   def props(
     id: NotificationManager.Id,
-    config: Config)(implicit c: ExecutionContext, t: Timeout): Props = {
+    config: Config,
+    verificationBus: VerificationBus)(implicit c: ExecutionContext, t: Timeout): Props = {
     val annetteConfig: Config = config.getConfig("annette")
     val mailNotificationConfig = annetteConfig.emailNotificationEntry
     println(mailNotificationConfig)
@@ -102,6 +104,7 @@ object NotificationManagerActor extends NotificationConfig {
       emailRetryInterval = mailNotificationConfig.retryInterval,
       emailSettings = mailNotificationConfig.email,
       smsRetryInterval = smsNotificationConfig.retryInterval,
-      smsSettings = smsNotificationConfig.sms))
+      smsSettings = smsNotificationConfig.sms,
+      verificationBus = verificationBus))
   }
 }

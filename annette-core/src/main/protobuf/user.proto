@@ -37,7 +37,7 @@ message UserV1 {
     optional string additionalTel = 22;
     optional string additionalMail = 23;
     map<string, string> meta = 24;
-    required bool deactivated = 25;
+    required int32 status = 25;
 }
 
 message UpdateUserV1 {
@@ -65,7 +65,7 @@ message UpdateUserV1 {
     optional string additionalTel = 22;
     optional string additionalMail = 23;
     map<string, string> meta = 24;
-    optional bool deactivated = 25;
+    optional int32 status = 25;
 }
 
 message UserPropertyV1 {

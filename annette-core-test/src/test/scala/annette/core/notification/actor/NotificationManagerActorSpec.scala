@@ -4,6 +4,7 @@ import akka.actor.ActorSystem
 import akka.actor.SupervisorStrategy._
 import akka.testkit.{ TestActorRef, TestKit }
 import annette.core.notification.{ NewNotificationManager, SendPasswordToEmailNotification, SendPasswordToPhoneNotification }
+import annette.core.security.verification.VerificationBus
 import annette.core.test.PersistenceSpec
 
 class NotificationManagerActorSpec extends TestKit(ActorSystem("NotificationManagerActorSpec"))
@@ -14,7 +15,10 @@ class NotificationManagerActorSpec extends TestKit(ActorSystem("NotificationMana
   "A supervisor strategy of the NotificationManagerActor" when receive {
     "ArithmeticException" must {
       "resume actorRef " in {
-        val supervisor = TestActorRef[NotificationManagerActor](NotificationManagerActor.props(generateActorId, config))
+        val supervisor = TestActorRef[NotificationManagerActor](NotificationManagerActor.props(
+          id = generateActorId,
+          config = config,
+          verificationBus = new VerificationBus))
         val strategy = supervisor.underlyingActor.supervisorStrategy.decider
         strategy(new ArithmeticException) shouldBe Resume
       }
@@ -22,7 +26,10 @@ class NotificationManagerActorSpec extends TestKit(ActorSystem("NotificationMana
     "NullPointerException" must {
       "restart actorRef " in {
         val p = newTestProbeRef
-        val supervisor = TestActorRef[NotificationManagerActor](NotificationManagerActor.props(generateActorId, config))
+        val supervisor = TestActorRef[NotificationManagerActor](NotificationManagerActor.props(
+          id = generateActorId,
+          config = config,
+          verificationBus = new VerificationBus))
         val strategy = supervisor.underlyingActor.supervisorStrategy.decider
         strategy(new NullPointerException) shouldBe Restart
       }
@@ -30,7 +37,10 @@ class NotificationManagerActorSpec extends TestKit(ActorSystem("NotificationMana
     "IllegalArgumentException" must {
       "resume actorRef " in {
         val p = newTestProbeRef
-        val supervisor = TestActorRef[NotificationManagerActor](NotificationManagerActor.props(generateActorId, config))
+        val supervisor = TestActorRef[NotificationManagerActor](NotificationManagerActor.props(
+          id = generateActorId,
+          config = config,
+          verificationBus = new VerificationBus))
         val strategy = supervisor.underlyingActor.supervisorStrategy.decider
         strategy(new IllegalArgumentException) shouldBe Resume
       }
@@ -38,7 +48,10 @@ class NotificationManagerActorSpec extends TestKit(ActorSystem("NotificationMana
     "Exception" must {
       "restart actorRef " in {
         val p = newTestProbeRef
-        val supervisor = TestActorRef[NotificationManagerActor](NotificationManagerActor.props(generateActorId, config))
+        val supervisor = TestActorRef[NotificationManagerActor](NotificationManagerActor.props(
+          id = generateActorId,
+          config = config,
+          verificationBus = new VerificationBus))
         val strategy = supervisor.underlyingActor.supervisorStrategy.decider
         strategy(new Exception) shouldBe Resume
       }

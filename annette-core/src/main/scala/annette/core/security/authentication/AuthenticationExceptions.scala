@@ -12,6 +12,7 @@ class UnauthorizedException(code: String) extends AuthenticationException(code)
 class ForbiddenException(code: String) extends AuthenticationException(code)
 
 class AuthenticationFailedException extends UnauthorizedException("core.authentication.exception.authenticationFailed")
+class AccountDeactivatedException extends UnauthorizedException("core.authentication.exception.deactivatedAccount")
 
 class CsrfTokenRequiredException extends UnauthorizedException("core.authentication.exception.csrfTokenRequired")
 

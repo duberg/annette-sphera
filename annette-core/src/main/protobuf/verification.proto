@@ -5,7 +5,14 @@ package imc;
 option java_package = "annette.core.serializer.proto";
 
 message VerificationStateV1 {
-    map<string, VerificationV1> verifications = 1;
+    map<string, VerificationLikeV1> verifications = 1;
+}
+
+message VerificationLikeV1 {
+    oneof VerificationLike {
+        VerificationV1 opt1 = 1;
+        EmailVerificationV1 opt2 = 2;
+    }
 }
 
 message VerificationV1 {
@@ -14,8 +21,15 @@ message VerificationV1 {
     required int64 duration = 3;
 }
 
+message EmailVerificationV1 {
+    required string id = 1;
+    required string code = 2;
+    required string email = 3;
+    required int64 duration = 4;
+}
+
 message VerificationCreatedEvtV1 {
-    required VerificationV1 x = 1;
+    required VerificationLikeV1 x = 1;
 }
 
 message VerificationDeletedEvtV1 {

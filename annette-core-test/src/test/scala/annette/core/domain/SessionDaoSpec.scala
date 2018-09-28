@@ -14,6 +14,7 @@ import annette.core.domain.language.model.{ Language, LanguageUpdate }
 import annette.core.domain.tenancy._
 import annette.core.domain.tenancy.dao.SessionDao
 import annette.core.domain.tenancy.model._
+import annette.core.security.verification.VerificationBus
 import annette.core.test.PersistenceSpec
 import com.typesafe.config.{ Config, ConfigFactory }
 import org.joda.time.DateTime
@@ -27,7 +28,9 @@ class SessionDaoSpec extends TestKit(ActorSystem("SessionDaoSpec"))
 
   def newCoreServiceActor(): ActorRef = {
     val uuid = UUID.randomUUID().toString
-    system.actorOf(CoreService.props(config), s"CoreService-$uuid")
+    system.actorOf(CoreService.props(
+      config = config,
+      verificationBus = new VerificationBus), s"CoreService-$uuid")
   }
 
   def newSessionDao(): SessionDao = {

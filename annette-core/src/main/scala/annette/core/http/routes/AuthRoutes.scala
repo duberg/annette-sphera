@@ -18,6 +18,7 @@ import annette.core.domain.tenancy.model._
 import annette.core.model.EntityType.Verification
 import annette.core.notification._
 import annette.core.security.AnnetteSecurityDirectives
+import annette.core.security.verification.CreateEmailVerification
 import annette.core.utils.Generator
 import com.typesafe.config.Config
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
@@ -35,7 +36,7 @@ trait AuthRoutes extends Directives with AskSupport with Generator {
   val authenticationService: ActorRef
   val annetteSecurityDirectives: AnnetteSecurityDirectives
   val notificationManager: NotificationManager
-  val config: Config
+  val apiUrl: String
 
   implicit val c: ExecutionContext
   //implicit val t: Timeout = 30.seconds // TODO: заменить на конфигурацию
@@ -97,7 +98,7 @@ trait AuthRoutes extends Directives with AskSupport with Generator {
       if (unknownTenants.nonEmpty) throw TenantNotFoundException(unknownTenants)
 
       else {
-        val createUser = CreateUser(
+        val c1 = CreateUser(
           username = None,
           displayName = Some(s"${x.lastName} ${x.firstName}"),
           firstName = x.firstName,
@@ -117,29 +118,33 @@ trait AuthRoutes extends Directives with AskSupport with Generator {
           additionalTel = None,
           additionalMail = None,
           meta = Map.empty,
-          deactivated = true)
+          status = 0)
+
+        val code = generateUUIDStr
+
+        val c2 = CreateEmailVerification(
+          code = code,
+          email = x.email,
+          duration = 10.minutes)
 
         for {
-          user <- userManager.create(createUser)
+          user <- userManager.create(c1)
           tenantUser <- Future.sequence(x.tenants.map(tenantUserDao.create(_, user.id)))
           tenantUserRole <- Future.sequence(x.tenants.map(tenantId => tenantUserRoleDao.store(TenantUserRole(tenantId, user.id, Set("user")))))
-          verification <- notificationManager.createVerification()
+          verification <- notificationManager.createVerification(c2)
         } yield {
           /**
            * = Email verification =
            */
-          val apiUrl = "http://localhost:9000"
-          val verificationUrl = s"$apiUrl/notifications/verification/${verification.id}"
-          val template = html.ConfirmationEmail(verificationUrl)
-          val pin = verification.code
-
-          val notification = CreateVerifyByEmailNotification(
+          val url = s"$apiUrl/verification/${verification.id}/$code"
+          val template = html.ConfirmationEmail(url)
+          val c3 = CreateVerifyByEmailNotification(
             email = x.email,
             subject = "Confirm your email address",
             message = template.toString(),
-            code = pin)
+            code = code)
 
-          notificationManager.push(notification)
+          notificationManager.push(c3)
 
           user
         }

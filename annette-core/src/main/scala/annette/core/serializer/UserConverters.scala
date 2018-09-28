@@ -88,7 +88,7 @@ trait UserConverters {
       additionalTel = x.additionalTel,
       additionalMail = x.additionalMail,
       meta = x.meta,
-      deactivated = x.deactivated)
+      status = x.status)
   }
 
   implicit def fromUser(x: User): UserV1 = {
@@ -117,7 +117,7 @@ trait UserConverters {
       additionalTel = x.additionalTel,
       additionalMail = x.additionalMail,
       meta = x.meta,
-      deactivated = x.deactivated)
+      status = x.status)
   }
 
   implicit def toUpdateUser(x: UpdateUserV1): UpdateUser = {
@@ -145,7 +145,7 @@ trait UserConverters {
       additionalTel = x.additionalTel,
       additionalMail = x.additionalMail,
       meta = x.meta,
-      deactivated = x.deactivated)
+      status = x.status)
   }
 
   implicit def fromUpdateUser(x: UpdateUser): UpdateUserV1 = {
@@ -173,7 +173,7 @@ trait UserConverters {
       additionalTel = x.additionalTel,
       additionalMail = x.additionalMail,
       meta = x.meta,
-      deactivated = x.deactivated)
+      status = x.status)
   }
 
   implicit def toUserPropertyId(x: UserPropertyIdV1): UserProperty.Id = {

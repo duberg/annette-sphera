@@ -5,16 +5,21 @@ import java.util.UUID
 
 import akka.Done
 import annette.core.AnnetteMessageException
-import annette.core.domain.tenancy.UserManager.CreateUserSuccess
+import annette.core.domain.tenancy.UserManager.{ ActivatedUserEvt, CreateUserSuccess }
 import annette.core.domain.tenancy.model._
-import annette.core.domain.tenancy.{ UserNotFoundMsg, UserManager }
+import annette.core.domain.tenancy.{ UserManager, UserNotFoundMsg }
 import annette.core.persistence.Persistence._
+import annette.core.security.verification.Verification.{ EmailVerifiedEvt, VerifiedEvt }
+import annette.core.security.verification.{ EmailVerification, Verification, VerificationBus }
 import com.outworkers.phantom.builder.QueryBuilder.Create
 import org.mindrot.jbcrypt.BCrypt
 
 import scala.util.Try
 
-class UsersActor(val id: String, val initState: UsersState) extends PersistentStateActor[UsersState] {
+class UsersActor(
+  val id: String,
+  val verificationBus: VerificationBus,
+  val initState: UsersState) extends PersistentStateActor[UsersState] {
 
   def processFailure: PartialFunction[Throwable, Unit] = {
     case e: AnnetteMessageException =>
@@ -53,7 +58,7 @@ class UsersActor(val id: String, val initState: UsersState) extends PersistentSt
         additionalTel = x.additionalTel,
         additionalMail = x.additionalMail,
         meta = x.meta,
-        deactivated = x.deactivated)
+        status = x.status)
 
       persist(UserManager.CreatedUserEvt(user)) { event =>
         changeState(state.updated(event))
@@ -89,7 +94,7 @@ class UsersActor(val id: String, val initState: UsersState) extends PersistentSt
   def findUserById(state: UsersState, id: User.Id): Unit =
     sender ! UserManager.SingleUser(state.findUserById(id))
 
-  def findAllUsers(state: UsersState): Unit =
+  def listUsers(state: UsersState): Unit =
     sender ! UserManager.MultipleUsers(state.users)
 
   def updatePassword(state: UsersState, userId: User.Id, password: String): Unit = {
@@ -107,16 +112,28 @@ class UsersActor(val id: String, val initState: UsersState) extends PersistentSt
     sender ! UserManager.SingleUser(state.findUserByLoginAndPassword(login, password))
   }
 
+  def activateUser(state: UsersState, email: String): Unit = {
+    state.findUserByEmail(email).foreach { x =>
+      persist(ActivatedUserEvt(x.id)) { event =>
+        changeState(state.updated(event))
+      }
+    }
+  }
+
   def behavior(state: UsersState): Receive = {
     case UserManager.CreateUserCmd(x) => createUser(state, x)
     case UserManager.UpdateUserCmd(x) => updateUser(state, x)
     case UserManager.DeleteUserCmd(x) => deleteUser(state, x)
     case UserManager.FindUserById(x) => findUserById(state, x)
-    case UserManager.FindAllUsers => findAllUsers(state)
+    case UserManager.FindAllUsers => listUsers(state)
 
     case UserManager.UpdatePasswordCmd(userId, password) => updatePassword(state, userId, password)
     case UserManager.FindUserByLoginAndPassword(login, password) => findUserByLoginAndPassword(state, login, password)
 
+    case Verification.EmailVerifiedEvt(x) => activateUser(state, x.email)
   }
 
+  override def afterRecover(state: UsersState): Unit = {
+    verificationBus.subscribe(self, "email")
+  }
 }
