@@ -9,7 +9,7 @@ import akka.http.scaladsl.server.Directives.reject
 import akka.http.scaladsl.server.directives.BasicDirectives.provide
 import akka.http.scaladsl.server.directives.FutureDirectives.onComplete
 import akka.http.scaladsl.server.directives.HeaderDirectives.optionalHeaderValueByName
-import akka.http.scaladsl.server.{ AuthenticationFailedRejection, Directive, Directive1 }
+import akka.http.scaladsl.server._
 import akka.http.scaladsl.util.FastFuture
 import akka.pattern.ask
 import akka.util.Timeout
@@ -23,7 +23,7 @@ import scala.concurrent.duration._
 import scala.util.{ Success, Try }
 
 @Singleton
-class AnnetteSecurityDirectives @Inject() (
+class SecurityDirectives @Inject() (
   @Named(AuthenticationService.name) val authenticationService: ActorRef,
   system: ActorSystem,
   config: Config) {
@@ -37,8 +37,8 @@ class AnnetteSecurityDirectives @Inject() (
   val debugApplicationId = Try { config.getString("annette.security.debugSession.application") }.toOption
   val debugLanguageId = Try { config.getString("annette.security.debugSession.language") }.toOption
 
-  implicit val myLogSourceType = new LogSource[AnnetteSecurityDirectives] {
-    def genString(a: AnnetteSecurityDirectives) = "AnnetteSecurityDirectives"
+  implicit val myLogSourceType = new LogSource[SecurityDirectives] {
+    def genString(a: SecurityDirectives) = "AnnetteSecurityDirectives"
   }
 
   val log = Logging(system, this)
@@ -77,7 +77,7 @@ class AnnetteSecurityDirectives @Inject() (
   private val authReject = reject(
     AuthenticationFailedRejection.apply(
       AuthenticationFailedRejection.CredentialsMissing,
-      HttpChallenge("Basic", Some("Annette"))))
+      HttpChallenge("Auth", Some("Annette"))))
 
   val authenticatedOpt: Directive1[Option[Session]] = optionalHeaderValueByName("Authorization")
     .flatMap {
@@ -106,5 +106,10 @@ class AnnetteSecurityDirectives @Inject() (
       }
       .getOrElse(FastFuture.successful(None))
   }
+
+  def authorized(check: ⇒ Future[Boolean]): Directive1[Session] =
+    authenticated.flatMap { session =>
+      Directives.authorizeAsync(check).tmap(_ => session)
+    }
 }
 

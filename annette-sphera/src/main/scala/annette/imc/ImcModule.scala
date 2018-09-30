@@ -5,7 +5,7 @@ import java.util.UUID
 import akka.actor.ActorSystem
 import akka.http.scaladsl.util.FastFuture
 import annette.core.{ AnnetteHttpModule, BuildInfo, CoreModule }
-import annette.core.security.AnnetteSecurityDirectives
+import annette.core.security.SecurityDirectives
 import annette.imc.http.ImcApi
 import annette.imc.user.model.UserRoled
 import com.typesafe.config.Config

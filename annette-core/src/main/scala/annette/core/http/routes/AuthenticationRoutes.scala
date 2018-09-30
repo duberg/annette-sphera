@@ -17,7 +17,7 @@ import annette.core.domain.tenancy.dao.{ TenantDao, TenantUserDao, TenantUserRol
 import annette.core.domain.tenancy.model._
 import annette.core.model.EntityType.Verification
 import annette.core.notification._
-import annette.core.security.AnnetteSecurityDirectives
+import annette.core.security.SecurityDirectives
 import annette.core.security.verification.CreateEmailVerification
 import annette.core.utils.Generator
 import com.typesafe.config.Config
@@ -27,14 +27,14 @@ import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.{ Failure, Success }
 import scala.concurrent.duration._
 
-trait AuthRoutes extends Directives with AskSupport with Generator {
+trait AuthenticationRoutes extends Directives with AskSupport with Generator {
   val tenantDao: TenantDao
   val tenantUserDao: TenantUserDao
   val tenantUserRoleDao: TenantUserRoleDao
   val userManager: UserManager
   val languageDao: LanguageDao
   val authenticationService: ActorRef
-  val annetteSecurityDirectives: AnnetteSecurityDirectives
+  val annetteSecurityDirectives: SecurityDirectives
   val notificationManager: NotificationManager
   val apiUrl: String
 
@@ -215,7 +215,7 @@ trait AuthRoutes extends Directives with AskSupport with Generator {
       complete(true)
   }
 
-  def authRoutes = pathPrefix("auth") {
+  def authenticationRoutes = pathPrefix("auth") {
     signIn ~ signOut ~ signUp ~ applicationStateRoutes ~ heartbeatRoute ~ languagesRoute
   }
 

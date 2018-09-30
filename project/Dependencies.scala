@@ -16,6 +16,7 @@ object Dependencies {
     val scalaj = "2.3.0"
     val scalamock = "3.6.0"
     val apachePoi = "3.17"
+    val casbin = "1.1.0"
   }
 
   //lazy val akkaBackend: Seq[sbt.ModuleID] = common ++ tests ++ guice ++ reflect //++ metrics
@@ -53,7 +54,9 @@ object Dependencies {
      "org.scalaj" %% "scalaj-http" % Version.scalaj,
       "com.roundeights" %% "hasher" % "1.2.0",
 
-    "org.scalamock" %% "scalamock-scalatest-support" % Version.scalamock % Test
+    "org.scalamock" %% "scalamock-scalatest-support" % Version.scalamock % Test,
+
+    "org.casbin" % "jcasbin" % Version.casbin
   ) ++ test ++ guice ++ reflect
 
   /**

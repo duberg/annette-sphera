@@ -19,7 +19,7 @@ import io.circe.syntax._
 
 import scala.concurrent.{ ExecutionContext, Future }
 import annette.core.domain.tenancy.model._
-import annette.core.security.AnnetteSecurityDirectives
+import annette.core.security.SecurityDirectives
 
 import scala.util.{ Failure, Success }
 import annette.core.utils.Generator
@@ -28,7 +28,7 @@ import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 
 trait UserRoutes extends Directives {
   implicit val c: ExecutionContext
-  val annetteSecurityDirectives: AnnetteSecurityDirectives
+  val annetteSecurityDirectives: SecurityDirectives
   val userManager: UserManager
   val tenantDao: TenantDao
   val tenantUserDao: TenantUserDao
@@ -703,7 +703,12 @@ trait UserRoutes extends Directives {
   //  }
   //
 
-  val userRoutes: Route = (pathPrefix("users") & authenticated) { implicit session =>
+  def hasAdminRights = Future {
+    //println("authorized")
+    true
+  }
+
+  val userRoutes: Route = (pathPrefix("users") & authorized(hasAdminRights)) { implicit session =>
     createUser ~ getUser ~ updateUser ~ deleteUser ~ listUsers
   }
 }

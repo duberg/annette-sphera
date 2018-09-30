@@ -14,9 +14,9 @@ import annette.core.domain.language.dao.{ LanguageDao, LanguageDb }
 import annette.core.domain.tenancy.UserManager
 import annette.core.domain.tenancy.dao._
 import annette.core.http.ExceptionHandler
-import annette.core.http.routes.{ ApiRoutes, AuthRoutes, UserRoutes }
+import annette.core.http.routes.{ ApiRoutes, AuthenticationRoutes, UserRoutes }
 import annette.core.notification.NotificationManager
-import annette.core.security.AnnetteSecurityDirectives
+import annette.core.security.SecurityDirectives
 import com.typesafe.config.Config
 
 import scala.concurrent.{ ExecutionContext, ExecutionContextExecutor, Future }
@@ -37,9 +37,10 @@ class CoreModule @Inject() (
   val applicationDao: ApplicationManager,
   val tenantUserRoleDao: TenantUserRoleDao,
   val sessionDao: SessionDao,
-  val annetteSecurityDirectives: AnnetteSecurityDirectives,
+  val annetteSecurityDirectives: SecurityDirectives,
   val notificationManager: NotificationManager,
-  @Named(AuthenticationService.name) val authenticationService: ActorRef) extends AnnetteHttpModule with ApiRoutes with ExceptionHandler {
+  @Named(AuthenticationService.name) val authenticationService: ActorRef,
+  @Named("AuthorizationManager") val authorizationManager: ActorRef) extends AnnetteHttpModule with ApiRoutes with ExceptionHandler {
   System.setProperty("logback.configurationFile", "conf/logback.xml")
 
   implicit val c: ExecutionContext = system.dispatcher

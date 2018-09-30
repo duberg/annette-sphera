@@ -10,14 +10,14 @@ import annette.core.utils.Generator
 
 import scala.concurrent.ExecutionContext
 import annette.core.json._
-import annette.core.security.AnnetteSecurityDirectives
+import annette.core.security.SecurityDirectives
 import annette.core.security.verification.Verification
 
 trait NotificationRoutes extends Directives with Generator {
   implicit val c: ExecutionContext
   implicit val t: Timeout
 
-  val annetteSecurityDirectives: AnnetteSecurityDirectives
+  val annetteSecurityDirectives: SecurityDirectives
   val notificationManager: NotificationManager
 
   import annetteSecurityDirectives._

@@ -1,10 +1,11 @@
 package annette.core.inject
 
-import akka.actor.{ ActorRef, ActorSystem }
+import akka.actor.{ ActorRef, ActorSystem, Props }
 import akka.util.Timeout
 import annette.core.CoreModule
 import annette.core.domain.{ CoreService, InitCoreTables }
 import annette.core.security.authentication.{ AuthenticationService, AuthenticationServiceProvider }
+import annette.core.security.authorization.AuthorizationActor
 import annette.core.security.verification.VerificationBus
 import com.google.inject.name.Names
 import com.google.inject.{ AbstractModule, Provides }
@@ -19,6 +20,7 @@ class AnnetteServerModule extends AbstractModule with ScalaModule {
     bind(classOf[InitCoreTables]).asEagerSingleton()
     bind(classOf[CoreModule]).asEagerSingleton()
     bind[ActorRef].annotatedWith(Names.named(AuthenticationService.name)).toProvider(classOf[AuthenticationServiceProvider]).asEagerSingleton()
+
   }
 
   @Provides
@@ -28,5 +30,12 @@ class AnnetteServerModule extends AbstractModule with ScalaModule {
     actorSystem.actorOf(props = CoreService.props(
       config = config,
       verificationBus = verificationBus), name = CoreService.name)
+  }
+
+  @Provides
+  @Singleton
+  @Named("AuthorizationManager")
+  def getAuthorizationManager(actorSystem: ActorSystem, config: Config)(implicit c: ExecutionContext, t: Timeout) = {
+    actorSystem.actorOf(props = Props(new AuthorizationActor), name = "authorization")
   }
 }

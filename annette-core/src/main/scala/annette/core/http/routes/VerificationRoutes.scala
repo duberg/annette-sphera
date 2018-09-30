@@ -5,7 +5,7 @@ import akka.http.scaladsl.server.{ Directives, Route }
 import akka.util.Timeout
 import annette.core.json.{ JsonNotification, _ }
 import annette.core.notification._
-import annette.core.security.AnnetteSecurityDirectives
+import annette.core.security.SecurityDirectives
 import annette.core.security.verification.Verification
 import annette.core.utils.Generator
 
@@ -17,7 +17,7 @@ trait VerificationRoutes extends Directives with Generator {
   implicit val t: Timeout
 
   val httpUrl: String
-  val annetteSecurityDirectives: AnnetteSecurityDirectives
+  val annetteSecurityDirectives: SecurityDirectives
   val notificationManager: NotificationManager
 
   import annetteSecurityDirectives._

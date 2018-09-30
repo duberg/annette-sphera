@@ -5,7 +5,8 @@ import akka.pattern.AskSupport
 import com.typesafe.config.Config
 
 trait ApiRoutes extends Directives with AskSupport
-  with AuthRoutes
+  with AuthenticationRoutes
+  with AuthorizationRoutes
   with UserRoutes
   with NotificationRoutes
   with VerificationRoutes {
@@ -18,6 +19,10 @@ trait ApiRoutes extends Directives with AskSupport
   val apiUrl = s"$httpUrl/api"
 
   val apiRoutes: Route = pathPrefix("api") {
-    authRoutes ~ userRoutes ~ notificationRoutes ~ verificationRoutes
+    authenticationRoutes ~
+      authorizationRoutes ~
+      userRoutes ~
+      notificationRoutes ~
+      verificationRoutes
   }
 }

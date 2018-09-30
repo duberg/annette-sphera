@@ -1,0 +1,6 @@
+p, admin, /web/oms/stat/*, GET
+p, developer, /*, GET|POST|UPDATE|DELETE
+p, admin, /backend/stat/*, GET|POST
+p, admin1, /web/oms/stat/*, GET
+g, devId, developer
+g, test2, admin
