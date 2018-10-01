@@ -1,8 +1,8 @@
-package annette.core.akka.persistence
+package annette.core.akkaext.persistence
 
 import akka.actor.{ ActorSystem, PoisonPill }
 import akka.testkit.TestKit
-import annette.core.akka.persistence.TestCqrsPersistentActor._
+import annette.core.akkaext.persistence.TestCqrsPersistentActor._
 import annette.core.akkaext.actor.ActorId
 import annette.core.akkaext.actor.CqrsQuery._
 import annette.core.akkaext.actor.CqrsResponse._

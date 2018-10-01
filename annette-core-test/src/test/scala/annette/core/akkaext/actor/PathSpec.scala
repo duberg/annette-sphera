@@ -1,4 +1,4 @@
-package annette.core.akka.actor
+package annette.core.akkaext.actor
 
 import annette.core.akkaext.actor.{ ActorId, DataPath, Path, SelectParentAsterisk }
 import annette.core.utils.Generator

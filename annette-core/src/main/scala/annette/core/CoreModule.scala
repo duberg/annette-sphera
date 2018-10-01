@@ -14,7 +14,7 @@ import annette.core.domain.language.dao.{ LanguageDao, LanguageDb }
 import annette.core.domain.tenancy.UserManager
 import annette.core.domain.tenancy.dao._
 import annette.core.http.ExceptionHandler
-import annette.core.http.routes.{ ApiRoutes, AuthenticationRoutes, UserRoutes }
+import annette.core.http.routes.ApiRoutes
 import annette.core.notification.NotificationManager
 import annette.core.security.SecurityDirectives
 import com.typesafe.config.Config

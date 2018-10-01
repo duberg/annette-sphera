@@ -1,4 +1,4 @@
-package annette.core.akka.persistence
+package annette.core.akkaext.persistence
 
 import java.util.UUID
 
@@ -6,7 +6,7 @@ import akka.actor.{ ActorRef, Props }
 import akka.persistence.SnapshotMetadata
 import akka.testkit.{ TestKit, TestProbe }
 import akka.util.Timeout
-import annette.core.akka.persistence.TestCqrsPersistentActor._
+import annette.core.akkaext.persistence.TestCqrsPersistentActor._
 import annette.core.akkaext.actor.CqrsQuery.GetState
 import annette.core.akkaext.actor._
 import annette.core.akkaext.persistence._

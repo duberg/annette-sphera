@@ -1,7 +1,7 @@
 package annette.core.json
 
-import annette.core.{ AnnetteException, CoreException }
 import annette.core.http.ExceptionMapping
+import annette.core.{ AnnetteException, CoreException }
 import io.circe._
 
 trait ExceptionCodec extends ExceptionMapping {

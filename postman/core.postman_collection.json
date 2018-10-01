@@ -40,6 +40,15 @@
 				{
 					"name": "signUp",
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiI0N2E4MjY1Ny1iNmI0LTRhNTctOTU3Yi0wNjdjNGQ4NjRhZTciLCJVaWQiOiIxNGFkN2U3YS1lNTI4LTRjN2YtODY1ZC0zZTk5NDQ5NGI0MzAiLCJUaWQiOiJJTUMiLCJBaWQiOiJJTUMiLCJMaWQiOiJSVSJ9.CBAOOOgEEk_A3VJ6KK1j8M-6UO1UlEI3jfR4t3ss9o0",
+								"password": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiI0N2E4MjY1Ny1iNmI0LTRhNTctOTU3Yi0wNjdjNGQ4NjRhZTciLCJVaWQiOiIxNGFkN2U3YS1lNTI4LTRjN2YtODY1ZC0zZTk5NDQ5NGI0MzAiLCJUaWQiOiJJTUMiLCJBaWQiOiJJTUMiLCJMaWQiOiJSVSJ9.CBAOOOgEEk_A3VJ6KK1j8M-6UO1UlEI3jfR4t3ss9o0",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
 						"url": "http://localhost:9000/api/auth/signup",
 						"method": "POST",
 						"header": [
@@ -53,11 +62,16 @@
 								"value": "IMC",
 								"description": "",
 								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnphV1FpT2lJME4yRTRNalkxTnkxaU5tSTBMVFJoTlRjdE9UVTNZaTB3Tmpkak5HUTROalJoWlRjaUxDSlZhV1FpT2lJeE5HRmtOMlUzWVMxbE5USTRMVFJqTjJZdE9EWTFaQzB6WlRrNU5EUTVOR0kwTXpBaUxDSlVhV1FpT2lKSlRVTWlMQ0pCYVdRaU9pSkpUVU1pTENKTWFXUWlPaUpTVlNKOS5DQkFPT09nRUVrX0EzVko2S0sxajhNLTZVTzFVbEVJM2pmUjR0M3NzOW8wOmV5SmhiR2NpT2lKSVV6STFOaUlzSW5SNWNDSTZJa3BYVkNKOS5leUp6YVdRaU9pSTBOMkU0TWpZMU55MWlObUkwTFRSaE5UY3RPVFUzWWkwd05qZGpOR1E0TmpSaFpUY2lMQ0pWYVdRaU9pSXhOR0ZrTjJVM1lTMWxOVEk0TFRSak4yWXRPRFkxWkMwelpUazVORFE1TkdJME16QWlMQ0pVYVdRaU9pSkpUVU1pTENKQmFXUWlPaUpKVFVNaUxDSk1hV1FpT2lKU1ZTSjkuQ0JBT09PZ0VFa19BM1ZKNktLMWo4TS02VU8xVWxFSTNqZlI0dDNzczlvMA==",
+								"description": ""
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\": \"gfhfgh\",\n\t\"firstName\":\"Давид\",\n\t\"lastName\":\"Кантемиров\",\n\t\"password\":\"abc\",\n\t\"tenants\": [\"IMC\"]\n}"
+							"raw": "{\n\t\"email\": \"david.kantemirov@yahoo.com\",\n\t\"firstName\":\"Давид\",\n\t\"lastName\":\"Кантемиров\",\n\t\"password\":\"abc\",\n\t\"tenants\": [\"IMC\"]\n}"
 						},
 						"description": ""
 					},
@@ -255,6 +269,64 @@
 						"body": {
 							"mode": "raw",
 							"raw": "\"5173\""
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "authorization",
+			"description": "",
+			"item": [
+				{
+					"name": "list",
+					"request": {
+						"url": "http://localhost:9000/api/roles/permissions/list",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-Tenant",
+								"value": "IMC",
+								"description": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"login\":\"david.kantemirov@yahoo.com\",\n\t\"password\":\"abc\",\n\t\"rememberMe\":false,\n\t\"selectTenant\": false,\n\t\"tenant\": \"IMC\",\n\t\"application\": \"IMC\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"url": "http://localhost:9000/api/roles/permissions",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-Tenant",
+								"value": "IMC",
+								"description": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"roleName\": \"admin\",\n        \"accessPath\": \"/web/oms/stat/*\",\n        \"action\": \"GET\"\n}"
 						},
 						"description": ""
 					},

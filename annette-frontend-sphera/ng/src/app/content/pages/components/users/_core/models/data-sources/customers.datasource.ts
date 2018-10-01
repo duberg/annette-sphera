@@ -17,15 +17,15 @@ export class CustomersDataSource extends BaseDataSource {
 				// Comment this when you start work with real server
 				// This code imitates server calls
 				// START
-				const result = this.baseFilter(res.items, queryParams, ['status', 'type']);
-				this.entitySubject.next(result.items);
-				this.paginatorTotalSubject.next(result.totalCount);
+				//const result = this.baseFilter(res.items, queryParams, ['status', 'type']);
+				//this.entitySubject.next(result.items);
+				//this.paginatorTotalSubject.next(result.totalCount);
 				// END
 
 				// Uncomment this when you start work with real server
 				// START
-				// this.entitySubject.next(res.items);
-				// this.paginatorTotalSubject.next(res.totalCount);
+				this.entitySubject.next(res.items);
+				this.paginatorTotalSubject.next(res.totalCount);
 				// END
 			}),
 			catchError(err => of(new QueryResultsModel([], err))),

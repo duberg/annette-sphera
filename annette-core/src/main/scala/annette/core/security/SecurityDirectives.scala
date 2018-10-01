@@ -26,7 +26,7 @@ import scala.util.{ Success, Try }
 class SecurityDirectives @Inject() (
   @Named(AuthenticationService.name) val authenticationService: ActorRef,
   system: ActorSystem,
-  config: Config) {
+  config: Config) extends Directives {
 
   implicit val serviceTimeout: Timeout = 30.seconds // TODO: заменить на конфигурацию
 
@@ -107,9 +107,9 @@ class SecurityDirectives @Inject() (
       .getOrElse(FastFuture.successful(None))
   }
 
-  def authorized(check: ⇒ Future[Boolean]): Directive1[Session] =
-    authenticated.flatMap { session =>
-      Directives.authorizeAsync(check).tmap(_ => session)
-    }
+  def check = Future.successful(true)
+
+  val authorized: Directive1[Session] =
+    authenticated.flatMap(authorizeAsync(check) & provide(_))
 }
 

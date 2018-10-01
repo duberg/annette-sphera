@@ -3,11 +3,13 @@ package annette.core.http.routes
 import java.time.LocalDate
 import java.util.UUID
 
+import akka.actor.ActorRef
 import akka.http.scaladsl.model.{ HttpEntity, _ }
 import akka.http.scaladsl.server.Directives.{ entity, pathPrefix, _ }
 import akka.http.scaladsl.server.{ Directive1, Directives, Route }
 import akka.http.scaladsl.settings.RoutingSettings
 import akka.pattern.ask
+import annette.core.akkaext.http.PaginationDirectives
 import annette.core.security.authentication.Session
 import annette.core.{ AnnetteException, CoreModule }
 import annette.core.domain.tenancy.UserManager
@@ -20,19 +22,22 @@ import io.circe.syntax._
 import scala.concurrent.{ ExecutionContext, Future }
 import annette.core.domain.tenancy.model._
 import annette.core.security.SecurityDirectives
+import annette.core.security.authorization.AuthorizationActor.ValidateAuthorizedUser
+import annette.core.security.authorization.AuthrReqUser
 
 import scala.util.{ Failure, Success }
 import annette.core.utils.Generator
 import com.typesafe.config.Config
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 
-trait UserRoutes extends Directives {
+trait UserRoutes extends Directives with PaginationDirectives {
   implicit val c: ExecutionContext
   val annetteSecurityDirectives: SecurityDirectives
   val userManager: UserManager
   val tenantDao: TenantDao
   val tenantUserDao: TenantUserDao
   val tenantUserRoleDao: TenantUserRoleDao
+  val authorizationManager: ActorRef
   val config: Config
 
   import FailFastCirceSupport._
@@ -600,23 +605,44 @@ trait UserRoutes extends Directives {
     complete(userManager.delete(userId))
   }
 
-  def listUsers(implicit session: Session): Route = get {
-    val ff = for {
-      f <- userManager.selectAll
-      r <- tenantUserRoleDao.selectAll
-    } yield (f, r)
+  def listUsers(implicit session: Session): Route = (get & optionalPagination) {
+    case Some(x) =>
+      println(x)
 
-    onComplete(ff) {
-      case Success((x, y)) => complete(x)
-      case Success(_) => complete(StatusCodes.InternalServerError)
-      case Failure(throwable) =>
-        throwable match {
-          case annetteException: AnnetteException =>
-            complete(StatusCodes.InternalServerError -> annetteException.exceptionMessage)
-          case _ =>
-            complete(StatusCodes.InternalServerError -> Map("code" -> throwable.getMessage))
-        }
-    }
+      val ff = for {
+        f <- userManager.selectAll
+        r <- tenantUserRoleDao.selectAll
+      } yield (f, r)
+
+      onComplete(ff) {
+        case Success((x, y)) => complete(x.head)
+        case Success(_) => complete(StatusCodes.InternalServerError)
+        case Failure(throwable) =>
+          throwable match {
+            case annetteException: AnnetteException =>
+              complete(StatusCodes.InternalServerError -> annetteException.exceptionMessage)
+            case _ =>
+              complete(StatusCodes.InternalServerError -> Map("code" -> throwable.getMessage))
+          }
+      }
+
+    case None =>
+      val ff = for {
+        f <- userManager.selectAll
+        r <- tenantUserRoleDao.selectAll
+      } yield (f, r)
+
+      onComplete(ff) {
+        case Success((x, y)) => complete(x)
+        case Success(_) => complete(StatusCodes.InternalServerError)
+        case Failure(throwable) =>
+          throwable match {
+            case annetteException: AnnetteException =>
+              complete(StatusCodes.InternalServerError -> annetteException.exceptionMessage)
+            case _ =>
+              complete(StatusCodes.InternalServerError -> Map("code" -> throwable.getMessage))
+          }
+      }
   }
 
   //  private val getManagers = (pathPrefix("user" / "managers") & get & auth) {
@@ -703,12 +729,15 @@ trait UserRoutes extends Directives {
   //  }
   //
 
-  def hasAdminRights = Future {
+  def hasAdminRights = Future { //req: AuthrReqUser =>
+    // authorizationManager.ask(ValidateAuthorizedUser(
+    // Some(req.userId), Some(req.accessPath), Some(req.action))).mapTo[Boolean]
+
     //println("authorized")
     true
   }
 
-  val userRoutes: Route = (pathPrefix("users") & authorized(hasAdminRights)) { implicit session =>
+  val userRoutes: Route = (pathPrefix("users") & authorized) { implicit session =>
     createUser ~ getUser ~ updateUser ~ deleteUser ~ listUsers
   }
 }

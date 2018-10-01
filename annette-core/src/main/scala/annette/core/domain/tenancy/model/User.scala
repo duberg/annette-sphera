@@ -33,6 +33,7 @@ case class User(
   firstName: String,
   lastName: String,
   middleName: Option[String],
+  //gender: Option[String],
   email: Option[String],
   url: Option[String],
   description: Option[String],
@@ -51,8 +52,7 @@ case class User(
   additionalTel: Option[String],
   additionalMail: Option[String],
   meta: Map[String, String],
-  status: Int) {
-}
+  status: Int)
 
 case class SignUpUser(
   email: String,

@@ -28,7 +28,6 @@ object Dependencies {
     "ch.qos.logback" % "logback-classic" % "1.2.3",
     "com.typesafe.akka" %% "akka-persistence" % Version.akka,
     "com.typesafe.akka" %% "akka-persistence-cassandra" % Version.akkaPersistenceCassandra,
-
     "com.typesafe.akka" %% "akka-http"         % Version.akkaHttp,
     "com.typesafe.akka" %% "akka-http-xml"     % Version.akkaHttp,
     "com.typesafe.akka" %% "akka-stream"       % Version.akka,
@@ -39,23 +38,15 @@ object Dependencies {
     "io.circe" %% "circe-generic" % Version.circle,
     "io.circe" %% "circe-parser" % Version.circle,
     "io.circe" %% "circe-java8" % Version.circle,
-
     "com.google.protobuf" % "protobuf-java" % Version.protobuf,
-
     "javax.inject" % "javax.inject" % "1",
-
     "com.outworkers" %% "phantom-dsl" % Version.phantom,
-
     "org.mindrot" % "jbcrypt" % "0.3m",
-
     "com.carrotsearch" % "java-sizeof" % "0.0.5",
-
-     "com.sun.mail" % "javax.mail" % "1.6.0",
-     "org.scalaj" %% "scalaj-http" % Version.scalaj,
-      "com.roundeights" %% "hasher" % "1.2.0",
-
+    "com.sun.mail" % "javax.mail" % "1.6.0",
+    "org.scalaj" %% "scalaj-http" % Version.scalaj,
+    "com.roundeights" %% "hasher" % "1.2.0",
     "org.scalamock" %% "scalamock-scalatest-support" % Version.scalamock % Test,
-
     "org.casbin" % "jcasbin" % Version.casbin
   ) ++ test ++ guice ++ reflect
 
@@ -116,7 +107,7 @@ object Dependencies {
     "com.typesafe.akka" %% "akka-testkit" % Version.akka % Test,
     "com.typesafe.akka" %% "akka-http-testkit" % Version.akkaHttp % Test,
     "com.github.dnvriend" %% "akka-persistence-inmemory" % Version.akkaPersistenceInmemoryVersion % Test,
-    "commons-io" % "commons-io" % "2.5" % "test",
-    "biz.lobachev" %% "annette-core-test" % "3.1.0" % Test
+    "commons-io" % "commons-io" % "2.5" % "test"
+    //"biz.lobachev" %% "annette-core-test" % "3.1.0" % Test
   )
 }
