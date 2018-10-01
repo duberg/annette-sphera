@@ -109,6 +109,11 @@ object Order {
   case object Desc extends Order
 }
 
-case class PageRequest(offset: Int, limit: Int, sort: Map[String, Order])
+case class PageRequest(
+                        offset: Int,
+                        limit: Int,
+                        sort: Map[String, Order],
+                        //filter: Map[String, String]
+                      )
 
 case class PageResponse[T](elements: Seq[T], totalElements: Int)
