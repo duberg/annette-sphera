@@ -11,6 +11,7 @@ import scala.util.Try
  * This is an example of url:
  *   /filter-test?page=1&size=10 or
  *   /filter-test?page=1&size=10&sort=name,asc;age,desc
+ *   /filter-test?filter=status,1;gender,male&page=1&size=10&sort=name,asc;age,desc
  */
 trait PaginationDirectives {
 
@@ -89,7 +90,6 @@ trait PaginationDirectives {
   }
 
   private def deserializePage(offset: Int, limit: Int, sorting: Option[String]) = {
-
     val sortingParam = sorting.map(_.split(SortingSeparator).map(_.span(_ != OrderSeparator)).collect {
       case (field, sort) if sort == ',' + AscParam => (field, Order.Asc)
       case (field, sort) if sort == ',' + DescParam => (field, Order.Desc)
@@ -105,11 +105,8 @@ trait PaginationDirectives {
 sealed trait Order
 
 object Order {
-
   case object Asc extends Order
-
   case object Desc extends Order
-
 }
 
 case class PageRequest(offset: Int, limit: Int, sort: Map[String, Order])

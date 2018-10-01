@@ -605,44 +605,24 @@ trait UserRoutes extends Directives with PaginationDirectives {
     complete(userManager.delete(userId))
   }
 
-  def listUsers(implicit session: Session): Route = (get & optionalPagination) {
-    case Some(x) =>
-      println(x)
+  def listUsers(implicit session: Session): Route = (get & pagination) { page =>
+    println(page)
+    val ff = for {
+      f <- userManager.listUsers
+      r <- tenantUserRoleDao.selectAll
+    } yield (f, r)
 
-      val ff = for {
-        f <- userManager.selectAll
-        r <- tenantUserRoleDao.selectAll
-      } yield (f, r)
-
-      onComplete(ff) {
-        case Success((x, y)) => complete(x.head)
-        case Success(_) => complete(StatusCodes.InternalServerError)
-        case Failure(throwable) =>
-          throwable match {
-            case annetteException: AnnetteException =>
-              complete(StatusCodes.InternalServerError -> annetteException.exceptionMessage)
-            case _ =>
-              complete(StatusCodes.InternalServerError -> Map("code" -> throwable.getMessage))
-          }
-      }
-
-    case None =>
-      val ff = for {
-        f <- userManager.selectAll
-        r <- tenantUserRoleDao.selectAll
-      } yield (f, r)
-
-      onComplete(ff) {
-        case Success((x, y)) => complete(x)
-        case Success(_) => complete(StatusCodes.InternalServerError)
-        case Failure(throwable) =>
-          throwable match {
-            case annetteException: AnnetteException =>
-              complete(StatusCodes.InternalServerError -> annetteException.exceptionMessage)
-            case _ =>
-              complete(StatusCodes.InternalServerError -> Map("code" -> throwable.getMessage))
-          }
-      }
+    onComplete(ff) {
+      case Success((x, y)) => complete(x)
+      case Success(_) => complete(StatusCodes.InternalServerError)
+      case Failure(throwable) =>
+        throwable match {
+          case annetteException: AnnetteException =>
+            complete(StatusCodes.InternalServerError -> annetteException.exceptionMessage)
+          case _ =>
+            complete(StatusCodes.InternalServerError -> Map("code" -> throwable.getMessage))
+        }
+    }
   }
 
   //  private val getManagers = (pathPrefix("user" / "managers") & get & auth) {

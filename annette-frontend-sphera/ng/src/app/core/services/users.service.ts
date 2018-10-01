@@ -38,7 +38,7 @@ export class UsersService {
 		// This code imitates server calls
 		// START
 		const url = API_CUSTOMERS_URL;
-		return this.http.get<UserModel[]>(API_CUSTOMERS_URL).pipe(
+		return this.http.get<UserModel[]>(API_CUSTOMERS_URL, { params: params }).pipe(
 			map(res => new QueryResultsModel(res))
 		);
 		// END

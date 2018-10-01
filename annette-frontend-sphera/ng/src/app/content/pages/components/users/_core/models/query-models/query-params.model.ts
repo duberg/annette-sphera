@@ -1,13 +1,20 @@
+interface Filter {
+	status: number;
+	type: number;
+	firstName: String,
+	email: String
+}
+
 export class QueryParamsModel {
 	// fields
-	filter: any;
+	filter: Filter;
 	sortOrder: string; // asc || desc
 	sortField: string;
 	pageNumber: number;
 	pageSize: number;
 
 	// constructor overrides
-	constructor(_filter: any,
+	constructor(_filter: Filter,
 		_sortOrder: string = 'asc',
 		_sortField: string = '',
 		_pageNumber: number = 0,

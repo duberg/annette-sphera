@@ -14,6 +14,7 @@ import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
 import annette.core.AnnetteMessage
+import annette.core.akkaext.http.PageRequest
 import annette.core.domain.tenancy.UserManager.{ CreateUserSuccess, CreatedUserEvt }
 import annette.core.domain.tenancy.actor.{ UsersActor, UsersState }
 import annette.core.domain.tenancy.model.User.Id
@@ -74,15 +75,15 @@ class UserManager @Inject() (@Named("CoreService") actor: ActorRef) {
   }
 
   def getById(id: Id)(implicit ec: ExecutionContext): Future[Option[User]] = {
-    ask(actor, UserManager.FindUserById(id)).mapTo[UserManager.SingleUser].map(_.maybeEntry)
+    ask(actor, UserManager.GetUserById(id)).mapTo[UserManager.UserOpt].map(_.maybeEntry)
   }
 
-  def selectAll(implicit ec: ExecutionContext): Future[List[User]] = {
-    ask(actor, UserManager.FindAllUsers).mapTo[UserManager.MultipleUsers].map(_.entries.values.toList)
+  def listUsers(implicit ec: ExecutionContext): Future[List[User]] = {
+    ask(actor, UserManager.ListUsers).mapTo[UserManager.UsersMap].map(_.x.values.toList)
   }
 
   def getByLoginAndPassword(login: String, password: String)(implicit ec: ExecutionContext): Future[Option[User]] = {
-    ask(actor, UserManager.FindUserByLoginAndPassword(login, password)).mapTo[UserManager.SingleUser].map(_.maybeEntry)
+    ask(actor, UserManager.GetUserByLoginAndPassword(login, password)).mapTo[UserManager.UserOpt].map(_.maybeEntry)
   }
 }
 
@@ -96,11 +97,12 @@ object UserManager {
   case class CreateUserCmd(x: CreateUser) extends Command
   case class UpdateUserCmd(x: UpdateUser) extends Command
   case class DeleteUserCmd(userId: User.Id) extends Command
-
   case class UpdatePasswordCmd(userId: User.Id, password: String) extends Command
-  case class FindUserById(id: User.Id) extends Query
-  case class FindUserByLoginAndPassword(login: String, password: String) extends Query
-  object FindAllUsers extends Query
+
+  case class GetUserById(id: User.Id) extends Query
+  case class GetUserByLoginAndPassword(login: String, password: String) extends Query
+  object ListUsers extends Query
+  case class PaginateListUsers(page: PageRequest) extends Query
 
   case class CreatedUserEvt(x: User) extends Event
   case class UpdatedUserEvt(x: UpdateUser) extends Event
@@ -109,8 +111,8 @@ object UserManager {
   case class ActivatedUserEvt(userId: User.Id) extends Event
 
   case class CreateUserSuccess(x: User) extends Response
-  case class SingleUser(maybeEntry: Option[User]) extends Response
-  case class MultipleUsers(entries: Map[User.Id, User]) extends Response
+  case class UserOpt(maybeEntry: Option[User]) extends Response
+  case class UsersMap(x: Map[User.Id, User]) extends Response
 
   def props(id: String, verificationBus: VerificationBus, state: UsersState = UsersState()) =
     Props(new UsersActor(

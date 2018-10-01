@@ -47,7 +47,7 @@ trait TemplateDataRetrieverB {
     imcUserActor.ask(ImcUserActor.GetAll).mapTo[ImcUserActor.MultipleEntries].map(_.entries)
   }
 
-  private def getUsersAll: Future[Set[User]] = coreModule.userManager.selectAll.map(_.toSet)
+  private def getUsersAll: Future[Set[User]] = coreModule.userManager.listUsers.map(_.toSet)
 
   private def getUserRoleAll: Future[Set[TenantUserRole]] = coreModule.tenantUserRoleDao.selectAll.map(_.toSet)
 

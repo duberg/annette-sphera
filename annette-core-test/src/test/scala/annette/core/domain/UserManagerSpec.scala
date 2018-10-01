@@ -45,7 +45,7 @@ class UserManagerSpec extends TestKit(ActorSystem("UserActorSpec"))
         for {
           cc1 <- dao.create(c1)
           cc2 <- dao.create(c2)
-          ccs <- dao.selectAll
+          ccs <- dao.listUsers
         } yield {
           ccs.head.email shouldBe c1.email
           ccs.last.email shouldBe c2.email
@@ -245,7 +245,7 @@ class UserManagerSpec extends TestKit(ActorSystem("UserActorSpec"))
         for {
           cc1 <- dao.create(c1)
           cc2 <- dao.delete(cc1.id)
-          ccs <- dao.selectAll
+          ccs <- dao.listUsers
         } yield ccs.size shouldBe 0
       }
 

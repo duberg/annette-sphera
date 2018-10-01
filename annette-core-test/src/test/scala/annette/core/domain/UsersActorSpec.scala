@@ -34,7 +34,7 @@ class UsersActorSpec extends TestKit(ActorSystem("UserActorSpec"))
         for {
           cc1 <- ask(actor, UserManager.CreateUserCmd(c1)).mapTo[CreateUserSuccess].map(_.x)
           cc2 <- ask(actor, UserManager.CreateUserCmd(c2)).mapTo[CreateUserSuccess].map(_.x)
-          ccs <- ask(actor, UserManager.FindAllUsers).mapTo[UserManager.MultipleUsers].map(_.entries)
+          ccs <- ask(actor, UserManager.ListUsers).mapTo[UserManager.UsersMap].map(_.x)
         } yield {
           ccs(cc1.id) shouldBe a[User]
           ccs(cc2.id) shouldBe a[User]
@@ -128,7 +128,7 @@ class UsersActorSpec extends TestKit(ActorSystem("UserActorSpec"))
               additionalMail = None,
               meta = None,
               status = None)))
-          ccs <- ask(actor, UserManager.FindUserById(cc1.id)).mapTo[UserManager.SingleUser].map(_.maybeEntry.get)
+          ccs <- ask(actor, UserManager.GetUserById(cc1.id)).mapTo[UserManager.UserOpt].map(_.maybeEntry.get)
         } yield {
           ccs shouldBe a[User]
         }
@@ -222,7 +222,7 @@ class UsersActorSpec extends TestKit(ActorSystem("UserActorSpec"))
         for {
           cc1 <- ask(actor, UserManager.CreateUserCmd(c1)).mapTo[CreateUserSuccess].map(_.x)
           cc2 <- ask(actor, UserManager.DeleteUserCmd(cc1.id))
-          ccs <- ask(actor, UserManager.FindAllUsers).mapTo[UserManager.MultipleUsers].map(_.entries)
+          ccs <- ask(actor, UserManager.ListUsers).mapTo[UserManager.UsersMap].map(_.x)
         } yield ccs.size shouldBe 0
       }
 
@@ -240,9 +240,9 @@ class UsersActorSpec extends TestKit(ActorSystem("UserActorSpec"))
         val actor = newUserActor()
         for {
           cc1 <- ask(actor, UserManager.CreateUserCmd(c1))
-          cc2 <- ask(actor, UserManager.FindUserByLoginAndPassword(c1.email.get.toUpperCase.trim + " ", "abc")).mapTo[UserManager.SingleUser].map(_.maybeEntry.get)
-          cc3 <- ask(actor, UserManager.FindUserByLoginAndPassword(c1.phone.get.toUpperCase.trim + " ", "abc")).mapTo[UserManager.SingleUser].map(_.maybeEntry.get)
-          cc4 <- ask(actor, UserManager.FindUserByLoginAndPassword(c1.username.get.toUpperCase.trim + " ", "abc")).mapTo[UserManager.SingleUser].map(_.maybeEntry.get)
+          cc2 <- ask(actor, UserManager.GetUserByLoginAndPassword(c1.email.get.toUpperCase.trim + " ", "abc")).mapTo[UserManager.UserOpt].map(_.maybeEntry.get)
+          cc3 <- ask(actor, UserManager.GetUserByLoginAndPassword(c1.phone.get.toUpperCase.trim + " ", "abc")).mapTo[UserManager.UserOpt].map(_.maybeEntry.get)
+          cc4 <- ask(actor, UserManager.GetUserByLoginAndPassword(c1.username.get.toUpperCase.trim + " ", "abc")).mapTo[UserManager.UserOpt].map(_.maybeEntry.get)
         } yield {
           cc2 shouldBe a[User]
           cc3 shouldBe a[User]

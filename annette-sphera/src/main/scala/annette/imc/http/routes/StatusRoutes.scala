@@ -40,7 +40,7 @@ trait StatusRoutes
             case class UserWithRoles(u: User, isSecretar: Boolean, isChairman: Boolean)
 
             for {
-              allUsers <- coreModule.userManager.selectAll.map(_.toSet)
+              allUsers <- coreModule.userManager.listUsers.map(_.toSet)
               allUserRole <- coreModule.tenantUserRoleDao.selectAll.map(_.toSet)
               ap <- getApById(apId)
             } yield {
@@ -168,7 +168,7 @@ trait StatusRoutes
             case class UserWithRoles(u: User, isSecretar: Boolean, isChairman: Boolean)
 
             for {
-              allUsers <- coreModule.userManager.selectAll.map(_.toSet)
+              allUsers <- coreModule.userManager.listUsers.map(_.toSet)
               allUserRole <- coreModule.tenantUserRoleDao.selectAll.map(_.toSet)
               ap <- getApById(apId)
             } yield {
@@ -383,7 +383,7 @@ trait StatusRoutes
               expertIds <- apsActor.ask(GetApById(apId))
                 .mapTo[ApFound]
                 .map(_.ap.expertise.experts)
-              experts <- coreModule.userManager.selectAll.map(_.filter(expertIds contains _.id))
+              experts <- coreModule.userManager.listUsers.map(_.filter(expertIds contains _.id))
               allUsers: Set[User] <- getUsersAll
               allUserRole: Set[TenantUserRole] <- getUserRoleAll
               allImcUsers: Map[UUID, ImcUser] <- getAllImcUsers

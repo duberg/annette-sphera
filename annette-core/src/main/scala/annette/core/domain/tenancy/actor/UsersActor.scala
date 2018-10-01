@@ -5,7 +5,8 @@ import java.util.UUID
 
 import akka.Done
 import annette.core.AnnetteMessageException
-import annette.core.domain.tenancy.UserManager.{ ActivatedUserEvt, CreateUserSuccess }
+import annette.core.akkaext.http.PageRequest
+import annette.core.domain.tenancy.UserManager._
 import annette.core.domain.tenancy.model._
 import annette.core.domain.tenancy.{ UserManager, UserNotFoundMsg }
 import annette.core.persistence.Persistence._
@@ -92,10 +93,14 @@ class UsersActor(
   }
 
   def findUserById(state: UsersState, id: User.Id): Unit =
-    sender ! UserManager.SingleUser(state.findUserById(id))
+    sender ! UserManager.UserOpt(state.findUserById(id))
 
   def listUsers(state: UsersState): Unit =
-    sender ! UserManager.MultipleUsers(state.users)
+    sender ! UserManager.UsersMap(state.users)
+
+  def paginateListUsers(page: PageRequest): Unit = {
+    ???
+  }
 
   def updatePassword(state: UsersState, userId: User.Id, password: String): Unit = {
     if (state.userExists(userId)) {
@@ -109,7 +114,7 @@ class UsersActor(
   }
 
   def findUserByLoginAndPassword(state: UsersState, login: String, password: String): Unit = {
-    sender ! UserManager.SingleUser(state.findUserByLoginAndPassword(login, password))
+    sender ! UserManager.UserOpt(state.findUserByLoginAndPassword(login, password))
   }
 
   def activateUser(state: UsersState, email: String): Unit = {
@@ -121,15 +126,14 @@ class UsersActor(
   }
 
   def behavior(state: UsersState): Receive = {
-    case UserManager.CreateUserCmd(x) => createUser(state, x)
-    case UserManager.UpdateUserCmd(x) => updateUser(state, x)
-    case UserManager.DeleteUserCmd(x) => deleteUser(state, x)
-    case UserManager.FindUserById(x) => findUserById(state, x)
-    case UserManager.FindAllUsers => listUsers(state)
-
-    case UserManager.UpdatePasswordCmd(userId, password) => updatePassword(state, userId, password)
-    case UserManager.FindUserByLoginAndPassword(login, password) => findUserByLoginAndPassword(state, login, password)
-
+    case CreateUserCmd(x) => createUser(state, x)
+    case UpdateUserCmd(x) => updateUser(state, x)
+    case DeleteUserCmd(x) => deleteUser(state, x)
+    case GetUserById(x) => findUserById(state, x)
+    case ListUsers => listUsers(state)
+    case PaginateListUsers(x) => ???
+    case UpdatePasswordCmd(userId, password) => updatePassword(state, userId, password)
+    case GetUserByLoginAndPassword(login, password) => findUserByLoginAndPassword(state, login, password)
     case Verification.EmailVerifiedEvt(x) => activateUser(state, x.email)
   }
 

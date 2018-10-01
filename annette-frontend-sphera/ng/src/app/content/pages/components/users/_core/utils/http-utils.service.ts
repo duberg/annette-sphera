@@ -3,6 +3,7 @@ import { HttpParams, HttpHeaders } from '@angular/common/http';
 import {AuthenticationService} from "../../../../../../core/auth/authentication.service";
 import {map} from "rxjs/operators";
 import {Observable} from "rxjs";
+import {QueryParamsModel} from "../models/query-models/query-params.model";
 
 
 @Injectable()
@@ -11,13 +12,22 @@ export class HttpUtilsService {
 
 	}
 
-	getFindHTTPParams(queryParams): HttpParams {
-		const params = new HttpParams()
-			.set('filter', queryParams.filter)
-			.set('sortOrder', queryParams.sortOrder)
-			.set('sortField', queryParams.sortField)
-			.set('pageNumber', queryParams.pageNumber.toString())
-			.set('pageSize', queryParams.pageSize.toString());
+	getFindHTTPParams(queryParams: QueryParamsModel): HttpParams {
+		let filter = "";
+		let params = new HttpParams()
+			.set('offset', queryParams.pageNumber.toString())
+			.set('limit', queryParams.pageSize.toString())
+			.set('sort', `${queryParams.sortField},${queryParams.sortOrder}`);
+
+		Object.keys(queryParams.filter).forEach(key =>{
+			const value = queryParams.filter[key];
+			if (value != "") {
+				filter += filter != "" ? ";" : "";
+				filter += `${key},${value}`
+			}
+		});
+
+		params = filter == "" ? params : params.set('filter', filter);
 
 		return params;
 	}
