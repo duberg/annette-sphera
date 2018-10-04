@@ -17,7 +17,7 @@ sbt ~annette-sphera-server/reStart
 ```
 
 ### Users page:
-![users page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/lisusers.png)
+![users page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/listusers.png)
 
 ### Signin page:
 ![login page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/sigin.png)
