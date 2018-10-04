@@ -7,7 +7,7 @@ import akka.stream.ActorMaterializer
 import annette.core.CoreModule
 import annette.core.security.authentication.Session
 import annette.imc.{ ApsActor, ApsState, ApsStorage, ImcContext }
-import annette.imc.notification._
+//import annette.imc.notification._
 import annette.imc.report.ReportService
 import annette.imc.user.{ ImcUserActor, ImcUserState }
 import com.typesafe.config.ConfigFactory
@@ -17,7 +17,7 @@ class ImcApi(val coreModule: CoreModule, ctx1: ImcContext, auth1: Directive1[Ses
   with BulletinRoutes
   with CriterionRoutes
   with FileRoutes
-  with NotificationRoutes
+  //with NotificationRoutes
   with ReportRoutes
   with StatusRoutes
   with ExpertRoutes
@@ -35,7 +35,7 @@ class ImcApi(val coreModule: CoreModule, ctx1: ImcContext, auth1: Directive1[Ses
   override val apsActor = ctx.system.actorOf(ApsActor.props(apsActorId, initState))
   override val imcUserActor = ctx.system.actorOf(ImcUserActor.props(imcUserId, ImcUserState()))
 
-  override val notificationService = NotificationService(apsActor, ctx.config)
+  //override val notificationService = NotificationService1(apsActor, ctx.config)
   override val reportService = new ReportService(coreModule, apsActor, imcUserActor)
 
   override lazy val materializer = ActorMaterializer()
@@ -44,7 +44,7 @@ class ImcApi(val coreModule: CoreModule, ctx1: ImcContext, auth1: Directive1[Ses
     implicit val routingSettings: RoutingSettings = RoutingSettings(ConfigFactory.load())
     // adminRoutes ~
     Route.seal(apRoutes ~ expertRoutes ~ fileRoutes ~ criterionRoutes ~
-      statusRoutes ~ bulletinRoutes ~ reportRoutes ~ notificationRoutes ~ pdfRoutes)
-  }
+      statusRoutes ~ bulletinRoutes ~ reportRoutes ~ pdfRoutes)
+  } //~ notificationRoutes
 
 }

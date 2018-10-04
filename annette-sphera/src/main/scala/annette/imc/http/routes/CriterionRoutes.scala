@@ -20,8 +20,8 @@ import annette.core.security.authentication.Session
 
 import scala.concurrent.duration._
 import annette.imc.model.{ ApStatus, _ }
-import annette.imc.notification.model._
-import annette.imc.notification._
+//import annette.imc.notification.model._
+//import annette.imc.notification._
 
 import scala.util.{ Failure, Success }
 import annette.imc.utils.Implicits._
@@ -31,8 +31,8 @@ import annette.imc.user.model.UserRoled
 import scala.concurrent.Future
 
 trait CriterionRoutes
-  extends NotificationConfig
-  with Generator { self: APIContext with API =>
+  //  extends NotificationConfig
+  extends Generator { self: APIContext with API =>
 
   private val updateCriterion = (path("update" / JavaUUID) & post & auth & entity(as[UpdateCriterion])) {
     (apId, sessionData, criterion) =>

@@ -19,7 +19,6 @@ import annette.core.AnnetteException
 
 import scala.concurrent.Future
 import annette.imc.model.{ ApStatus, _ }
-import annette.imc.notification._
 import annette.imc.user.model._
 
 import scala.util.{ Failure, Success }
@@ -28,8 +27,8 @@ import annette.imc.utils.Files
 import annette.core.utils.Generator
 
 trait FileRoutes
-  extends NotificationConfig
-  with Generator { self: APIContext with API =>
+  //extends NotificationConfig
+  extends Generator { self: APIContext with API =>
 
   private def processFile(filePath: String, fileData: Multipart.FormData) = {
     val fileOutput = new FileOutputStream(filePath)

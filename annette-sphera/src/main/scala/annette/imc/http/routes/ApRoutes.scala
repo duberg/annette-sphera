@@ -12,7 +12,6 @@ import io.circe.syntax._
 import akka.http.scaladsl.model.headers._
 import annette.core.domain.tenancy.model.TenantUserRole
 import annette.imc.model.{ ApStatus, _ }
-import annette.imc.notification._
 
 import scala.util.{ Failure, Success }
 import annette.imc.utils.Implicits._
@@ -22,8 +21,8 @@ import annette.imc.user.model.UserRoled
 import scala.concurrent.Future
 
 trait ApRoutes
-  extends NotificationConfig
-  with Generator { self: APIContext with API =>
+  //  extends NotificationConfig
+  extends Generator { self: APIContext with API =>
 
   val coreModule: CoreModule
 

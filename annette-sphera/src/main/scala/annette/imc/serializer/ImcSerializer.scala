@@ -3,7 +3,6 @@
 package annette.imc.serializer
 
 import akka.serialization.SerializerWithStringManifest
-import annette.imc.notification.actor.{ MailNotificationServiceState, SmsNotificationServiceState, SmsVerificationServiceState, _ }
 import annette.imc.user.{ ImcUserActor, ImcUserState }
 import annette.imc.{ ApsActor, ApsState }
 
@@ -12,8 +11,7 @@ import annette.imc.{ ApsActor, ApsState }
  */
 class ImcSerializer extends SerializerWithStringManifest
   with ImcUserConverters
-  with ApConverters
-  with NotificationConverters {
+  with ApConverters {
 
   private val className = Option(this.getClass.getName).getOrElse("<undefined>")
 
@@ -46,20 +44,6 @@ class ImcSerializer extends SerializerWithStringManifest
       case obj: ApsActor.UpdateBulletinEvt => toApUpdateBulletinEvtBinary(obj)
       case obj: ApsActor.VoteEvt => toApVoteEvtBinary(obj)
       case obj: ApsActor.ChangeManagerEvt => toApChangeManagerEvtBinary(obj)
-
-      case obj: MailNotificationServiceActor.AddedNotificationEvt => toMailNotificationServiceAddedNotificationEvtBinary(obj)
-      case obj: MailNotificationServiceActor.DeletedNotificationEvt => toMailNotificationServiceDeletedNotificationEvtBinary(obj)
-      case obj: MailNotificationServiceActor.UpdatedRetryEvt => toMailNotificationServiceUpdatedRetryEvtBinary(obj)
-      case obj: MailNotificationServiceState => toMailNotificationServiceStateBinary(obj)
-
-      case obj: SmsNotificationServiceActor.AddedNotificationEvt => toSmsNotificationServiceAddedNotificationEvtBinary(obj)
-      case obj: SmsNotificationServiceActor.DeletedNotificationEvt => toSmsNotificationServiceDeletedNotificationEvtBinary(obj)
-      case obj: SmsNotificationServiceActor.UpdatedRetryEvt => toSmsNotificationServiceUpdatedRetryEvtBinary(obj)
-      case obj: SmsNotificationServiceState => toSmsNotificationServiceStateBinary(obj)
-
-      case obj: SmsVerificationServiceActor.AddedVerificationEvt => toSmsVerificationServiceAddedVerificationEvtBinary(obj)
-      case obj: SmsVerificationServiceActor.DeletedVerificationEvt => toSmsVerificationServiceDeletedVerificationEvtBinary(obj)
-      case obj: SmsVerificationServiceState => toSmsVerificationServiceStateBinary(obj)
 
       case _ =>
         val errorMsg = s"Can't serialize an object using $className [${o.toString}]"
@@ -94,20 +78,6 @@ class ImcSerializer extends SerializerWithStringManifest
       case _: ApsActor.UpdateBulletinEvt => ApUpdateBulletinEvtManifestV1
       case _: ApsActor.VoteEvt => ApVoteEvtManifestV1
       case _: ApsActor.ChangeManagerEvt => ApChangeManagerEvtManifestV1
-
-      case _: MailNotificationServiceActor.AddedNotificationEvt => MailNotificationServiceAddedNotificationEvtManifestV1
-      case _: MailNotificationServiceActor.DeletedNotificationEvt => MailNotificationServiceDeletedNotificationEvtManifestV1
-      case _: MailNotificationServiceActor.UpdatedRetryEvt => MailNotificationServiceUpdatedRetryEvtManifestV1
-      case _: MailNotificationServiceState => MailNotificationServiceStateManifestV1
-
-      case _: SmsNotificationServiceActor.AddedNotificationEvt => SmsNotificationServiceAddedNotificationEvtManifestV1
-      case _: SmsNotificationServiceActor.DeletedNotificationEvt => SmsNotificationServiceDeletedNotificationEvtManifestV1
-      case _: SmsNotificationServiceActor.UpdatedRetryEvt => SmsNotificationServiceUpdatedRetryEvtManifestV1
-      case _: SmsNotificationServiceState => SmsNotificationServiceStateManifestV1
-
-      case _: SmsVerificationServiceActor.AddedVerificationEvt => SmsVerificationServiceAddedVerificationEvtManifestV1
-      case _: SmsVerificationServiceActor.DeletedVerificationEvt => SmsVerificationServiceDeletedVerificationEvtManifestV1
-      case _: SmsVerificationServiceState => SmsVerificationServiceStateManifestV1
 
       case _ =>
         val errorMsg = s"Can't create manifest for object using $className [${o.toString}]"
@@ -160,23 +130,9 @@ class ImcSerializer extends SerializerWithStringManifest
       case ApRemoveExpertEvtManifestV1 => fromApRemoveExpertEvtV1(bytes)
       case ApUpdateBulletinEvtManifestV1 => fromApUpdateBulletinEvtV1(bytes)
       case ApVoteEvtManifestV1 => fromApVoteEvtV1(bytes)
-      case ApChangeManagerEvtManifestV1 => fromApChangeManagerEvtV1(bytes)
+      case ApChangeManagerEvtManifestV1 =>
+        fromApChangeManagerEvtV1(bytes)
 
-      case MailNotificationServiceAddedNotificationEvtManifestV1 => fromMailNotificationServiceAddedNotificationEvt(bytes)
-      case MailNotificationServiceDeletedNotificationEvtManifestV1 => fromMailNotificationServiceDeletedNotificationEvt(bytes)
-      case MailNotificationServiceUpdatedRetryEvtManifestV1 => fromMailNotificationServiceUpdatedRetryEvt(bytes)
-      case MailNotificationServiceStateManifestV1 => fromMailNotificationServiceState(bytes)
-
-      case SmsNotificationServiceAddedNotificationEvtManifestV1 => fromSmsNotificationServiceAddedNotificationEvt(bytes)
-      case SmsNotificationServiceDeletedNotificationEvtManifestV1 => fromSmsNotificationServiceDeletedNotificationEvt(bytes)
-      case SmsNotificationServiceUpdatedRetryEvtManifestV1 => fromSmsNotificationServiceUpdatedRetryEvt(bytes)
-      case SmsNotificationServiceStateManifestV1 => fromSmsNotificationServiceState(bytes)
-
-      case SmsVerificationServiceAddedVerificationEvtManifestV1 => fromSmsVerificationServiceAddedVerificationEvt(bytes)
-      case SmsVerificationServiceDeletedVerificationEvtManifestV1 => fromSmsVerificationServiceDeletedVerificationEvt(bytes)
-      case SmsVerificationServiceStateManifestV1 => fromSmsVerificationServiceState(bytes)
-
-      case _ =>
         val errorMsg = s"Can't deserialize an object using $className manifest [$manifest]"
         throw new IllegalArgumentException(errorMsg)
     }

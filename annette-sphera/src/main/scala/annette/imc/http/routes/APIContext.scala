@@ -7,7 +7,6 @@ import akka.util.Timeout
 import annette.core.CoreModule
 import annette.core.security.authentication.Session
 import annette.imc.ImcContext
-import annette.imc.notification.NotificationService
 
 import scala.concurrent.duration._
 
@@ -17,7 +16,7 @@ trait APIContext {
   val auth: Directive1[Session]
   val imcUserActor: ActorRef
   val apsActor: ActorRef
-  val notificationService: NotificationService
+  //  val notificationService: NotificationService
   implicit val materializer: ActorMaterializer
 
   implicit lazy val s = ctx.system

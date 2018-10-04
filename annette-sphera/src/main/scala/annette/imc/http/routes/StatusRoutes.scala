@@ -16,17 +16,13 @@ import io.circe.syntax._
 import scala.concurrent.Future
 import annette.core.domain.tenancy.model.{ TenantUserRole, User }
 import annette.imc.model.{ ApStatus, _ }
-import annette.imc.notification.model._
-import annette.imc.notification._
 import annette.imc.user.model._
 
 import scala.util.{ Failure, Success }
 import annette.imc.utils.Implicits._
 import annette.core.utils.Generator
 
-trait StatusRoutes
-  extends NotificationConfig
-  with Generator { self: APIContext with API =>
+trait StatusRoutes extends Generator { self: APIContext with API =>
 
   private val ready = (path("ready" / JavaUUID) & get & auth) {
     // посылается секретарем председателю
@@ -124,19 +120,20 @@ trait StatusRoutes
                       "Applicant" -> applicantName,
                       "ChairmanOfTheExpertCouncil" -> chairmanName).mapValues(_.toString)
 
-                    notificationService.addNotificationAsync(MailNotification.ToReview(
-                      id = UUID.randomUUID(),
-                      email = email,
-                      language = u.language.getOrElse(""),
-                      templateParameters = p))
+                    // todo: notification
+                    //                    notificationService.addNotificationAsync(MailNotification.ToReview(
+                    //                      id = UUID.randomUUID(),
+                    //                      email = email,
+                    //                      language = u.language.getOrElse(""),
+                    //                      templateParameters = p))
                   }
-
-                  u.phone.foreach { phone =>
-                    notificationService.addNotificationAsync(SmsNotification.ToReview(
-                      id = UUID.randomUUID(),
-                      phone = phone,
-                      language = u.language.getOrElse("")))
-                  }
+                // todo: notification
+                //                  u.phone.foreach { phone =>
+                //                    notificationService.addNotificationAsync(SmsNotification.ToReview(
+                //                      id = UUID.randomUUID(),
+                //                      phone = phone,
+                //                      language = u.language.getOrElse("")))
+                //                  }
               }
             }
 
@@ -210,19 +207,20 @@ trait StatusRoutes
                       "Positions" -> "Секретарю",
                       "Applicant" -> applicantName,
                       "ChairmanOfTheExpertCouncil" -> chairmanName).mapValues(_.toString)
-
-                    notificationService.addNotificationAsync(MailNotification.ToReview(
-                      id = UUID.randomUUID(),
-                      email = email,
-                      language = u.language.getOrElse(""),
-                      templateParameters = p))
+                    // todo: notification
+                    //                    notificationService.addNotificationAsync(MailNotification.ToReview(
+                    //                      id = UUID.randomUUID(),
+                    //                      email = email,
+                    //                      language = u.language.getOrElse(""),
+                    //                      templateParameters = p))
                   }
-                  u.phone.foreach { phone =>
-                    notificationService.addNotificationAsync(SmsNotification.ToReview(
-                      id = UUID.randomUUID(),
-                      phone = phone,
-                      language = u.language.getOrElse("")))
-                  }
+                // todo: notification
+                //                  u.phone.foreach { phone =>
+                //                    notificationService.addNotificationAsync(SmsNotification.ToReview(
+                //                      id = UUID.randomUUID(),
+                //                      phone = phone,
+                //                      language = u.language.getOrElse("")))
+                //                 }
               }
 
               //              chairman.foreach {
@@ -329,12 +327,12 @@ trait StatusRoutes
               "User" -> user,
               "UserFull" -> userFull,
               "Sender" -> senderShort).mapValues(_.toString)
-
-            notificationService.addNotificationAsync(MailNotification.NotReady(
-              id = UUID.randomUUID(),
-              email = u.email.getOrElse(""),
-              language = "RU",
-              templateParameters = p))
+            // todo: notification
+            //            notificationService.addNotificationAsync(MailNotification.NotReady(
+            //              id = UUID.randomUUID(),
+            //              email = u.email.getOrElse(""),
+            //              language = "RU",
+            //              templateParameters = p))
 
             complete("Done")
 
@@ -438,19 +436,20 @@ trait StatusRoutes
                     "UserFull" -> expertFull,
                     "Applicant" -> applicantName,
                     "ChairmanOfTheExpertCouncil" -> chairmanName).mapValues(_.toString)
-
-                  notificationService.addNotificationAsync(MailNotification.ToExpertise(
-                    id = UUID.randomUUID(),
-                    email = email,
-                    language = language.getOrElse(""),
-                    templateParameters = p))
+                  // todo: notification
+                  //                  notificationService.addNotificationAsync(MailNotification.ToExpertise(
+                  //                    id = UUID.randomUUID(),
+                  //                    email = email,
+                  //                    language = language.getOrElse(""),
+                  //                    templateParameters = p))
                 }
-                u.phone.foreach { phone =>
-                  notificationService.addNotificationAsync(SmsNotification.ToExpertise(
-                    id = UUID.randomUUID(),
-                    phone = phone,
-                    language = language.getOrElse("")))
-                }
+                // todo: notification
+                //                u.phone.foreach { phone =>
+                //                  notificationService.addNotificationAsync(SmsNotification.ToExpertise(
+                //                    id = UUID.randomUUID(),
+                //                    phone = phone,
+                //                    language = language.getOrElse("")))
+                //                }
               }
               experts
             }

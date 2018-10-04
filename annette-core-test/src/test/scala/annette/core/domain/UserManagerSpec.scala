@@ -10,7 +10,6 @@ import annette.core.domain.application.ApplicationManager
 import annette.core.domain.application._
 import annette.core.domain.language.LanguageService
 import annette.core.domain.language.model.{ Language, LanguageUpdate }
-import annette.core.domain.tenancy.UserManager.CreateUserSuccess
 import annette.core.domain.tenancy.{ UserManager, _ }
 import annette.core.domain.tenancy.model._
 import annette.core.security.verification.VerificationBus

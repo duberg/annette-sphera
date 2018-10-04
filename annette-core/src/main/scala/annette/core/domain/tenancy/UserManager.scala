@@ -24,13 +24,17 @@ import javax.inject._
 
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration._
+import annette.core.domain.tenancy.model.User._
 
 @Singleton
 class UserManager @Inject() (@Named("CoreService") actor: ActorRef)(implicit c: ExecutionContext, t: Timeout) {
   def create(x: CreateUser): Future[User] =
     ask(actor, CreateUserCmd(x))
-      .mapTo[CreateUserSuccess]
-      .map(_.x)
+      // .mapTo[Response]
+      .map {
+        case CreateUserSuccess(y) => y
+        case m: AnnetteMessage => throw m.toException
+      }
 
   def update(x: UpdateUser): Future[Unit] = {
     for {

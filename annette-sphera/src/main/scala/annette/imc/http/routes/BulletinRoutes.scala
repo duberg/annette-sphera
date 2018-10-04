@@ -18,15 +18,16 @@ import annette.core.security.authentication.Session
 
 import scala.concurrent.duration._
 import annette.imc.model.{ ApStatus, _ }
-import annette.imc.notification._
 
 import scala.util.{ Failure, Success }
 import annette.imc.utils.Implicits._
 import annette.core.utils.Generator
 
+import scala.concurrent.Future
+
 trait BulletinRoutes
-  extends NotificationConfig
-  with Generator { self: APIContext with API =>
+  //extends NotificationConfig
+  extends Generator { self: APIContext with API =>
 
   private val update = (path("update" / JavaUUID) & post & auth & entity(as[UpdateBulletin])) {
     (apId, sessionData, bulletin) =>
@@ -42,13 +43,13 @@ trait BulletinRoutes
 
           if (x) {
             // ========= Verification =========
-
-            val f = for {
-              user <- coreModule.userManager.getById(userId).map(_.get) if user.phone.nonEmpty
-              x <- notificationService.addSmsVerificationVoted(user.phone.get, apId, bulletin, user.language.getOrElse(""))
-            } yield x
-            onComplete(f) {
-              case Success(x) => complete(x.id)
+            //todo: verification
+            //            val f = for {
+            //              user <- coreModule.userManager.getById(userId).map(_.get) if user.phone.nonEmpty
+            //              x <- notificationService.addSmsVerificationVoted(user.phone.get, apId, bulletin, user.language.getOrElse(""))
+            //            } yield x
+            onComplete(Future.successful(generateUUID)) {
+              case Success(x) => complete(x) //.id
               case Failure(throwable) =>
                 throwable match {
                   case annetteException: AnnetteException =>
