@@ -17,10 +17,10 @@ sbt ~annette-sphera-server/reStart
 ```
 
 ### Users page:
-![users page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/listusers.png)
+![users page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_listusers.png)
 
 ### Signin page:
-![login page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/signin.png)
+![login page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_signin.png)
 
 ### Signup confirmation (example email template):
-![login page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/emailconfirmation.png)
+![login page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_emailconfirmation.png)
