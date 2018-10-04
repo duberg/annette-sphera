@@ -21,3 +21,6 @@ sbt ~annette-sphera-server/reStart
 
 ### Signin page:
 ![login page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/Screenshot%20from%202018-10-04%2014-00-49.png)
+
+### Signup confirmation example email template:
+![login page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/Screenshot%20from%202018-10-01%2016-41-01.png)
