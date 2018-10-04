@@ -14,4 +14,4 @@ npm run build
 sbt ~annette-sphera-server/reStart
 ```
 
-This project is based on ideas and source code of Valery Lobachev (https://github.com/valerylobachev)
+This project is based on ideas and source code of dmitry.rogachev (https://github.com/valerylobachev)

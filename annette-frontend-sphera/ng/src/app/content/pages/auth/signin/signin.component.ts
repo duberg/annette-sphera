@@ -26,7 +26,7 @@ import {log} from "util";
 })
 export class SigninComponent implements OnInit, OnDestroy {
 	public model: any = {
-		login: 'valery.lobachev@gmail.com',
+		login: 'it@kantemirov.ru',
 		password: 'abc',
 		rememberMe:false,
 		selectTenant:false,
