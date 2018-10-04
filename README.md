@@ -16,11 +16,11 @@ npm run build
 sbt ~annette-sphera-server/reStart
 ```
 
-### Users page:
+## Users page:
 ![users page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_listusers.png)
 
-### Signin page:
-![login page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_signin.png)
+## Signin page:
+![signin page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_signin.png)
 
-### Signup confirmation (example email template):
-![login page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_emailconfirmation.png)
+## Signup confirmation (example email template):
+![signup page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_emailconfirmation.png)
