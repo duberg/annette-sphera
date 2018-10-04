@@ -14,8 +14,10 @@ export class HttpUtilsService {
 
 	getFindHTTPParams(queryParams: QueryParamsModel): HttpParams {
 		let filter = "";
+		const offset = queryParams.pageNumber * queryParams.pageSize;
+
 		let params = new HttpParams()
-			.set('offset', queryParams.pageNumber.toString())
+			.set('offset', offset.toString())
 			.set('limit', queryParams.pageSize.toString())
 			.set('sort', `${queryParams.sortField},${queryParams.sortOrder}`);
 

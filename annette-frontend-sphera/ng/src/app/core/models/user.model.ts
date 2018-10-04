@@ -15,6 +15,8 @@ export interface SignUpUser {
 	firstName: string;
 	password: string;
 	tenants: string[];
+	rpassword: '',
+	agree: boolean
 }
 
 

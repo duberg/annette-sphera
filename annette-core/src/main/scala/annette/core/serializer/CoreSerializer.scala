@@ -6,6 +6,7 @@ import annette.core.domain.application._
 import annette.core.domain.application.{ ApplicationManager, ApplicationManagerState }
 import annette.core.domain.tenancy.actor.UsersState
 import annette.core.security.verification.{ Verification, VerificationState }
+import annette.core.domain.tenancy.model.User
 
 class CoreSerializer extends SerializerWithStringManifest
   with UserConverters
@@ -18,9 +19,9 @@ class CoreSerializer extends SerializerWithStringManifest
 
   override def toBinary(o: AnyRef): Array[Byte] = {
     o match {
-      case obj: UserManager.CreatedUserEvt => toCreatedUserEvtBinary(obj)
-      case obj: UserManager.UpdatedUserEvt => toUpdateUserEvtBinary(obj)
-      case obj: UserManager.DeletedUserEvt => toDeleteUserEvtBinary(obj)
+      case obj: User.CreatedUserEvt => toCreatedUserEvtBinary(obj)
+      case obj: User.UpdatedUserEvt => toUpdateUserEvtBinary(obj)
+      case obj: User.DeletedUserEvt => toDeleteUserEvtBinary(obj)
       case obj: UsersState => toUserStatesBinary(obj)
 
       case obj: Application.ApplicationCreatedEvt => toApplicationCreatedEvtBinary(obj)
@@ -40,9 +41,9 @@ class CoreSerializer extends SerializerWithStringManifest
 
   override def manifest(o: AnyRef): String = {
     o match {
-      case _: UserManager.CreatedUserEvt => CreatedUserEvtManifestV1
-      case _: UserManager.UpdatedUserEvt => UpdatedUserEvtManifestV1
-      case _: UserManager.DeletedUserEvt => DeletedUserEvtManifestV1
+      case _: User.CreatedUserEvt => CreatedUserEvtManifestV1
+      case _: User.UpdatedUserEvt => UpdatedUserEvtManifestV1
+      case _: User.DeletedUserEvt => DeletedUserEvtManifestV1
       case _: UsersState => UsersStateManifestV1
 
       case _: Application.ApplicationCreatedEvt => ApplicationCreatedEvtManifestV1

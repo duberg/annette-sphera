@@ -5,23 +5,22 @@ import java.util.UUID
 
 import akka.Done
 import annette.core.AnnetteMessageException
-import annette.core.akkaext.http.PageRequest
-import annette.core.domain.tenancy.UserManager._
+import annette.core.akkaext.actor.ActorId
+import annette.core.akkaext.http.{ Order, PageRequest }
+import annette.core.akkaext.persistence.CqrsPersistentActor
+import annette.core.domain.tenancy._
 import annette.core.domain.tenancy.model._
+import annette.core.domain.tenancy.model.User._
 import annette.core.domain.tenancy.{ UserManager, UserNotFoundMsg }
-import annette.core.persistence.Persistence._
-import annette.core.security.verification.Verification.{ EmailVerifiedEvt, VerifiedEvt }
-import annette.core.security.verification.{ EmailVerification, Verification, VerificationBus }
+import annette.core.security.verification._
 import com.outworkers.phantom.builder.QueryBuilder.Create
+import monocle.macros.GenLens
 import org.mindrot.jbcrypt.BCrypt
 
 import scala.util.Try
+import shapeless._
 
-class UsersActor(
-  val id: String,
-  val verificationBus: VerificationBus,
-  val initState: UsersState) extends PersistentStateActor[UsersState] {
-
+class UsersActor(val id: ActorId, val verificationBus: VerificationBus, val initState: UsersState) extends CqrsPersistentActor[UsersState] {
   def processFailure: PartialFunction[Throwable, Unit] = {
     case e: AnnetteMessageException =>
       sender ! e.message
@@ -61,9 +60,9 @@ class UsersActor(
         meta = x.meta,
         status = x.status)
 
-      persist(UserManager.CreatedUserEvt(user)) { event =>
+      persist(CreatedUserEvt(user)) { event =>
         changeState(state.updated(event))
-        sender ! UserManager.CreateUserSuccess(user)
+        sender ! CreateUserSuccess(user)
       }
     })
   }
@@ -75,7 +74,7 @@ class UsersActor(
     validateResult.fold(
       processFailure,
       _ =>
-        persist(UserManager.UpdatedUserEvt(entry)) { event =>
+        persist(UpdatedUserEvt(entry)) { event =>
           changeState(state.updated(event))
           sender ! Done
         })
@@ -83,7 +82,7 @@ class UsersActor(
 
   def deleteUser(state: UsersState, id: User.Id): Unit = {
     if (state.userExists(id)) {
-      persist(UserManager.DeletedUserEvt(id)) { event =>
+      persist(DeletedUserEvt(id)) { event =>
         changeState(state.updated(event))
         sender ! Done
       }
@@ -93,18 +92,37 @@ class UsersActor(
   }
 
   def findUserById(state: UsersState, id: User.Id): Unit =
-    sender ! UserManager.UserOpt(state.findUserById(id))
+    sender ! UserOpt(state.findUserById(id))
 
   def listUsers(state: UsersState): Unit =
-    sender ! UserManager.UsersMap(state.users)
+    sender ! UsersMap(state.users)
 
-  def paginateListUsers(page: PageRequest): Unit = {
-    ???
+  def paginateListUsers(state: UsersState, page: PageRequest): Unit = {
+    def sort = (state.users.values.toList /: page.sort) {
+      case (users, (field, order)) =>
+
+        field match {
+          case "lastName" =>
+            order match {
+              case Order.Asc => users.sortBy(_.lastName)(Ordering.String)
+              case Order.Desc => users.sortBy(_.lastName)(Ordering.String.reverse)
+            }
+          case _ =>
+            order match {
+              case Order.Asc => users.sortBy(_.firstName)(Ordering.String)
+              case Order.Desc => users.sortBy(_.firstName)(Ordering.String.reverse)
+            }
+        }
+    }
+
+    sender ! UsersList(PaginateUsersList(
+      items = sort.slice(page.offset, page.offset + page.limit),
+      totalCount = state.users.size))
   }
 
   def updatePassword(state: UsersState, userId: User.Id, password: String): Unit = {
     if (state.userExists(userId)) {
-      persist(UserManager.UpdatedPasswordEvt(userId, password)) { event =>
+      persist(UpdatedPasswordEvt(userId, password)) { event =>
         changeState(state.updated(event))
         sender ! Done
       }
@@ -114,7 +132,7 @@ class UsersActor(
   }
 
   def findUserByLoginAndPassword(state: UsersState, login: String, password: String): Unit = {
-    sender ! UserManager.UserOpt(state.findUserByLoginAndPassword(login, password))
+    sender ! UserOpt(state.findUserByLoginAndPassword(login, password))
   }
 
   def activateUser(state: UsersState, email: String): Unit = {
@@ -131,7 +149,7 @@ class UsersActor(
     case DeleteUserCmd(x) => deleteUser(state, x)
     case GetUserById(x) => findUserById(state, x)
     case ListUsers => listUsers(state)
-    case PaginateListUsers(x) => ???
+    case PaginateListUsers(x) => paginateListUsers(state, x)
     case UpdatePasswordCmd(userId, password) => updatePassword(state, userId, password)
     case GetUserByLoginAndPassword(login, password) => findUserByLoginAndPassword(state, login, password)
     case Verification.EmailVerifiedEvt(x) => activateUser(state, x.email)

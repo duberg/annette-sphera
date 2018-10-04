@@ -22,8 +22,8 @@ export class UsersService {
 	}
 
 	// READ
-	getAllCustomers(): Observable<UserModel[]> {
-		return this.http.get<UserModel[]>(API_CUSTOMERS_URL);
+	getAllCustomers(): Observable<QueryResultsModel> {
+		return this.http.get<QueryResultsModel>(API_CUSTOMERS_URL);
 	}
 
 	getCustomerById(customerId: number): Observable<UserModel> {
@@ -33,22 +33,10 @@ export class UsersService {
 	// Method from server should return QueryResultsModel(any[], totalsCount: number)
 	findCustomers(queryParams: QueryParamsModel): Observable<QueryResultsModel> {
 		const params = this.httpUtils.getFindHTTPParams(queryParams);
-
-		// Comment this when you start work with real server
-		// This code imitates server calls
-		// START
-		const url = API_CUSTOMERS_URL;
-		return this.http.get<UserModel[]>(API_CUSTOMERS_URL, { params: params }).pipe(
-			map(res => new QueryResultsModel(res))
-		);
-		// END
-
-		// Uncomment this when you start work with real server
-		// Note: Add headers if needed
-		// START
-		// const url = this.API_CUSTOMERS_URL + '/find';
-		// return this.http.get<QueryResultsModel>(url, params);
-		// END
+		return this.http.get<QueryResultsModel>(API_CUSTOMERS_URL, { params: params })
+		// 	.pipe(
+		// 	map(res => new QueryResultsModel(res.items, res.totalCount))
+		// );
 	}
 
 	// UPDATE => PUT: update the customer on the server

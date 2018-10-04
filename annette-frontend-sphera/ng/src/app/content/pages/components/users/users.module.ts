@@ -103,6 +103,7 @@ const routes: Routes = [
 		MatSnackBarModule,
 		MatTabsModule,
 		MatTooltipModule,
+
 		//HttpClientInMemoryWebApiModule.forFeature(FakeApiService)
 	],
 	providers: [

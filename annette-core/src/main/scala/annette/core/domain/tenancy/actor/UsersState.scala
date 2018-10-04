@@ -2,11 +2,11 @@ package annette.core.domain.tenancy.actor
 
 import java.time.ZonedDateTime
 
+import annette.core.akkaext.actor.{ CqrsEvent, CqrsState }
 import annette.core.domain.application.Application
 import annette.core.domain.tenancy._
 import annette.core.domain.tenancy.model._
-import annette.core.persistence.Persistence
-import annette.core.persistence.Persistence.PersistentState
+import annette.core.domain.tenancy.model.User._
 import org.mindrot.jbcrypt.BCrypt
 
 case class UsersState(
@@ -14,7 +14,7 @@ case class UsersState(
   emailIndex: Map[String, User.Id] = Map.empty,
   phoneIndex: Map[String, User.Id] = Map.empty,
   usernameIndex: Map[String, User.Id] = Map.empty,
-  userProperties: Map[UserProperty.Id, UserProperty] = Map.empty) extends PersistentState[UsersState] {
+  userProperties: Map[UserProperty.Id, UserProperty] = Map.empty) extends CqrsState {
 
   def createUser(x: User): UsersState = {
     val newEmailIndex = x.email.map { email => emailIndex + (email.trim.toLowerCase -> x.id) }.getOrElse(emailIndex)
@@ -170,13 +170,11 @@ case class UsersState(
     copy(users = users + (user.id -> user))
   }
 
-  override def updated(event: Persistence.PersistentEvent) = {
-    event match {
-      case UserManager.CreatedUserEvt(x) => createUser(x)
-      case UserManager.UpdatedUserEvt(x) => updateUser(x)
-      case UserManager.DeletedUserEvt(x) => deleteUser(x)
-      case UserManager.UpdatedPasswordEvt(x, y) => updatePassword(x, y)
-      case UserManager.ActivatedUserEvt(x) => activateUser(x)
-    }
+  def update: Update = {
+    case CreatedUserEvt(x) => createUser(x)
+    case UpdatedUserEvt(x) => updateUser(x)
+    case DeletedUserEvt(x) => deleteUser(x)
+    case UpdatedPasswordEvt(x, y) => updatePassword(x, y)
+    case ActivatedUserEvt(x) => activateUser(x)
   }
 }

@@ -2,7 +2,7 @@ package annette.core.serializer
 
 import java.time.ZonedDateTime
 import java.util.UUID
-
+import annette.core.domain.tenancy.model.User._
 import annette.core.domain.tenancy.model._
 import annette.core.domain.tenancy.{ UserManager, actor }
 import annette.core.domain.tenancy.actor.UsersState
@@ -16,15 +16,15 @@ trait UserConverters {
   val DeletedUserEvtManifestV1 = "DeletedUserEvt.v1"
   val UsersStateManifestV1 = "UsersState.v1"
 
-  def toCreatedUserEvtBinary(obj: UserManager.CreatedUserEvt) = {
+  def toCreatedUserEvtBinary(obj: CreatedUserEvt) = {
     CreatedUserEvtV1(obj.x).toByteArray
   }
 
-  def toUpdateUserEvtBinary(obj: UserManager.UpdatedUserEvt): Array[Byte] = {
+  def toUpdateUserEvtBinary(obj: UpdatedUserEvt): Array[Byte] = {
     UpdatedUserEvtV1(obj.x).toByteArray
   }
 
-  def toDeleteUserEvtBinary(obj: UserManager.DeletedUserEvt) = {
+  def toDeleteUserEvtBinary(obj: DeletedUserEvt) = {
     DeletedUserEvtV1(obj.userId).toByteArray
   }
 
@@ -37,19 +37,19 @@ trait UserConverters {
       userProperties = obj.userProperties.map({ case (x, y) => x.toString -> fromUserProperty(y) })).toByteArray
   }
 
-  def fromCreatedUserEvt(bytes: Array[Byte]): UserManager.CreatedUserEvt = {
+  def fromCreatedUserEvt(bytes: Array[Byte]): CreatedUserEvt = {
     val x = CreatedUserEvtV1.parseFrom(bytes).x
-    UserManager.CreatedUserEvt(x)
+    CreatedUserEvt(x)
   }
 
-  def fromUpdatedUserEvt(bytes: Array[Byte]): UserManager.UpdatedUserEvt = {
+  def fromUpdatedUserEvt(bytes: Array[Byte]): UpdatedUserEvt = {
     val x = UpdatedUserEvtV1.parseFrom(bytes).x
-    UserManager.UpdatedUserEvt(x)
+    UpdatedUserEvt(x)
   }
 
-  def fromDeletedUserEvt(bytes: Array[Byte]): UserManager.DeletedUserEvt = {
+  def fromDeletedUserEvt(bytes: Array[Byte]): DeletedUserEvt = {
     val userId = DeletedUserEvtV1.parseFrom(bytes).userId
-    UserManager.DeletedUserEvt(userId)
+    DeletedUserEvt(userId)
   }
 
   def fromUsersStateV1(bytes: Array[Byte]): UsersState = {

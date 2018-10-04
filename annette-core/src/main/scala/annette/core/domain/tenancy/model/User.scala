@@ -3,6 +3,8 @@ package annette.core.domain.tenancy.model
 import java.time.ZonedDateTime
 import java.util.{ Locale, UUID }
 
+import annette.core.akkaext.actor.{ CqrsCommand, CqrsEvent, CqrsQuery, CqrsResponse }
+import annette.core.akkaext.http.PageRequest
 import annette.core.domain.application.Application
 import annette.core.domain.authorization.model.Role
 
@@ -62,6 +64,8 @@ case class SignUpUser(
   language: Option[String],
   tenants: Set[Tenant.Id])
 
+case class PaginateUsersList(items: List[User], totalCount: Int)
+
 case class CreateUser(
   username: Option[String],
   displayName: Option[String],
@@ -115,4 +119,30 @@ case class UpdateUser(
 
 object User {
   type Id = UUID
+
+  trait Command extends CqrsCommand
+  trait Query extends CqrsQuery
+  trait Event extends CqrsEvent
+  trait Response extends CqrsResponse
+
+  case class CreateUserCmd(x: CreateUser) extends Command
+  case class UpdateUserCmd(x: UpdateUser) extends Command
+  case class DeleteUserCmd(userId: User.Id) extends Command
+  case class UpdatePasswordCmd(userId: User.Id, password: String) extends Command
+
+  case class GetUserById(id: User.Id) extends Query
+  case class GetUserByLoginAndPassword(login: String, password: String) extends Query
+  object ListUsers extends Query
+  case class PaginateListUsers(page: PageRequest) extends Query
+
+  case class CreatedUserEvt(x: User) extends Event
+  case class UpdatedUserEvt(x: UpdateUser) extends Event
+  case class UpdatedPasswordEvt(userId: User.Id, password: String) extends Event
+  case class DeletedUserEvt(userId: User.Id) extends Event
+  case class ActivatedUserEvt(userId: User.Id) extends Event
+
+  case class CreateUserSuccess(x: User) extends Response
+  case class UserOpt(maybeEntry: Option[User]) extends Response
+  case class UsersMap(x: Map[User.Id, User]) extends Response
+  case class UsersList(x: PaginateUsersList) extends Response
 }

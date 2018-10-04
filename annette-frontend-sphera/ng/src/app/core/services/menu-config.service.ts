@@ -17,7 +17,7 @@ export class MenuConfigService {
 
 	constructor(private router: Router, private usersService: UsersService) {
 		this.usersService.getAllCustomers()
-			.pipe(map(x => x.length))
+			.pipe(map(x => x.totalCount))
 			.subscribe(response => this.configModel.config.aside.items[1].badge.value = response);
 
 		this.router.events

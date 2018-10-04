@@ -26,7 +26,9 @@ export class SignupComponent implements OnInit {
 		lastName: '',
 		firstName: '',
 		password: '',
-		tenants: ['IMC']
+		tenants: ['IMC'],
+		rpassword: '',
+		agree: false
 	};
 
 	@Input() action: string;

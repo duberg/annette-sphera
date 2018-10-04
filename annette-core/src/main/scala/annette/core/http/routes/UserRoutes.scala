@@ -608,7 +608,7 @@ trait UserRoutes extends Directives with PaginationDirectives {
   def listUsers(implicit session: Session): Route = (get & pagination) { page =>
     println(page)
     val ff = for {
-      f <- userManager.listUsers
+      f <- userManager.paginateListUsers(page)
       r <- tenantUserRoleDao.selectAll
     } yield (f, r)
 

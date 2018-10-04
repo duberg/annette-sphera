@@ -17,6 +17,8 @@ object Dependencies {
     val scalamock = "3.6.0"
     val apachePoi = "3.17"
     val casbin = "1.1.0"
+    val shapeless = "2.3.3"
+    val monocle = "1.5.0"
   }
 
   //lazy val akkaBackend: Seq[sbt.ModuleID] = common ++ tests ++ guice ++ reflect //++ metrics
@@ -47,7 +49,13 @@ object Dependencies {
     "org.scalaj" %% "scalaj-http" % Version.scalaj,
     "com.roundeights" %% "hasher" % "1.2.0",
     "org.scalamock" %% "scalamock-scalatest-support" % Version.scalamock % Test,
-    "org.casbin" % "jcasbin" % Version.casbin
+    "org.casbin" % "jcasbin" % Version.casbin,
+
+    "com.chuusai" %% "shapeless" % Version.shapeless,
+
+    "com.github.julien-truffaut" %%  "monocle-core"  % Version.monocle,
+    "com.github.julien-truffaut" %%  "monocle-macro" % Version.monocle,
+    "com.github.julien-truffaut" %%  "monocle-law"   % Version.monocle % "test"
   ) ++ test ++ guice ++ reflect
 
   /**

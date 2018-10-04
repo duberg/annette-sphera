@@ -36,36 +36,31 @@ class AnnetteHttpServer(coreModule: CoreModule) {
   }
 
   private def routes(modules: List[AnnetteHttpModule]): Route = {
-    var routes: Route = pathEndOrSingleSlash {
-      getFromResource("dist/index.html")
-      //complete("ok")
-    } ~
-      path(Segment) { file =>
-        getFromResource(s"dist/$file")
+    var routes: Route = {
+      pathEndOrSingleSlash {
+        getFromResource("dist/index.html")
       } ~
-      pathPrefix("dist") {
-        getFromResourceDirectory("dist/")
-      } ~
-      pathPrefix("assets") {
-        getFromResourceDirectory("dist/assets/")
-      } ~
-      coreModule.routes
+        path(Segment) { file =>
+          getFromResource(s"dist/$file")
+        } ~
+        pathPrefix("dist") {
+          getFromResourceDirectory("dist/")
+        } ~
+        pathPrefix("assets") {
+          getFromResourceDirectory("dist/assets/")
+        } ~
+        (pathPrefix(!"api") & get) {
+          getFromResource("dist/index.html")
+        } ~
+        coreModule.routes
+    }
 
     modules.foreach { module =>
       log.info(s"Routes initialized for module ${module.name}")
       routes = routes ~ module.routes
     }
 
-    /* routes = routes ~ pathPrefix("") {
-      getFromResource("dist/index.html")
-    }*/
-
     routes
-    //    ~
-    //      (path(Segments) & get) { any =>
-    //        getFromResource("dist/index.html")
-    //      }
-
   }
 
 }

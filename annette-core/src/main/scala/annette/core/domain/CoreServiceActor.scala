@@ -9,7 +9,7 @@ import annette.core.domain.language.LanguageService
 import annette.core.domain.tenancy.{ LastSessionService, OpenSessionService, SessionHistoryService, UserManager }
 import annette.core.notification.actor.NotificationManagerActor
 import com.typesafe.config.Config
-
+import annette.core.domain.tenancy.model.User
 import scala.concurrent.ExecutionContext
 import annette.core.domain.CoreService._
 import annette.core.notification.actor._
@@ -45,9 +45,9 @@ class CoreServiceActor(config: Config, verificationBus: VerificationBus)(implici
       languageActor forward msg
     case msg: LanguageService.Query =>
       languageActor forward msg
-    case msg: UserManager.Command =>
+    case msg: User.Command =>
       userActor forward msg
-    case msg: UserManager.Query =>
+    case msg: User.Query =>
       userActor forward msg
     case msg: OpenSessionService.Command =>
       openSessionActor forward msg
