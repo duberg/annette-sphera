@@ -16,8 +16,8 @@ npm run build
 sbt ~annette-sphera-server/reStart
 ```
 
-Users page:
+### Users page:
 ![users page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/Screenshot%20from%202018-10-04%2014-00-08.png)
 
-Signin page:
+### Signin page:
 ![login page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/Screenshot%20from%202018-10-04%2014-00-49.png)
