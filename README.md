@@ -1,6 +1,6 @@
 # Интеграционная платформа Annette-Sphera
 
-This project is based on ideas and source code of dmitry.rogachev (https://github.com/valerylobachev)
+This project is based on ideas and source code of Valery Lobachev (https://github.com/valerylobachev)
 
 Нужно первоначально сгенерировать схему, для этого в настройках conf/application.conf прописываем
 ```core.initDb.createSchema = true```
