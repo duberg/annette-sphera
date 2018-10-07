@@ -67,6 +67,7 @@ case class SignUpUser(
 case class PaginateUsersList(items: List[User], totalCount: Int)
 
 case class CreateUser(
+  id: Option[User.Id] = None,
   username: Option[String],
   displayName: Option[String],
   firstName: String,

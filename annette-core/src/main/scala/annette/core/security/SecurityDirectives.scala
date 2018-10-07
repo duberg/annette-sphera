@@ -4,6 +4,7 @@ import java.util.UUID
 
 import akka.actor.{ ActorRef, ActorSystem }
 import akka.event.{ LogSource, Logging }
+import akka.http.scaladsl.model.{ HttpMethod, Uri }
 import akka.http.scaladsl.model.headers.HttpChallenge
 import akka.http.scaladsl.server.Directives.reject
 import akka.http.scaladsl.server.directives.BasicDirectives.provide
@@ -14,6 +15,7 @@ import akka.http.scaladsl.util.FastFuture
 import akka.pattern.ask
 import akka.util.Timeout
 import annette.core.security.authentication.{ AuthenticationService, Session }
+import annette.core.security.authorization.AuthorizationActor.ValidateAuthorizedUser
 import com.typesafe.config.Config
 import javax.inject.{ Inject, Named, Singleton }
 
@@ -24,7 +26,8 @@ import scala.util.{ Success, Try }
 
 @Singleton
 class SecurityDirectives @Inject() (
-  @Named(AuthenticationService.name) val authenticationService: ActorRef,
+  @Named(AuthenticationService.name) val authenticationManager: ActorRef,
+  @Named("AuthorizationManager") val authorizationManager: ActorRef,
   system: ActorSystem,
   config: Config) extends Directives {
 
@@ -86,6 +89,9 @@ class SecurityDirectives @Inject() (
         else tokenValidation(maybeJwtToken)
     }
 
+  /**
+   * = Authentication directive =
+   */
   val authenticated: Directive1[Session] = authenticatedOpt.flatMap {
     case Some(session) => provide(session)
     case _ => authReject
@@ -95,7 +101,7 @@ class SecurityDirectives @Inject() (
     maybeJwtToken
       .map {
         token =>
-          authenticationService
+          authenticationManager
             .ask(AuthenticationService.Authenticate(token))
             .map {
               case AuthenticationService.Authenticated(sessionData) =>
@@ -107,9 +113,23 @@ class SecurityDirectives @Inject() (
       .getOrElse(FastFuture.successful(None))
   }
 
-  def check = Future.successful(true)
+  def authorizationCheck(uri: Uri, httpMethod: HttpMethod, session: Session): Future[Boolean] =
+    ask(authorizationManager, ValidateAuthorizedUser(
+      userId = Some(session.userId.toString),
+      accessPath = Some(uri.path.toString()),
+      action = Some(httpMethod.value)))
+      .mapTo[Boolean]
 
-  val authorized: Directive1[Session] =
-    authenticated.flatMap(authorizeAsync(check) & provide(_))
+  /**
+   * = Authorization directive =
+   *
+   * Для проверки прав доступа нужно извлечь uri ресурса, http метод и сессию пользователя.
+   */
+  val authorized: Directive1[Session] = {
+    (extractUri & extractMethod & authenticated) tflatMap {
+      case (uri, httpMethod, session) =>
+        authorizeAsync(authorizationCheck(uri, httpMethod, session)) & provide(session)
+    }
+  }
 }
 

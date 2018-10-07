@@ -31,7 +31,7 @@ class UsersActor(val id: ActorId, val verificationBus: VerificationBus, val init
   def createUser(state: UsersState, x: CreateUser): Unit = {
     val validateResult = Try { state.validateCreate(x) }
     validateResult.fold(processFailure, _ => {
-      val userId = UUID.randomUUID()
+      val userId = x.id.getOrElse(UUID.randomUUID())
       val hashedPassword = BCrypt.hashpw(x.password, BCrypt.gensalt())
       val user = User(
         id = userId,
@@ -59,6 +59,8 @@ class UsersActor(val id: ActorId, val verificationBus: VerificationBus, val init
         additionalMail = x.additionalMail,
         meta = x.meta,
         status = x.status)
+
+      println(s"Created user $user")
 
       persist(CreatedUserEvt(user)) { event =>
         changeState(state.updated(event))

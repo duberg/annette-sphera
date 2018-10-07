@@ -1,5 +1,4 @@
-p, admin, /web/oms/stat/*, GET
-p, developer, /*, GET|POST|UPDATE|DELETE
-p, admin, /backend/stat/*, GET|POST
-g, devId, developer
-g, test2, admin
+p, admin, /api/*, GET|POST|UPDATE|DELETE
+p, user, /api/*, GET
+g, 00000000-0000-0000-0000-000000000000, admin
+g, 00000000-0000-0000-0000-000000000001, user

@@ -180,6 +180,7 @@ class InitCoreTables @Inject() (
             tenant -> roles
         }
         val x = CreateUser(
+          id = opt(UUID.fromString(conf.getString("id"))),
           username = opt(conf.getString("username")),
           displayName = opt(conf.getString("name")),
           firstName = opt(conf.getString("firstName")).getOrElse(""),
