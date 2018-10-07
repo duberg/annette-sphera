@@ -16,6 +16,21 @@ npm run build
 sbt ~annette-sphera-server/reStart
 ```
 
+## Директива авторизации akka-http:
+```scala
+ /**
+   * = Authorization directive =
+   *
+   * Для проверки прав доступа нужно извлечь uri ресурса, http метод и сессию пользователя.
+   */
+  val authorized: Directive1[Session] = {
+    (extractUri & extractMethod & authenticated) tflatMap {
+      case (uri, httpMethod, session) =>
+        authorizeAsync(authorizationCheck(uri, httpMethod, session)) & provide(session)
+    }
+  }
+```
+
 ## Users page:
 ![users page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_listusers.png)
 

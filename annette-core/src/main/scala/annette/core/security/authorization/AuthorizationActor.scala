@@ -44,7 +44,6 @@ class AuthorizationActor(enforcer: Enforcer) extends Actor with ActorLogging {
 
   def validateUserAuthorization(msg: ValidateAuthorizedUser): Unit = {
     try {
-
       log.info(msg.toString)
 
       val userId = msg.userId.getOrElse("")
@@ -52,20 +51,12 @@ class AuthorizationActor(enforcer: Enforcer) extends Actor with ActorLogging {
       val action = msg.action.getOrElse("")
 
       println(enforcer.getRolesForUser(msg.userId.get))
+
       val roles = enforcer.getRolesForUser(msg.userId.get).asScala
-      val isAdmin = roles.find(_ == "admin")
 
-      log.info("---")
+      val result: Boolean = enforcer.enforce(userId, accessPath, action).booleanValue()
 
-      isAdmin.fold(ifNotAdmin()) { _ =>
-        log.info(s"User ${userId} authorized as admin")
-        sender ! true
-      }
-
-      def ifNotAdmin() = {
-        val result: Boolean = enforcer.enforce(userId, accessPath, action).booleanValue()
-        sender() ! result
-      }
+      sender() ! result
     } catch {
       case e: Throwable =>
         // logger.error(s"Error Occured $e")
