@@ -28,6 +28,7 @@ object Dependencies {
     "com.typesafe.akka" %% "akka-cluster-metrics" % Version.akka,
     "com.typesafe.akka" %% "akka-slf4j" % Version.akka,
     "ch.qos.logback" % "logback-classic" % "1.2.3",
+   // "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0",
     "com.typesafe.akka" %% "akka-persistence" % Version.akka,
     "com.typesafe.akka" %% "akka-persistence-cassandra" % Version.akkaPersistenceCassandra,
     "com.typesafe.akka" %% "akka-http"         % Version.akkaHttp,

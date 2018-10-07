@@ -2,19 +2,19 @@ package annette.core.security.authorization
 
 import java.util
 
-import akka.actor.{ Actor, ActorLogging }
+import akka.actor.{ Actor, ActorLogging, Props }
 import akka.actor.Status.Failure
 import annette.core.security.authorization.AuthorizationActor._
 import javax.inject.Named
-import org.casbin.jcasbin.main.Enforcer
+import org.casbin.jcasbin.main.{ CoreEnforcer, Enforcer }
+import org.casbin.jcasbin.model.Model
+import org.casbin.jcasbin.persist.file_adapter.FileAdapter
 
 import scala.collection.JavaConverters._
 import scala.concurrent.Future
 
 @Named("AuthorizationManager")
-class AuthorizationActor() extends Actor with ActorLogging {
-
-  private val enforcer = new Enforcer("./conf/restful_rbac_model.conf", "./conf/authorize_policy.csv")
+class AuthorizationActor(enforcer: Enforcer) extends Actor with ActorLogging {
 
   override def receive: Receive = {
     case msg: ValidateAuthorizedUser =>
@@ -39,7 +39,7 @@ class AuthorizationActor() extends Actor with ActorLogging {
       processDeleteAuthrUser(msg)
 
     case _ =>
-      log.warning(s"Unknown msg received.")
+    // logger.warn(s"Unknown msg received.")
   }
 
   def validateUserAuthorization(msg: ValidateAuthorizedUser): Unit = {
@@ -52,7 +52,7 @@ class AuthorizationActor() extends Actor with ActorLogging {
       sender() ! result
     } catch {
       case e: Throwable =>
-        log.error(s"Error Occured $e")
+        // logger.error(s"Error Occured $e")
         sender() ! Failure(e)
     }
   }
@@ -66,12 +66,11 @@ class AuthorizationActor() extends Actor with ActorLogging {
       sender() ! Future.successful(msg.roleName)
     } catch {
       case e: Throwable =>
-        log.error(s"Error Occured $e")
+        //logger.error(s"Error Occured $e")
         sender() ! Failure(e)
     }
   }
 
-  //TODO 리스트로 item 안더해짐 ;;
   def processReadPolicy(msg: ReadPolicy): Unit = {
     val origSender = sender()
 
@@ -87,7 +86,7 @@ class AuthorizationActor() extends Actor with ActorLogging {
       origSender ! resultSeq
     } catch {
       case e: Throwable =>
-        log.error(s"Error Occured $e")
+        // logger.error(s"Error Occured $e")
         origSender ! Failure(e)
     }
   }
@@ -99,7 +98,7 @@ class AuthorizationActor() extends Actor with ActorLogging {
       sender() ! Future.successful()
     } catch {
       case e: Throwable =>
-        log.error(s"Error Occured $e")
+        // logger.error(s"Error Occured $e")
         sender() ! Failure(e)
     }
   }
@@ -113,7 +112,7 @@ class AuthorizationActor() extends Actor with ActorLogging {
       sender() ! result
     } catch {
       case e: Throwable =>
-        log.error(s"Error Occured $e")
+        // logger.error(s"Error Occured $e")
         sender() ! false
     }
   }
@@ -131,7 +130,7 @@ class AuthorizationActor() extends Actor with ActorLogging {
       sender() ! resultRoleSeq
     } catch {
       case e: Throwable =>
-        log.error(s"Error Occured $e")
+        // logger.error(s"Error Occured $e")
         sender() ! Failure(e)
     }
 
@@ -148,7 +147,7 @@ class AuthorizationActor() extends Actor with ActorLogging {
       sender() ! result
     } catch {
       case e: Throwable =>
-        log.error(s"Error Occured $e")
+        // logger.error(s"Error Occured $e")
         sender() ! Failure(e)
     }
   }
@@ -162,7 +161,7 @@ class AuthorizationActor() extends Actor with ActorLogging {
       origSender ! result
     } catch {
       case e: Throwable =>
-        log.error(s"Error Occured $e")
+        //logger.error(s"Error Occured $e")
         origSender ! Failure(e)
     }
   }
@@ -173,14 +172,14 @@ class AuthorizationActor() extends Actor with ActorLogging {
       sender() ! result
     } catch {
       case e: Throwable =>
-        log.error(s"Error Occured $e")
+        // logger.error(s"Error Occured $e")
         sender() ! Failure(e)
     }
   }
 }
 
 object AuthorizationActor {
-  def apply: AuthorizationActor = new AuthorizationActor()
+  def props(enforcer: Enforcer) = Props(new AuthorizationActor(enforcer))
 
   case class CreatePolicy(roleName: String, accessPath: String, actions: Seq[String])
 

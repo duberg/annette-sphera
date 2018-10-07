@@ -12,6 +12,9 @@ import com.google.inject.{ AbstractModule, Provides }
 import com.typesafe.config.Config
 import javax.inject.{ Named, Singleton }
 import net.codingwell.scalaguice.ScalaModule
+import org.casbin.jcasbin.main.{ CoreEnforcer, Enforcer }
+import org.casbin.jcasbin.persist.file_adapter.FileAdapter
+import org.casbin.jcasbin.util.Util
 
 import scala.concurrent.ExecutionContext
 
@@ -35,7 +38,15 @@ class AnnetteServerModule extends AbstractModule with ScalaModule {
   @Provides
   @Singleton
   @Named("AuthorizationManager")
-  def getAuthorizationManager(actorSystem: ActorSystem, config: Config)(implicit c: ExecutionContext, t: Timeout) = {
-    actorSystem.actorOf(props = Props(new AuthorizationActor), name = "authorization")
+  def getAuthorizationManager(actorSystem: ActorSystem, enforcer: Enforcer, config: Config)(implicit c: ExecutionContext, t: Timeout) = {
+    actorSystem.actorOf(props = AuthorizationActor.props(enforcer), name = "authorization")
+  }
+
+  @Provides
+  @Singleton
+  def getEnforcer(): Enforcer = {
+    Util.enableLog = false
+    val enforcer = new Enforcer("./conf/restful_rbac_model.conf", "./conf/authorize_policy.csv")
+    enforcer
   }
 }

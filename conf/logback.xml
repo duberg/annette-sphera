@@ -23,6 +23,7 @@
   <logger name="com.outworkers" level="WARN" />
   <logger name="com.datastax" level="WARN" />
   <logger name="io.netty" level="WARN" />
+  <logger name="org.casbin.jcasbin.util.Util" level="OFF" />
 
   <root level="DEBUG">
     <appender-ref ref="ASYNCFILE" />
