@@ -10,7 +10,7 @@ import akka.util.Timeout
 import annette.core.security.authentication.{ AuthenticationService, Session }
 import annette.core.domain.DB
 import annette.core.domain.application.ApplicationManager
-import annette.core.domain.language.dao.{ LanguageDao, LanguageDb }
+import annette.core.domain.language.LanguageManager
 import annette.core.domain.tenancy.UserManager
 import annette.core.domain.tenancy.dao._
 import annette.core.http.ExceptionHandler
@@ -32,8 +32,7 @@ class CoreModule @Inject() (
   val userManager: UserManager,
   val tenantDao: TenantDao,
   val tenantUserDao: TenantUserDao,
-  val languageDb: LanguageDb,
-  val languageDao: LanguageDao,
+  val languageDao: LanguageManager,
   val applicationDao: ApplicationManager,
   val tenantUserRoleDao: TenantUserRoleDao,
   val sessionDao: SessionDao,

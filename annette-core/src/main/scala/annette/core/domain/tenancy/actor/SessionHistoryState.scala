@@ -1,12 +1,10 @@
 package annette.core.domain.tenancy.actor
 
+import annette.core.akkaext.actor.CqrsState
 import annette.core.domain.tenancy.SessionHistoryService
 import annette.core.domain.tenancy.model.{ OpenSession, SessionHistory }
-import annette.core.persistence.Persistence
-import annette.core.persistence.Persistence.PersistentState
 
-case class SessionHistoryState(
-  sessionHistory: Map[OpenSession.Id, SessionHistory] = Map.empty) extends PersistentState[SessionHistoryState] {
+case class SessionHistoryState(sessionHistory: Map[OpenSession.Id, SessionHistory] = Map.empty) extends CqrsState {
 
   def createSessionHistory(entry: SessionHistory): SessionHistoryState = {
     if (sessionHistory.get(entry.id).isDefined) throw new IllegalArgumentException
@@ -24,9 +22,7 @@ case class SessionHistoryState(
 
   def sessionHistoryExists(id: OpenSession.Id): Boolean = sessionHistory.get(id).isDefined
 
-  override def updated(event: Persistence.PersistentEvent): SessionHistoryState = {
-    event match {
-      case SessionHistoryService.SessionHistoryCreatedEvt(entry) => createSessionHistory(entry)
-    }
+  def update: Update = {
+    case SessionHistoryService.SessionHistoryCreatedEvt(entry) => createSessionHistory(entry)
   }
 }

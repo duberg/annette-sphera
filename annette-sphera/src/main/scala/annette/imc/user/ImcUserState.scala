@@ -3,7 +3,7 @@ package annette.imc.user
 import java.util.UUID
 
 import annette.core.domain.tenancy.model.User
-import annette.core.persistence.Persistence.{ PersistentEvent, PersistentState }
+import annette.imc.persistence.Persistence.{ PersistentEvent, PersistentState }
 import annette.imc.user.model.ImcUser
 
 case class ImcUserState(storage: Map[UUID, ImcUser] = Map.empty) extends PersistentState[ImcUserState] {

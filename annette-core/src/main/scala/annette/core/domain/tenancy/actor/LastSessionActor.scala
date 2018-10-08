@@ -1,29 +1,31 @@
 package annette.core.domain.tenancy.actor
 
 import akka.Done
+import annette.core.akkaext.actor.ActorId
+import annette.core.akkaext.persistence.CqrsPersistentActor
 import annette.core.domain.tenancy.LastSessionService
 import annette.core.domain.tenancy.model._
-import annette.core.persistence.Persistence._
+import LastSessionService._
 
-class LastSessionActor(val id: String, val initState: LastSessionState) extends PersistentStateActor[LastSessionState] {
+class LastSessionActor(val id: ActorId, val initState: LastSessionState) extends CqrsPersistentActor[LastSessionState] {
 
   def storeLastSession(state: LastSessionState, entry: LastSession): Unit = {
-    persist(LastSessionService.LastSessionStoredEvt(entry)) { event =>
+    persist(LastSessionStoredEvt(entry)) { event =>
       changeState(state.updated(event))
       sender ! Done
     }
   }
 
   def findLastSessionByUserId(state: LastSessionState, id: User.Id): Unit =
-    sender ! LastSessionService.LastSessionOpt(state.findLastSessionByUserId(id))
+    sender ! LastSessionOpt(state.findLastSessionByUserId(id))
 
   def findAllLastSessions(state: LastSessionState): Unit =
-    sender ! LastSessionService.LastSessionSeq(state.findAllLastSessions)
+    sender ! LastSessionSeq(state.findAllLastSessions)
 
   def behavior(state: LastSessionState): Receive = {
-    case LastSessionService.StoreLastSessionCmd(entry) => storeLastSession(state, entry)
-    case LastSessionService.FindLastSessionByUserId(i) => findLastSessionByUserId(state, i)
-    case LastSessionService.FindAllLastSessions => findAllLastSessions(state)
+    case StoreLastSessionCmd(entry) => storeLastSession(state, entry)
+    case FindLastSessionByUserId(i) => findLastSessionByUserId(state, i)
+    case FindAllLastSessions => findAllLastSessions(state)
 
   }
 

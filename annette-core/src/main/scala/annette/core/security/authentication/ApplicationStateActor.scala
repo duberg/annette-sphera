@@ -6,7 +6,7 @@ import akka.pattern.pipe
 import annette.core.domain.application.ApplicationManager
 import annette.core.security.authentication.jwt.JwtHelper
 import annette.core.domain.application._
-import annette.core.domain.language.dao.LanguageDao
+import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.UserManager
 import annette.core.domain.tenancy.dao.{ SessionDao, TenantDao, TenantUserDao }
@@ -20,7 +20,7 @@ class ApplicationStateActor(
   applicationDao: ApplicationManager,
   userDao: UserManager,
   tenantUserDao: TenantUserDao,
-  languageDao: LanguageDao,
+  languageDao: LanguageManager,
   override val secret: String)
   extends Actor with ActorLogging with JwtHelper {
 

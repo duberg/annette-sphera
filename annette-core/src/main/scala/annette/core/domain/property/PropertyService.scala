@@ -4,17 +4,16 @@ import java.util.UUID
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.model.{ Tenant, User }
 import akka.actor.Props
+import annette.core.akkaext.actor.{ ActorId, CqrsCommand, CqrsEvent, CqrsQuery, CqrsResponse }
 import annette.core.domain.application.Application
-import annette.core.persistence.Persistence.{ PersistentCommand, PersistentEvent, PersistentQuery }
 import annette.core.domain.property.model._
 import annette.core.utils.{ AnyValue, FilterOption, NoValue }
 
 object PropertyService {
-
-  sealed trait Command extends PersistentCommand
-  sealed trait Query extends PersistentQuery
-  sealed trait Event extends PersistentEvent
-  sealed trait Response
+  trait Command extends CqrsCommand
+  trait Query extends CqrsQuery
+  trait Event extends CqrsEvent
+  trait Response extends CqrsResponse
 
   object EntryAlreadyExists extends Response
   object EntryNotFound extends Response
@@ -36,6 +35,7 @@ object PropertyService {
   case class PropertyOption(maybeEntry: Option[Property]) extends Response
   case class PropertySeq(entries: Seq[Property]) extends Response
 
-  def props(id: String, state: PropertyState = PropertyState()) = Props(classOf[PropertyActor], id, state)
+  def props(id: ActorId, state: PropertyState = PropertyState()) =
+    Props(new PropertyActor(id, state))
 }
 

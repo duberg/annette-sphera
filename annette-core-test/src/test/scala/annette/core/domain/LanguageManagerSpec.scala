@@ -9,8 +9,7 @@ import akka.pattern.ask
 import akka.testkit.TestKit
 import annette.core.domain.application.ApplicationManager
 import annette.core.domain.application._
-import annette.core.domain.language.{ LanguageAlreadyExists, LanguageNotFound, LanguageService }
-import annette.core.domain.language.dao.LanguageDao
+import annette.core.domain.language.{ LanguageAlreadyExists, LanguageManager, LanguageNotFound, LanguageService }
 import annette.core.domain.language.model.{ Language, LanguageUpdate }
 import annette.core.domain.tenancy._
 import annette.core.domain.tenancy.model._
@@ -18,7 +17,7 @@ import annette.core.security.verification.VerificationBus
 import annette.core.test.PersistenceSpec
 import com.typesafe.config.{ Config, ConfigFactory }
 
-class LanguageDaoSpec extends TestKit(ActorSystem("UserActorSpec"))
+class LanguageManagerSpec extends TestKit(ActorSystem("UserActorSpec"))
   with PersistenceSpec
   with NewApplication
   with NewLanguage
@@ -32,9 +31,9 @@ class LanguageDaoSpec extends TestKit(ActorSystem("UserActorSpec"))
       verificationBus = new VerificationBus), s"CoreService-$uuid")
   }
 
-  def newLanguageDao(): LanguageDao = {
+  def newLanguageDao(): LanguageManager = {
     val coreServiceActor = newCoreServiceActor()
-    new LanguageDao(coreServiceActor)
+    new LanguageManager(coreServiceActor)
   }
 
   "The LanguageDao" when {

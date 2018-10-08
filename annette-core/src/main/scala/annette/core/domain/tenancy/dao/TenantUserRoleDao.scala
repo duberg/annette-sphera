@@ -3,7 +3,7 @@ package annette.core.domain.tenancy.dao
 import annette.core.domain.application.ApplicationManager
 import javax.inject._
 import annette.core.domain.application.Application
-import annette.core.domain.language.dao.LanguageDao
+import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.{ UserManager, _ }
 import annette.core.domain.tenancy.model.{ Tenant, TenantUserRole, User }

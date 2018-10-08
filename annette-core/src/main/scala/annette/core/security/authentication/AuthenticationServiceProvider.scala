@@ -6,7 +6,7 @@ import akka.event.{ LogSource, Logging }
 import akka.routing.FromConfig
 import annette.core.domain.InitCoreTables
 import annette.core.domain.application.ApplicationManager
-import annette.core.domain.language.dao.LanguageDao
+import annette.core.domain.language.LanguageManager
 import annette.core.domain.tenancy.UserManager
 import annette.core.domain.tenancy.dao.{ SessionDao, TenantDao, TenantUserDao }
 import com.google.inject.Provider
@@ -24,7 +24,7 @@ class AuthenticationServiceProvider @Inject() (
   applicationDao: ApplicationManager,
   userDao: UserManager,
   tenantUserDao: TenantUserDao,
-  languageDao: LanguageDao,
+  languageDao: LanguageManager,
   config: Config,
   initCoreTables: InitCoreTables) extends Provider[ActorRef] {
 

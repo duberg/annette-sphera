@@ -2,11 +2,9 @@ package annette.core.domain.tenancy.actor
 
 import annette.core.domain.tenancy.LastSessionService
 import annette.core.domain.tenancy.model.{ LastSession, User }
-import annette.core.persistence.Persistence
-import annette.core.persistence.Persistence.PersistentState
-
-case class LastSessionState(
-  lastSessions: Map[User.Id, LastSession] = Map.empty) extends PersistentState[LastSessionState] {
+import annette.core.akkaext.actor.CqrsState
+import annette.core.domain.tenancy.LastSessionService._
+case class LastSessionState(lastSessions: Map[User.Id, LastSession] = Map.empty) extends CqrsState {
 
   // both for updating and creating
   def storeLastSession(entry: LastSession): LastSessionState = {
@@ -19,9 +17,7 @@ case class LastSessionState(
 
   def lastSessionExists(id: User.Id): Boolean = lastSessions.get(id).isDefined
 
-  override def updated(event: Persistence.PersistentEvent): LastSessionState = {
-    event match {
-      case LastSessionService.LastSessionStoredEvt(entry) => storeLastSession(entry)
-    }
+  def update: Update = {
+    case LastSessionStoredEvt(entry) => storeLastSession(entry)
   }
 }

@@ -1,11 +1,11 @@
 package annette.core.domain.language
 
 import akka.Done
+import annette.core.akkaext.actor.ActorId
+import annette.core.akkaext.persistence.CqrsPersistentActor
 import annette.core.domain.language.model._
-import annette.core.persistence.Persistence._
 
-class LanguageActor(val id: String, val initState: LanguageState) extends PersistentStateActor[LanguageState] {
-
+class LanguageActor(val id: ActorId, val initState: LanguageState) extends CqrsPersistentActor[LanguageState] {
   def createLanguage(state: LanguageState, entry: Language): Unit = {
     if (state.languageExists(entry.id)) sender ! LanguageService.EntryAlreadyExists
     else {

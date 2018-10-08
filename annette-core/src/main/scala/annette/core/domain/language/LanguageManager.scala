@@ -1,26 +1,20 @@
 
-package annette.core.domain.language.dao
-
-import javax.inject._
+package annette.core.domain.language
 
 import akka.Done
-
-import scala.util.{ Failure, Success }
 import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
-import annette.core.domain.language._
 import annette.core.domain.language.model.Language.Id
 import annette.core.domain.language.model.{ Language, LanguageUpdate }
+import javax.inject._
 
-import scala.concurrent.duration._
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class LanguageDao @Inject() (
-  @Named("CoreService") actor: ActorRef) extends ILanguageDao {
+class LanguageManager @Inject() (@Named("CoreService") actor: ActorRef)(implicit val c: ExecutionContext, val t: Timeout) {
 
-  override def create(language: Language)(implicit ec: ExecutionContext): Future[Unit] = {
+  def create(language: Language): Future[Unit] = {
     for {
       f <- ask(actor, LanguageService.CreateLanguageCmd(language))
     } yield {
@@ -31,7 +25,7 @@ class LanguageDao @Inject() (
     }
   }
 
-  override def update(language: LanguageUpdate)(implicit ec: ExecutionContext): Future[Unit] = {
+  def update(language: LanguageUpdate): Future[Unit] = {
     for {
       f <- ask(actor, LanguageService.UpdateLanguageCmd(language))
     } yield {
@@ -42,15 +36,15 @@ class LanguageDao @Inject() (
     }
   }
 
-  override def getById(id: Language.Id)(implicit ec: ExecutionContext): Future[Option[Language]] = {
+  def getById(id: Language.Id): Future[Option[Language]] = {
     ask(actor, LanguageService.FindLanguageById(id)).mapTo[LanguageService.SingleLanguage].map(_.maybeEntry)
   }
 
-  override def selectAll(implicit ec: ExecutionContext): Future[List[Language]] = {
+  def selectAll: Future[List[Language]] = {
     ask(actor, LanguageService.FindAllLanguages).mapTo[LanguageService.MultipleLanguages].map(_.entries.values.toList)
   }
 
-  override def delete(id: Id)(implicit ec: ExecutionContext): Future[Unit] = {
+  def delete(id: Id): Future[Unit] = {
     for {
       f <- ask(actor, LanguageService.DeleteLanguageCmd(id))
     } yield {

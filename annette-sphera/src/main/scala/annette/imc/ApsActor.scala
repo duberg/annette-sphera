@@ -5,7 +5,7 @@ import java.util.UUID
 
 import akka.actor.Props
 import annette.core.domain.tenancy.model.User
-import annette.core.persistence.Persistence._
+import annette.imc.persistence.Persistence._
 import annette.imc.model._
 
 class ApsActor(val id: String, val initState: ApsState)

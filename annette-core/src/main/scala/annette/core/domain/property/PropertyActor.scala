@@ -1,17 +1,19 @@
 package annette.core.domain.property
 
 import akka.Done
+import annette.core.akkaext.persistence.CqrsPersistentActor
 import annette.core.domain.application.Application
 import annette.core.domain.language.model.Language
 import annette.core.domain.property.model._
 import annette.core.domain.tenancy.model.{ Tenant, User }
-import annette.core.persistence.Persistence._
 import annette.core.utils.FilterOption
+import PropertyService._
+import annette.core.akkaext.actor.ActorId
 
-class PropertyActor(val id: String, val initState: PropertyState) extends PersistentStateActor[PropertyState] {
+class PropertyActor(val id: ActorId, val initState: PropertyState) extends CqrsPersistentActor[PropertyState] {
 
   def setProperty(state: PropertyState, entry: Property): Unit = {
-    persist(PropertyService.PropertySetEvt(entry)) { event =>
+    persist(PropertySetEvt(entry)) { event =>
       changeState(state.updated(event))
       sender ! Done
     }
@@ -19,20 +21,20 @@ class PropertyActor(val id: String, val initState: PropertyState) extends Persis
 
   def removeProperty(state: PropertyState, id: Property.Id): Unit = {
     if (state.propertyExists(id)) {
-      persist(PropertyService.PropertyRemovedEvt(id)) { event =>
+      persist(PropertyRemovedEvt(id)) { event =>
         changeState(state.updated(event))
         sender ! Done
       }
     } else {
-      sender ! PropertyService.EntryNotFound
+      sender ! EntryNotFound
     }
   }
 
   def findPropertyById(state: PropertyState, id: Property.Id): Unit =
-    sender ! PropertyService.PropertyOption(state.findPropertyById(id))
+    sender ! PropertyOption(state.findPropertyById(id))
 
   def findAllProperties(state: PropertyState): Unit =
-    sender ! PropertyService.PropertySeq(state.findAllProperties)
+    sender ! PropertySeq(state.findAllProperties)
 
   def findProperties(
     state: PropertyState,
@@ -41,15 +43,15 @@ class PropertyActor(val id: String, val initState: PropertyState) extends Persis
     applicationId: FilterOption[Application.Id],
     languageId: FilterOption[Language.Id],
     key: FilterOption[String]): Unit = {
-    sender ! PropertyService.PropertySeq(state.findProperties(userId, tenantId, applicationId, languageId, key))
+    sender ! PropertySeq(state.findProperties(userId, tenantId, applicationId, languageId, key))
   }
 
   def behavior(state: PropertyState): Receive = {
-    case PropertyService.SetPropertyCmd(entry) => setProperty(state, entry)
-    case PropertyService.RemovePropertyCmd(id) => removeProperty(state, id)
-    case PropertyService.FindPropertyById(id) => findPropertyById(state, id)
-    case PropertyService.FindProperties(userId, tenantId, applicationId, languageId, key) => findProperties(state, userId, tenantId, applicationId, languageId, key)
-    case PropertyService.FindAllProperties => findAllProperties(state)
+    case SetPropertyCmd(entry) => setProperty(state, entry)
+    case RemovePropertyCmd(id) => removeProperty(state, id)
+    case FindPropertyById(id) => findPropertyById(state, id)
+    case FindProperties(userId, tenantId, applicationId, languageId, key) => findProperties(state, userId, tenantId, applicationId, languageId, key)
+    case FindAllProperties => findAllProperties(state)
 
   }
 

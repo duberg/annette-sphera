@@ -1,16 +1,15 @@
 package annette.core.domain.tenancy
 
 import akka.actor.Props
+import annette.core.akkaext.actor.{ ActorId, CqrsCommand, CqrsEvent, CqrsQuery, CqrsResponse }
 import annette.core.domain.tenancy.actor.{ SessionHistoryActor, SessionHistoryState }
 import annette.core.domain.tenancy.model._
-import annette.core.persistence.Persistence.{ PersistentCommand, PersistentEvent, PersistentQuery }
 
 object SessionHistoryService {
-
-  sealed trait Command extends PersistentCommand
-  sealed trait Query extends PersistentQuery
-  sealed trait Event extends PersistentEvent
-  sealed trait Response
+  trait Command extends CqrsCommand
+  trait Query extends CqrsQuery
+  trait Event extends CqrsEvent
+  trait Response extends CqrsResponse
 
   case object EntryAlreadyExists extends Response
   case object EntryNotFound extends Response
@@ -24,5 +23,6 @@ object SessionHistoryService {
   case class SessionHistoryOpt(maybeEntry: Option[SessionHistory]) extends Response
   case class SessionHistorySeq(entries: Seq[SessionHistory]) extends Response
 
-  def props(id: String, state: SessionHistoryState = SessionHistoryState()) = Props(classOf[SessionHistoryActor], id, state)
+  def props(id: ActorId, state: SessionHistoryState = SessionHistoryState()) =
+    Props(new SessionHistoryActor(id, state))
 }

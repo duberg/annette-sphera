@@ -6,7 +6,7 @@ import akka.http.scaladsl.server.{ Directives, Route }
 import akka.pattern.AskSupport
 import annette.core.akkaext.http.{ PageResponse, PaginationDirectives }
 import annette.core.domain.application.Application
-import annette.core.domain.language.dao.LanguageDao
+import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.UserManager
 import annette.core.domain.tenancy.dao.{ TenantDao, TenantUserDao, TenantUserRoleDao }
@@ -33,7 +33,7 @@ trait AuthorizationRoutes extends Directives
   val tenantUserDao: TenantUserDao
   val tenantUserRoleDao: TenantUserRoleDao
   val userManager: UserManager
-  val languageDao: LanguageDao
+  val languageDao: LanguageManager
   val authenticationService: ActorRef
   val annetteSecurityDirectives: SecurityDirectives
   val notificationManager: NotificationManager
@@ -74,7 +74,6 @@ trait AuthorizationRoutes extends Directives
       }
       case Failure(e) => throw new AnnetteException(s"error message: ${e.getMessage}")
     }
-
   }
 
   def authorizationRoutes = pathPrefix("permissions") {

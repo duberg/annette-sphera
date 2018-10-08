@@ -1,11 +1,9 @@
 package annette.core.domain.language
 
+import annette.core.akkaext.actor.CqrsState
 import annette.core.domain.language.model._
-import annette.core.persistence.Persistence
-import annette.core.persistence.Persistence.PersistentState
 
-case class LanguageState(
-  languages: Map[Language.Id, Language] = Map.empty) extends PersistentState[LanguageState] {
+case class LanguageState(languages: Map[Language.Id, Language] = Map.empty) extends CqrsState {
 
   def createLanguage(entry: Language): LanguageState = {
     if (languages.get(entry.id).isDefined) throw new IllegalArgumentException
@@ -35,11 +33,9 @@ case class LanguageState(
 
   def languageExists(id: Language.Id): Boolean = languages.get(id).isDefined
 
-  override def updated(event: Persistence.PersistentEvent) = {
-    event match {
-      case LanguageService.LanguageCreatedEvt(entry) => createLanguage(entry)
-      case LanguageService.LanguageUpdatedEvt(entry) => updateLanguage(entry)
-      case LanguageService.LanguageDeletedEvt(id) => deleteLanguage(id)
-    }
+  def update: Update = {
+    case LanguageService.LanguageCreatedEvt(entry) => createLanguage(entry)
+    case LanguageService.LanguageUpdatedEvt(entry) => updateLanguage(entry)
+    case LanguageService.LanguageDeletedEvt(id) => deleteLanguage(id)
   }
 }

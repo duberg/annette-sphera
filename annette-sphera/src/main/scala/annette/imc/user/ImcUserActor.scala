@@ -3,7 +3,7 @@ package annette.imc.user
 import java.util.UUID
 
 import akka.actor.Props
-import annette.core.persistence.Persistence._
+import annette.imc.persistence.Persistence._
 import annette.imc.user.model.ImcUser
 
 class ImcUserActor(val id: String, val initState: ImcUserState) extends PersistentStateActor[ImcUserState] {

@@ -92,7 +92,7 @@ class UserManager @Inject() (@Named("CoreService") actor: ActorRef)(implicit c: 
 }
 
 object UserManager {
-  def props(id: String, verificationBus: VerificationBus, state: UsersState = UsersState()) =
+  def props(id: ActorId, verificationBus: VerificationBus, state: UsersState = UsersState()) =
     Props(new UsersActor(
       id = id,
       verificationBus = verificationBus,

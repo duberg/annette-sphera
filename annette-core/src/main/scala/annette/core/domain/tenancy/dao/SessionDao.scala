@@ -14,13 +14,10 @@ import akka.event.{ LogSource, Logging }
 import akka.pattern.ask
 import annette.core.domain.tenancy._
 import annette.core.domain.tenancy.model.OpenSession.Id
+import annette.core.domain.tenancy.LastSessionService
 
-/**
- * Created by valery on 18.12.16.
- */
 @Singleton
-class SessionDao @Inject() (
-  @Named("CoreService") actor: ActorRef, system: ActorSystem) extends ISessionDao {
+class SessionDao @Inject() (@Named("CoreService") actor: ActorRef, system: ActorSystem) extends ISessionDao {
 
   implicit val myLogSourceType: LogSource[SessionDao] = (a: SessionDao) => "SessionDao"
 

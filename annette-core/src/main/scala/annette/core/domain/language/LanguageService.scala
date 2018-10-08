@@ -1,15 +1,16 @@
 package annette.core.domain.language
 
 import akka.actor.Props
+import annette.core.akkaext.actor.{ ActorId, CqrsCommand, CqrsEvent, CqrsQuery, CqrsResponse }
 import annette.core.domain.language.model._
-import annette.core.persistence.Persistence.{ PersistentCommand, PersistentEvent, PersistentQuery }
 
 object LanguageService {
+  def props(id: ActorId, state: LanguageState = LanguageState()) = Props(classOf[LanguageActor], id, state)
 
-  sealed trait Command extends PersistentCommand
-  sealed trait Query extends PersistentQuery
-  sealed trait Event extends PersistentEvent
-  sealed trait Response
+  trait Command extends CqrsCommand
+  trait Query extends CqrsQuery
+  trait Event extends CqrsEvent
+  trait Response extends CqrsResponse
 
   object EntryAlreadyExists extends Response
   object EntryNotFound extends Response
@@ -26,6 +27,4 @@ object LanguageService {
 
   case class SingleLanguage(maybeEntry: Option[Language]) extends Response
   case class MultipleLanguages(entries: Map[Language.Id, Language]) extends Response
-
-  def props(id: String, state: LanguageState = LanguageState()) = Props(classOf[LanguageActor], id, state)
 }

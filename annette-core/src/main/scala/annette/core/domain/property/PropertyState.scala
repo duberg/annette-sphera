@@ -1,10 +1,9 @@
 package annette.core.domain.property
 
+import annette.core.akkaext.actor.CqrsState
 import annette.core.domain.application.Application
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.model.{ Tenant, User }
-import annette.core.persistence.Persistence
-import annette.core.persistence.Persistence.PersistentState
 import annette.core.domain.property.model._
 import annette.core.utils.{ AnyValue, FilterOption, NoValue, Value }
 
@@ -14,7 +13,7 @@ case class PropertyState(
   tenantIndex: Map[Option[Tenant.Id], Set[Property.Id]] = Map.empty,
   applicationIndex: Map[Option[Application.Id], Set[Property.Id]] = Map.empty,
   languageIndex: Map[Option[Language.Id], Set[Property.Id]] = Map.empty,
-  keyIndex: Map[Option[String], Set[Property.Id]] = Map.empty) extends PersistentState[PropertyState] {
+  keyIndex: Map[Option[String], Set[Property.Id]] = Map.empty) extends CqrsState {
 
   def setProperty(entry: Property): PropertyState = {
     copy(
@@ -79,10 +78,8 @@ case class PropertyState(
 
   def propertyExists(id: Property.Id): Boolean = properties.get(id).isDefined
 
-  override def updated(event: Persistence.PersistentEvent) = {
-    event match {
-      case PropertyService.PropertySetEvt(entry) => setProperty(entry)
-      case PropertyService.PropertyRemovedEvt(id) => removeProperty(id)
-    }
+  def update: Update = {
+    case PropertyService.PropertySetEvt(entry) => setProperty(entry)
+    case PropertyService.PropertyRemovedEvt(id) => removeProperty(id)
   }
 }

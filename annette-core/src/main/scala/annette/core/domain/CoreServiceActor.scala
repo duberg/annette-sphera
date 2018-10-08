@@ -18,15 +18,25 @@ import annette.core.security.verification.{ Verification, VerificationBus }
 @Singleton
 @Named("CoreService")
 class CoreServiceActor(config: Config, verificationBus: VerificationBus)(implicit c: ExecutionContext, t: Timeout) extends Actor with ActorLogging {
-  val applicationActor: ActorRef = context.actorOf(ApplicationManager.props("core-application"), "application")
-  val languageActor: ActorRef = context.actorOf(LanguageService.props("core-language"), "language")
-  val userActor: ActorRef = context.actorOf(UserManager.props(id = "core-user", verificationBus = verificationBus), "user")
-
-  val lastSessionActor: ActorRef = context.actorOf(LastSessionService.props("core-last-session"), "last-session")
-  val sessionHistoryActor: ActorRef = context.actorOf(SessionHistoryService.props("core-session-history"), "session-history")
-  val openSessionActor: ActorRef = context.actorOf(OpenSessionService.props("core-open-session", lastSessionActor, sessionHistoryActor), "open-session")
-
   val coreId = ActorId("core")
+
+  val applicationActorId = coreId / "application"
+  val applicationActor: ActorRef = context.actorOf(ApplicationManager.props(applicationActorId), "application")
+
+  val languageActorId = coreId / "language"
+  val languageActor: ActorRef = context.actorOf(LanguageService.props(languageActorId), "language")
+
+  val userActorId = coreId / "user"
+  val userActor: ActorRef = context.actorOf(UserManager.props(id = userActorId, verificationBus = verificationBus), "user")
+
+  val lastSessionActorId = coreId / "last-session"
+  val lastSessionActor: ActorRef = context.actorOf(LastSessionService.props(lastSessionActorId), "last-session")
+
+  val sessionHistoryActorId = coreId / "session-history"
+  val sessionHistoryActor: ActorRef = context.actorOf(SessionHistoryService.props(sessionHistoryActorId), "session-history")
+
+  val openSessionActorId = coreId / "core-open-session"
+  val openSessionActor: ActorRef = context.actorOf(OpenSessionService.props(openSessionActorId, lastSessionActor, sessionHistoryActor), "open-session")
 
   val notificationManagerId = coreId / NotificationManagerActorName
   val notificationManagerActor: ActorRef = context.actorOf(

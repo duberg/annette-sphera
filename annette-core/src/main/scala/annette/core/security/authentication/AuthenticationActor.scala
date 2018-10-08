@@ -3,8 +3,8 @@ package annette.core.security.authentication
 import akka.actor.{ Actor, ActorLogging }
 import akka.event.LoggingReceive
 import annette.core.domain.application.ApplicationManager
+import annette.core.domain.language.LanguageManager
 import annette.core.security.authentication.jwt.JwtHelper
-import annette.core.domain.language.dao.LanguageDao
 import annette.core.domain.tenancy.UserManager
 import annette.core.domain.tenancy.dao.{ SessionDao, TenantDao, TenantUserDao }
 import annette.core.domain.tenancy.model.OpenSession
@@ -17,7 +17,7 @@ class AuthenticationActor(
   applicationDao: ApplicationManager,
   userDao: UserManager,
   tenantUserDao: TenantUserDao,
-  languageDao: LanguageDao,
+  languageDao: LanguageManager,
   override val secret: String)
   extends Actor with ActorLogging with JwtHelper {
 

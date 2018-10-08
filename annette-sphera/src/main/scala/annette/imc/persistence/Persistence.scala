@@ -1,19 +1,18 @@
-package annette.core.persistence
+package annette.imc.persistence
 
 import java.time.{ Instant, LocalDateTime, ZoneId }
 import java.util.UUID
 
 import akka.actor.{ ActorLogging, ActorRef, Props }
-import akka.pattern.ask
-
+import akka.pattern.AskSupport
 import akka.persistence._
 import akka.util.Timeout
 import annette.core.utils.ActorLifecycleHooks
 
-import scala.concurrent._
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration._
 
-object Persistence {
+object Persistence extends AskSupport {
   /**
    * Predefined snapshot interval.
    */

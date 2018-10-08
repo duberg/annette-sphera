@@ -1,12 +1,11 @@
 package annette.core.domain.tenancy.actor
 
+import annette.core.akkaext.actor.CqrsState
 import annette.core.domain.tenancy.OpenSessionService
 import annette.core.domain.tenancy.model.{ OpenSession, OpenSessionUpdate }
-import annette.core.persistence.Persistence
-import annette.core.persistence.Persistence.PersistentState
+import OpenSessionService._
 
-case class OpenSessionState(
-  openSessions: Map[OpenSession.Id, OpenSession] = Map.empty) extends PersistentState[OpenSessionState] {
+case class OpenSessionState(openSessions: Map[OpenSession.Id, OpenSession] = Map.empty) extends CqrsState {
 
   def createOpenSession(entry: OpenSession): OpenSessionState = {
     if (openSessions.get(entry.id).isDefined) throw new IllegalArgumentException
@@ -40,11 +39,9 @@ case class OpenSessionState(
 
   def openSessionExists(id: OpenSession.Id): Boolean = openSessions.get(id).isDefined
 
-  override def updated(event: Persistence.PersistentEvent) = {
-    event match {
-      case OpenSessionService.OpenSessionCreatedEvt(entry) => createOpenSession(entry)
-      case OpenSessionService.OpenSessionUpdatedEvt(entry) => updateOpenSession(entry)
-      case OpenSessionService.OpenSessionDeletedEvt(id) => deleteOpenSession(id)
-    }
+  def update: Update = {
+    case OpenSessionCreatedEvt(entry) => createOpenSession(entry)
+    case OpenSessionUpdatedEvt(entry) => updateOpenSession(entry)
+    case OpenSessionDeletedEvt(id) => deleteOpenSession(id)
   }
 }

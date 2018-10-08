@@ -4,18 +4,22 @@ import akka.Done
 import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
+import annette.core.akkaext.actor.ActorId
+import annette.core.akkaext.persistence.CqrsPersistentActor
 import annette.core.domain.application.Application
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.model._
 import annette.core.domain.tenancy.{ LastSessionService, OpenSessionService, SessionHistoryService }
-import annette.core.persistence.Persistence._
 import org.joda.time.DateTime
 
 import scala.concurrent.ExecutionContext
+import scala.concurrent.duration._
 
-class OpenSessionActor(val id: String, val lastSessionRef: ActorRef, val sessionHistoryRef: ActorRef,
-  val initState: OpenSessionState) extends PersistentStateActor[OpenSessionState] {
-  import scala.concurrent.duration._
+class OpenSessionActor(
+  val id: ActorId,
+  val lastSessionRef: ActorRef,
+  val sessionHistoryRef: ActorRef,
+  val initState: OpenSessionState) extends CqrsPersistentActor[OpenSessionState] {
 
   implicit val serviceTimeout: Timeout = 5.seconds
   implicit val ec: ExecutionContext = context.dispatcher

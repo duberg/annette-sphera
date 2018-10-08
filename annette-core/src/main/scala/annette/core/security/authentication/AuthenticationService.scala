@@ -9,7 +9,7 @@ import akka.routing.FromConfig
 import akka.util.Timeout
 import annette.core.domain.application.ApplicationManager
 import annette.core.domain.application._
-import annette.core.domain.language.dao.LanguageDao
+import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.UserManager
 import annette.core.domain.tenancy.dao._
@@ -78,7 +78,7 @@ object AuthenticationService {
     applicationDao: ApplicationManager,
     userDao: UserManager,
     tenantUserDao: TenantUserDao,
-    languageDao: LanguageDao,
+    languageDao: LanguageManager,
     config: Config) = Props(
     classOf[AuthenticationService],
     sessionDao,
@@ -97,7 +97,7 @@ class AuthenticationService(
   applicationDao: ApplicationManager,
   userDao: UserManager,
   tenantUserDao: TenantUserDao,
-  languageDao: LanguageDao,
+  languageDao: LanguageManager,
   config: Config)
   extends Actor with ActorLogging {
 

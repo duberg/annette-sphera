@@ -9,7 +9,7 @@ import annette.core.domain.application.ApplicationManager
 import annette.core.security.authentication.AuthenticationService.{ FailureResponse, Login }
 import annette.core.security.authentication.jwt.JwtHelper
 import annette.core.domain.application._
-import annette.core.domain.language.dao.LanguageDao
+import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.UserManager
 import annette.core.domain.tenancy.dao._
@@ -24,7 +24,7 @@ class LoginActor(
   tenantDao: TenantDao,
   tenantUserDao: TenantUserDao,
   applicationDao: ApplicationManager,
-  languageDao: LanguageDao,
+  languageDao: LanguageManager,
   rememberMeSessionTimeout: Int,
   sessionTimeout: Int,
   override val secret: String)

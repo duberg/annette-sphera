@@ -3,7 +3,7 @@ package annette.imc
 import java.time.ZonedDateTime
 
 import annette.core.domain.tenancy.model.User
-import annette.core.persistence.Persistence.{ PersistentEvent, PersistentState }
+import annette.imc.persistence.Persistence.{ PersistentEvent, PersistentState }
 import annette.imc.ApsActor.{ ChangeStatusCmd, FinishCriterionEvt }
 import annette.imc.model._
 

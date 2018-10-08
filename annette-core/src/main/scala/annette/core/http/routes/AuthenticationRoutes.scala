@@ -10,7 +10,7 @@ import akka.util.Timeout
 import annette.core.security.authentication.{ ApplicationState, AuthenticationService, ForbiddenException }
 import annette.core.{ AnnetteException, RequiredValueNotProvided, TenantNotFoundException }
 import annette.core.domain.application.Application
-import annette.core.domain.language.dao.LanguageDao
+import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.UserManager
 import annette.core.domain.tenancy.dao.{ TenantDao, TenantUserDao, TenantUserRoleDao }
@@ -32,7 +32,7 @@ trait AuthenticationRoutes extends Directives with AskSupport with Generator {
   val tenantUserDao: TenantUserDao
   val tenantUserRoleDao: TenantUserRoleDao
   val userManager: UserManager
-  val languageDao: LanguageDao
+  val languageDao: LanguageManager
   val authenticationService: ActorRef
   val annetteSecurityDirectives: SecurityDirectives
   val notificationManager: NotificationManager
