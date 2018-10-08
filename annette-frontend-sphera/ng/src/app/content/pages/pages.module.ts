@@ -11,16 +11,16 @@ import { ECommerceModule } from './components/apps/e-commerce/e-commerce.module'
 import { CoreModule } from '../../core/core.module';
 import { AngularEditorModule } from '@kolkov/angular-editor';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 import { ErrorPageComponent } from './snippets/error-page/error-page.component';
 import {UsersModule} from "./components/users/users.module";
+import {TenancyModule} from "./domain/tenancy/tenancy.module";
 
 @NgModule({
 	declarations: [
 		PagesComponent,
 		ActionComponent,
 		ProfileComponent,
-		ErrorPageComponent,
+		ErrorPageComponent
 	],
 	imports: [
 		CommonModule,
@@ -32,7 +32,8 @@ import {UsersModule} from "./components/users/users.module";
 		MailModule,
 		ECommerceModule,
 		AngularEditorModule,
-		UsersModule
+		UsersModule,
+		TenancyModule
 	],
 	providers: []
 })

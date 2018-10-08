@@ -465,15 +465,37 @@ export class MenuConfig implements ConfigModel {
 						//badge: {type: 'm-badge--danger', value: '2'},
 						translate: 'MENU.DASHBOARD'
 					},
+
+					// = TENANCY =
+					{section: 'Tenancy'},
 					{
 						title: 'Users',
 						desc: 'Users list',
 						root: true,
 						icon: 'flaticon-users',
 						page: '/users',
-						badge: {type: 'm-badge--danger', value: '0'},
+						//badge: {type: 'm-badge--danger', value: '0'},
 						translate: 'MENU.USERS'
 					},
+					{
+						title: 'Roles',
+						desc: 'Roles list',
+						root: true,
+						icon: 'flaticon-user-ok',
+						page: '/domain/tenancy/roles',
+						//badge: {type: 'm-badge--danger', value: '0'},
+						translate: 'MENU.ROLES'
+					},
+					{
+						title: 'Permissions',
+						desc: 'Permissions list',
+						root: true,
+						icon: 'flaticon-user-settings',
+						page: '/domain/tenancy/permissions',
+						//badge: {type: 'm-badge--danger', value: '0'},
+						translate: 'MENU.PERMISSIONS'
+					},
+
 					{section: 'Components'},
 					{
 						title: 'Google Material',

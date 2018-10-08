@@ -10,7 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { LayoutUtilsService, MessageType } from '../../apps/e-commerce/_core/utils/layout-utils.service';
 // Models
 import { QueryParamsModel } from '../../apps/e-commerce/_core/models/query-models/query-params.model';
-import { CustomersDataSource } from '../_core/models/data-sources/customers.datasource';
+import { UsersDatasource } from '../_core/models/datasources/users.datasource';
 import {UsersService} from "../../../../../core/services/users.service";
 import {UserEditDialogComponent} from "../user-edit/user-edit-dialog.component";
 import {UserModel} from "../_core/models/user.model";
@@ -23,8 +23,8 @@ import {UserModel} from "../_core/models/user.model";
   styleUrls: ['./users-list.component.scss']
 })
 export class UsersListComponent implements OnInit {
-// Table fields
-	dataSource: CustomersDataSource;
+	// Table fields
+	dataSource: UsersDatasource;
 	displayedColumns = ['select', 'id', 'lastName', 'firstName', 'email', 'gender', 'status', 'type', 'actions'];
 	@ViewChild(MatPaginator) paginator: MatPaginator;
 	@ViewChild(MatSort) sort: MatSort;
@@ -37,7 +37,7 @@ export class UsersListComponent implements OnInit {
 	customersResult: UserModel[] = [];
 
 	constructor(
-		private customersService: UsersService,
+		private usersService: UsersService,
 		public dialog: MatDialog,
 		public snackBar: MatSnackBar,
 		private layoutUtilsService: LayoutUtilsService,
@@ -56,7 +56,7 @@ export class UsersListComponent implements OnInit {
 		merge(this.sort.sortChange, this.paginator.page)
 			.pipe(
 				tap(() => {
-					this.loadCustomersList();
+					this.loadUsersList();
 				})
 			)
 			.subscribe();
@@ -69,20 +69,20 @@ export class UsersListComponent implements OnInit {
 				distinctUntilChanged(), // This operator will eliminate duplicate values
 				tap(() => {
 					this.paginator.pageIndex = 0;
-					this.loadCustomersList();
+					this.loadUsersList();
 				})
 			)
 			.subscribe();
 
 		// Init DataSource
 		const queryParams = new QueryParamsModel(this.filterConfiguration(false));
-		this.dataSource = new CustomersDataSource(this.customersService);
+		this.dataSource = new UsersDatasource(this.usersService);
 		// First load
 		this.dataSource.loadCustomers(queryParams);
 		this.dataSource.entitySubject.subscribe(res => (this.customersResult = res));
 	}
 
-	loadCustomersList() {
+	loadUsersList() {
 		const queryParams = new QueryParamsModel(
 			this.filterConfiguration(true),
 			this.sort.direction,
@@ -132,9 +132,9 @@ export class UsersListComponent implements OnInit {
 				return;
 			}
 
-			this.customersService.deleteCustomer(_item.id).subscribe(() => {
+			this.usersService.deleteCustomer(_item.id).subscribe(() => {
 				this.layoutUtilsService.showActionNotification(_deleteMessage, MessageType.Delete);
-				this.loadCustomersList();
+				this.loadUsersList();
 			});
 		});
 	}
@@ -155,11 +155,11 @@ export class UsersListComponent implements OnInit {
 			for (let i = 0; i < this.selection.selected.length; i++) {
 				idsForDeletion.push(this.selection.selected[i].id);
 			}
-			this.customersService
+			this.usersService
 				.deleteCustomers(idsForDeletion)
 				.subscribe(() => {
 					this.layoutUtilsService.showActionNotification(_deleteMessage, MessageType.Delete);
-					this.loadCustomersList();
+					this.loadUsersList();
 					this.selection.clear();
 				});
 		});
@@ -202,11 +202,11 @@ export class UsersListComponent implements OnInit {
 				return;
 			}
 
-			this.customersService
+			this.usersService
 				.updateStatusForCustomer(this.selection.selected, +res)
 				.subscribe(() => {
 					this.layoutUtilsService.showActionNotification(_updateMessage, MessageType.Update);
-					this.loadCustomersList();
+					this.loadUsersList();
 					this.selection.clear();
 				});
 		});
@@ -231,7 +231,7 @@ export class UsersListComponent implements OnInit {
 			}
 
 			this.layoutUtilsService.showActionNotification(_saveMessage, _messageType, 10000, true, false);
-			this.loadCustomersList();
+			this.loadUsersList();
 		});
 	}
 

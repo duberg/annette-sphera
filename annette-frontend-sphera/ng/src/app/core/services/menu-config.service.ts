@@ -16,9 +16,9 @@ export class MenuConfigService {
 	menuHasChanged: any = false;
 
 	constructor(private router: Router, private usersService: UsersService) {
-		this.usersService.getAllCustomers()
-			.pipe(map(x => x.totalCount))
-			.subscribe(response => this.configModel.config.aside.items[1].badge.value = response);
+		// this.usersService.getAllCustomers()
+		// 	.pipe(map(x => x.totalCount))
+		// 	.subscribe(response => this.configModel.config.aside.items[1].badge.value = response);
 
 		this.router.events
 			.pipe(filter(event => event instanceof NavigationStart))

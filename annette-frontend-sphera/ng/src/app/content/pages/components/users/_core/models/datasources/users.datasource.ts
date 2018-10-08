@@ -2,10 +2,10 @@ import { Observable, of } from 'rxjs';
 import {catchError, finalize, map, tap} from 'rxjs/operators';
 import { UsersService } from '../../../../../../../core/services/users.service';
 import { QueryParamsModel } from '../query-models/query-params.model';
-import { BaseDataSource } from './_base.datasource';
 import { QueryResultsModel } from '../query-models/query-results.model';
+import {BaseDataSource} from "../../../../../../../core/datasources/base.datasource";
 
-export class CustomersDataSource extends BaseDataSource {
+export class UsersDatasource extends BaseDataSource {
 	constructor(private customersService: UsersService) {
 		super();
 	}
