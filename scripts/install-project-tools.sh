@@ -67,6 +67,6 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89
 sudo apt-get update
 sudo apt-get install -y sbt
 
-sbt annette-akka/run
+# sbt annette-akka/run
 
 
