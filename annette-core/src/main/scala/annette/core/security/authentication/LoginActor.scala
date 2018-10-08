@@ -74,7 +74,7 @@ class LoginActor(
 
       // 5. Проверки организации:
       tenant <- tenantManager
-        .getById(tenantId)
+        .getTenantById(tenantId)
         .map(_.getOrElse(throw new TenantNotFoundException()))
 
       // Проверки приложения в организации

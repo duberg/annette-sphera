@@ -37,6 +37,8 @@ import {TranslateModule} from "@ngx-translate/core";
 import {HttpUtilsService} from "../../components/users/_core/utils/http-utils.service";
 import {UsersService} from "../../../../core/services/users.service";
 import {TypesUtilsService} from "../../components/users/_core/utils/types-utils.service";
+import { TenantsListComponent } from './tenants/tenants-list/tenants-list.component';
+import { TenantEditComponent } from './tenants/tenant-edit/tenant-edit.component';
 
 const routes: Routes = [
 	{
@@ -55,6 +57,10 @@ const routes: Routes = [
 			{
 				path: 'permissions',
 				component: PermissionsListComponent
+			},
+			{
+				path: 'tenants',
+				component: TenantsListComponent
 			},
 		]
 	}
@@ -106,7 +112,9 @@ const routes: Routes = [
   	TenancyComponent,
 	RolesListComponent,
 	PermissionsListComponent,
-	PermissionEditComponent
+	PermissionEditComponent,
+	TenantsListComponent,
+	TenantEditComponent
   ]
 })
 export class TenancyModule { }

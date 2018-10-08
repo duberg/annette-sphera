@@ -469,6 +469,14 @@ export class MenuConfig implements ConfigModel {
 					// = TENANCY =
 					{section: 'Tenancy'},
 					{
+						title: 'Tenants',
+						desc: 'Tenants list',
+						root: true,
+						icon: 'flaticon-tabs',
+						page: '/domain/tenancy/tenants',
+						translate: 'MENU.TENANTS'
+					},
+					{
 						title: 'Users',
 						desc: 'Users list',
 						root: true,
