@@ -5,7 +5,7 @@ import java.util.UUID
 import annette.core.domain.tenancy.model.User._
 import annette.core.domain.tenancy.model._
 import annette.core.domain.tenancy.{ UserManager, actor }
-import annette.core.domain.tenancy.actor.UsersState
+import annette.core.domain.tenancy.actor.UserManagerState
 import annette.core.serializer.proto.user._
 import Implicits._
 
@@ -28,7 +28,7 @@ trait UserConverters {
     DeletedUserEvtV1(obj.userId).toByteArray
   }
 
-  def toUserStatesBinary(obj: UsersState): Array[Byte] = {
+  def toUserStatesBinary(obj: UserManagerState): Array[Byte] = {
     UsersStateV1(
       users = obj.users.map({ case (x, y) => UUIDToString(x) -> fromUser(y) }),
       emailIndex = obj.emailIndex,
@@ -52,9 +52,9 @@ trait UserConverters {
     DeletedUserEvt(userId)
   }
 
-  def fromUsersStateV1(bytes: Array[Byte]): UsersState = {
+  def fromUsersStateV1(bytes: Array[Byte]): UserManagerState = {
     val x = UsersStateV1.parseFrom(bytes)
-    UsersState(
+    UserManagerState(
       users = x.users.map({ case (a, b) => stringToUUID(a) -> toUser(b) }),
       emailIndex = x.emailIndex,
       phoneIndex = x.phoneIndex,

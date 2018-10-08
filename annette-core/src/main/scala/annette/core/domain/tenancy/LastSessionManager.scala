@@ -2,10 +2,10 @@ package annette.core.domain.tenancy
 
 import akka.actor.Props
 import annette.core.akkaext.actor.{ ActorId, CqrsCommand, CqrsEvent, CqrsQuery, CqrsResponse }
-import annette.core.domain.tenancy.actor.{ LastSessionActor, LastSessionState }
+import annette.core.domain.tenancy.actor.{ LastSessionManagerActor, LastSessionManagerState }
 import annette.core.domain.tenancy.model._
 
-object LastSessionService {
+object LastSessionManager {
   trait Command extends CqrsCommand
   trait Query extends CqrsQuery
   trait Event extends CqrsEvent
@@ -23,6 +23,6 @@ object LastSessionService {
   case class LastSessionOpt(maybeEntry: Option[LastSession]) extends Response
   case class LastSessionSeq(entries: Seq[LastSession]) extends Response
 
-  def props(id: ActorId, state: LastSessionState = LastSessionState()) =
-    Props(new LastSessionActor(id, state))
+  def props(id: ActorId, state: LastSessionManagerState = LastSessionManagerState()) =
+    Props(new LastSessionManagerActor(id, state))
 }

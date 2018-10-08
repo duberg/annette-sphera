@@ -33,7 +33,7 @@ trait AuthorizationRoutes extends Directives
   val tenantUserDao: TenantUserDao
   val tenantUserRoleDao: TenantUserRoleDao
   val userManager: UserManager
-  val languageDao: LanguageManager
+  val languageManager: LanguageManager
   val authenticationService: ActorRef
   val annetteSecurityDirectives: SecurityDirectives
   val notificationManager: NotificationManager

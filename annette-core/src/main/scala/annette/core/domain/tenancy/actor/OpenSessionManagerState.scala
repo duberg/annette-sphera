@@ -1,18 +1,18 @@
 package annette.core.domain.tenancy.actor
 
 import annette.core.akkaext.actor.CqrsState
-import annette.core.domain.tenancy.OpenSessionService
+import annette.core.domain.tenancy.OpenSessionManager
 import annette.core.domain.tenancy.model.{ OpenSession, OpenSessionUpdate }
-import OpenSessionService._
+import OpenSessionManager._
 
-case class OpenSessionState(openSessions: Map[OpenSession.Id, OpenSession] = Map.empty) extends CqrsState {
+case class OpenSessionManagerState(openSessions: Map[OpenSession.Id, OpenSession] = Map.empty) extends CqrsState {
 
-  def createOpenSession(entry: OpenSession): OpenSessionState = {
+  def createOpenSession(entry: OpenSession): OpenSessionManagerState = {
     if (openSessions.get(entry.id).isDefined) throw new IllegalArgumentException
     else copy(openSessions = openSessions + (entry.id -> entry))
   }
 
-  def updateOpenSession(entry: OpenSessionUpdate): OpenSessionState = {
+  def updateOpenSession(entry: OpenSessionUpdate): OpenSessionManagerState = {
     openSessions
       .get(entry.id)
       .map {
@@ -28,7 +28,7 @@ case class OpenSessionState(openSessions: Map[OpenSession.Id, OpenSession] = Map
       .getOrElse(throw new IllegalArgumentException)
   }
 
-  def deleteOpenSession(id: OpenSession.Id): OpenSessionState = {
+  def deleteOpenSession(id: OpenSession.Id): OpenSessionManagerState = {
     if (openSessions.get(id).isEmpty) throw new IllegalArgumentException
     else copy(openSessions = openSessions - id)
   }

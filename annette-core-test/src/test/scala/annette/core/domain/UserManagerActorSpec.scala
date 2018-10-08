@@ -11,7 +11,7 @@ import annette.core.domain.tenancy.model.User._
 import annette.core.domain.tenancy.model._
 import annette.core.test.PersistenceSpec
 
-class UsersActorSpec extends TestKit(ActorSystem("UserActorSpec"))
+class UserManagerActorSpec extends TestKit(ActorSystem("UserActorSpec"))
   with PersistenceSpec with NewUser {
 
   "A UserActor" when receive {

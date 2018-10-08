@@ -5,7 +5,7 @@ import java.util.UUID
 import akka.actor.ActorRef
 import akka.testkit.TestKit
 import annette.core.domain.language.LanguageService
-import annette.core.domain.tenancy.SessionHistoryService
+import annette.core.domain.tenancy.SessionHistoryManager
 import annette.core.domain.tenancy.model._
 import annette.core.test.PersistenceSpec
 import org.joda.time.DateTime
@@ -28,7 +28,7 @@ trait NewSessionHistory { _: PersistenceSpec with TestKit =>
 
   def newSessionHistoryActor(): ActorRef = {
     val uuid = UUID.randomUUID().toString
-    system.actorOf(SessionHistoryService.props(s"SessionHistory-$uuid"), s"session-history-$uuid")
+    system.actorOf(SessionHistoryManager.props(s"SessionHistory-$uuid"), s"session-history-$uuid")
   }
 
 }

@@ -3,25 +3,24 @@ package annette.core.domain
 import java.util.UUID
 
 import akka.Done
-import akka.actor.{ ActorRef, ActorSystem }
+import akka.actor.{ActorRef, ActorSystem}
 import akka.pattern.ask
 import akka.testkit.TestKit
 import annette.core.AnnetteException
 import annette.core.domain.application.ApplicationManager
 import annette.core.domain.application._
 import annette.core.domain.language.LanguageService
-import annette.core.domain.language.model.{ Language, LanguageUpdate }
-import annette.core.domain.tenancy._
-import annette.core.domain.tenancy.dao.SessionDao
+import annette.core.domain.language.model.{Language, LanguageUpdate}
+import annette.core.domain.tenancy.{SessionManager, _}
 import annette.core.domain.tenancy.model._
 import annette.core.security.verification.VerificationBus
 import annette.core.test.PersistenceSpec
-import com.typesafe.config.{ Config, ConfigFactory }
+import com.typesafe.config.{Config, ConfigFactory}
 import org.joda.time.DateTime
 
 import scala.concurrent.Future
 
-class SessionDaoSpec extends TestKit(ActorSystem("SessionDaoSpec"))
+class SessionManagerSpec extends TestKit(ActorSystem("SessionDaoSpec"))
   with PersistenceSpec
   with NewOpenSession {
   lazy val config: Config = ConfigFactory.load()
@@ -33,9 +32,9 @@ class SessionDaoSpec extends TestKit(ActorSystem("SessionDaoSpec"))
       verificationBus = new VerificationBus), s"CoreService-$uuid")
   }
 
-  def newSessionDao(): SessionDao = {
+  def newSessionDao(): SessionManager = {
     val coreServiceActor = newCoreServiceActor()
-    new SessionDao(coreServiceActor, system)
+    new SessionManager(coreServiceActor, system)
   }
 
   "A SessionDao" when {

@@ -2,32 +2,32 @@ package annette.core.security.authentication
 
 import java.util.UUID
 
-import akka.actor.{ Actor, ActorLogging, ActorRef }
+import akka.actor.{Actor, ActorLogging, ActorRef}
 import akka.event.LoggingReceive
 import akka.http.scaladsl.util.FastFuture
 import annette.core.domain.application.ApplicationManager
-import annette.core.security.authentication.AuthenticationService.{ FailureResponse, Login }
+import annette.core.security.authentication.AuthenticationService.{FailureResponse, Login}
 import annette.core.security.authentication.jwt.JwtHelper
 import annette.core.domain.application._
 import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.UserManager
+import annette.core.domain.tenancy.{SessionManager, UserManager}
 import annette.core.domain.tenancy.dao._
-import annette.core.domain.tenancy.model.{ OpenSession, Tenant, User }
+import annette.core.domain.tenancy.model.{OpenSession, Tenant, User}
 import org.joda.time.DateTime
 
 import scala.concurrent.Future
 
 class LoginActor(
-  userDao: UserManager,
-  sessionDao: SessionDao,
-  tenantDao: TenantDao,
-  tenantUserDao: TenantUserDao,
-  applicationDao: ApplicationManager,
-  languageDao: LanguageManager,
-  rememberMeSessionTimeout: Int,
-  sessionTimeout: Int,
-  override val secret: String)
+                  userDao: UserManager,
+                  sessionDao: SessionManager,
+                  tenantDao: TenantDao,
+                  tenantUserDao: TenantUserDao,
+                  applicationDao: ApplicationManager,
+                  languageDao: LanguageManager,
+                  rememberMeSessionTimeout: Int,
+                  sessionTimeout: Int,
+                  override val secret: String)
   extends Actor with ActorLogging with JwtHelper {
 
   implicit val ec = context.dispatcher

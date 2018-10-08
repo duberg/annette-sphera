@@ -4,10 +4,10 @@ import akka.actor.{ ActorRef, Props }
 import annette.core.akkaext.actor.{ ActorId, CqrsCommand, CqrsEvent, CqrsQuery, CqrsResponse }
 import annette.core.domain.application.Application
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.actor.{ OpenSessionActor, OpenSessionState }
+import annette.core.domain.tenancy.actor.{ OpenSessionManagerActor, OpenSessionManagerState }
 import annette.core.domain.tenancy.model._
 
-object OpenSessionService {
+object OpenSessionManager {
   trait Command extends CqrsCommand
   trait Query extends CqrsQuery
   trait Event extends CqrsEvent
@@ -35,6 +35,6 @@ object OpenSessionService {
   case class OpenSessionOpt(maybeEntry: Option[OpenSession]) extends Response
   case class OpenSessionSeq(entries: Seq[OpenSession]) extends Response
 
-  def props(id: ActorId, lastSession: ActorRef, sessionHistory: ActorRef, state: OpenSessionState = OpenSessionState()) =
-    Props(new OpenSessionActor(id, lastSession, sessionHistory, state))
+  def props(id: ActorId, lastSession: ActorRef, sessionHistory: ActorRef, state: OpenSessionManagerState = OpenSessionManagerState()) =
+    Props(new OpenSessionManagerActor(id, lastSession, sessionHistory, state))
 }

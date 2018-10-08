@@ -32,7 +32,7 @@ trait AuthenticationRoutes extends Directives with AskSupport with Generator {
   val tenantUserDao: TenantUserDao
   val tenantUserRoleDao: TenantUserRoleDao
   val userManager: UserManager
-  val languageDao: LanguageManager
+  val languageManager: LanguageManager
   val authenticationService: ActorRef
   val annetteSecurityDirectives: SecurityDirectives
   val notificationManager: NotificationManager
@@ -199,7 +199,7 @@ trait AuthenticationRoutes extends Directives with AskSupport with Generator {
   }
 
   private def languagesRoute = (get & path("languages")) {
-    onComplete(languageDao.selectAll) {
+    onComplete(languageManager.selectAll) {
       languages =>
         complete(languages)
     }

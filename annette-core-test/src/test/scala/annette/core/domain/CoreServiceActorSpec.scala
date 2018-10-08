@@ -11,8 +11,8 @@ import annette.core.domain.application._
 import annette.core.domain.language.LanguageService
 import annette.core.domain.language.model.{ Language, LanguageUpdate }
 import annette.core.domain.tenancy._
-import LastSessionService.LastSessionOpt
-import OpenSessionService.{ OpenSessionOpt, OpenSessionSeq }
+import LastSessionManager.LastSessionOpt
+import OpenSessionManager.{ OpenSessionOpt, OpenSessionSeq }
 import annette.core.domain.tenancy.model.User.CreateUserSuccess
 import annette.core.domain.tenancy.model._
 import annette.core.security.verification.VerificationBus
@@ -586,9 +586,9 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
         val s2 = newOpenSession
         val actor = newCoreServiceActor()
         for {
-          c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s1))
-          c2 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s2))
-          r <- ask(actor, OpenSessionService.FindAllOpenSessions).mapTo[OpenSessionService.OpenSessionSeq].map(_.entries)
+          c1 <- ask(actor, OpenSessionManager.CreateOpenSessionCmd(s1))
+          c2 <- ask(actor, OpenSessionManager.CreateOpenSessionCmd(s2))
+          r <- ask(actor, OpenSessionManager.FindAllOpenSessions).mapTo[OpenSessionManager.OpenSessionSeq].map(_.entries)
         } yield {
           c1 shouldBe Done
           c2 shouldBe Done
@@ -604,10 +604,10 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
           tenantId = Some("EXXO"))
         val actor = newCoreServiceActor()
         for {
-          c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s1))
-          u <- ask(actor, OpenSessionService.UpdateOpenSessionCmd(upd))
-          r <- ask(actor, OpenSessionService.FindOpenSessionById(s1.id))
-            .mapTo[OpenSessionService.OpenSessionOpt].map(_.maybeEntry.map(_.tenantId))
+          c1 <- ask(actor, OpenSessionManager.CreateOpenSessionCmd(s1))
+          u <- ask(actor, OpenSessionManager.UpdateOpenSessionCmd(upd))
+          r <- ask(actor, OpenSessionManager.FindOpenSessionById(s1.id))
+            .mapTo[OpenSessionManager.OpenSessionOpt].map(_.maybeEntry.map(_.tenantId))
         } yield {
           c1 shouldBe Done
           u shouldBe Done
@@ -621,10 +621,10 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
           languageId = Some("RU"))
         val actor = newCoreServiceActor()
         for {
-          c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s1))
-          u <- ask(actor, OpenSessionService.UpdateOpenSessionCmd(upd))
-          r <- ask(actor, OpenSessionService.FindOpenSessionById(s1.id))
-            .mapTo[OpenSessionService.OpenSessionOpt].map(_.maybeEntry.map(_.languageId))
+          c1 <- ask(actor, OpenSessionManager.CreateOpenSessionCmd(s1))
+          u <- ask(actor, OpenSessionManager.UpdateOpenSessionCmd(upd))
+          r <- ask(actor, OpenSessionManager.FindOpenSessionById(s1.id))
+            .mapTo[OpenSessionManager.OpenSessionOpt].map(_.maybeEntry.map(_.languageId))
         } yield {
           c1 shouldBe Done
           u shouldBe Done
@@ -638,10 +638,10 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
           applicationId = Some("exxo"))
         val actor = newCoreServiceActor()
         for {
-          c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s1))
-          u <- ask(actor, OpenSessionService.UpdateOpenSessionCmd(upd))
-          r <- ask(actor, OpenSessionService.FindOpenSessionById(s1.id))
-            .mapTo[OpenSessionService.OpenSessionOpt].map(_.maybeEntry.map(_.applicationId))
+          c1 <- ask(actor, OpenSessionManager.CreateOpenSessionCmd(s1))
+          u <- ask(actor, OpenSessionManager.UpdateOpenSessionCmd(upd))
+          r <- ask(actor, OpenSessionManager.FindOpenSessionById(s1.id))
+            .mapTo[OpenSessionManager.OpenSessionOpt].map(_.maybeEntry.map(_.applicationId))
         } yield {
           c1 shouldBe Done
           u shouldBe Done
@@ -655,10 +655,10 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
           rememberMe = Some(false))
         val actor = newCoreServiceActor()
         for {
-          c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s1))
-          u <- ask(actor, OpenSessionService.UpdateOpenSessionCmd(upd))
-          r <- ask(actor, OpenSessionService.FindOpenSessionById(s1.id))
-            .mapTo[OpenSessionService.OpenSessionOpt].map(_.maybeEntry.map(_.rememberMe))
+          c1 <- ask(actor, OpenSessionManager.CreateOpenSessionCmd(s1))
+          u <- ask(actor, OpenSessionManager.UpdateOpenSessionCmd(upd))
+          r <- ask(actor, OpenSessionManager.FindOpenSessionById(s1.id))
+            .mapTo[OpenSessionManager.OpenSessionOpt].map(_.maybeEntry.map(_.rememberMe))
         } yield {
           c1 shouldBe Done
           u shouldBe Done
@@ -674,10 +674,10 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
           applicationId = Some("exxo"))
         val actor = newCoreServiceActor()
         for {
-          c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s1))
-          u <- ask(actor, OpenSessionService.UpdateOpenSessionCmd(upd))
-          r <- ask(actor, OpenSessionService.FindOpenSessionById(s1.id))
-            .mapTo[OpenSessionService.OpenSessionOpt]
+          c1 <- ask(actor, OpenSessionManager.CreateOpenSessionCmd(s1))
+          u <- ask(actor, OpenSessionManager.UpdateOpenSessionCmd(upd))
+          r <- ask(actor, OpenSessionManager.FindOpenSessionById(s1.id))
+            .mapTo[OpenSessionManager.OpenSessionOpt]
             .map(_.maybeEntry.map(x => (x.tenantId, x.languageId, x.applicationId)))
         } yield {
           c1 shouldBe Done
@@ -692,10 +692,10 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
           lastOpTimestamp = Some(DateTime.now))
         val actor = newCoreServiceActor()
         for {
-          c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s1))
-          u <- ask(actor, OpenSessionService.UpdateOpenSessionCmd(upd))
-          r <- ask(actor, OpenSessionService.FindOpenSessionById(s1.id))
-            .mapTo[OpenSessionService.OpenSessionOpt].map(_.maybeEntry.map(_.lastOpTimestamp))
+          c1 <- ask(actor, OpenSessionManager.CreateOpenSessionCmd(s1))
+          u <- ask(actor, OpenSessionManager.UpdateOpenSessionCmd(upd))
+          r <- ask(actor, OpenSessionManager.FindOpenSessionById(s1.id))
+            .mapTo[OpenSessionManager.OpenSessionOpt].map(_.maybeEntry.map(_.lastOpTimestamp))
         } yield {
           c1 shouldBe Done
           u shouldBe Done
@@ -711,10 +711,10 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
           rememberMe = Some(false))
         val actor = newCoreServiceActor()
         for {
-          u <- ask(actor, OpenSessionService.UpdateOpenSessionCmd(upd))
+          u <- ask(actor, OpenSessionManager.UpdateOpenSessionCmd(upd))
 
         } yield {
-          u shouldBe OpenSessionService.EntryNotFound
+          u shouldBe OpenSessionManager.EntryNotFound
         }
       }
 
@@ -725,10 +725,10 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
 
         val actor = newCoreServiceActor()
         for {
-          c1 <- ask(actor, OpenSessionService.CreateOpenSessionCmd(s1))
-          r1 <- ask(actor, OpenSessionService.FindOpenSessionById(s1.id)).mapTo[OpenSessionOpt].map(_.maybeEntry)
-          d <- ask(actor, OpenSessionService.DeleteOpenSessionCmd(s1.id))
-          r2 <- ask(actor, OpenSessionService.FindAllOpenSessions).mapTo[OpenSessionSeq].map(_.entries)
+          c1 <- ask(actor, OpenSessionManager.CreateOpenSessionCmd(s1))
+          r1 <- ask(actor, OpenSessionManager.FindOpenSessionById(s1.id)).mapTo[OpenSessionOpt].map(_.maybeEntry)
+          d <- ask(actor, OpenSessionManager.DeleteOpenSessionCmd(s1.id))
+          r2 <- ask(actor, OpenSessionManager.FindAllOpenSessions).mapTo[OpenSessionSeq].map(_.entries)
 
         } yield {
           c1 shouldBe Done
@@ -743,9 +743,9 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
       "do nothing" in {
         val actor = newCoreServiceActor()
         for {
-          d <- ask(actor, OpenSessionService.DeleteOpenSessionCmd(UUID.randomUUID()))
+          d <- ask(actor, OpenSessionManager.DeleteOpenSessionCmd(UUID.randomUUID()))
         } yield {
-          d shouldBe OpenSessionService.EntryNotFound
+          d shouldBe OpenSessionManager.EntryNotFound
         }
       }
 
@@ -759,9 +759,9 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
         val s2 = newLastSession
         val actor = newCoreServiceActor()
         for {
-          c1 <- ask(actor, LastSessionService.StoreLastSessionCmd(s1))
-          c2 <- ask(actor, LastSessionService.StoreLastSessionCmd(s2))
-          r <- ask(actor, LastSessionService.FindAllLastSessions).mapTo[LastSessionService.LastSessionSeq].map(_.entries)
+          c1 <- ask(actor, LastSessionManager.StoreLastSessionCmd(s1))
+          c2 <- ask(actor, LastSessionManager.StoreLastSessionCmd(s2))
+          r <- ask(actor, LastSessionManager.FindAllLastSessions).mapTo[LastSessionManager.LastSessionSeq].map(_.entries)
         } yield {
           c1 shouldBe Done
           c2 shouldBe Done
@@ -775,10 +775,10 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
         val s2 = newLastSession.copy(userId = s1.userId)
         val actor = newCoreServiceActor()
         for {
-          c1 <- ask(actor, LastSessionService.StoreLastSessionCmd(s1))
-          c2 <- ask(actor, LastSessionService.StoreLastSessionCmd(s2))
-          r <- ask(actor, LastSessionService.FindAllLastSessions).mapTo[LastSessionService.LastSessionSeq].map(_.entries)
-          s <- ask(actor, LastSessionService.FindLastSessionByUserId(s1.userId)).mapTo[LastSessionOpt].map(_.maybeEntry)
+          c1 <- ask(actor, LastSessionManager.StoreLastSessionCmd(s1))
+          c2 <- ask(actor, LastSessionManager.StoreLastSessionCmd(s2))
+          r <- ask(actor, LastSessionManager.FindAllLastSessions).mapTo[LastSessionManager.LastSessionSeq].map(_.entries)
+          s <- ask(actor, LastSessionManager.FindLastSessionByUserId(s1.userId)).mapTo[LastSessionOpt].map(_.maybeEntry)
         } yield {
           c1 shouldBe Done
           c2 shouldBe Done
@@ -795,10 +795,10 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
         val s2 = newSessionHistory
         val actor = newSessionHistoryActor()
         for {
-          c1 <- ask(actor, SessionHistoryService.CreateSessionHistoryCmd(s1))
-          c2 <- ask(actor, SessionHistoryService.CreateSessionHistoryCmd(s2))
-          r <- ask(actor, SessionHistoryService.FindAllSessionHistory)
-            .mapTo[SessionHistoryService.SessionHistorySeq].map(_.entries)
+          c1 <- ask(actor, SessionHistoryManager.CreateSessionHistoryCmd(s1))
+          c2 <- ask(actor, SessionHistoryManager.CreateSessionHistoryCmd(s2))
+          r <- ask(actor, SessionHistoryManager.FindAllSessionHistory)
+            .mapTo[SessionHistoryManager.SessionHistorySeq].map(_.entries)
         } yield {
           c1 shouldBe Done
           c2 shouldBe Done
@@ -812,14 +812,14 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
         val s2 = newSessionHistory.copy(id = s1.id)
         val actor = newSessionHistoryActor()
         for {
-          c1 <- ask(actor, SessionHistoryService.CreateSessionHistoryCmd(s1))
-          c2 <- ask(actor, SessionHistoryService.CreateSessionHistoryCmd(s2))
-          r <- ask(actor, SessionHistoryService.FindAllSessionHistory).mapTo[SessionHistoryService.SessionHistorySeq].map(_.entries)
-          r1 <- ask(actor, SessionHistoryService.FindSessionHistoryById(s1.id))
-            .mapTo[SessionHistoryService.SessionHistoryOpt].map(_.maybeEntry)
+          c1 <- ask(actor, SessionHistoryManager.CreateSessionHistoryCmd(s1))
+          c2 <- ask(actor, SessionHistoryManager.CreateSessionHistoryCmd(s2))
+          r <- ask(actor, SessionHistoryManager.FindAllSessionHistory).mapTo[SessionHistoryManager.SessionHistorySeq].map(_.entries)
+          r1 <- ask(actor, SessionHistoryManager.FindSessionHistoryById(s1.id))
+            .mapTo[SessionHistoryManager.SessionHistoryOpt].map(_.maybeEntry)
         } yield {
           c1 shouldBe Done
-          c2 shouldBe SessionHistoryService.EntryAlreadyExists
+          c2 shouldBe SessionHistoryManager.EntryAlreadyExists
           r.size shouldBe 1
           r1 shouldBe Some(s1)
         }

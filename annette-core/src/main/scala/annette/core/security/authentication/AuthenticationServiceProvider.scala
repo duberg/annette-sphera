@@ -1,14 +1,14 @@
 package annette.core.security.authentication
 
-import akka.actor.{ ActorRef, ActorSystem, Props }
+import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.cluster.Cluster
-import akka.event.{ LogSource, Logging }
+import akka.event.{LogSource, Logging}
 import akka.routing.FromConfig
 import annette.core.domain.InitCoreTables
 import annette.core.domain.application.ApplicationManager
 import annette.core.domain.language.LanguageManager
-import annette.core.domain.tenancy.UserManager
-import annette.core.domain.tenancy.dao.{ SessionDao, TenantDao, TenantUserDao }
+import annette.core.domain.tenancy.{SessionManager, UserManager}
+import annette.core.domain.tenancy.dao.{TenantDao, TenantUserDao}
 import com.google.inject.Provider
 import com.typesafe.config.Config
 import javax.inject._
@@ -18,15 +18,15 @@ import javax.inject._
  */
 @Singleton
 class AuthenticationServiceProvider @Inject() (
-  system: ActorSystem,
-  sessionDao: SessionDao,
-  tenantDao: TenantDao,
-  applicationDao: ApplicationManager,
-  userDao: UserManager,
-  tenantUserDao: TenantUserDao,
-  languageDao: LanguageManager,
-  config: Config,
-  initCoreTables: InitCoreTables) extends Provider[ActorRef] {
+                                                system: ActorSystem,
+                                                sessionDao: SessionManager,
+                                                tenantDao: TenantDao,
+                                                applicationDao: ApplicationManager,
+                                                userDao: UserManager,
+                                                tenantUserDao: TenantUserDao,
+                                                languageDao: LanguageManager,
+                                                config: Config,
+                                                initCoreTables: InitCoreTables) extends Provider[ActorRef] {
 
   implicit val myLogSourceType: LogSource[AuthenticationServiceProvider] = (a: AuthenticationServiceProvider) => "AuthenticationServiceProvider"
 

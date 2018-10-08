@@ -6,7 +6,7 @@ import akka.util.Timeout
 import annette.core.akkaext.actor.ActorId
 import annette.core.domain.application._
 import annette.core.domain.language.LanguageService
-import annette.core.domain.tenancy.{ LastSessionService, OpenSessionService, SessionHistoryService, UserManager }
+import annette.core.domain.tenancy.{ LastSessionManager, OpenSessionManager, SessionHistoryManager, UserManager }
 import annette.core.notification.actor.NotificationManagerActor
 import com.typesafe.config.Config
 import annette.core.domain.tenancy.model.User
@@ -30,13 +30,13 @@ class CoreServiceActor(config: Config, verificationBus: VerificationBus)(implici
   val userActor: ActorRef = context.actorOf(UserManager.props(id = userActorId, verificationBus = verificationBus), "user")
 
   val lastSessionActorId = coreId / "last-session"
-  val lastSessionActor: ActorRef = context.actorOf(LastSessionService.props(lastSessionActorId), "last-session")
+  val lastSessionActor: ActorRef = context.actorOf(LastSessionManager.props(lastSessionActorId), "last-session")
 
   val sessionHistoryActorId = coreId / "session-history"
-  val sessionHistoryActor: ActorRef = context.actorOf(SessionHistoryService.props(sessionHistoryActorId), "session-history")
+  val sessionHistoryActor: ActorRef = context.actorOf(SessionHistoryManager.props(sessionHistoryActorId), "session-history")
 
   val openSessionActorId = coreId / "core-open-session"
-  val openSessionActor: ActorRef = context.actorOf(OpenSessionService.props(openSessionActorId, lastSessionActor, sessionHistoryActor), "open-session")
+  val openSessionActor: ActorRef = context.actorOf(OpenSessionManager.props(openSessionActorId, lastSessionActor, sessionHistoryActor), "open-session")
 
   val notificationManagerId = coreId / NotificationManagerActorName
   val notificationManagerActor: ActorRef = context.actorOf(
@@ -59,17 +59,17 @@ class CoreServiceActor(config: Config, verificationBus: VerificationBus)(implici
       userActor forward msg
     case msg: User.Query =>
       userActor forward msg
-    case msg: OpenSessionService.Command =>
+    case msg: OpenSessionManager.Command =>
       openSessionActor forward msg
-    case msg: OpenSessionService.Query =>
+    case msg: OpenSessionManager.Query =>
       openSessionActor forward msg
-    case msg: LastSessionService.Command =>
+    case msg: LastSessionManager.Command =>
       lastSessionActor forward msg
-    case msg: LastSessionService.Query =>
+    case msg: LastSessionManager.Query =>
       lastSessionActor forward msg
-    case msg: SessionHistoryService.Command =>
+    case msg: SessionHistoryManager.Command =>
       sessionHistoryActor forward msg
-    case msg: SessionHistoryService.Query =>
+    case msg: SessionHistoryManager.Query =>
       sessionHistoryActor forward msg
 
     case x: EmailNotificationActor.Command => notificationManagerActor forward x

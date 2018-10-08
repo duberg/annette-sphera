@@ -1,14 +1,14 @@
 package annette.core.security.authentication
 
-import akka.actor.{ Actor, ActorLogging }
+import akka.actor.{Actor, ActorLogging}
 import akka.event.LoggingReceive
-import annette.core.domain.tenancy.dao.SessionDao
+import annette.core.domain.tenancy.SessionManager
 
 /**
  * Created by valery on 25.10.16.
  */
 class LogoutActor(
-  sessionDao: SessionDao)
+  sessionDao: SessionManager)
   extends Actor with ActorLogging {
 
   implicit val ec = context.dispatcher

@@ -6,35 +6,24 @@ import annette.core.akkaext.persistence.CqrsPersistentActor
 import annette.core.domain.application.Application._
 
 class ApplicationManagerActor(val id: ActorId, val initState: ApplicationManagerState) extends CqrsPersistentActor[ApplicationManagerState] {
-  def createApplication(state: ApplicationManagerState, x: Application): Unit = {
-    if (state.applicationExists(x.id)) sender ! EntryAlreadyExists
-    else {
-      persist(state, ApplicationCreatedEvt(x)) { (state, event) =>
-        sender ! ApplicationCreated(x)
-      }
+  def createApplication(p1: ApplicationManagerState, p2: Application): Unit = {
+    if (p1.applicationExists(p2.id)) sender ! EntryAlreadyExists
+    else persist(p1, ApplicationCreatedEvt(p2)) { (state, event) =>
+      sender ! ApplicationCreated(p2)
     }
   }
 
-  def updateApplication(state: ApplicationManagerState, entry: UpdateApplication): Unit = {
-    if (state.applicationExists(entry.id)) {
-      persist(ApplicationUpdatedEvt(entry)) { event =>
-        changeState(state.updated(event))
-        sender ! Done
-      }
-    } else {
-      sender ! EntryNotFound
+  def updateApplication(p1: ApplicationManagerState, p2: UpdateApplication): Unit = {
+    if (p1.applicationExists(p2.id)) persist(p1, ApplicationUpdatedEvt(p2)) { (state, event) =>
+      sender ! Done
     }
+    else sender ! EntryNotFound
   }
 
-  def deleteApplication(state: ApplicationManagerState, id: Application.Id): Unit = {
-    if (state.applicationExists(id)) {
-      persist(ApplicationDeletedEvt(id)) { event =>
-        changeState(state.updated(event))
+  def deleteApplication(p1: ApplicationManagerState, p2: Application.Id): Unit = {
+    if (p1.applicationExists(p2)) persist(p1, ApplicationDeletedEvt(p2)) { (state, event) =>
         sender ! Done
-      }
-    } else {
-      sender ! EntryNotFound
-    }
+    } else sender ! EntryNotFound
   }
 
   def findApplicationById(state: ApplicationManagerState, id: Application.Id): Unit = {

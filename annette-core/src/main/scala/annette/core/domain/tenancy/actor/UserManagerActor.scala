@@ -20,7 +20,7 @@ import org.mindrot.jbcrypt.BCrypt
 import scala.util.Try
 import shapeless._
 
-class UsersActor(val id: ActorId, val verificationBus: VerificationBus, val initState: UsersState) extends CqrsPersistentActor[UsersState] {
+class UserManagerActor(val id: ActorId, val verificationBus: VerificationBus, val initState: UserManagerState) extends CqrsPersistentActor[UserManagerState] {
   def processFailure: PartialFunction[Throwable, Unit] = {
     case e: AnnetteMessageException =>
       sender ! e.message
@@ -28,7 +28,7 @@ class UsersActor(val id: ActorId, val verificationBus: VerificationBus, val init
       sender ! akka.actor.Status.Failure(th)
   }
 
-  def createUser(state: UsersState, x: CreateUser): Unit = {
+  def createUser(state: UserManagerState, x: CreateUser): Unit = {
     val validateResult = Try { state.validateCreate(x) }
     validateResult.fold(processFailure, _ => {
       val userId = x.id.getOrElse(UUID.randomUUID())
@@ -60,8 +60,6 @@ class UsersActor(val id: ActorId, val verificationBus: VerificationBus, val init
         meta = x.meta,
         status = x.status)
 
-      println(s"Created user $user")
-
       persist(CreatedUserEvt(user)) { event =>
         changeState(state.updated(event))
         sender ! CreateUserSuccess(user)
@@ -69,7 +67,7 @@ class UsersActor(val id: ActorId, val verificationBus: VerificationBus, val init
     })
   }
 
-  def updateUser(state: UsersState, entry: UpdateUser): Unit = {
+  def updateUser(state: UserManagerState, entry: UpdateUser): Unit = {
     val validateResult = Try {
       state.validateUpdate(entry)
     }
@@ -82,7 +80,7 @@ class UsersActor(val id: ActorId, val verificationBus: VerificationBus, val init
         })
   }
 
-  def deleteUser(state: UsersState, id: User.Id): Unit = {
+  def deleteUser(state: UserManagerState, id: User.Id): Unit = {
     if (state.userExists(id)) {
       persist(DeletedUserEvt(id)) { event =>
         changeState(state.updated(event))
@@ -93,13 +91,13 @@ class UsersActor(val id: ActorId, val verificationBus: VerificationBus, val init
     }
   }
 
-  def findUserById(state: UsersState, id: User.Id): Unit =
+  def findUserById(state: UserManagerState, id: User.Id): Unit =
     sender ! UserOpt(state.findUserById(id))
 
-  def listUsers(state: UsersState): Unit =
+  def listUsers(state: UserManagerState): Unit =
     sender ! UsersMap(state.users)
 
-  def paginateListUsers(state: UsersState, page: PageRequest): Unit = {
+  def paginateListUsers(state: UserManagerState, page: PageRequest): Unit = {
     def sort = (state.users.values.toList /: page.sort) {
       case (users, (field, order)) =>
 
@@ -122,7 +120,7 @@ class UsersActor(val id: ActorId, val verificationBus: VerificationBus, val init
       totalCount = state.users.size))
   }
 
-  def updatePassword(state: UsersState, userId: User.Id, password: String): Unit = {
+  def updatePassword(state: UserManagerState, userId: User.Id, password: String): Unit = {
     if (state.userExists(userId)) {
       persist(UpdatedPasswordEvt(userId, password)) { event =>
         changeState(state.updated(event))
@@ -133,11 +131,11 @@ class UsersActor(val id: ActorId, val verificationBus: VerificationBus, val init
     }
   }
 
-  def findUserByLoginAndPassword(state: UsersState, login: String, password: String): Unit = {
+  def findUserByLoginAndPassword(state: UserManagerState, login: String, password: String): Unit = {
     sender ! UserOpt(state.findUserByLoginAndPassword(login, password))
   }
 
-  def activateUser(state: UsersState, email: String): Unit = {
+  def activateUser(state: UserManagerState, email: String): Unit = {
     state.findUserByEmail(email).foreach { x =>
       persist(ActivatedUserEvt(x.id)) { event =>
         changeState(state.updated(event))
@@ -145,7 +143,7 @@ class UsersActor(val id: ActorId, val verificationBus: VerificationBus, val init
     }
   }
 
-  def behavior(state: UsersState): Receive = {
+  def behavior(state: UserManagerState): Receive = {
     case CreateUserCmd(x) => createUser(state, x)
     case UpdateUserCmd(x) => updateUser(state, x)
     case DeleteUserCmd(x) => deleteUser(state, x)
@@ -157,7 +155,7 @@ class UsersActor(val id: ActorId, val verificationBus: VerificationBus, val init
     case Verification.EmailVerifiedEvt(x) => activateUser(state, x.email)
   }
 
-  override def afterRecover(state: UsersState): Unit = {
+  override def afterRecover(state: UserManagerState): Unit = {
     verificationBus.subscribe(self, "email")
   }
 }

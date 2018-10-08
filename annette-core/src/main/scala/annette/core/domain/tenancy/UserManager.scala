@@ -16,7 +16,7 @@ import annette.core.AnnetteMessage
 import annette.core.akkaext.actor._
 import annette.core.akkaext.http.PageRequest
 import annette.core.domain.tenancy.model.User._
-import annette.core.domain.tenancy.actor.{ UsersActor, UsersState }
+import annette.core.domain.tenancy.actor.{ UserManagerActor, UserManagerState }
 import annette.core.domain.tenancy.model.User.Id
 import annette.core.domain.tenancy.model.{ UpdateUser, User }
 import annette.core.security.verification.VerificationBus
@@ -92,8 +92,8 @@ class UserManager @Inject() (@Named("CoreService") actor: ActorRef)(implicit c: 
 }
 
 object UserManager {
-  def props(id: ActorId, verificationBus: VerificationBus, state: UsersState = UsersState()) =
-    Props(new UsersActor(
+  def props(id: ActorId, verificationBus: VerificationBus, state: UserManagerState = UserManagerState()) =
+    Props(new UserManagerActor(
       id = id,
       verificationBus = verificationBus,
       initState = state))

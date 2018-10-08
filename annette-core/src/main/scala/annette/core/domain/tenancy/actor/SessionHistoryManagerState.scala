@@ -1,17 +1,17 @@
 package annette.core.domain.tenancy.actor
 
 import annette.core.akkaext.actor.CqrsState
-import annette.core.domain.tenancy.SessionHistoryService
+import annette.core.domain.tenancy.SessionHistoryManager
 import annette.core.domain.tenancy.model.{ OpenSession, SessionHistory }
 
-case class SessionHistoryState(sessionHistory: Map[OpenSession.Id, SessionHistory] = Map.empty) extends CqrsState {
+case class SessionHistoryManagerState(sessionHistory: Map[OpenSession.Id, SessionHistory] = Map.empty) extends CqrsState {
 
-  def createSessionHistory(entry: SessionHistory): SessionHistoryState = {
+  def createSessionHistory(entry: SessionHistory): SessionHistoryManagerState = {
     if (sessionHistory.get(entry.id).isDefined) throw new IllegalArgumentException
     else copy(sessionHistory = sessionHistory + (entry.id -> entry))
   }
 
-  def deleteSessionHistory(id: OpenSession.Id): SessionHistoryState = {
+  def deleteSessionHistory(id: OpenSession.Id): SessionHistoryManagerState = {
     if (sessionHistory.get(id).isEmpty) throw new IllegalArgumentException
     else copy(sessionHistory = sessionHistory - id)
   }
@@ -23,6 +23,6 @@ case class SessionHistoryState(sessionHistory: Map[OpenSession.Id, SessionHistor
   def sessionHistoryExists(id: OpenSession.Id): Boolean = sessionHistory.get(id).isDefined
 
   def update: Update = {
-    case SessionHistoryService.SessionHistoryCreatedEvt(entry) => createSessionHistory(entry)
+    case SessionHistoryManager.SessionHistoryCreatedEvt(entry) => createSessionHistory(entry)
   }
 }

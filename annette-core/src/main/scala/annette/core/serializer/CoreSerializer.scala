@@ -4,7 +4,7 @@ import akka.serialization.SerializerWithStringManifest
 import annette.core.domain.tenancy.UserManager
 import annette.core.domain.application._
 import annette.core.domain.application.{ ApplicationManager, ApplicationManagerState }
-import annette.core.domain.tenancy.actor.UsersState
+import annette.core.domain.tenancy.actor.UserManagerState
 import annette.core.security.verification.{ Verification, VerificationState }
 import annette.core.domain.tenancy.model.User
 
@@ -22,7 +22,7 @@ class CoreSerializer extends SerializerWithStringManifest
       case obj: User.CreatedUserEvt => toCreatedUserEvtBinary(obj)
       case obj: User.UpdatedUserEvt => toUpdateUserEvtBinary(obj)
       case obj: User.DeletedUserEvt => toDeleteUserEvtBinary(obj)
-      case obj: UsersState => toUserStatesBinary(obj)
+      case obj: UserManagerState => toUserStatesBinary(obj)
 
       case obj: Application.ApplicationCreatedEvt => toApplicationCreatedEvtBinary(obj)
       case obj: Application.ApplicationUpdatedEvt => toApplicationUpdateEvtBinary(obj)
@@ -44,7 +44,7 @@ class CoreSerializer extends SerializerWithStringManifest
       case _: User.CreatedUserEvt => CreatedUserEvtManifestV1
       case _: User.UpdatedUserEvt => UpdatedUserEvtManifestV1
       case _: User.DeletedUserEvt => DeletedUserEvtManifestV1
-      case _: UsersState => UsersStateManifestV1
+      case _: UserManagerState => UsersStateManifestV1
 
       case _: Application.ApplicationCreatedEvt => ApplicationCreatedEvtManifestV1
       case _: Application.ApplicationUpdatedEvt => ApplicationUpdatedEvtManifestV1

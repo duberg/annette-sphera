@@ -9,14 +9,14 @@ import annette.core.domain.tenancy.model._
 import annette.core.domain.tenancy.model.User._
 import org.mindrot.jbcrypt.BCrypt
 
-case class UsersState(
+case class UserManagerState(
   users: Map[User.Id, User] = Map.empty,
   emailIndex: Map[String, User.Id] = Map.empty,
   phoneIndex: Map[String, User.Id] = Map.empty,
   usernameIndex: Map[String, User.Id] = Map.empty,
   userProperties: Map[UserProperty.Id, UserProperty] = Map.empty) extends CqrsState {
 
-  def createUser(x: User): UsersState = {
+  def createUser(x: User): UserManagerState = {
     val newEmailIndex = x.email.map { email => emailIndex + (email.trim.toLowerCase -> x.id) }.getOrElse(emailIndex)
     val newPhoneIndex = x.phone.map { phone => phoneIndex + (phone.trim.toLowerCase -> x.id) }.getOrElse(phoneIndex)
     val newLoginIndex = x.username.map { login => usernameIndex + (login.trim.toLowerCase -> x.id) }.getOrElse(usernameIndex)
@@ -67,7 +67,7 @@ case class UsersState(
       .getOrElse(throw new UserNotFound(x.id))
   }
 
-  def updateUser(x: UpdateUser): UsersState = {
+  def updateUser(x: UpdateUser): UserManagerState = {
     val user = validateUpdate(x)
 
     val newEmailIndex = x.email.map {
@@ -113,7 +113,7 @@ case class UsersState(
       usernameIndex = newUsernameIndex)
   }
 
-  def deleteUser(id: User.Id): UsersState = {
+  def deleteUser(id: User.Id): UserManagerState = {
     users.get(id).map {
       user =>
         val newEmailIndex = user.email.map { email => emailIndex - email.trim.toLowerCase }.getOrElse(emailIndex)
@@ -128,7 +128,7 @@ case class UsersState(
 
   def userExists(id: User.Id): Boolean = users.get(id).isDefined
 
-  def updatePassword(userId: User.Id, password: String): UsersState = {
+  def updatePassword(userId: User.Id, password: String): UserManagerState = {
     users
       .get(userId)
       .map {
@@ -165,7 +165,7 @@ case class UsersState(
           .getOrElse(usernameIndex.get(cleanLogin)))
   }
 
-  def activateUser(x: User.Id): UsersState = {
+  def activateUser(x: User.Id): UserManagerState = {
     val user = users(x).copy(status = 1)
     copy(users = users + (user.id -> user))
   }

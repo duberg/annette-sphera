@@ -3,13 +3,13 @@ package annette.core.domain.tenancy.actor
 import akka.Done
 import annette.core.akkaext.actor.ActorId
 import annette.core.akkaext.persistence.CqrsPersistentActor
-import annette.core.domain.tenancy.SessionHistoryService
+import annette.core.domain.tenancy.SessionHistoryManager
 import annette.core.domain.tenancy.model._
-import SessionHistoryService._
+import SessionHistoryManager._
 
-class SessionHistoryActor(val id: ActorId, val initState: SessionHistoryState) extends CqrsPersistentActor[SessionHistoryState] {
+class SessionHistoryManagerActor(val id: ActorId, val initState: SessionHistoryManagerState) extends CqrsPersistentActor[SessionHistoryManagerState] {
 
-  def createSessionHistory(state: SessionHistoryState, entry: SessionHistory): Unit = {
+  def createSessionHistory(state: SessionHistoryManagerState, entry: SessionHistory): Unit = {
     if (state.sessionHistoryExists(entry.id)) sender ! EntryAlreadyExists
     else {
       persist(SessionHistoryCreatedEvt(entry)) { event =>
@@ -20,13 +20,13 @@ class SessionHistoryActor(val id: ActorId, val initState: SessionHistoryState) e
     }
   }
 
-  def findSessionHistoryById(state: SessionHistoryState, id: OpenSession.Id): Unit =
+  def findSessionHistoryById(state: SessionHistoryManagerState, id: OpenSession.Id): Unit =
     sender ! SessionHistoryOpt(state.findSessionHistoryById(id))
 
-  def findAllSessionHistory(state: SessionHistoryState): Unit =
+  def findAllSessionHistory(state: SessionHistoryManagerState): Unit =
     sender ! SessionHistorySeq(state.findAllSessionHistory)
 
-  def behavior(state: SessionHistoryState): Receive = {
+  def behavior(state: SessionHistoryManagerState): Receive = {
     case CreateSessionHistoryCmd(entry) => createSessionHistory(state, entry)
     case FindSessionHistoryById(i) => findSessionHistoryById(state, i)
     case FindAllSessionHistory => findAllSessionHistory(state)
