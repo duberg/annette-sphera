@@ -42,7 +42,7 @@ object Implicits {
   implicit def OptToSet[T](x: Option[Set[T]]): Set[T] = x.getOrElse(Set.empty)
   implicit def OptSetToSeq[T](x: Option[Set[T]]): Seq[T] = x.map(_.toSeq).getOrElse(Seq.empty)
   implicit def OptSeqToSeq[T](x: Option[Seq[T]]): Seq[T] = x.getOrElse(Seq.empty)
-  implicit def OptToMap[A, B](x: Option[Map[A, B]]): Map[A, B] = x.getOrElse(Map.empty)
+  //implicit def OptToMap[A, B](x: Option[Map[A, B]]): Map[A, B] = x.getOrElse(Map.empty)
   implicit def SetToOptSeq[T](x: Set[T]): Option[Seq[T]] = Some(x.toSeq)
   implicit def SeqToOptSet[T](x: Seq[T]): Option[Set[T]] = Some(x.toSet)
 
@@ -50,6 +50,12 @@ object Implicits {
   implicit def toSet[A, B](x: Seq[A])(implicit convert: A => B): Set[B] = x.map(convert).toSet
   implicit def toSet[A, B](x: Set[A])(implicit convert: A => B): Set[B] = x map convert
 
-  private implicit def typeAToOptionTypeB[A, B](x: Option[A])(implicit convert: A => B): Option[B] =
-    x map convert
+  /**
+   * = Map conversions =
+   */
+  implicit def mapValue[A, B, C](x: Map[C, A])(implicit convert: A => B): Map[C, B] = x mapValues convert
+  implicit def mapValueOpt[A, B, C](x: Map[C, A])(implicit convert: A => B): Option[Map[C, B]] = if (x.isEmpty) None else mapValue(x)
+  implicit def optMapValue[A, B, C](x: Option[Map[C, A]])(implicit convert: A => B): Map[C, B] = x.fold(Map[C, B]())(mapValue(_))
+
+  implicit def typeAToOptionTypeB[A, B](x: Option[A])(implicit convert: A => B): Option[B] = x map convert
 }

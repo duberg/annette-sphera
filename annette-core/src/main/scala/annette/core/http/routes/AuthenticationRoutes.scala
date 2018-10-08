@@ -12,8 +12,8 @@ import annette.core.{ AnnetteException, RequiredValueNotProvided, TenantNotFound
 import annette.core.domain.application.Application
 import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.UserManager
-import annette.core.domain.tenancy.dao.{ TenantDao, TenantUserDao, TenantUserRoleDao }
+import annette.core.domain.tenancy.{ TenantManager, UserManager }
+import annette.core.domain.tenancy.dao.{ TenantUserDao, TenantUserRoleDao }
 import annette.core.domain.tenancy.model._
 import annette.core.model.EntityType.Verification
 import annette.core.notification._
@@ -28,9 +28,7 @@ import scala.util.{ Failure, Success }
 import scala.concurrent.duration._
 
 trait AuthenticationRoutes extends Directives with AskSupport with Generator {
-  val tenantDao: TenantDao
-  val tenantUserDao: TenantUserDao
-  val tenantUserRoleDao: TenantUserRoleDao
+  val tenantManager: TenantManager
   val userManager: UserManager
   val languageManager: LanguageManager
   val authenticationService: ActorRef
@@ -88,7 +86,7 @@ trait AuthenticationRoutes extends Directives with AskSupport with Generator {
   }
 
   def signUp: Route = (path("signup") & post & entity(as[SignUpUser])) { x =>
-    def f = tenantDao.listIds.flatMap(f = tenantIds => {
+    def f = tenantManager.listTenantsIds.flatMap(f = tenantIds => {
       // if empty tenants
       if (x.tenants.isEmpty) throw RequiredValueNotProvided("tenants")
 
@@ -98,12 +96,17 @@ trait AuthenticationRoutes extends Directives with AskSupport with Generator {
       if (unknownTenants.nonEmpty) throw TenantNotFoundException(unknownTenants)
 
       else {
-        val c1 = CreateUser(
+        val x1 = CreateUser(
           username = None,
           displayName = Some(s"${x.lastName} ${x.firstName}"),
           firstName = x.firstName,
           lastName = x.lastName,
           middleName = None,
+          gender = None,
+
+          // Set default role "user"
+          roles = x.tenants.map(_ -> Set("user")).toMap,
+
           email = Some(x.email),
           url = None,
           description = None,
@@ -122,16 +125,14 @@ trait AuthenticationRoutes extends Directives with AskSupport with Generator {
 
         val code = generateUUIDStr
 
-        val c2 = CreateEmailVerification(
+        val x2 = CreateEmailVerification(
           code = code,
           email = x.email,
           duration = 10.minutes)
 
         for {
-          user <- userManager.create(c1)
-          tenantUser <- Future.sequence(x.tenants.map(tenantUserDao.create(_, user.id)))
-          tenantUserRole <- Future.sequence(x.tenants.map(tenantId => tenantUserRoleDao.store(TenantUserRole(tenantId, user.id, Set("user")))))
-          verification <- notificationManager.createVerification(c2)
+          user <- userManager.create(x1)
+          verification <- notificationManager.createVerification(x2)
         } yield {
           /**
            * = Email verification =

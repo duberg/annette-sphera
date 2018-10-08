@@ -12,7 +12,7 @@ import akka.pattern.ask
 import annette.core.akkaext.http.PaginationDirectives
 import annette.core.security.authentication.Session
 import annette.core.{ AnnetteException, CoreModule }
-import annette.core.domain.tenancy.UserManager
+import annette.core.domain.tenancy.{ TenantManager, UserManager }
 import annette.core.domain.tenancy.dao.{ TenantDao, TenantUserDao, TenantUserRoleDao }
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import io.circe._
@@ -34,7 +34,7 @@ trait UserRoutes extends Directives with PaginationDirectives {
   implicit val c: ExecutionContext
   val annetteSecurityDirectives: SecurityDirectives
   val userManager: UserManager
-  val tenantDao: TenantDao
+  val tenantManager: TenantManager
   val tenantUserDao: TenantUserDao
   val tenantUserRoleDao: TenantUserRoleDao
   val authorizationManager: ActorRef

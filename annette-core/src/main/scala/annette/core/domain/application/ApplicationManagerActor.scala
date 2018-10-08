@@ -22,8 +22,9 @@ class ApplicationManagerActor(val id: ActorId, val initState: ApplicationManager
 
   def deleteApplication(p1: ApplicationManagerState, p2: Application.Id): Unit = {
     if (p1.applicationExists(p2)) persist(p1, ApplicationDeletedEvt(p2)) { (state, event) =>
-        sender ! Done
-    } else sender ! EntryNotFound
+      sender ! Done
+    }
+    else sender ! EntryNotFound
   }
 
   def findApplicationById(state: ApplicationManagerState, id: Application.Id): Unit = {

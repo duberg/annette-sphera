@@ -11,8 +11,7 @@ import annette.core.security.authentication.jwt.JwtHelper
 import annette.core.domain.application._
 import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.{SessionManager, UserManager}
-import annette.core.domain.tenancy.dao._
+import annette.core.domain.tenancy.{SessionManager, TenantManager, UserManager}
 import annette.core.domain.tenancy.model.{OpenSession, Tenant, User}
 import org.joda.time.DateTime
 
@@ -21,8 +20,7 @@ import scala.concurrent.Future
 class LoginActor(
                   userDao: UserManager,
                   sessionDao: SessionManager,
-                  tenantDao: TenantDao,
-                  tenantUserDao: TenantUserDao,
+                  tenantManager: TenantManager,
                   applicationDao: ApplicationManager,
                   languageDao: LanguageManager,
                   rememberMeSessionTimeout: Int,
@@ -75,7 +73,7 @@ class LoginActor(
       // пользователю предлагается выбрать организацию/приложение
 
       // 5. Проверки организации:
-      tenant <- tenantDao
+      tenant <- tenantManager
         .getById(tenantId)
         .map(_.getOrElse(throw new TenantNotFoundException()))
 

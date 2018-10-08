@@ -5,10 +5,9 @@ import java.util.UUID
 import annette.core.akkaext.actor.ActorId
 import annette.core.akkaext.http.PageRequest
 import annette.core.akkaext.persistence.CqrsPersistentActor
-import annette.core.domain.tenancy.model.{CreateTenant, UpdateTenant}
+import annette.core.domain.tenancy.model.{ CreateTenant, Tenant, UpdateTenant }
 import annette.core.domain.tenancy.model.Tenant._
-import annette.core.domain.tenancy.model.Tenant
-import annette.core.domain.tenancy.model.User.{CreateUserSuccess, CreatedUserEvt}
+import annette.core.domain.tenancy.model.User.{ CreateUserSuccess, CreatedUserEvt }
 
 class TenantManagerActor(val id: ActorId, val initState: TenantManagerState) extends CqrsPersistentActor[TenantManagerState] {
   def createTenant(p1: TenantManagerState, p2: CreateTenant): Unit = {
@@ -18,8 +17,7 @@ class TenantManagerActor(val id: ActorId, val initState: TenantManagerState) ext
       defaultApplicationId = p2.defaultApplicationId,
       applications = p2.applications,
       defaultLanguageId = p2.defaultLanguageId,
-      languages = p2.languages
-    )
+      languages = p2.languages)
     persist(p1, CreatedTenantEvt(tenant)) { (state, event) =>
       sender ! CreateTenantSuccess(tenant)
     }
@@ -30,16 +28,15 @@ class TenantManagerActor(val id: ActorId, val initState: TenantManagerState) ext
   }
 
   def deleteTenant(p1: TenantManagerState, p2: Tenant.Id): Unit = {
-   ???
+    ???
   }
 
-
   def findTenantById(p1: TenantManagerState, p2: Tenant.Id): Unit = {
-
+    sender() ! TenantOpt(p1(p2))
   }
 
   def listTenants(p1: TenantManagerState): Unit = {
-
+    sender() ! TenantsMap(p1.tenants)
   }
 
   def paginateListTenants(p1: TenantManagerState, p2: PageRequest): Unit = {

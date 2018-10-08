@@ -4,10 +4,10 @@ import akka.actor.ActorRef
 import akka.persistence.PersistentActor
 import akka.util.Timeout
 import annette.core.akkaext.actor.CqrsResponse.Persisted
-import annette.core.akkaext.actor.{CqrsCommand, CqrsEvent, CqrsResponse, CqrsState}
+import annette.core.akkaext.actor.{ CqrsCommand, CqrsEvent, CqrsResponse, CqrsState }
 
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
+import scala.concurrent.{ ExecutionContext, Future }
+import scala.util.{ Failure, Success, Try }
 
 trait PersistBehavior[A <: CqrsState] { x: CqrsPersistentActor[A] with PersistentActor =>
   /**

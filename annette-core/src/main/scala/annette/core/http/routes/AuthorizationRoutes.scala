@@ -8,8 +8,8 @@ import annette.core.akkaext.http.{ PageResponse, PaginationDirectives }
 import annette.core.domain.application.Application
 import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.UserManager
-import annette.core.domain.tenancy.dao.{ TenantDao, TenantUserDao, TenantUserRoleDao }
+import annette.core.domain.tenancy.{ TenantManager, UserManager }
+import annette.core.domain.tenancy.dao.{ TenantUserDao, TenantUserRoleDao }
 import annette.core.domain.tenancy.model._
 import annette.core.notification._
 import annette.core.security.SecurityDirectives
@@ -29,9 +29,7 @@ trait AuthorizationRoutes extends Directives
   with PaginationDirectives
   with AskSupport
   with Generator {
-  val tenantDao: TenantDao
-  val tenantUserDao: TenantUserDao
-  val tenantUserRoleDao: TenantUserRoleDao
+  val tenantManager: TenantManager
   val userManager: UserManager
   val languageManager: LanguageManager
   val authenticationService: ActorRef

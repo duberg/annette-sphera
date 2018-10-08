@@ -1,8 +1,8 @@
 package annette.core.domain.tenancy
 
 import akka.Done
-import akka.actor.{ActorRef, ActorSystem}
-import akka.event.{LogSource, Logging}
+import akka.actor.{ ActorRef, ActorSystem }
+import akka.event.{ LogSource, Logging }
 import akka.pattern.ask
 import annette.core.domain.application.Application
 import annette.core.domain.language.model.Language
@@ -11,10 +11,10 @@ import annette.core.domain.tenancy.model._
 import javax.inject._
 import org.joda.time.DateTime
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class SessionManager @Inject()(@Named("CoreService") actor: ActorRef, system: ActorSystem) {
+class SessionManager @Inject() (@Named("CoreService") actor: ActorRef, system: ActorSystem) {
 
   implicit val myLogSourceType: LogSource[SessionManager] = (a: SessionManager) => "SessionDao"
 

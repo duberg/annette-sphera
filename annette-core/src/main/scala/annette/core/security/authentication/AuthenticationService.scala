@@ -3,7 +3,7 @@ package annette.core.security.authentication
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-import akka.actor.{Actor, ActorLogging, Props}
+import akka.actor.{ Actor, ActorLogging, Props }
 import akka.event.LoggingReceive
 import akka.routing.FromConfig
 import akka.util.Timeout
@@ -11,7 +11,7 @@ import annette.core.domain.application.ApplicationManager
 import annette.core.domain.application._
 import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.{SessionManager, UserManager}
+import annette.core.domain.tenancy.{ SessionManager, TenantManager, UserManager }
 import annette.core.domain.tenancy.dao._
 import annette.core.domain.tenancy.model.Tenant
 import com.typesafe.config.Config
@@ -73,32 +73,32 @@ object AuthenticationService {
     languageId: Language.Id)
 
   def props(
-             sessionDao: SessionManager,
-             tenantDao: TenantDao,
-             applicationDao: ApplicationManager,
-             userDao: UserManager,
-             tenantUserDao: TenantUserDao,
-             languageDao: LanguageManager,
-             config: Config) = Props(
+    sessionManager: SessionManager,
+    tenantManager: TenantManager,
+    applicationManager: ApplicationManager,
+    userManager: UserManager,
+    tenantUserDao: TenantUserDao,
+    languageManager: LanguageManager,
+    config: Config) = Props(
     classOf[AuthenticationService],
-    sessionDao,
-    tenantDao,
-    applicationDao,
-    userDao,
+    sessionManager,
+    tenantManager,
+    applicationManager,
+    userManager,
     tenantUserDao,
-    languageDao,
+    languageManager,
     config)
 
 }
 
 class AuthenticationService(
-                             sessionDao: SessionManager,
-                             tenantDao: TenantDao,
-                             applicationDao: ApplicationManager,
-                             userDao: UserManager,
-                             tenantUserDao: TenantUserDao,
-                             languageDao: LanguageManager,
-                             config: Config)
+  sessionDao: SessionManager,
+  tenantDao: TenantDao,
+  applicationDao: ApplicationManager,
+  userDao: UserManager,
+  tenantUserDao: TenantUserDao,
+  languageDao: LanguageManager,
+  config: Config)
   extends Actor with ActorLogging {
 
   implicit val ec = context.dispatcher

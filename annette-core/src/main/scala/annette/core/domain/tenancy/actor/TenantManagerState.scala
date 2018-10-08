@@ -5,7 +5,6 @@ import annette.core.domain.tenancy.model.Tenant
 
 case class TenantManagerState(tenants: Map[Tenant.Id, Tenant]) extends CqrsState {
 
-
   def update: Update = {
 
   }

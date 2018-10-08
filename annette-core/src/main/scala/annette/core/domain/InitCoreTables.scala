@@ -9,8 +9,7 @@ import akka.http.scaladsl.util.FastFuture
 import annette.core.domain.application.{ Application, ApplicationAlreadyExists, ApplicationManager }
 import annette.core.domain.language.model.Language
 import annette.core.domain.language.{ LanguageAlreadyExists, LanguageManager }
-import annette.core.domain.tenancy.dao._
-import annette.core.domain.tenancy.model.{ CreateUser, Tenant, TenantUserRole, User }
+import annette.core.domain.tenancy.model._
 import annette.core.domain.tenancy._
 import annette.core.domain.tenancy.model.Tenant.Id
 import annette.core.domain.tenancy.model.User.Id
@@ -25,14 +24,10 @@ import scala.util.Try
 @Singleton
 class InitCoreTables @Inject() (
   config: Config,
-  tenancyDb: TenancyDb,
-  userDao: UserManager,
-  tenantDao: TenantDao,
-  tenantUserDao: TenantUserDao,
-  tenantUserRoleDao: TenantUserRoleDao,
-  // languageDb: LanguageDb,
-  languageDao: LanguageManager,
-  applicationDao: ApplicationManager,
+  userManager: UserManager,
+  tenantManager: TenantManager,
+  languageManager: LanguageManager,
+  applicationManger: ApplicationManager,
   system: ActorSystem) {
 
   implicit val myLogSourceType: LogSource[InitCoreTables] = (a: InitCoreTables) => "InitCoreTables"
@@ -57,7 +52,7 @@ class InitCoreTables @Inject() (
   def initDb(): Future[Unit] = {
 
     for {
-      _ <- createTables(initDbConf)
+      // _ <- createTables(initDbConf)
       _ <- load("languages", loadLanguages)
       _ <- load("applications", loadApplications)
       _ <- load("tenants", loadTenants)
@@ -75,23 +70,23 @@ class InitCoreTables @Inject() (
       .getOrElse(FastFuture.successful(()))
   }
 
-  private def createTables(initDb: Config): Future[Unit] = {
-
-    val createFuture = for {
-      //res1 <- languageDb.createAsync()
-      res2 <- tenancyDb.createAsync()
-      //res3 <- applicationDb.createAsync()
-    } yield (res2)
-    createFuture.failed.foreach {
-      case th: Throwable =>
-        log.error("Create table failure: ")
-        th.printStackTrace()
-    }
-    createFuture
-      .map(_ => ())
-      .recover { case _ => () }
-
-  }
+  //  private def createTables(initDb: Config): Future[Unit] = {
+  //
+  //    val createFuture = for {
+  //      //res1 <- languageDb.createAsync()
+  //      res2 <- tenancyDb.createAsync()
+  //      //res3 <- applicationDb.createAsync()
+  //    } yield (res2)
+  //    createFuture.failed.foreach {
+  //      case th: Throwable =>
+  //        log.error("Create table failure: ")
+  //        th.printStackTrace()
+  //    }
+  //    createFuture
+  //      .map(_ => ())
+  //      .recover { case _ => () }
+  //
+  //  }
 
   private def loadLanguages(list: List[Config]): Future[Unit] = {
     val languages = list.map {
@@ -103,7 +98,7 @@ class InitCoreTables @Inject() (
     Future
       .traverse(languages) {
         lang =>
-          languageDao.create(lang).map(_ => ()).recover {
+          languageManager.create(lang).map(_ => ()).recover {
             case _: LanguageAlreadyExists =>
               log.error(s"Failed to load $lang: already exist")
             case th =>
@@ -129,7 +124,7 @@ class InitCoreTables @Inject() (
     Future
       .traverse(data) {
         obj =>
-          applicationDao.create(obj).map(_ => ()).recover {
+          applicationManger.create(obj).map(_ => ()).recover {
             case _: ApplicationAlreadyExists =>
               log.error(s"Failed to load $obj: already exist")
             case th =>
@@ -145,84 +140,82 @@ class InitCoreTables @Inject() (
       conf =>
         val applications = opt(conf.getStringList("applications").asScala.toList).getOrElse(Set.empty[String])
         val languages = opt(conf.getStringList("languages").asScala.toList).getOrElse(Set.empty[String])
-        Tenant(
+        CreateTenant(
+          id = opt(conf.getString("id")).getOrElse("ID"),
           name = opt(conf.getString("name")).getOrElse(""),
           defaultApplicationId = opt(conf.getString("applicationId")).getOrElse(applications.head),
           applications = applications.toSet,
           defaultLanguageId = opt(conf.getString("languageId")).getOrElse(languages.head),
-          languages = languages.toSet,
-          id = opt(conf.getString("id")).getOrElse("ID"))
+          languages = languages.toSet)
     }
-    Future
-      .traverse(data) {
-        obj =>
-          tenantDao.create(obj).map(_ => ()).recover {
-            case _: TenantAlreadyExists =>
-              log.error(s"Failed to load $obj: already exist")
-            case th =>
-              log.error(s"Failed to load $obj")
-              th.printStackTrace()
-          }
+    Future.traverse(data) { obj =>
+      tenantManager.createTenant(obj).map(_ => ()).recover {
+        case _: TenantAlreadyExists =>
+          log.error(s"Failed to load $obj: already exist")
+        case th =>
+          log.error(s"Failed to load $obj")
+          th.printStackTrace()
       }
+    }
       .map(_ => ())
-
   }
 
   private def loadUsers(list: List[Config]) = {
-    val data = list.map {
-      conf =>
-        val tenantsConf = opt(conf.getConfigList("tenants").asScala.toList).get
-        val tenantsAndRoles: Seq[(String, Set[String])] = tenantsConf.map {
-          case tenantConf =>
-            val tenant = opt(tenantConf.getString("tenant")).getOrElse("")
-            val roles = opt(tenantConf.getStringList("roles").asScala.toSet).getOrElse(Set.empty)
-            tenant -> roles
-        }
-        val x = CreateUser(
-          id = opt(UUID.fromString(conf.getString("id"))),
-          username = opt(conf.getString("username")),
-          displayName = opt(conf.getString("name")),
-          firstName = opt(conf.getString("firstName")).getOrElse(""),
-          lastName = opt(conf.getString("lastName")).getOrElse(""),
-          middleName = opt(conf.getString("middleName")),
-          email = opt(conf.getString("email")),
-          url = opt(conf.getString("url")),
-          description = opt(conf.getString("description")),
-          phone = opt(conf.getString("phone")),
-          language = opt(conf.getString("locale")),
-          //tenants = tenantsAndRoles.map(_._1).toSet,
-          //applications = Map.empty,
-          //roles = Map.empty,
-          password = opt(conf.getString("password")).getOrElse("abc"),
-          avatarUrl = opt(conf.getString("avatarUrl")),
-          sphere = opt(conf.getString("sphere")),
-          company = opt(conf.getString("company")),
-          position = opt(conf.getString("position")),
-          rank = opt(conf.getString("rank")),
-          additionalTel = opt(conf.getString("additionalTel")),
-          additionalMail = opt(conf.getString("additionalMail")),
-          meta = Map.empty,
-          status = 1)
+    val data = list.map { conf =>
+      val tenantsConf = opt(conf.getConfigList("tenants").asScala.toList).get
 
-        (x, tenantsAndRoles)
+      val tenantsAndRoles = tenantsConf.map {
+        case tenantConf =>
+          val tenant = opt(tenantConf.getString("tenant")).getOrElse("")
+          val roles = opt(tenantConf.getStringList("roles").asScala.toSet).getOrElse(Set.empty)
+          tenant -> roles
+      }.toMap
+
+      val x = CreateUser(
+        id = opt(UUID.fromString(conf.getString("id"))),
+        username = opt(conf.getString("username")),
+        displayName = opt(conf.getString("name")),
+        firstName = opt(conf.getString("firstName")).getOrElse(""),
+        lastName = opt(conf.getString("lastName")).getOrElse(""),
+        middleName = opt(conf.getString("middleName")),
+        gender = opt(conf.getString("gender")),
+        email = opt(conf.getString("email")),
+        url = opt(conf.getString("url")),
+        description = opt(conf.getString("description")),
+        phone = opt(conf.getString("phone")),
+        language = opt(conf.getString("locale")),
+        roles = tenantsAndRoles,
+        password = opt(conf.getString("password")).getOrElse("abc"),
+        avatarUrl = opt(conf.getString("avatarUrl")),
+        sphere = opt(conf.getString("sphere")),
+        company = opt(conf.getString("company")),
+        position = opt(conf.getString("position")),
+        rank = opt(conf.getString("rank")),
+        additionalTel = opt(conf.getString("additionalTel")),
+        additionalMail = opt(conf.getString("additionalMail")),
+        meta = Map.empty,
+        status = 1)
+
+      (x, tenantsAndRoles)
     }
+
     Future.traverse(data) {
       case (x, tenantsAndRoles) =>
-        def f1: Future[User] = userDao.create(x)
-        def f2(user: User) = Future.sequence(tenantsAndRoles.map {
-          case (tenant, roles) =>
-            tenantUserDao.create(tenant, user.id)
-        })
-        def f3(user: User) = Future.sequence(tenantsAndRoles.map {
-          case (tenant, roles) =>
-            if (roles.nonEmpty) tenantUserRoleDao.store(TenantUserRole(tenant, user.id, roles)).map(Some.apply)
-            else Future.successful(None)
-        })
+        def f1: Future[User] = userManager.create(x)
+        //        def f2(user: User) = Future.sequence(tenantsAndRoles.map {
+        //          case (tenant, roles) =>
+        //            tenantUserDao.create(tenant, user.id)
+        //        })
+        //        def f3(user: User) = Future.sequence(tenantsAndRoles.map {
+        //          case (tenant, roles) =>
+        //            if (roles.nonEmpty) tenantUserRoleDao.store(TenantUserRole(tenant, user.id, roles)).map(Some.apply)
+        //            else Future.successful(None)
+        //        })
 
         (for {
           x1 <- f1
-          x2 <- f2(x1)
-          x3 <- f3(x1)
+          //x2 <- f2(x1)
+          //x3 <- f3(x1)
         } yield ()).recover {
           case _: UserAlreadyExists =>
             log.error(s"Failed to load $x: already exist")
@@ -237,5 +230,4 @@ class InitCoreTables @Inject() (
     }
       .map(_ => ())
   }
-
 }

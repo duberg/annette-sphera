@@ -46,18 +46,18 @@ object Tenant {
 
   case class CreateTenantCmd(x: CreateTenant) extends Command
   case class UpdateTenantCmd(x: UpdateTenant) extends Command
-  case class DeleteTenantCmd(userId: Tenant.Id) extends Command
+  case class DeleteTenantCmd(x: Tenant.Id) extends Command
 
-  case class GetTenantById(id: Tenant.Id) extends Query
+  case class GetTenantById(x: Tenant.Id) extends Query
   object ListTenants extends Query
   case class PaginateListTenants(page: PageRequest) extends Query
 
   case class CreatedTenantEvt(x: Tenant) extends Event
   case class UpdatedTenantEvt(x: UpdateTenant) extends Event
-  case class DeletedTenantEvt(userId: Tenant.Id) extends Event
+  case class DeletedTenantEvt(x: Tenant.Id) extends Event
 
   case class CreateTenantSuccess(x: Tenant) extends Response
-  case class TenantOpt(maybeEntry: Option[Tenant]) extends Response
+  case class TenantOpt(x: Option[Tenant]) extends Response
   case class TenantsMap(x: Map[Tenant.Id, Tenant]) extends Response
   case class TenantsList(x: PaginateTenantsList) extends Response
 }

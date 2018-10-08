@@ -46,11 +46,11 @@ class OpenSessionManagerActor(
   }
 
   def updateTenantApplicationLanguage(
-                                       state: OpenSessionManagerState,
-                                       id: OpenSession.Id,
-                                       tenantId: Tenant.Id,
-                                       applicationId: Application.Id,
-                                       languageId: Language.Id): Unit = {
+    state: OpenSessionManagerState,
+    id: OpenSession.Id,
+    tenantId: Tenant.Id,
+    applicationId: Application.Id,
+    languageId: Language.Id): Unit = {
     val entry = OpenSessionUpdate(
       id = id,
       tenantId = Some(tenantId),

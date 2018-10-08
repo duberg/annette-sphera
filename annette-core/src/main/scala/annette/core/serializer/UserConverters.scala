@@ -2,12 +2,14 @@ package annette.core.serializer
 
 import java.time.ZonedDateTime
 import java.util.UUID
+
 import annette.core.domain.tenancy.model.User._
 import annette.core.domain.tenancy.model._
 import annette.core.domain.tenancy.{ UserManager, actor }
 import annette.core.domain.tenancy.actor.UserManagerState
 import annette.core.serializer.proto.user._
 import Implicits._
+import annette.core.domain.authorization.model.Role
 
 trait UserConverters {
 
@@ -70,15 +72,14 @@ trait UserConverters {
       firstName = x.firstName,
       lastName = x.lastName,
       middleName = x.middleName,
+      gender = x.gender,
       email = x.email,
       url = x.url,
       description = x.description,
       phone = x.phone,
       language = x.locale,
       registeredDate = x.registeredDate,
-      //tenants = x.tenants.toSet,
-      //applications = x.applications,
-      //roles = x.roles,
+      roles = x.roles,
       password = x.password,
       avatarUrl = x.avatarUrl,
       sphere = x.sphere,
@@ -105,9 +106,7 @@ trait UserConverters {
       phone = x.phone,
       locale = x.language,
       registeredDate = x.registeredDate,
-      //tenants = x.tenants.toSet,
-      //applications = x.applications,
-      //roles = x.roles,
+      roles = x.roles,
       password = x.password,
       avatarUrl = x.avatarUrl,
       sphere = x.sphere,
@@ -120,6 +119,10 @@ trait UserConverters {
       status = x.status)
   }
 
+  implicit def toRoles(x: RolesV1): Set[Role.Id] = x.x.toSet
+
+  implicit def fromRoles(x: Set[Role.Id]): RolesV1 = RolesV1(x)
+
   implicit def toUpdateUser(x: UpdateUserV1): UpdateUser = {
     UpdateUser(
       id = x.id,
@@ -128,14 +131,13 @@ trait UserConverters {
       firstName = x.firstName,
       lastName = x.lastName,
       middleName = x.middleName,
+      gender = x.gender,
       email = x.email,
       url = x.url,
       description = x.description,
       phone = x.phone,
       language = x.locale,
-      //tenants = x.tenants,
-      //applications = x.applications,
-      //roles = x.roles,
+      roles = x.roles,
       password = x.password,
       avatarUrl = x.avatarUrl,
       sphere = x.sphere,
@@ -156,14 +158,13 @@ trait UserConverters {
       firstName = x.firstName,
       lastName = x.lastName,
       middleName = x.middleName,
+      gender = x.gender,
       email = x.email,
       url = x.url,
       description = x.description,
       phone = x.phone,
       locale = x.language,
-      //tenants = x.tenants,
-      //applications = x.applications,
-      //roles = x.roles,
+      roles = x.roles,
       password = x.password,
       avatarUrl = x.avatarUrl,
       sphere = x.sphere,

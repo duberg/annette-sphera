@@ -1,24 +1,24 @@
 package annette.core.security.authentication
 
-import akka.actor.{Actor, ActorLogging}
+import akka.actor.{ Actor, ActorLogging }
 import akka.event.LoggingReceive
 import annette.core.domain.application.ApplicationManager
 import annette.core.domain.language.LanguageManager
 import annette.core.security.authentication.jwt.JwtHelper
-import annette.core.domain.tenancy.{SessionManager, UserManager}
-import annette.core.domain.tenancy.dao.{TenantDao, TenantUserDao}
+import annette.core.domain.tenancy.{ SessionManager, UserManager }
+import annette.core.domain.tenancy.dao.{ TenantDao, TenantUserDao }
 import annette.core.domain.tenancy.model.OpenSession
 
 import scala.concurrent.Future
 
 class AuthenticationActor(
-                           sessionDao: SessionManager,
-                           tenantDao: TenantDao,
-                           applicationDao: ApplicationManager,
-                           userDao: UserManager,
-                           tenantUserDao: TenantUserDao,
-                           languageDao: LanguageManager,
-                           override val secret: String)
+  sessionDao: SessionManager,
+  tenantDao: TenantDao,
+  applicationDao: ApplicationManager,
+  userDao: UserManager,
+  tenantUserDao: TenantUserDao,
+  languageDao: LanguageManager,
+  override val secret: String)
   extends Actor with ActorLogging with JwtHelper {
 
   implicit val ec = context.dispatcher
