@@ -151,7 +151,7 @@ export const locale = {
 			PERMISSIONS: {
 				PERMISSIONS: 'Users',
 				PERMISSIONS_LIST: 'Permissions list',
-				NEW_PERMISSION: 'New PERMISSION',
+				NEW_PERMISSION: 'New Permission',
 				DELETE_CUSTOMER_SIMPLE: {
 					TITLE: 'Customer Delete',
 					DESCRIPTION: 'Are you sure to permanently delete this customer?',
