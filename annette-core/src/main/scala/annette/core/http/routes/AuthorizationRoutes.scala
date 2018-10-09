@@ -9,7 +9,6 @@ import annette.core.domain.application.Application
 import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.{ TenantManager, UserManager }
-import annette.core.domain.tenancy.dao.{ TenantUserDao, TenantUserRoleDao }
 import annette.core.domain.tenancy.model._
 import annette.core.notification._
 import annette.core.security.SecurityDirectives

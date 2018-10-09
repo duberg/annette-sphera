@@ -4,6 +4,7 @@ import akka.Done
 import akka.actor.{ ActorRef, ActorSystem }
 import akka.event.{ LogSource, Logging }
 import akka.pattern.ask
+import akka.util.Timeout
 import annette.core.domain.application.Application
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.model.OpenSession.Id
@@ -14,13 +15,13 @@ import org.joda.time.DateTime
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class SessionManager @Inject() (@Named("CoreService") actor: ActorRef, system: ActorSystem) {
+class SessionManager @Inject() (@Named("CoreService") actor: ActorRef, system: ActorSystem)(implicit val c: ExecutionContext, val t: Timeout) {
 
   implicit val myLogSourceType: LogSource[SessionManager] = (a: SessionManager) => "SessionDao"
 
   val log = Logging(system, this)
 
-  def createSession(openSession: OpenSession)(implicit ec: ExecutionContext): Future[OpenSession] = {
+  def createSession(openSession: OpenSession): Future[OpenSession] = {
     for {
       f <- ask(actor, OpenSessionManager.CreateOpenSessionCmd(openSession))
     } yield {
@@ -31,7 +32,7 @@ class SessionManager @Inject() (@Named("CoreService") actor: ActorRef, system: A
     }
   }
 
-  def closeSession(id: OpenSession.Id)(implicit ec: ExecutionContext): Future[Unit] = {
+  def closeSession(id: OpenSession.Id): Future[Unit] = {
     for {
       s <- ask(actor, OpenSessionManager.FindOpenSessionById(id))
         .mapTo[OpenSessionManager.OpenSessionOpt].map(_.maybeEntry)
@@ -46,7 +47,7 @@ class SessionManager @Inject() (@Named("CoreService") actor: ActorRef, system: A
     } yield {}
   }
 
-  def updateLastOpTimestamp(id: OpenSession.Id)(implicit ec: ExecutionContext): Unit = {
+  def updateLastOpTimestamp(id: OpenSession.Id): Unit = {
     ask(actor, OpenSessionManager.UpdateOpenSessionCmd(OpenSessionUpdate(
       id = id,
       lastOpTimestamp = Some(DateTime.now())))).failed.foreach(e => log.error(e.getMessage))
@@ -57,36 +58,36 @@ class SessionManager @Inject() (@Named("CoreService") actor: ActorRef, system: A
     id: OpenSession.Id,
     tenantId: Tenant.Id,
     applicationId: Application.Id,
-    languageId: Language.Id)(implicit ec: ExecutionContext): Unit = {
+    languageId: Language.Id): Unit = {
     ask(actor, OpenSessionManager.UpdateTenantApplicationLanguageCmd(id, tenantId, applicationId, languageId))
       .failed.foreach(e => log.error(e.getMessage))
   }
 
-  def getOpenSessionById(id: OpenSession.Id)(implicit ec: ExecutionContext): Future[Option[OpenSession]] = {
+  def getOpenSessionById(id: OpenSession.Id): Future[Option[OpenSession]] = {
 
     ask(actor, OpenSessionManager.FindOpenSessionById(id))
       .mapTo[OpenSessionManager.OpenSessionOpt].map(_.maybeEntry)
 
   }
 
-  def getLastSessionByUserId(userId: User.Id)(implicit ec: ExecutionContext): Future[Option[LastSession]] = {
+  def getLastSessionByUserId(userId: User.Id): Future[Option[LastSession]] = {
     ask(actor, LastSessionManager.FindLastSessionByUserId(userId)).mapTo[LastSessionManager.LastSessionOpt].map(_.maybeEntry)
   }
 
-  def getSessionHistoryById(id: Id)(implicit ec: ExecutionContext): Future[Option[SessionHistory]] = {
+  def getSessionHistoryById(id: Id): Future[Option[SessionHistory]] = {
     ask(actor, SessionHistoryManager.FindSessionHistoryById(id))
       .mapTo[SessionHistoryManager.SessionHistoryOpt].map(_.maybeEntry)
   }
 
-  def getAllOpenSessions(implicit ec: ExecutionContext): Future[Seq[OpenSession]] = {
+  def getAllOpenSessions: Future[Seq[OpenSession]] = {
     ask(actor, OpenSessionManager.FindAllOpenSessions).mapTo[OpenSessionManager.OpenSessionSeq].map(_.entries)
   }
 
-  def getAllLastSessions(implicit ec: ExecutionContext): Future[Seq[LastSession]] = {
+  def getAllLastSessions: Future[Seq[LastSession]] = {
     ask(actor, LastSessionManager.FindAllLastSessions).mapTo[LastSessionManager.LastSessionSeq].map(_.entries)
   }
 
-  def getAllSessionHistories(implicit ec: ExecutionContext): Future[Seq[SessionHistory]] = {
+  def getAllSessionHistories: Future[Seq[SessionHistory]] = {
     ask(actor, SessionHistoryManager.FindAllSessionHistory).mapTo[SessionHistoryManager.SessionHistorySeq].map(_.entries)
   }
 }

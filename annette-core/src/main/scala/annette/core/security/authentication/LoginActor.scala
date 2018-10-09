@@ -2,30 +2,30 @@ package annette.core.security.authentication
 
 import java.util.UUID
 
-import akka.actor.{Actor, ActorLogging, ActorRef}
+import akka.actor.{ Actor, ActorLogging, ActorRef }
 import akka.event.LoggingReceive
 import akka.http.scaladsl.util.FastFuture
 import annette.core.domain.application.ApplicationManager
-import annette.core.security.authentication.AuthenticationService.{FailureResponse, Login}
+import annette.core.security.authentication.AuthenticationService.{ FailureResponse, Login }
 import annette.core.security.authentication.jwt.JwtHelper
 import annette.core.domain.application._
 import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.{SessionManager, TenantManager, UserManager}
-import annette.core.domain.tenancy.model.{OpenSession, Tenant, User}
+import annette.core.domain.tenancy.{ SessionManager, TenantManager, UserManager }
+import annette.core.domain.tenancy.model.{ OpenSession, Tenant, TenantData, User }
 import org.joda.time.DateTime
 
 import scala.concurrent.Future
 
 class LoginActor(
-                  userDao: UserManager,
-                  sessionDao: SessionManager,
-                  tenantManager: TenantManager,
-                  applicationDao: ApplicationManager,
-                  languageDao: LanguageManager,
-                  rememberMeSessionTimeout: Int,
-                  sessionTimeout: Int,
-                  override val secret: String)
+  userDao: UserManager,
+  sessionDao: SessionManager,
+  tenantManager: TenantManager,
+  applicationDao: ApplicationManager,
+  languageDao: LanguageManager,
+  rememberMeSessionTimeout: Int,
+  sessionTimeout: Int,
+  override val secret: String)
   extends Actor with ActorLogging with JwtHelper {
 
   implicit val ec = context.dispatcher
@@ -61,7 +61,7 @@ class LoginActor(
       // 1. Проверки пользователя:
       user <- validateUser(msg.credentials.login, msg.credentials.password)
 
-      userTenants <- tenantUserDao.getUserTenantData(user.id)
+      userTenants <- tenantManager.getUserTenantData(user.id)
       // получить организацию и приложение для входа
       (tenantId, applicationId) <- {
         val r = getTenantAndApplication(user.id, userTenants, msg.credentials.tenant, msg.credentials.application)
@@ -85,18 +85,17 @@ class LoginActor(
       _ = if (!tenant.languages.contains(languageId)) throw new LanguageNotAssignedToTenantException()
 
       // 6. Проверки пользователя в организации:
-      tenantUser <- tenantUserDao
-        .getByIds(tenantId, user.id)
-        .map(_.getOrElse(throw new UserNotAssignedToTenantException()))
+      tenantUser <- tenantManager.isUserAssignedToTenant(tenantId, user.id)
+        .map(x => if (!x) throw new UserNotAssignedToTenantException())
 
       // 7. Проверки приложения:
       application <- applicationDao
-        .getById(applicationId)
+        .getApplicationById(applicationId)
         .map(_.getOrElse(throw new ApplicationNotFoundException()))
 
       // Проверки языка:
       language <- languageDao
-        .getById(languageId)
+        .getLanguageById(languageId)
         .map(_.getOrElse(throw new LanguageNotFoundException()))
 
       languages <- languageDao.selectAll
@@ -138,7 +137,7 @@ class LoginActor(
 
   def getTenantAndApplication(
     userId: User.Id,
-    tenantData: scala.Seq[TenantData],
+    tenantData: Set[TenantData],
     maybeTenant: Option[Tenant.Id],
     maybeApplication: Option[Application.Id]): Future[(Tenant.Id, Application.Id)] = {
     context.system.log.debug(s"getTenantAndApplication: maybeTenant: $maybeTenant, maybeApplication: $maybeApplication, tenantData: $tenantData")
@@ -153,7 +152,7 @@ class LoginActor(
       } yield lastSessionOpt
         .map(sh => (sh.tenantId, sh.applicationId))
         .getOrElse {
-          if (tenantData.length == 1 && tenantData.head.apps.length == 1) {
+          if (tenantData.size == 1 && tenantData.head.apps.size == 1) {
             // Если пользователь присвоен одной организации и одному приложению то используем эти данные
             (tenantData.head.id, tenantData.head.apps.head.id)
           } else {
@@ -201,7 +200,7 @@ class LoginActor(
   def provideUserTenantData(userFuture: Future[User], requestor: ActorRef, exOpt: Option[AuthenticationException]): Unit = {
     val future = for {
       user <- userFuture
-      userTenantData <- tenantUserDao.getUserTenantData(user.id)
+      userTenantData <- tenantManager.getUserTenantData(user.id)
     } yield userTenantData
     future.foreach {
       case res =>

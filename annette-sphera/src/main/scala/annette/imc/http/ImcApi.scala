@@ -19,7 +19,7 @@ class ImcApi(val coreModule: CoreModule, ctx1: ImcContext, auth1: Directive1[Ses
   with FileRoutes
   //with NotificationRoutes
   with ReportRoutes
-  with StatusRoutes
+  //  with StatusRoutes
   with ExpertRoutes
   with APIContext
   with PdfRoute
@@ -44,7 +44,11 @@ class ImcApi(val coreModule: CoreModule, ctx1: ImcContext, auth1: Directive1[Ses
     implicit val routingSettings: RoutingSettings = RoutingSettings(ConfigFactory.load())
     // adminRoutes ~
     Route.seal(apRoutes ~ expertRoutes ~ fileRoutes ~ criterionRoutes ~
-      statusRoutes ~ bulletinRoutes ~ reportRoutes ~ pdfRoutes)
-  } //~ notificationRoutes
+      bulletinRoutes ~ reportRoutes ~ pdfRoutes)
+  }
+
+  //statusRoutes ~
+
+  //~ notificationRoutes
 
 }

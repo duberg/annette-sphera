@@ -11,8 +11,7 @@ import annette.core.security.authentication.{ AuthenticationService, Session }
 import annette.core.domain.DB
 import annette.core.domain.application.ApplicationManager
 import annette.core.domain.language.LanguageManager
-import annette.core.domain.tenancy.{ SessionManager, UserManager }
-import annette.core.domain.tenancy.dao._
+import annette.core.domain.tenancy.{ SessionManager, TenantManager, UserManager }
 import annette.core.http.ExceptionHandler
 import annette.core.http.routes.ApiRoutes
 import annette.core.notification.NotificationManager
@@ -28,11 +27,9 @@ class CoreModule @Inject() (
   val system: ActorSystem,
   val config: Config,
   val userManager: UserManager,
-  val tenantManager: TenantDao,
-  val tenantUserDao: TenantUserDao,
+  val tenantManager: TenantManager,
   val languageManager: LanguageManager,
   val applicationManager: ApplicationManager,
-  val tenantUserRoleDao: TenantUserRoleDao,
   val sessionManager: SessionManager,
   val annetteSecurityDirectives: SecurityDirectives,
   val notificationManager: NotificationManager,

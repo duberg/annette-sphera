@@ -32,7 +32,7 @@ class ApplicationManager @Inject() (@Named("CoreService") actor: ActorRef)(impli
     }
   }
 
-  def getById(id: Application.Id): Future[Option[Application]] = {
+  def getApplicationById(id: Application.Id): Future[Option[Application]] = {
     ask(actor, GetApplicationById(id)).mapTo[ApplicationOpt].map(_.x)
   }
 

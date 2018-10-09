@@ -70,7 +70,7 @@ class ApplicationDaoSpec extends TestKit(ActorSystem("ApplicationDaoSpec"))
 
           cc1 <- dao.create(c1)
           cc2 <- dao.update(UpdateApplication(Some(c2.name), Some(c2.code), c1.id))
-          ccs <- dao.getById(c1.id)
+          ccs <- dao.getApplicationById(c1.id)
         } yield ccs shouldBe Some(c2)
       }
       "should not update application if it doesn't exist" in {

@@ -12,8 +12,7 @@ import annette.core.domain.application._
 import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.{ SessionManager, TenantManager, UserManager }
-import annette.core.domain.tenancy.dao._
-import annette.core.domain.tenancy.model.Tenant
+import annette.core.domain.tenancy.model.{ Tenant, TenantData }
 import com.typesafe.config.Config
 
 import scala.util.Try
@@ -46,7 +45,7 @@ object AuthenticationService {
     application: Option[Application.Id])
 
   case class UserTenantData(
-    userTenantData: Seq[TenantData],
+    userTenantData: Set[TenantData],
     messageCode: Option[Map[String, String]]) extends Response
 
   case class Logout(token: UUID) extends Message
@@ -77,7 +76,6 @@ object AuthenticationService {
     tenantManager: TenantManager,
     applicationManager: ApplicationManager,
     userManager: UserManager,
-    tenantUserDao: TenantUserDao,
     languageManager: LanguageManager,
     config: Config) = Props(
     classOf[AuthenticationService],
@@ -85,19 +83,17 @@ object AuthenticationService {
     tenantManager,
     applicationManager,
     userManager,
-    tenantUserDao,
     languageManager,
     config)
 
 }
 
 class AuthenticationService(
-  sessionDao: SessionManager,
-  tenantDao: TenantDao,
-  applicationDao: ApplicationManager,
-  userDao: UserManager,
-  tenantUserDao: TenantUserDao,
-  languageDao: LanguageManager,
+  sessionManager: SessionManager,
+  tenantManager: TenantManager,
+  applicationManager: ApplicationManager,
+  userManager: UserManager,
+  languageManager: LanguageManager,
   config: Config)
   extends Actor with ActorLogging {
 
@@ -122,23 +118,23 @@ class AuthenticationService(
     FromConfig.props(
       Props(
         classOf[LoginActor],
-        userDao, sessionDao, tenantDao, tenantUserDao, applicationDao, languageDao,
+        userManager, sessionManager, tenantManager, applicationManager, languageManager,
         rememberMeSessionTimeout, sessionTimeout, secret)),
     "login")
 
   val logoutService = context.actorOf(
     FromConfig.props(
-      Props(classOf[LogoutActor], sessionDao)),
+      Props(classOf[LogoutActor], sessionManager)),
     "logout")
 
   val authenticateService = context.actorOf(
     FromConfig.props(
-      Props(classOf[AuthenticationActor], sessionDao, tenantDao, applicationDao, userDao, tenantUserDao, languageDao, secret)),
+      Props(classOf[AuthenticationActor], sessionManager, tenantManager, applicationManager, userManager, languageManager, secret)),
     "authenticate")
 
   val applicationStateService = context.actorOf(
     FromConfig.props(
-      Props(classOf[ApplicationStateActor], sessionDao, tenantDao, applicationDao, userDao, tenantUserDao, languageDao, secret)),
+      Props(classOf[ApplicationStateActor], sessionManager, tenantManager, applicationManager, userManager, languageManager, secret)),
     "applicationState")
 
   override def receive: Receive = LoggingReceive {
@@ -158,7 +154,7 @@ class AuthenticationService(
       logoutService forward msg
 
     case msg: AuthenticationService.UpdateLastOpTimestamp =>
-      sessionDao.updateLastOpTimestamp(msg.sessionId)
+      sessionManager.updateLastOpTimestamp(msg.sessionId)
 
   }
 }

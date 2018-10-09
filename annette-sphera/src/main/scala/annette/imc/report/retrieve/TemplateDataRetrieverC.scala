@@ -32,7 +32,7 @@ trait TemplateDataRetrieverC {
       .map(_.ap)
 
   private def getUsers(x: Set[User.Id]): Future[Set[User]] =
-    Future.sequence(x.map(coreModule.userManager.getById))
+    Future.sequence(x.map(coreModule.userManager.getUserById))
       .map(_.flatten)
 
   private def getImcUser(userId: User.Id): Future[Option[ImcUser]] =
@@ -50,7 +50,10 @@ trait TemplateDataRetrieverC {
 
   private def getUsersAll: Future[Set[User]] = coreModule.userManager.listUsers.map(_.toSet)
 
-  private def getUserRoleAll: Future[Set[TenantUserRole]] = coreModule.tenantUserRoleDao.selectAll.map(_.toSet)
+  private def getUserRoleAll: Future[Set[TenantUserRole]] = {
+    //coreModule.tenantUserRoleDao.selectAll.map(_.toSet)
+    ???
+  }
   def retrieveDataC(apId: Ap.Id, expertId: User.Id, language: String): Future[TemplateDataC] = {
     if (language == "RU") retrieveRU(apId, expertId)
     else retrieveEN(apId, expertId)

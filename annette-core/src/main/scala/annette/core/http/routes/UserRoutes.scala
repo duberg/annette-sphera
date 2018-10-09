@@ -13,7 +13,6 @@ import annette.core.akkaext.http.PaginationDirectives
 import annette.core.security.authentication.Session
 import annette.core.{ AnnetteException, CoreModule }
 import annette.core.domain.tenancy.{ TenantManager, UserManager }
-import annette.core.domain.tenancy.dao.{ TenantDao, TenantUserDao, TenantUserRoleDao }
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import io.circe._
 import io.circe.generic.auto._
@@ -35,8 +34,6 @@ trait UserRoutes extends Directives with PaginationDirectives {
   val annetteSecurityDirectives: SecurityDirectives
   val userManager: UserManager
   val tenantManager: TenantManager
-  val tenantUserDao: TenantUserDao
-  val tenantUserRoleDao: TenantUserRoleDao
   val authorizationManager: ActorRef
   val config: Config
 
@@ -609,11 +606,11 @@ trait UserRoutes extends Directives with PaginationDirectives {
     println(page)
     val ff = for {
       f <- userManager.paginateListUsers(page)
-      r <- tenantUserRoleDao.selectAll
-    } yield (f, r)
+      //r <- tenantUserRoleDao.selectAll
+    } yield f
 
     onComplete(ff) {
-      case Success((x, y)) => complete(x)
+      case Success(x) => complete(x)
       case Success(_) => complete(StatusCodes.InternalServerError)
       case Failure(throwable) =>
         throwable match {

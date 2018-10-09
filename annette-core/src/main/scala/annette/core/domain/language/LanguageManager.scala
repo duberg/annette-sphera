@@ -36,7 +36,7 @@ class LanguageManager @Inject() (@Named("CoreService") actor: ActorRef)(implicit
     }
   }
 
-  def getById(id: Language.Id): Future[Option[Language]] = {
+  def getLanguageById(id: Language.Id): Future[Option[Language]] = {
     ask(actor, LanguageService.FindLanguageById(id)).mapTo[LanguageService.SingleLanguage].map(_.maybeEntry)
   }
 

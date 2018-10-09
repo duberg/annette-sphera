@@ -26,43 +26,43 @@ trait ApRoutes
 
   val coreModule: CoreModule
 
-  private val newAp = (path("new") & get & auth) {
-    sessionData =>
-      {
-        val userId = sessionData.userId
-
-        val userFuture = getUserRoled(sessionData.userId).mapTo[Option[UserRoled]]
-
-        val ff = for {
-
-          u <- userFuture
-          _ <- predicate(u.exists(_.manager))(new Exception("must be in role of manager"))
-
-          d <- apsActor.ask(CreateCmd(userId)).mapTo[Created]
-          f <- coreModule.tenantUserRoleDao.selectAll.mapTo[List[TenantUserRole]]
-        } yield {
-          val expertList = f.filter(x => x.roles.contains("expert") || x.roles.contains("additional"))
-          (d, expertList)
-        }
-        onComplete(ff) {
-          case Success((Created(id), experts)) => {
-
-            experts.foreach(x => {
-              apsActor ! AddExpertCmd(id, x.userId)
-            })
-            complete(id.asJson)
-          }
-          case Success(_) => complete(StatusCodes.InternalServerError)
-          case Failure(throwable) =>
-            throwable match {
-              case annetteException: AnnetteException =>
-                complete(StatusCodes.InternalServerError -> annetteException.exceptionMessage)
-              case _ =>
-                complete(StatusCodes.InternalServerError -> Map("code" -> throwable.getMessage))
-            }
-        }
-      }
-  }
+//  private val newAp = (path("new") & get & auth) {
+//    sessionData =>
+//      {
+//        val userId = sessionData.userId
+//
+//        val userFuture = getUserRoled(sessionData.userId).mapTo[Option[UserRoled]]
+//
+//        val ff = for {
+//
+//          u <- userFuture
+//          _ <- predicate(u.exists(_.manager))(new Exception("must be in role of manager"))
+//
+//          d <- apsActor.ask(CreateCmd(userId)).mapTo[Created]
+//          f <- coreModule.tenantUserRoleDao.selectAll.mapTo[List[TenantUserRole]]
+//        } yield {
+//          val expertList = f.filter(x => x.roles.contains("expert") || x.roles.contains("additional"))
+//          (d, expertList)
+//        }
+//        onComplete(ff) {
+//          case Success((Created(id), experts)) => {
+//
+//            experts.foreach(x => {
+//              apsActor ! AddExpertCmd(id, x.userId)
+//            })
+//            complete(id.asJson)
+//          }
+//          case Success(_) => complete(StatusCodes.InternalServerError)
+//          case Failure(throwable) =>
+//            throwable match {
+//              case annetteException: AnnetteException =>
+//                complete(StatusCodes.InternalServerError -> annetteException.exceptionMessage)
+//              case _ =>
+//                complete(StatusCodes.InternalServerError -> Map("code" -> throwable.getMessage))
+//            }
+//        }
+//      }
+//  }
 
   private val newAp1 = (path("new1") & get & auth) { //только для тестирования
     sessionData =>
@@ -374,8 +374,10 @@ trait ApRoutes
   }
 
   def apRoutes = pathPrefix("ap") {
-    newAp ~ newAp1 ~ removeAp ~ removeNew ~ update ~ getAll ~ getFilled ~
+     newAp1 ~ removeAp ~ removeNew ~ update ~ getAll ~ getFilled ~
       getReady ~ getFilling ~ getForExpert ~ getUpdateAp ~ getFiles
   }
+
+  //newAp ~
 
 }

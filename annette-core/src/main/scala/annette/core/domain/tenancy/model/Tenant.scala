@@ -36,6 +36,8 @@ case class CreateTenant(
 
 case class UpdateTenant()
 
+case class TenantData(name: String, apps: Set[Application], lang: Language, langs: Set[Language], application: Application, id: Tenant.Id)
+
 object Tenant {
   type Id = String
 

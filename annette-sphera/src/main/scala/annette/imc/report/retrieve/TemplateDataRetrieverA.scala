@@ -31,7 +31,7 @@ trait TemplateDataRetrieverA {
       .map(_.ap)
 
   private def getUsers(x: Set[User.Id]): Future[Set[User]] =
-    Future.sequence(x.map(coreModule.userManager.getById))
+    Future.sequence(x.map(coreModule.userManager.getUserById))
       .map(_.flatten)
 
   private def getImcUser(userId: User.Id): Future[Option[ImcUser]] =
@@ -48,7 +48,10 @@ trait TemplateDataRetrieverA {
 
   private def getUsersAll: Future[Set[User]] = coreModule.userManager.listUsers.map(_.toSet)
 
-  private def getUserRoleAll: Future[Set[TenantUserRole]] = coreModule.tenantUserRoleDao.selectAll.map(_.toSet)
+  private def getUserRoleAll: Future[Set[TenantUserRole]] = {
+    Future.successful(Set.empty)
+    //coreModule.tenantUserRoleDao.selectAll.map(_.toSet)
+  }
 
   def retrieveDataA(apId: Ap.Id, language: String): Future[TemplateDataA] = {
     for {

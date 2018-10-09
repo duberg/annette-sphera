@@ -8,23 +8,18 @@ import annette.core.domain.InitCoreTables
 import annette.core.domain.application.ApplicationManager
 import annette.core.domain.language.LanguageManager
 import annette.core.domain.tenancy.{ SessionManager, TenantManager, UserManager }
-import annette.core.domain.tenancy.dao.{ TenantUserDao }
 import com.google.inject.Provider
 import com.typesafe.config.Config
 import javax.inject._
 
-/**
- * Created by valery on 25.01.17.
- */
 @Singleton
 class AuthenticationServiceProvider @Inject() (
   system: ActorSystem,
-  sessionDao: SessionManager,
+  sessionDManager: SessionManager,
   tenantManager: TenantManager,
-  applicationDao: ApplicationManager,
-  userDao: UserManager,
-  tenantUserDao: TenantUserDao,
-  languageDao: LanguageManager,
+  applicationManager: ApplicationManager,
+  userManager: UserManager,
+  languageManager: LanguageManager,
   config: Config,
   initCoreTables: InitCoreTables) extends Provider[ActorRef] {
 
@@ -63,12 +58,11 @@ class AuthenticationServiceProvider @Inject() (
   private def initService() = {
     system.actorOf(
       AuthenticationService.props(
-        sessionManager = sessionDao,
+        sessionManager = sessionDManager,
         tenantManager = tenantManager,
-        applicationManager = applicationDao,
-        userManager = userDao,
-        tenantUserDao = tenantUserDao,
-        languageManager = languageDao,
+        applicationManager = applicationManager,
+        userManager = userManager,
+        languageManager = languageManager,
         config = config),
       AuthenticationService.name)
   }

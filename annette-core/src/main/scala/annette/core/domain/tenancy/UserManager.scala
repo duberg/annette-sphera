@@ -70,13 +70,10 @@ class UserManager @Inject() (@Named("CoreService") actor: ActorRef)(implicit c: 
     }
   }
 
-  def getById(x: User.Id): Future[Option[User]] =
+  def getUserById(x: User.Id): Future[Option[User]] =
     ask(actor, GetUserById(x))
       .mapTo[UserOpt]
       .map(_.maybeEntry)
-
-  def listTenantsIds(x: User.Id): Future[Set[Tenant.Id]] =
-    getById(x).map(_.map(_.roles.keys.toSet).getOrElse(Set.empty))
 
   def listUsers: Future[List[User]] =
     ask(actor, ListUsers)

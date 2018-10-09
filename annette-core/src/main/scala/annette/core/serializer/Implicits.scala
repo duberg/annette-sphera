@@ -53,9 +53,15 @@ object Implicits {
   /**
    * = Map conversions =
    */
-  implicit def mapValue[A, B, C](x: Map[C, A])(implicit convert: A => B): Map[C, B] = x mapValues convert
-  implicit def mapValueOpt[A, B, C](x: Map[C, A])(implicit convert: A => B): Option[Map[C, B]] = if (x.isEmpty) None else mapValue(x)
-  implicit def optMapValue[A, B, C](x: Option[Map[C, A]])(implicit convert: A => B): Map[C, B] = x.fold(Map[C, B]())(mapValue(_))
+  implicit def mapConversion1[A, B, C](x: Map[C, A])(implicit convert: A => B): Map[C, B] =
+    x mapValues convert
 
-  implicit def typeAToOptionTypeB[A, B](x: Option[A])(implicit convert: A => B): Option[B] = x map convert
+  implicit def mapValueOpt[A, B, C](x: Map[C, A])(implicit convert: A => B): Option[Map[C, B]] =
+    if (x.isEmpty) None else Some(mapConversion1(x))
+
+  implicit def optMapValue[A, B, C](x: Option[Map[C, A]])(implicit convert: A => B): Map[C, B] =
+    x.fold(Map[C, B]())(mapConversion1(_))
+
+  implicit def typeAToOptionTypeB[A, B](x: Option[A])(implicit convert: A => B): Option[B] =
+    x map convert
 }

@@ -76,7 +76,7 @@ class LanguageManagerSpec extends TestKit(ActorSystem("UserActorSpec"))
 
           cc1 <- dao.create(c1)
           cc2 <- dao.update(LanguageUpdate(Some(c2.name), c1.id))
-          ccs <- dao.getById(c1.id)
+          ccs <- dao.getLanguageById(c1.id)
         } yield {
           cc1 shouldBe ()
           cc2 shouldBe ()

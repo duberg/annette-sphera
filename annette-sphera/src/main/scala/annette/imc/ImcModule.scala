@@ -21,28 +21,29 @@ case class ImcContext(
 
 class ImcModule extends AnnetteHttpModule {
   def getUserRoled(ec: ExecutionContext)(userId: UUID) = {
-    implicit val e: ExecutionContext = ec
-    for {
-      x <- coreModule.userManager.getById(userId)
-      y <- coreModule.tenantUserRoleDao.getByIds("IMC", userId)
-    } yield {
-      x.map { user =>
-        val roles = y.map(_.roles)
-
-        UserRoled(
-          user.id,
-          user.lastName,
-          user.firstName,
-          user.middleName.getOrElse(""),
-          user.email,
-          roles.exists(_.contains("admin")),
-          roles.exists(_.contains("secretar")),
-          roles.exists(_.contains("manager")),
-          roles.exists(_.contains("chairman")),
-          roles.exists(_.contains("expert")),
-          roles.exists(_.contains("additional")))
-      }
-    }
+    //    implicit val e: ExecutionContext = ec
+    //    for {
+    //      x <- coreModule.userManager.getUserById(userId)
+    //      y <- coreModule.tenantUserRoleDao.getByIds("IMC", userId)
+    //    } yield {
+    //      x.map { user =>
+    //        val roles = y.map(_.roles)
+    //
+    //        UserRoled(
+    //          user.id,
+    //          user.lastName,
+    //          user.firstName,
+    //          user.middleName.getOrElse(""),
+    //          user.email,
+    //          roles.exists(_.contains("admin")),
+    //          roles.exists(_.contains("secretar")),
+    //          roles.exists(_.contains("manager")),
+    //          roles.exists(_.contains("chairman")),
+    //          roles.exists(_.contains("expert")),
+    //          roles.exists(_.contains("additional")))
+    //      }
+    //    }
+    ???
   }
 
   override def init(): Future[Unit] = {

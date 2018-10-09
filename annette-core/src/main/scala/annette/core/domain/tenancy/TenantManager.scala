@@ -3,22 +3,22 @@ package annette.core.domain.tenancy
 import akka.actor.ActorRef
 import akka.pattern.AskSupport
 import akka.util.Timeout
-import annette.core.domain.application.{Application, ApplicationManager}
+import annette.core.domain.application.{ Application, ApplicationManager }
 import annette.core.domain.language.LanguageManager
-import annette.core.domain.tenancy.dao.TenantData
-import annette.core.domain.tenancy.model.{CreateTenant, Tenant, User}
-import javax.inject.{Inject, Named, Singleton}
+import annette.core.domain.language.model.Language
+import annette.core.domain.tenancy.model.{ CreateTenant, Tenant, TenantData, User }
+import javax.inject.{ Inject, Named, Singleton }
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import annette.core.domain.tenancy.model.Tenant._
 
 @Singleton
 class TenantManager @Inject() (
-                                @Named("CoreService") actor: ActorRef,
-                                userManager: UserManager,
-                                tenantManager: TenantManager,
-                                languageManager: LanguageManager,
-                                applicationManager: ApplicationManager)(implicit val c: ExecutionContext, val t: Timeout) extends AskSupport {
+  @Named("CoreService") actor: ActorRef,
+  userManager: UserManager,
+  tenantManager: TenantManager,
+  languageManager: LanguageManager,
+  applicationManager: ApplicationManager)(implicit val c: ExecutionContext, val t: Timeout) extends AskSupport {
 
   def createTenant(x: CreateTenant): Future[Tenant] =
     ask(actor, CreateTenantCmd(x))
@@ -42,47 +42,82 @@ class TenantManager @Inject() (
       .mapTo[TenantsMap]
       .map(_.x.keys.toSet)
 
-  def listApplications(x: Tenant.Id): Future[Set[Application]] =
-    getTenantById(x).map(_.map(_.applications))
+  def listTenantsIdsByUserId(x: User.Id): Future[Set[Tenant.Id]] =
+    userManager
+      .getUserById(x)
+      .map(_.map(_.roles.keys.toSet)
+        .getOrElse(Set.empty))
+
+  def listTenantsByUserId(x: User.Id): Future[Map[Tenant.Id, Tenant]] =
+    listTenantsIdsByUserId(x).flatMap { y =>
+      Future.sequence(y.map(getTenantById))
+        .map(_.flatten)
+        .map(_.map(x => x.id -> x).toMap)
+    }
+
+  def listTenantsByUserIdSet(x: User.Id): Future[Set[Tenant]] =
+    listTenantsIdsByUserId(x).flatMap { y =>
+      Future.sequence(y.map(getTenantById))
+        .map(_.flatten.toSet)
+        .map(_.toSet)
+    }
+
+  def listApplicationsIdsByUserId(x: User.Id): Future[Set[Application.Id]] =
+    listTenantsByUserId(x)
+      .map(_.values.flatMap(_.applications).toSet)
+
+  def listApplicationsByUserId(x: User.Id): Future[Map[Application.Id, Application]] =
+    listApplicationsIdsByUserId(x).flatMap { y =>
+      Future.sequence(y.map(applicationManager.getApplicationById))
+        .map(_.flatten)
+        .map(_.map(x => x.id -> x).toMap)
+    }
+
+  def listApplicationsByUserIdSet(x: User.Id): Future[Set[Application]] =
+    listApplicationsIdsByUserId(x).flatMap { y =>
+      Future.sequence(y.map(applicationManager.getApplicationById))
+        .map(_.flatten)
+        .map(_.toSet)
+    }
+
+  def listLanguagesIdsByUserId(x: User.Id): Future[Set[Language.Id]] =
+    listTenants
+      .map(_.flatMap(_._2.languages))
+      .map(_.toSet)
+
+  def listLanguagesByUserId(x: User.Id): Future[Map[Language.Id, Language]] =
+    listLanguagesIdsByUserId(x).flatMap { y =>
+      Future.sequence(y.map(languageManager.getLanguageById))
+        .map(_.flatten)
+        .map(_.map(x => x.id -> x).toMap)
+    }
+
+  def listLanguagesByUserIdSet(x: User.Id): Future[Set[Language]] =
+    listLanguagesIdsByUserId(x).flatMap { y =>
+      Future.sequence(y.map(languageManager.getLanguageById))
+        .map(_.flatten)
+        .map(_.toSet)
+    }
+
+  def isUserAssignedToTenant(tenantId: Tenant.Id, userId: User.Id): Future[Boolean] =
+    listTenantsIdsByUserId(userId)
+      .map(_ contains tenantId)
 
   //def paginateListTenants:
 
-  def getUserTenantData(userId: User.Id): Future[Seq[TenantData]] = {
-    val tenantsFuture = userManager.listTenantsIds(userId)
-    val applicationsFuture = tenantsFuture.flatMap {
-      tenants =>
-        val applicationIds = tenants.flatMap(_.applications)
-        Future.sequence(applicationIds.map(a => applicationManager.getById(a))).map(_.flatten)
-    }
-    val languagesFuture = tenantsFuture.flatMap {
-      tenants =>
-        val languageIds = tenants.flatMap(_.languages)
-        Future.sequence(languageIds.map(a => languageManager.getById(a))).map(_.flatten)
-    }
-
+  def getUserTenantData(userId: User.Id): Future[Set[TenantData]] = {
     for {
-      tenants <- tenantsFuture.map(_.toSeq)
-      applications <- applicationsFuture.map(_.toSeq)
-      languages <- languagesFuture.map(_.toSeq)
-    } yield {
-      println("getUserTenantData")
-      println(tenants)
-      println(applications)
-      println(languages)
-      val appMap = applications.map(a => a.id -> a).toMap
-      val langMap = languages.map(a => a.id -> a).toMap
-      tenants.map {
-        tenant =>
-          val apps = tenant.applications
-            .map(a => appMap.get(a))
-            .flatten.toSeq
-          val langs = tenant.languages
-            .map(a => langMap.get(a))
-            .flatten.toSeq
-          val lang = langMap.get(tenant.defaultLanguageId).get
-          TenantData(tenant.name, apps, lang, langs, appMap.get(tenant.defaultApplicationId).get, tenant.id)
-      }
+      tenants <- listTenantsByUserIdSet(userId)
+      applications <- listApplicationsByUserId(userId)
+      languages <- listLanguagesByUserId(userId)
+    } yield tenants map { tenant =>
+      TenantData(
+        name = tenant.name,
+        apps = applications.values.toSet,
+        lang = languages(tenant.defaultLanguageId),
+        langs = languages.values.toSet,
+        application = applications(tenant.defaultApplicationId),
+        id = tenant.id)
     }
-
   }
 }

@@ -32,7 +32,7 @@ class TenantManagerActor(val id: ActorId, val initState: TenantManagerState) ext
   }
 
   def findTenantById(p1: TenantManagerState, p2: Tenant.Id): Unit = {
-    sender() ! TenantOpt(p1(p2))
+    sender() ! TenantOpt(p1.tenants.get(p2))
   }
 
   def listTenants(p1: TenantManagerState): Unit = {

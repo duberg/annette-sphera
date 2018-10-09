@@ -8,19 +8,17 @@ import annette.core.security.authentication.jwt.JwtHelper
 import annette.core.domain.application._
 import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.{ SessionManager, UserManager }
-import annette.core.domain.tenancy.dao.{ TenantDao, TenantUserDao }
+import annette.core.domain.tenancy.{ SessionManager, TenantManager, UserManager }
 import annette.core.domain.tenancy.model.Tenant
 
 import scala.concurrent.Future
 
 class ApplicationStateActor(
-  sessionDao: SessionManager,
-  tenantDao: TenantDao,
-  applicationDao: ApplicationManager,
-  userDao: UserManager,
-  tenantUserDao: TenantUserDao,
-  languageDao: LanguageManager,
+  sessionManager: SessionManager,
+  tenantManager: TenantManager,
+  applicationManager: ApplicationManager,
+  userManager: UserManager,
+  languageManager: LanguageManager,
   override val secret: String)
   extends Actor with ActorLogging with JwtHelper {
 
@@ -40,18 +38,18 @@ class ApplicationStateActor(
       .map {
         sessionData =>
           for {
-            userOpt <- userDao.getById(sessionData.userId)
-            tenantOpt <- tenantDao.getById(sessionData.tenantId)
-            applicationOpt <- applicationDao.getById(sessionData.applicationId)
-            languages <- languageDao.selectAll
-            userTenantData <- tenantUserDao.getUserTenantData(sessionData.userId)
+            userOpt <- userManager.getUserById(sessionData.userId)
+            tenantOpt <- tenantManager.getTenantById(sessionData.tenantId)
+            applicationOpt <- applicationManager.getApplicationById(sessionData.applicationId)
+            languages <- languageManager.selectAll
+            userTenantData <- tenantManager.getUserTenantData(sessionData.userId)
           } yield {
             val language = languages.find(_.id == sessionData.languageId).getOrElse(languages.head)
             val jwtToken = encodeSessionData(sessionData)
             ApplicationState(
               authenticated = true,
               language = language,
-              languages = languages.toSeq,
+              languages = languages,
               user = userOpt,
               tenant = tenantOpt,
               application = applicationOpt,
@@ -61,7 +59,7 @@ class ApplicationStateActor(
       }
       .getOrElse {
         for {
-          languages <- languageDao.selectAll
+          languages <- languageManager.selectAll
         } yield {
           val language = languages.find(_.id == "RU").getOrElse(languages.head) // TODO: заменить константу на настройку
           ApplicationState(
@@ -78,11 +76,11 @@ class ApplicationStateActor(
     applicationId: Application.Id,
     languageId: Language.Id): Future[ApplicationState] = {
     for {
-      userOpt <- userDao.getById(sessionData.userId)
-      tenantOpt <- tenantDao.getById(tenantId)
-      applicationOpt <- applicationDao.getById(applicationId)
-      languages <- languageDao.selectAll
-      userTenantData <- tenantUserDao.getUserTenantData(sessionData.userId)
+      userOpt <- userManager.getUserById(sessionData.userId)
+      tenantOpt <- tenantManager.getTenantById(tenantId)
+      applicationOpt <- applicationManager.getApplicationById(applicationId)
+      languages <- languageManager.selectAll
+      userTenantData <- tenantManager.getUserTenantData(sessionData.userId)
     } yield {
       val languageOpt = languages.find(_.id == languageId)
 
@@ -96,7 +94,7 @@ class ApplicationStateActor(
 
       val jwtToken = encodeSessionData(sessionData.copy(tenantId = tenantId, applicationId = applicationId, languageId = languageId))
 
-      sessionDao.updateTenantApplicationLanguage(sessionData.sessionId, tenantId, applicationId, languageId)
+      sessionManager.updateTenantApplicationLanguage(sessionData.sessionId, tenantId, applicationId, languageId)
 
       ApplicationState(
         authenticated = true,

@@ -26,7 +26,7 @@ trait API { self: APIContext =>
       .map(_.ap)
 
   def getUsers(x: Set[User.Id]): Future[Set[User]] =
-    Future.sequence(x.map(coreModule.userManager.getById))
+    Future.sequence(x.map(coreModule.userManager.getUserById))
       .map(_.flatten)
 
   def getImcUser(userId: User.Id): Future[Option[ImcUser]] =
@@ -43,7 +43,10 @@ trait API { self: APIContext =>
 
   def getUsersAll: Future[Set[User]] = coreModule.userManager.listUsers.map(_.toSet)
 
-  def getUserRoleAll: Future[Set[TenantUserRole]] = coreModule.tenantUserRoleDao.selectAll.map(_.toSet)
+  def getUserRoleAll: Future[Set[TenantUserRole]] = {
+    Future.successful(Set.empty)
+    //coreModule.tenantUserRoleDao.selectAll.map(_.toSet)
+  }
 
   def applicant(ap: Ap, language: String): String = language match {
     case "EN" => ap.apData.entityName.map(_.en).getOrElse("")

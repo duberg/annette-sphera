@@ -5,19 +5,17 @@ import akka.event.LoggingReceive
 import annette.core.domain.application.ApplicationManager
 import annette.core.domain.language.LanguageManager
 import annette.core.security.authentication.jwt.JwtHelper
-import annette.core.domain.tenancy.{ SessionManager, UserManager }
-import annette.core.domain.tenancy.dao.{ TenantDao, TenantUserDao }
+import annette.core.domain.tenancy.{ SessionManager, TenantManager, UserManager }
 import annette.core.domain.tenancy.model.OpenSession
 
 import scala.concurrent.Future
 
 class AuthenticationActor(
-  sessionDao: SessionManager,
-  tenantDao: TenantDao,
-  applicationDao: ApplicationManager,
-  userDao: UserManager,
-  tenantUserDao: TenantUserDao,
-  languageDao: LanguageManager,
+  sessionManager: SessionManager,
+  tenantManager: TenantManager,
+  applicationManager: ApplicationManager,
+  userManager: UserManager,
+  languageManager: LanguageManager,
   override val secret: String)
   extends Actor with ActorLogging with JwtHelper {
 
@@ -48,7 +46,7 @@ class AuthenticationActor(
   }
   private def validateSession(sessionData: Session): Future[OpenSession] = {
     for {
-      openSessionOpt <- sessionDao.getOpenSessionById(sessionData.sessionId)
+      openSessionOpt <- sessionManager.getOpenSessionById(sessionData.sessionId)
     } yield {
       openSessionOpt.fold(throw new AuthenticationFailedException()) {
         openSession =>
@@ -64,10 +62,10 @@ class AuthenticationActor(
     val tenantId = sessionData.tenantId
     val applicationId = sessionData.applicationId
     for {
-      userOpt <- userDao.getById(session.userId)
-      tenantOpt <- tenantDao.getById(tenantId)
-      applicationOpt <- applicationDao.getById(applicationId)
-      tenantUserExist <- tenantUserDao.isExist(tenantId, session.userId)
+      userOpt <- userManager.getUserById(session.userId)
+      tenantOpt <- tenantManager.getTenantById(tenantId)
+      applicationOpt <- applicationManager.getApplicationById(applicationId)
+      tenantUserExist <- tenantManager.isUserAssignedToTenant(tenantId, session.userId)
     } yield {
       if (userOpt.isEmpty) throw new UserNotFoundException()
       if (tenantOpt.isEmpty) throw new TenantNotFoundException()
