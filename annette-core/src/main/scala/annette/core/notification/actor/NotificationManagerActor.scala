@@ -97,7 +97,6 @@ object NotificationManagerActor extends NotificationConfig {
     verificationBus: VerificationBus)(implicit c: ExecutionContext, t: Timeout): Props = {
     val annetteConfig: Config = config.getConfig("annette")
     val mailNotificationConfig = annetteConfig.emailNotificationEntry
-    println(mailNotificationConfig)
     val smsNotificationConfig = annetteConfig.smsNotificationEntry
     Props(new NotificationManagerActor(
       id = id,

@@ -35,7 +35,7 @@
 						<!-- 'm  margin-bottom-10-mobile' for adaptive make-up  -->
 						<div class="m-form__control">
 							<mat-form-field class="mat-form-field-fluid">
-								<mat-select [(value)]="filterStatus" (selectionChange)="loadUsersList()">
+								<mat-select [(value)]="filterStatus" (selectionChange)="loadPermissionsList()">
 									<mat-option value="">All</mat-option>
 									<mat-option value="0">Suspended</mat-option>
 									<mat-option value="1">Active</mat-option>
@@ -51,7 +51,7 @@
 
 						<div class="m-form__control">
 							<mat-form-field class="mat-form-field-fluid">
-								<mat-select [(value)]="filterType" (selectionChange)="loadUsersList()">
+								<mat-select [(value)]="filterType" (selectionChange)="loadPermissionsList()">
 									<mat-option value="">All</mat-option>
 									<mat-option value="0">Business</mat-option>
 									<mat-option value="1">Individual</mat-option>

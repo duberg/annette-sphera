@@ -15,7 +15,7 @@ import javax.inject._
 @Singleton
 class AuthenticationServiceProvider @Inject() (
   system: ActorSystem,
-  sessionDManager: SessionManager,
+  sessionManager: SessionManager,
   tenantManager: TenantManager,
   applicationManager: ApplicationManager,
   userManager: UserManager,
@@ -30,7 +30,7 @@ class AuthenticationServiceProvider @Inject() (
   log.debug("AuthenticationServiceProvider")
 
   val clusterMode = config.getBoolean("annette.cluster")
-  final val routerName = "AuthenticationServiceRouter"
+  final val routerName = "AuthenticationManagerRouter"
 
   private val authenticationService: ActorRef = initAuthenticationService()
 
@@ -58,7 +58,7 @@ class AuthenticationServiceProvider @Inject() (
   private def initService() = {
     system.actorOf(
       AuthenticationService.props(
-        sessionManager = sessionDManager,
+        sessionManager = sessionManager,
         tenantManager = tenantManager,
         applicationManager = applicationManager,
         userManager = userManager,

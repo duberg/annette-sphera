@@ -31,7 +31,7 @@ trait AuthorizationRoutes extends Directives
   val tenantManager: TenantManager
   val userManager: UserManager
   val languageManager: LanguageManager
-  val authenticationService: ActorRef
+  val authenticationManager: ActorRef
   val annetteSecurityDirectives: SecurityDirectives
   val notificationManager: NotificationManager
   val authorizationManager: ActorRef

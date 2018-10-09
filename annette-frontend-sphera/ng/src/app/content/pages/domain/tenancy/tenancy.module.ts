@@ -39,6 +39,7 @@ import {UsersService} from "../../../../core/services/users.service";
 import {TypesUtilsService} from "../../components/users/_core/utils/types-utils.service";
 import { TenantsListComponent } from './tenants/tenants-list/tenants-list.component';
 import { TenantEditComponent } from './tenants/tenant-edit/tenant-edit.component';
+import {RolesEditComponent} from "./roles/role-edit/roles-edit.component";
 
 const routes: Routes = [
 	{
@@ -111,10 +112,11 @@ const routes: Routes = [
   declarations: [
   	TenancyComponent,
 	RolesListComponent,
+	RolesEditComponent,
 	PermissionsListComponent,
 	PermissionEditComponent,
 	TenantsListComponent,
-	TenantEditComponent
+	TenantEditComponent,
   ]
 })
 export class TenancyModule { }

@@ -30,7 +30,7 @@ trait AuthenticationRoutes extends Directives with AskSupport with Generator {
   val tenantManager: TenantManager
   val userManager: UserManager
   val languageManager: LanguageManager
-  val authenticationService: ActorRef
+  val authenticationManager: ActorRef
   val annetteSecurityDirectives: SecurityDirectives
   val notificationManager: NotificationManager
   val apiUrl: String
@@ -51,8 +51,9 @@ trait AuthenticationRoutes extends Directives with AskSupport with Generator {
   def signIn: Route = (path("signin") & post) {
     (entity(as[AuthenticationService.Credentials]) & extractClientIP) {
       (loginData, clientIp) =>
-        val future = authenticationService
+        val future = authenticationManager
           .ask(AuthenticationService.Login(loginData, clientIp.toOption.map(_.toString).getOrElse("")))
+
         onComplete(future) {
           case Success(response) =>
             response match {
@@ -77,7 +78,7 @@ trait AuthenticationRoutes extends Directives with AskSupport with Generator {
 
   def signOut: Route = (path("signout") & post & authenticatedOpt) {
     case Some(sessionData) =>
-      complete(authenticationService
+      complete(authenticationManager
         .ask(AuthenticationService.Logout(sessionData.sessionId))
         .mapTo[AuthenticationService.Response])
     case None =>
@@ -158,7 +159,7 @@ trait AuthenticationRoutes extends Directives with AskSupport with Generator {
       authenticatedOpt {
         maybeSession =>
 
-          val applicationStateFuture = authenticationService
+          val applicationStateFuture = authenticationManager
             .ask(AuthenticationService.GetApplicationState(maybeSession))
             .mapTo[ApplicationState]
           onComplete(applicationStateFuture) {
@@ -178,7 +179,7 @@ trait AuthenticationRoutes extends Directives with AskSupport with Generator {
       (post & authenticated & entity(as[SetApplicationState])) {
         case (sessionData, SetApplicationState(tenantId, applicationId, languageId)) =>
 
-          val applicationStateFuture = authenticationService
+          val applicationStateFuture = authenticationManager
             .ask(AuthenticationService.SetApplicationState(sessionData, tenantId, applicationId, languageId))
             .mapTo[ApplicationState]
           onComplete(applicationStateFuture) {
@@ -209,7 +210,7 @@ trait AuthenticationRoutes extends Directives with AskSupport with Generator {
     case (live, sessionData) =>
       import FailFastCirceSupport._
       if (live == "true") {
-        val applicationStateFuture = authenticationService
+        val applicationStateFuture = authenticationManager
           .ask(AuthenticationService.UpdateLastOpTimestamp(sessionData.sessionId))
       }
       complete(true)

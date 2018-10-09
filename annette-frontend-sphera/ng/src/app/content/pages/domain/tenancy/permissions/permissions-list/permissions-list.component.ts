@@ -173,4 +173,28 @@ export class PermissionsListComponent implements OnInit {
 		}
 		return '';
 	}
+
+	addpermission() {
+
+	}
+
+	deletepermissions() {
+
+	}
+
+	fetchpermissions() {
+
+	}
+
+	updateStatusForpermissions() {
+
+	}
+
+	editpermission(permission) {
+
+	}
+
+	deletepermission(permission) {
+
+	}
 }

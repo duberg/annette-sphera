@@ -141,6 +141,7 @@ case class UserManagerState(
   }
 
   def findUserByLoginAndPassword(login: String, password: String): Option[User] = {
+    println(users)
     val cleanLogin = login.toLowerCase.trim
     findUserId(cleanLogin)
       .flatMap {

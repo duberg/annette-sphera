@@ -34,7 +34,7 @@ class LoginActor(
     for {
       userOpt <- userDao.getByLoginAndPassword(login, password)
     } yield {
-      context.system.log.debug(s"validateUser: $userOpt")
+      log.debug(s"validateUser: $userOpt")
 
       userOpt match {
         case Some(x) if x.status != 0 => x
@@ -45,9 +45,9 @@ class LoginActor(
   }
 
   override def receive: Receive = LoggingReceive {
-    case msg: AuthenticationService.Login =>
-      if (msg.credentials.selectTenant) provideUserTenantData(sender, msg, None)
-      else login(msg)
+    case x: AuthenticationService.Login =>
+      if (x.credentials.selectTenant) provideUserTenantData(sender, x, None)
+      else login(x)
   }
 
   /* ----------------------- Login ----------------------- */

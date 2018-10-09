@@ -11,6 +11,7 @@ This project is based on ideas and source code of Valery Lobachev (https://githu
 ## Собираем клиент:
 ```bash
 cd annette-frontend-sphera/ng/
+npm install
 npm run build
 ```
 

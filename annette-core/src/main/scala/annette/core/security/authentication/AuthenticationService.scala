@@ -16,12 +16,68 @@ import annette.core.domain.tenancy.model.{ Tenant, TenantData }
 import com.typesafe.config.Config
 
 import scala.util.Try
+import AuthenticationService._
+
+class AuthenticationService(
+  sessionManager: SessionManager,
+  tenantManager: TenantManager,
+  applicationManager: ApplicationManager,
+  userManager: UserManager,
+  languageManager: LanguageManager,
+  config: Config)
+  extends Actor with ActorLogging {
+
+  implicit val ec = context.dispatcher
+
+  val secret = config.getString("annette.secret")
+
+  implicit val timeout = Timeout(
+    Try { config.getDuration("annette.core.AuthenticationService.timeout", TimeUnit.MILLISECONDS) }
+      .getOrElse(10000),
+    TimeUnit.MILLISECONDS)
+
+  val rememberMeSessionTimeout = config
+    .getDuration("annette.core.AuthenticationService.rememberMeSessionTimeout", TimeUnit.MINUTES)
+    .toInt
+
+  val sessionTimeout = config
+    .getDuration("annette.core.AuthenticationService.sessionTimeout", TimeUnit.MINUTES)
+    .toInt
+
+  val loginService = context.actorOf(
+    FromConfig.props(
+      Props(
+        classOf[LoginActor],
+        userManager, sessionManager, tenantManager, applicationManager, languageManager,
+        rememberMeSessionTimeout, sessionTimeout, secret)),
+    "login")
+
+  val logoutService = context.actorOf(
+    FromConfig.props(
+      Props(classOf[LogoutActor], sessionManager)),
+    "logout")
+
+  val authenticateService = context.actorOf(
+    FromConfig.props(
+      Props(classOf[AuthenticationActor], sessionManager, tenantManager, applicationManager, userManager, languageManager, secret)),
+    "authenticate")
+
+  val applicationStateService = context.actorOf(
+    FromConfig.props(
+      Props(classOf[ApplicationStateActor], sessionManager, tenantManager, applicationManager, userManager, languageManager, secret)),
+    "applicationState")
+
+  def receive: Receive = LoggingReceive {
+    case x: Authenticate => authenticateService forward x
+    case x: GetApplicationState => applicationStateService forward x
+    case x: SetApplicationState => applicationStateService forward x
+    case x: Login => loginService forward x
+    case x: Logout => logoutService forward x
+    case x: UpdateLastOpTimestamp => sessionManager.updateLastOpTimestamp(x.sessionId)
+  }
+}
 
 object AuthenticationService {
-
-  /**
-   * Наименование актора сервиса аутентификации
-   */
   final val name = "AuthenticationService"
 
   class Message
@@ -77,84 +133,15 @@ object AuthenticationService {
     applicationManager: ApplicationManager,
     userManager: UserManager,
     languageManager: LanguageManager,
-    config: Config) = Props(
-    classOf[AuthenticationService],
-    sessionManager,
-    tenantManager,
-    applicationManager,
-    userManager,
-    languageManager,
-    config)
-
-}
-
-class AuthenticationService(
-  sessionManager: SessionManager,
-  tenantManager: TenantManager,
-  applicationManager: ApplicationManager,
-  userManager: UserManager,
-  languageManager: LanguageManager,
-  config: Config)
-  extends Actor with ActorLogging {
-
-  implicit val ec = context.dispatcher
-
-  val secret = config.getString("annette.secret")
-
-  implicit val timeout = Timeout(
-    Try { config.getDuration("annette.core.AuthenticationService.timeout", TimeUnit.MILLISECONDS) }
-      .getOrElse(10000),
-    TimeUnit.MILLISECONDS)
-
-  val rememberMeSessionTimeout = config
-    .getDuration("annette.core.AuthenticationService.rememberMeSessionTimeout", TimeUnit.MINUTES)
-    .toInt
-
-  val sessionTimeout = config
-    .getDuration("annette.core.AuthenticationService.sessionTimeout", TimeUnit.MINUTES)
-    .toInt
-
-  val loginService = context.actorOf(
-    FromConfig.props(
-      Props(
-        classOf[LoginActor],
-        userManager, sessionManager, tenantManager, applicationManager, languageManager,
-        rememberMeSessionTimeout, sessionTimeout, secret)),
-    "login")
-
-  val logoutService = context.actorOf(
-    FromConfig.props(
-      Props(classOf[LogoutActor], sessionManager)),
-    "logout")
-
-  val authenticateService = context.actorOf(
-    FromConfig.props(
-      Props(classOf[AuthenticationActor], sessionManager, tenantManager, applicationManager, userManager, languageManager, secret)),
-    "authenticate")
-
-  val applicationStateService = context.actorOf(
-    FromConfig.props(
-      Props(classOf[ApplicationStateActor], sessionManager, tenantManager, applicationManager, userManager, languageManager, secret)),
-    "applicationState")
-
-  override def receive: Receive = LoggingReceive {
-    case msg: AuthenticationService.Authenticate =>
-      authenticateService forward msg
-
-    case msg: AuthenticationService.GetApplicationState =>
-      applicationStateService forward msg
-
-    case msg: AuthenticationService.SetApplicationState =>
-      applicationStateService forward msg
-
-    case msg: AuthenticationService.Login =>
-      loginService forward msg
-
-    case msg: AuthenticationService.Logout =>
-      logoutService forward msg
-
-    case msg: AuthenticationService.UpdateLastOpTimestamp =>
-      sessionManager.updateLastOpTimestamp(msg.sessionId)
-
+    config: Config) = {
+    Props(
+      new AuthenticationService(
+        sessionManager = sessionManager,
+        tenantManager = tenantManager,
+        applicationManager = applicationManager,
+        userManager = userManager,
+        languageManager = languageManager,
+        config = config))
   }
+
 }
