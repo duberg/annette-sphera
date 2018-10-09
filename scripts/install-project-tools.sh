@@ -5,42 +5,15 @@ sudo apt-get install -y curl
 curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
-# Install global dep
-# Fix: bug with undefined loop
-# https://github.com/angular/angular-cli/issues/6727
-# Angular. Shame on you!
-sudo npm install -g node-gyp
 sudo npm install -g @angular/cli
 
-# Prepare frontend
-cd ~/Desktop/annette-aniklab/annette-frontend/
-npm install
-npm run build
-cd ~/Desktop/annette-aniklab/annette-frontend-imc/
-npm install
-# npm run build
-ng build --watch
-
-# Install Cassandra
-echo "deb http://www.apache.org/dist/cassandra/debian 311x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
-curl https://www.apache.org/dist/cassandra/KEYS | sudo apt-key add -
-sudo apt-get update
-sudo apt-key adv --keyserver pool.sks-keyservers.net --recv-key A278B781FE4B2BDA
-sudo apt-get install -y cassandra
-
-# The default location of configuration files is /etc/cassandra.
-
-# You need to enable PasswordAuthenticator in cassandra.yaml file.
-# To enable PasswordAuthenticator you need to change authenticator property in cassandra.yaml
-# Change: authenticator: AllowAllAuthenticator
-# to: authenticator: PasswordAuthenticator
-sudo gedit /etc/cassandra/cassandra.yaml
-sudo service cassandra start
-# If establishing connection fails try multiple times:
-cqlsh localhost -u cassandra -p cassandra
-CREATE USER annette WITH PASSWORD 'abc' SUPERUSER;
-CREATE USER valery WITH PASSWORD 'abc' SUPERUSER;
-ALTER USER cassandra WITH PASSWORD 'afsso67347mething54747long67a7ndincom4574prehensi562ble';
+# Install Postgresql
+apt-get install postgresql-10 postgresql-contrib
+sudo -u postgres psql postgres
+create database annette_sphera;
+#\password postgres
+#abc
+#\q
 
 cd ~/Desktop/
 

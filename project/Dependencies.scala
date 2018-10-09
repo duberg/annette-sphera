@@ -5,6 +5,7 @@ object Dependencies {
     val scala = "2.12.4"
     val akka = "2.5.16"
     val akkaPersistenceCassandra = "0.90"
+    //val akkaPersistencePostgresql = "0.10.0"
     val akkaPersistenceInmemoryVersion = "2.5.0.0"
     val akkaHttp = "10.0.14"
     val phantom = "2.12.1"
@@ -31,6 +32,10 @@ object Dependencies {
    // "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0",
     "com.typesafe.akka" %% "akka-persistence" % Version.akka,
     "com.typesafe.akka" %% "akka-persistence-cassandra" % Version.akkaPersistenceCassandra,
+
+    "com.okumin" %% "akka-persistence-sql-async" % "0.5.1",
+    "com.github.mauricio" %% "postgresql-async" % "0.2.21",
+
     "com.typesafe.akka" %% "akka-http"         % Version.akkaHttp,
     "com.typesafe.akka" %% "akka-http-xml"     % Version.akkaHttp,
     "com.typesafe.akka" %% "akka-stream"       % Version.akka,

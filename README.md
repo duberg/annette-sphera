@@ -2,7 +2,7 @@
 
 This project is based on ideas and source code of Valery Lobachev (https://github.com/valerylobachev)
 
-Установить sbt, nodejs, cassandra, protoc-3.2.0 
+Установить sbt, nodejs, postgresql (или cassandra), protoc-3.2.0 
 ```/scripts/install-project-tools.sh```
 
 Нужно первоначально сгенерировать схему, для этого в настройках conf/application.conf прописываем
