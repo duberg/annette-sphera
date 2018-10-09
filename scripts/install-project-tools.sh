@@ -9,11 +9,15 @@ sudo npm install -g @angular/cli
 
 # Install Postgresql
 apt-get install postgresql-10 postgresql-contrib
+
 sudo -u postgres psql postgres
 create database annette_sphera;
 #\password postgres
 #abc
-#\q
+\q
+
+# Create schema
+# Run ./postgresql/schema.sql
 
 cd ~/Desktop/
 
