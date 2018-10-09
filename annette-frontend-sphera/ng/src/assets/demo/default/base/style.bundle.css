@@ -55525,7 +55525,7 @@ body.m-content--skin-light2 {
 }
 
 .m-aside-left.m-aside-left-offcanvas-default .m-aside-left {
-	//top: !important;
+	top: 0 !important;
 }
 
 .m-aside-left.m-aside-left-offcanvas-default .m-body {
