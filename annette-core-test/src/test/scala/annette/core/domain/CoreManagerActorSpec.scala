@@ -20,7 +20,7 @@ import annette.core.test.PersistenceSpec
 import com.typesafe.config.{ Config, ConfigFactory }
 import org.joda.time.DateTime
 
-class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
+class CoreManagerActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
   with PersistenceSpec
   with NewApplication
   with NewLanguage

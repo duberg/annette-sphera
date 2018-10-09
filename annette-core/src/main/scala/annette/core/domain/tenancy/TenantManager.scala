@@ -16,7 +16,6 @@ import annette.core.domain.tenancy.model.Tenant._
 class TenantManager @Inject() (
   @Named("CoreService") actor: ActorRef,
   userManager: UserManager,
-  tenantManager: TenantManager,
   languageManager: LanguageManager,
   applicationManager: ApplicationManager)(implicit val c: ExecutionContext, val t: Timeout) extends AskSupport {
 

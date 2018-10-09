@@ -2,6 +2,7 @@ package annette.core.domain.tenancy.actor
 
 import java.util.UUID
 
+import akka.actor.Props
 import annette.core.akkaext.actor.ActorId
 import annette.core.akkaext.http.PageRequest
 import annette.core.akkaext.persistence.CqrsPersistentActor
@@ -51,4 +52,9 @@ class TenantManagerActor(val id: ActorId, val initState: TenantManagerState) ext
     case ListTenants => listTenants(state)
     case PaginateListTenants(x) => paginateListTenants(state, x)
   }
+}
+
+object TenantManagerActor {
+  def props(id: ActorId, initState: TenantManagerState = TenantManagerState.empty): Props =
+    Props(new TenantManagerActor(id, initState))
 }

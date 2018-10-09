@@ -9,19 +9,26 @@ import annette.core.domain.language.LanguageService
 import annette.core.domain.tenancy.{ LastSessionManager, OpenSessionManager, SessionHistoryManager, UserManager }
 import annette.core.notification.actor.NotificationManagerActor
 import com.typesafe.config.Config
-import annette.core.domain.tenancy.model.User
+import annette.core.domain.tenancy.model.{ Tenant, User }
+
 import scala.concurrent.ExecutionContext
 import annette.core.domain.CoreService._
+import annette.core.domain.tenancy.actor.TenantManagerActor
 import annette.core.notification.actor._
 import annette.core.security.verification.{ Verification, VerificationBus }
 
 @Singleton
 @Named("CoreService")
-class CoreServiceActor(config: Config, verificationBus: VerificationBus)(implicit c: ExecutionContext, t: Timeout) extends Actor with ActorLogging {
+class CoreManagerActor(config: Config, verificationBus: VerificationBus)(implicit c: ExecutionContext, t: Timeout) extends Actor with ActorLogging {
   val coreId = ActorId("core")
 
-  val applicationActorId = coreId / "application"
-  val applicationActor: ActorRef = context.actorOf(ApplicationManager.props(applicationActorId), "application")
+  val tenantManagerId = coreId / "tenant"
+  val tenantManagerActor = context.actorOf(
+    props = TenantManagerActor.props(tenantManagerId),
+    name = "tenant")
+
+  val applicationManagerId = coreId / "application"
+  val applicationActor: ActorRef = context.actorOf(ApplicationManager.props(applicationManagerId), "application")
 
   val languageActorId = coreId / "language"
   val languageActor: ActorRef = context.actorOf(LanguageService.props(languageActorId), "language")
@@ -47,30 +54,26 @@ class CoreServiceActor(config: Config, verificationBus: VerificationBus)(implici
     name = NotificationManagerActorName)
 
   def receive: PartialFunction[Any, Unit] = {
-    case msg: Application.Command =>
-      applicationActor forward msg
-    case msg: Application.Query =>
-      applicationActor forward msg
-    case msg: LanguageService.Command =>
-      languageActor forward msg
-    case msg: LanguageService.Query =>
-      languageActor forward msg
-    case msg: User.Command =>
-      userActor forward msg
-    case msg: User.Query =>
-      userActor forward msg
-    case msg: OpenSessionManager.Command =>
-      openSessionActor forward msg
-    case msg: OpenSessionManager.Query =>
-      openSessionActor forward msg
-    case msg: LastSessionManager.Command =>
-      lastSessionActor forward msg
-    case msg: LastSessionManager.Query =>
-      lastSessionActor forward msg
-    case msg: SessionHistoryManager.Command =>
-      sessionHistoryActor forward msg
-    case msg: SessionHistoryManager.Query =>
-      sessionHistoryActor forward msg
+    case x: Tenant.Command => tenantManagerActor forward x
+    case x: Tenant.Query => tenantManagerActor forward x
+
+    case x: Application.Command => applicationActor forward x
+    case x: Application.Query => applicationActor forward x
+
+    case x: LanguageService.Command => languageActor forward x
+    case x: LanguageService.Query => languageActor forward x
+
+    case x: User.Command => userActor forward x
+    case x: User.Query => userActor forward x
+
+    case x: OpenSessionManager.Command => openSessionActor forward x
+    case x: OpenSessionManager.Query => openSessionActor forward x
+
+    case x: LastSessionManager.Command => lastSessionActor forward x
+    case x: LastSessionManager.Query => lastSessionActor forward x
+
+    case x: SessionHistoryManager.Command => sessionHistoryActor forward x
+    case x: SessionHistoryManager.Query => sessionHistoryActor forward x
 
     case x: EmailNotificationActor.Command => notificationManagerActor forward x
     case x: SmsNotificationActor.Command => notificationManagerActor forward x
@@ -90,5 +93,5 @@ object CoreService {
   val name = "core"
 
   def props(config: Config, verificationBus: VerificationBus)(implicit c: ExecutionContext, t: Timeout) =
-    Props(new CoreServiceActor(config = config, verificationBus = verificationBus))
+    Props(new CoreManagerActor(config = config, verificationBus = verificationBus))
 }

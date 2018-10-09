@@ -13,3 +13,7 @@ case class TenantManagerState(tenants: Map[Tenant.Id, Tenant]) extends CqrsState
     case CreatedTenantEvt(x) => createTenant(x)
   }
 }
+
+object TenantManagerState {
+  def empty: TenantManagerState = TenantManagerState(Map.empty)
+}
