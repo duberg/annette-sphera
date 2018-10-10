@@ -146,7 +146,14 @@
 
 				<ng-container matColumnDef="applications">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Applications</mat-header-cell>
-					<mat-cell *matCellDef="let tenant">{{tenant.applications}}</mat-cell>
+					<mat-cell *matCellDef="let tenant">
+						<mat-list>
+							<mat-list-item *ngFor="let application of tenant.applications">
+								<mat-icon mat-list-icon>folder</mat-icon>
+								<p mat-line>{{application}}</p>
+							</mat-list-item>
+						</mat-list>
+					</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="defaultLanguageId">
@@ -156,7 +163,14 @@
 
 				<ng-container matColumnDef="languages">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Languages</mat-header-cell>
-					<mat-cell *matCellDef="let tenant">{{tenant.languages}}</mat-cell>
+					<mat-cell *matCellDef="let tenant">
+						<mat-list>
+							<mat-list-item *ngFor="let language of tenant.languages">
+								<mat-icon mat-list-icon>language</mat-icon>
+								<p mat-line>{{language}}</p>
+							</mat-list-item>
+						</mat-list>
+					</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="actions">

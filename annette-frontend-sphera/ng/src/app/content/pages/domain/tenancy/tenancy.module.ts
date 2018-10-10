@@ -29,7 +29,10 @@ import {
 	MatRadioModule,
 	MatSelectModule, MatSnackBarModule,
 	MatSortModule,
-	MatTableModule, MatTabsModule, MatTooltipModule
+	MatTableModule,
+	MatTabsModule,
+	MatTooltipModule,
+	MatListModule
 } from "@angular/material";
 import {PartialsModule} from "../../../partials/partials.module";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
@@ -95,7 +98,8 @@ const routes: Routes = [
 	  MatProgressSpinnerModule,
 	  MatSnackBarModule,
 	  MatTabsModule,
-	  MatTooltipModule
+	  MatTooltipModule,
+	  MatListModule
   ],
 	providers: [
 		{
