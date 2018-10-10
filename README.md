@@ -11,16 +11,7 @@ create database annette_sphera;
 \q
 ```
 
-- Generate postgresql schema:
-```bash
-sbt
-mg init
-~mg migrate
-~mg migrate
-
-```
-
-- Generate default application data. In conf/application.conf set this:
+- Generate postgresql schema. In conf/application.conf set this:
 ```core.initDb.createSchema = true```
 
 - Build frontend:
