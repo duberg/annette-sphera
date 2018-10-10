@@ -23,6 +23,7 @@ import scala.util.Try
 
 @Singleton
 class InitCoreTables @Inject() (
+  //db: DB,
   config: Config,
   userManager: UserManager,
   tenantManager: TenantManager,
@@ -50,9 +51,7 @@ class InitCoreTables @Inject() (
   }
 
   def initDb(): Future[Unit] = {
-
     for {
-      // _ <- createTables(initDbConf)
       _ <- load("languages", loadLanguages)
       _ <- load("applications", loadApplications)
       _ <- load("tenants", loadTenants)
@@ -69,24 +68,6 @@ class InitCoreTables @Inject() (
       .map(c => loadFunc(c))
       .getOrElse(FastFuture.successful(()))
   }
-
-  //  private def createTables(initDb: Config): Future[Unit] = {
-  //
-  //    val createFuture = for {
-  //      //res1 <- languageDb.createAsync()
-  //      res2 <- tenancyDb.createAsync()
-  //      //res3 <- applicationDb.createAsync()
-  //    } yield (res2)
-  //    createFuture.failed.foreach {
-  //      case th: Throwable =>
-  //        log.error("Create table failure: ")
-  //        th.printStackTrace()
-  //    }
-  //    createFuture
-  //      .map(_ => ())
-  //      .recover { case _ => () }
-  //
-  //  }
 
   private def loadLanguages(list: List[Config]): Future[Unit] = {
     val languages = list.map {

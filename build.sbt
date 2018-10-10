@@ -1,8 +1,13 @@
+import Dependencies._
+
 val imcVersion = "3.1.7-SNAPSHOT"
 val coreVersion = "4.0.28-SNAPSHOT"
 
 // the library is available in Bintray's JCenter
 resolvers += Resolver.jcenterRepo
+resolvers ++= Seq(
+  Resolver.bintrayRepo("naftoligug", "maven"),
+  Resolver.sonatypeRepo("snapshots"))
 
 lazy val commonSettings = Seq(
 
@@ -38,8 +43,6 @@ lazy val commonSettings = Seq(
   ),
   updateOptions := updateOptions.value.withLatestSnapshots(false),
 
-  mainClass in Compile := Some("annette.core.AnnetteApplication"),
-
   fork in run := false
 )
 
@@ -49,6 +52,7 @@ lazy val root = (project in file("."))
   .enablePlugins(UniversalPlugin)
   .settings(name := "sphera")
   .aggregate(annetteCore, annetteCoreTest, annetteSphera , annetteFrontendSphera)
+  //.dependsOn(generatedCode)
 
 lazy val annetteCore = Project(
   id = "annette-core",
@@ -141,8 +145,76 @@ lazy val annetteSpheraServer = Project(
     name := "annette-sphera-server",
     version := imcVersion,
     packageName in Universal := "annette-sphera-server",
-    baseDirectory in reStart := (baseDirectory in root).value
+    baseDirectory in reStart := (baseDirectory in root).value,
+    mainClass in Compile := Some("annette.core.AnnetteApplication")
   ).dependsOn(annetteSphera, annetteFrontendSphera)
 
 mainClass in Compile := Some("annette.core.AnnetteApplication")
 mainClass in reStart := Some("annette.core.AnnetteApplication")
+
+
+addCommandAlias("mgm", "migration_manager/run")
+
+addCommandAlias("mg", "migrations/run")
+
+lazy val slickVersion = "3.2.1"
+
+lazy val forkliftVersion = "0.3.0"
+
+lazy val loggingDependencies = List(
+  "org.slf4j" % "slf4j-nop" % "1.6.4" // <- disables logging
+)
+
+lazy val slickDependencies = List(
+  "com.typesafe.slick" %% "slick" % slickVersion
+)
+
+lazy val dbDependencies = List(
+  "com.typesafe.slick" %% "slick-hikaricp" % slickVersion,
+  "org.postgresql" % "postgresql" % "42.2.5"
+)
+
+lazy val forkliftDependencies = List(
+  "com.liyaos" %% "scala-forklift-slick" % forkliftVersion
+  ,"io.github.nafg" %% "slick-migration-api" % "0.4.1"
+)
+
+//lazy val appDependencies = dbDependencies ++ loggingDependencies
+
+lazy val migrationsDependencies =
+  dbDependencies ++ forkliftDependencies ++ loggingDependencies
+
+lazy val migrationManagerDependencies = dbDependencies ++ forkliftDependencies
+
+//lazy val app = Project("app",
+//  file("app")).dependsOn(generatedCode).settings(
+//  commonSettings:_*).settings {
+//  libraryDependencies ++= appDependencies
+//}
+
+lazy val migrationManager = Project("migration_manager",
+  file("migration_manager")).settings(
+  commonSettings:_*).settings {
+  libraryDependencies ++= migrationManagerDependencies
+}
+
+lazy val migrations = Project("migrations",
+  file("migrations")).dependsOn(
+  generatedCode, migrationManager).settings(
+  commonSettings:_*).settings {
+  libraryDependencies ++= migrationsDependencies
+}
+
+lazy val tools = Project("git-tools",
+  file("tools/git")).settings(commonSettings:_*).settings {
+  libraryDependencies ++= forkliftDependencies ++ List(
+    "com.liyaos" %% "scala-forklift-git-tools" % forkliftVersion,
+    "com.typesafe" % "config" % "1.3.0",
+    "org.eclipse.jgit" % "org.eclipse.jgit" % "4.0.1.201506240215-r"
+  )
+}
+
+lazy val generatedCode = Project("generate_code",
+  file("generated_code")).settings(commonSettings:_*).settings {
+  libraryDependencies ++= slickDependencies
+}

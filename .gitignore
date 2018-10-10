@@ -1,4 +1,7 @@
 *.log
+*.iml
+*.db
+*.swp
 *lock.json
 .idea/
 target/
@@ -10,3 +13,4 @@ annette-frontend-sphera/src/main/resources/dist
 tools/gen/
 annette-imc-server/file-storage/
 buildinfo.properties
+generated_code/*

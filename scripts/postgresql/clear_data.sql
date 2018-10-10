@@ -1,2 +1,2 @@
-delete from annette_sphera.journal;
-select * from annette_sphera.journal;
+delete from annette_sphera.public.*;
+select * from annette_sphera;

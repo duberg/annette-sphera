@@ -1,27 +1,9 @@
 #!/usr/bin/env bash
 
-sudo apt-get install -y curl
-# Install nodejs
-curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-sudo apt-get install -y nodejs
-
-sudo npm install -g @angular/cli
-
-# Install Postgresql
-apt-get install postgresql-10 postgresql-contrib
-
-sudo -u postgres psql postgres
-create database annette_sphera;
-#\password postgres
-#abc
-\q
-
-# Create schema
-# Run ./postgresql/schema.sql
-
-cd ~/Desktop/
-
+#
 # Install protobuf
+#
+#
 # Make sure you grab the latest version
 curl -OL https://github.com/google/protobuf/releases/download/v3.2.0/protoc-3.2.0-linux-x86_64.zip
 
@@ -44,6 +26,35 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89
 sudo apt-get update
 sudo apt-get install -y sbt
 
-# sbt annette-akka/run
+# Install postgresql
+sudo apt-get install postgresql-10 postgresql-contrib
+sudo -u postgres psql postgres
+create database annette_sphera;
+#\password postgres
+#abc
+\q
+
+# Generate postgresql schema:
+sbt mg init
+sbt ~mg migrate
+
+# Generate default application data. In conf/application.conf set this:
+# core.initDb.createSchema = true
+
+# Install nodejs
+sudo apt-get install -y curl
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# Install angular/cli
+sudo npm install -g @angular/cli
+
+# Build frontend
+cd annette-frontend-sphera/ng/
+npm install
+npm run build
+
+# Start sbt task:
+sbt ~annette-sphera-server/reStart
 
 

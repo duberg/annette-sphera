@@ -20,6 +20,8 @@ object Dependencies {
     val casbin = "1.1.0"
     val shapeless = "2.3.3"
     val monocle = "1.5.0"
+    val slick = "3.2.1"
+    val forklift= "0.3.0"
   }
 
   //lazy val akkaBackend: Seq[sbt.ModuleID] = common ++ tests ++ guice ++ reflect //++ metrics
@@ -61,7 +63,13 @@ object Dependencies {
 
     "com.github.julien-truffaut" %%  "monocle-core"  % Version.monocle,
     "com.github.julien-truffaut" %%  "monocle-macro" % Version.monocle,
-    "com.github.julien-truffaut" %%  "monocle-law"   % Version.monocle % "test"
+    "com.github.julien-truffaut" %%  "monocle-law"   % Version.monocle % "test",
+
+    "com.typesafe.slick" %% "slick" % Version.slick,
+    "com.typesafe.slick" %% "slick-hikaricp" % Version.slick,
+    "com.liyaos" %% "scala-forklift-slick" % Version.forklift,
+    
+    "org.postgresql" % "postgresql" % "42.2.5"
   ) ++ test ++ guice ++ reflect
 
   /**

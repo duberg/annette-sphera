@@ -2,20 +2,33 @@
 
 This project is based on ideas and source code of Valery Lobachev (https://github.com/valerylobachev)
 
-Установить sbt, nodejs, postgresql (или cassandra), protoc-3.2.0 
+- Install sbt, postgresql, protoc-3.2.0, nodejs, @angular/cli
 ```/scripts/install-project-tools.sh```
 
-Нужно первоначально сгенерировать схему, для этого в настройках conf/application.conf прописываем
+- Create database annette_sphera
+```bash
+sudo -u postgres psql postgres
+create database annette_sphera;
+\q
+```
+
+- Generate postgresql schema:
+```bash
+sbt mg init
+sbt ~mg migrate
+```
+
+- Generate default application data. In conf/application.conf set this:
 ```core.initDb.createSchema = true```
 
-## Собираем клиент:
+- Build frontend:
 ```bash
 cd annette-frontend-sphera/ng/
 npm install
 npm run build
 ```
 
-## Запускаем sbt task:
+- Start sbt task:
 ```bash
 sbt ~annette-sphera-server/reStart
 ```
@@ -36,7 +49,7 @@ sbt ~annette-sphera-server/reStart
 ## Signin page:
 ![signin page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_signin.png)
 
-## Директива авторизации akka-http:
+## Authorization directive akka-http:
 ```scala
  /**
    * = Authorization directive =
