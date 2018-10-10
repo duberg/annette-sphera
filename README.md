@@ -40,6 +40,10 @@ sbt ~annette-sphera-server/reStart
   }
 ```
 
+## Tenants page with pagination:
+![tenants page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_tenants.png)
+
+
 ## Signin page:
 ![signin page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_signin.png)
 
