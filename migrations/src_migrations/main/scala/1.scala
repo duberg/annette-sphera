@@ -30,7 +30,7 @@ object M1 {
   def createTables: Seq[DBIO[Int]] = Seq(
       createPersistenceMetadataTable,
       createPersistenceJournalTable,
-      createPersistenceSnapshotTable)
+      createPersistenceSnapshotTable
   )
 
   MyMigrations.migrations = MyMigrations.migrations :+ SqlMigration(1)(createTables)
