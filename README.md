@@ -29,6 +29,7 @@ npm run build
 
 - Start sbt task:
 ```bash
+cd ../../
 sbt ~annette-sphera-server/reStart
 ```
 

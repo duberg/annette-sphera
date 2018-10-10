@@ -1,3 +1,2 @@
 object MigrationSummary {
-  M1
 }

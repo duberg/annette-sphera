@@ -28,10 +28,9 @@ object M1 {
       PRIMARY KEY (persistence_key, sequence_nr));"""
 
   def createTables: Seq[DBIO[Int]] = Seq(
-      createPersistenceMetadataTable,
-      createPersistenceJournalTable,
-      createPersistenceSnapshotTable
-  )
+    createPersistenceMetadataTable,
+    createPersistenceJournalTable,
+    createPersistenceSnapshotTable)
 
   MyMigrations.migrations = MyMigrations.migrations :+ SqlMigration(1)(createTables)
 }

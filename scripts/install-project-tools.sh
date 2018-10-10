@@ -55,6 +55,7 @@ npm install
 npm run build
 
 # Start sbt task:
+cd ../../
 sbt ~annette-sphera-server/reStart
 
 
