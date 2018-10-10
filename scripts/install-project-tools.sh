@@ -35,8 +35,10 @@ create database annette_sphera;
 \q
 
 # Generate postgresql schema:
-sbt mg init
-sbt ~mg migrate
+sbt
+mg init
+~mg migrate
+~mg migrate
 
 # Generate default application data. In conf/application.conf set this:
 # core.initDb.createSchema = true

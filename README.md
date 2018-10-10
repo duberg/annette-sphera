@@ -13,8 +13,11 @@ create database annette_sphera;
 
 - Generate postgresql schema:
 ```bash
-sbt mg init
-sbt ~mg migrate
+sbt
+mg init
+~mg migrate
+~mg migrate
+
 ```
 
 - Generate default application data. In conf/application.conf set this:
