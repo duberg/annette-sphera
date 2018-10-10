@@ -7,6 +7,7 @@ import com.typesafe.config.Config
 trait ApiRoutes extends Directives with AskSupport
   with AuthenticationRoutes
   with AuthorizationRoutes
+  with TenantRoutes
   with UserRoutes
   with NotificationRoutes
   with VerificationRoutes {
@@ -21,6 +22,7 @@ trait ApiRoutes extends Directives with AskSupport
   val apiRoutes: Route = pathPrefix("api") {
     authenticationRoutes ~
       authorizationRoutes ~
+      tenantRoutes ~
       userRoutes ~
       notificationRoutes ~
       verificationRoutes

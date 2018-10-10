@@ -40,6 +40,7 @@ import {TypesUtilsService} from "../../components/users/_core/utils/types-utils.
 import { TenantsListComponent } from './tenants/tenants-list/tenants-list.component';
 import { TenantEditComponent } from './tenants/tenant-edit/tenant-edit.component';
 import {RolesEditComponent} from "./roles/role-edit/roles-edit.component";
+import {TenantsService} from "./_core/services/tenants.service";
 
 const routes: Routes = [
 	{
@@ -52,17 +53,17 @@ const routes: Routes = [
 				pathMatch: 'full'
 			},
 			{
+				path: 'tenants',
+				component: TenantsListComponent
+			},
+			{
 				path: 'roles',
 				component: RolesListComponent
 			},
 			{
 				path: 'permissions',
 				component: PermissionsListComponent
-			},
-			{
-				path: 'tenants',
-				component: TenantsListComponent
-			},
+			}
 		]
 	}
 ];
@@ -108,7 +109,9 @@ const routes: Routes = [
 		},
 		HttpUtilsService,
 		TypesUtilsService,
-		PermissionsService],
+		PermissionsService,
+		TenantsService
+	],
   declarations: [
   	TenancyComponent,
 	RolesListComponent,

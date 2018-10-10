@@ -3,10 +3,11 @@ package annette.core.domain.tenancy
 import akka.actor.ActorRef
 import akka.pattern.AskSupport
 import akka.util.Timeout
+import annette.core.akkaext.http.PageRequest
 import annette.core.domain.application.{ Application, ApplicationManager }
 import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.model.{ CreateTenant, Tenant, TenantData, User }
+import annette.core.domain.tenancy.model._
 import javax.inject.{ Inject, Named, Singleton }
 
 import scala.concurrent.{ ExecutionContext, Future }
@@ -34,6 +35,11 @@ class TenantManager @Inject() (
   def listTenants: Future[Map[Tenant.Id, Tenant]] =
     ask(actor, ListTenants)
       .mapTo[TenantsMap]
+      .map(_.x)
+
+  def paginateListTenants(page: PageRequest): Future[PaginateTenantsList] =
+    ask(actor, PaginateListTenants(page))
+      .mapTo[TenantsList]
       .map(_.x)
 
   def listTenantsIds: Future[Set[Tenant.Id]] =
