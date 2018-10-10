@@ -1,9 +1,8 @@
-# Интеграционная платформа Annette-Sphera
+# Integration platform Annette-Sphera
 
 This project is based on ideas and source code of Valery Lobachev (https://github.com/valerylobachev)
 
-- Install sbt, postgresql, protoc-3.2.0, nodejs, @angular/cli
-```/scripts/install-project-tools.sh```
+- Install sbt, postgresql, protoc-3.2.0, nodejs, @angular/cli: ```/scripts/install-project-tools.sh```
 
 - Create database annette_sphera
 ```bash
