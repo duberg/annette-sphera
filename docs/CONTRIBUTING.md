@@ -1,4 +1,4 @@
-# Contributing to Annette Axon
+# Contributing to Annette-Sphera
 
 We would love for you to contribute to starter project and help make it even better than it is
 today! As a contributor, here are the guidelines we would like you to follow:
