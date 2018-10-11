@@ -39,7 +39,7 @@ sudo service cassandra start
 # If establishing connection fails try multiple times:
 cqlsh localhost -u cassandra -p cassandra
 CREATE USER annette WITH PASSWORD 'abc' SUPERUSER;
-CREATE USER valery WITH PASSWORD 'abc' SUPERUSER;
+CREATE USER kantemirov WITH PASSWORD 'abc' SUPERUSER;
 ALTER USER cassandra WITH PASSWORD 'afsso67347mething54747long67a7ndincom4574prehensi562ble';
 
 cd ~/Desktop/

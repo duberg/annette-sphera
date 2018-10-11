@@ -6,20 +6,20 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.util.FastFuture
 import annette.core.{ AnnetteHttpModule, BuildInfo, CoreModule }
 import annette.core.security.SecurityDirectives
-import annette.imc.http.ImcApi
+import annette.imc.http.SpheraApi
 import annette.imc.user.model.UserRoled
 import com.typesafe.config.Config
 import javax.inject.{ Inject, Singleton }
 
 import scala.concurrent.{ ExecutionContext, Future }
 
-case class ImcContext(
+case class SpheraContext(
   system: ActorSystem,
   config: Config,
   fileStorageDir: String,
   getUserRoled: UUID => Future[Option[UserRoled]])
 
-class ImcModule extends AnnetteHttpModule {
+class SpheraModule extends AnnetteHttpModule {
   def getUserRoled(ec: ExecutionContext)(userId: UUID) = {
     //    implicit val e: ExecutionContext = ec
     //    for {
@@ -55,8 +55,8 @@ class ImcModule extends AnnetteHttpModule {
   override def name: String = "annette-imc"
 
   override def routes = {
-    val ctx = ImcContext(coreModule.system, coreModule.config, "file-storage", getUserRoled(coreModule.system.dispatcher))
-    val imcApi = new ImcApi(coreModule, ctx, coreModule.annetteSecurityDirectives.authenticated)
+    val ctx = SpheraContext(coreModule.system, coreModule.config, "file-storage", getUserRoled(coreModule.system.dispatcher))
+    val imcApi = new SpheraApi(coreModule, ctx, coreModule.annetteSecurityDirectives.authenticated)
     imcApi.routes
   }
 

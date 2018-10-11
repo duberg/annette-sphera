@@ -30,8 +30,8 @@ export class SigninComponent implements OnInit, OnDestroy {
 		password: 'abc',
 		rememberMe:false,
 		selectTenant:false,
-		tenant: "IMC",
-		application: "IMC"
+		tenant: "SPHERA",
+		application: "ADMIN"
 	};
 
 	@Output() actionChange = new Subject<string>();

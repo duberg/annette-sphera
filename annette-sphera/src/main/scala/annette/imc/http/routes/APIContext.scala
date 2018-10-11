@@ -6,13 +6,13 @@ import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import annette.core.CoreModule
 import annette.core.security.authentication.Session
-import annette.imc.ImcContext
+import annette.imc.SpheraContext
 
 import scala.concurrent.duration._
 
 trait APIContext {
   val coreModule: CoreModule
-  val ctx: ImcContext
+  val ctx: SpheraContext
   val auth: Directive1[Session]
   val imcUserActor: ActorRef
   val apsActor: ActorRef

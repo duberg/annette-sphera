@@ -18,17 +18,15 @@ import com.typesafe.config.Config
 import scala.util.Try
 import AuthenticationService._
 
+import scala.concurrent.ExecutionContext
+
 class AuthenticationService(
   sessionManager: SessionManager,
   TenantService: TenantService,
   applicationManager: ApplicationManager,
   userManager: UserManager,
   languageManager: LanguageManager,
-  config: Config)
-  extends Actor with ActorLogging {
-
-  implicit val ec = context.dispatcher
-
+  config: Config)(implicit c: ExecutionContext) extends Actor with ActorLogging {
   val secret = config.getString("annette.secret")
 
   implicit val timeout = Timeout(
@@ -45,17 +43,22 @@ class AuthenticationService(
     .toInt
 
   val loginService = context.actorOf(
-    FromConfig.props(
+    props = FromConfig.props(
       Props(
-        classOf[LoginActor],
-        userManager, sessionManager, TenantService, applicationManager, languageManager,
-        rememberMeSessionTimeout, sessionTimeout, secret)),
-    "login")
+        new LoginActor(
+          userDao = userManager,
+          sessionDao = sessionManager,
+          tenantService = TenantService,
+          applicationDao = applicationManager,
+          languageDao = languageManager,
+          rememberMeSessionTimeout = rememberMeSessionTimeout,
+          sessionTimeout = sessionTimeout,
+          secret = secret))),
+    name = "login")
 
   val logoutService = context.actorOf(
-    FromConfig.props(
-      Props(classOf[LogoutActor], sessionManager)),
-    "logout")
+    props = FromConfig.props(Props(new LogoutActor(sessionManager))),
+    name = "logout")
 
   val authenticateService = context.actorOf(
     FromConfig.props(
@@ -133,7 +136,7 @@ object AuthenticationService {
     applicationManager: ApplicationManager,
     userManager: UserManager,
     languageManager: LanguageManager,
-    config: Config) = {
+    config: Config)(implicit c: ExecutionContext): Props = {
     Props(
       new AuthenticationService(
         sessionManager = sessionManager,

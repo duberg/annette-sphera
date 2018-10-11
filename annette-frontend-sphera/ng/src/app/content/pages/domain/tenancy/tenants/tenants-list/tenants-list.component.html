@@ -149,8 +149,7 @@
 					<mat-cell *matCellDef="let tenant">
 						<mat-list>
 							<mat-list-item *ngFor="let application of tenant.applications">
-								<mat-icon mat-list-icon>folder</mat-icon>
-								<p mat-line>{{application}}</p>
+								{{application}}
 							</mat-list-item>
 						</mat-list>
 					</mat-cell>
@@ -166,8 +165,7 @@
 					<mat-cell *matCellDef="let tenant">
 						<mat-list>
 							<mat-list-item *ngFor="let language of tenant.languages">
-								<mat-icon mat-list-icon>language</mat-icon>
-								<p mat-line>{{language}}</p>
+								{{language}}
 							</mat-list-item>
 						</mat-list>
 					</mat-cell>

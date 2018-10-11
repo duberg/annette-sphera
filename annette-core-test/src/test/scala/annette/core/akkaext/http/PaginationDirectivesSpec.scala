@@ -11,7 +11,7 @@ class PaginationDirectivesSpec extends PaginationSpec {
 
     Get("/filter-test") ~> paginationOrDefaultsRoute ~> check {
       status shouldEqual StatusCodes.OK
-      responseAs[String] shouldEqual PageRequest(0, 10, Map.empty).toString
+      responseAs[String] shouldEqual PageRequest(0, 10, Map.empty, Map.empty).toString
     }
   }
 
@@ -22,19 +22,19 @@ class PaginationDirectivesSpec extends PaginationSpec {
 
     Get("/filter-test?offset=1") ~> paginationOrDefaultsRoute ~> check {
       status shouldEqual StatusCodes.OK
-      responseAs[String] shouldEqual PageRequest(1, 10, Map.empty).toString
+      responseAs[String] shouldEqual PageRequest(1, 10, Map.empty, Map.empty).toString
     }
   }
 
   it should "return the page object that was requested" in {
     Get("/filter-test?offset=1&limit=10&sort=name,asc;age,desc") ~> paginationRoute ~> check {
       status shouldEqual StatusCodes.OK
-      responseAs[String] shouldEqual PageRequest(1, 10, Map("name" -> Order.Asc, "age" -> Order.Desc)).toString
+      responseAs[String] shouldEqual PageRequest(1, 10, Map("name" -> Order.Asc, "age" -> Order.Desc), Map.empty).toString
     }
 
     Get("/filter-test?offset=1&limit=10&sort=name,asc;age,desc") ~> paginationOrDefaultsRoute ~> check {
       status shouldEqual StatusCodes.OK
-      responseAs[String] shouldEqual PageRequest(1, 10, Map("name" -> Order.Asc, "age" -> Order.Desc)).toString
+      responseAs[String] shouldEqual PageRequest(1, 10, Map("name" -> Order.Asc, "age" -> Order.Desc), Map.empty).toString
     }
   }
 }

@@ -4,6 +4,7 @@ import akka.actor.{ ActorRef, ActorSystem, Props }
 import akka.cluster.Cluster
 import akka.event.{ LogSource, Logging }
 import akka.routing.FromConfig
+import akka.util.Timeout
 import annette.core.domain.InitCoreTables
 import annette.core.domain.application.ApplicationManager
 import annette.core.domain.language.LanguageManager
@@ -11,6 +12,8 @@ import annette.core.domain.tenancy.{ SessionManager, TenantService, UserManager 
 import com.google.inject.Provider
 import com.typesafe.config.Config
 import javax.inject._
+
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class AuthenticationServiceProvider @Inject() (
@@ -21,7 +24,7 @@ class AuthenticationServiceProvider @Inject() (
   userManager: UserManager,
   languageManager: LanguageManager,
   config: Config,
-  initCoreTables: InitCoreTables) extends Provider[ActorRef] {
+  initCoreTables: InitCoreTables)(implicit c: ExecutionContext, t: Timeout) extends Provider[ActorRef] {
 
   implicit val myLogSourceType: LogSource[AuthenticationServiceProvider] = (a: AuthenticationServiceProvider) => "AuthenticationServiceProvider"
 
@@ -55,17 +58,15 @@ class AuthenticationServiceProvider @Inject() (
     initService()
   }
 
-  private def initService() = {
-    system.actorOf(
-      AuthenticationService.props(
-        sessionManager = sessionManager,
-        TenantService = TenantService,
-        applicationManager = applicationManager,
-        userManager = userManager,
-        languageManager = languageManager,
-        config = config),
-      AuthenticationService.name)
-  }
+  private def initService() = system.actorOf(
+    props = AuthenticationService.props(
+      sessionManager = sessionManager,
+      TenantService = TenantService,
+      applicationManager = applicationManager,
+      userManager = userManager,
+      languageManager = languageManager,
+      config = config),
+    name = AuthenticationService.name)
 
   private def initClusterServiceRouter() = {
     system.actorOf(FromConfig.props(Props.empty), routerName)

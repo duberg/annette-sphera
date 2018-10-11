@@ -5,6 +5,7 @@ import java.util.UUID
 import akka.actor.{ Actor, ActorLogging, ActorRef }
 import akka.event.LoggingReceive
 import akka.http.scaladsl.util.FastFuture
+import akka.util.Timeout
 import annette.core.domain.application.ApplicationManager
 import annette.core.security.authentication.AuthenticationService.{ FailureResponse, Login }
 import annette.core.security.authentication.jwt.JwtHelper
@@ -15,7 +16,7 @@ import annette.core.domain.tenancy.{ SessionManager, TenantService, UserManager 
 import annette.core.domain.tenancy.model.{ OpenSession, Tenant, TenantData, User }
 import org.joda.time.DateTime
 
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 
 class LoginActor(
   userDao: UserManager,
@@ -25,10 +26,7 @@ class LoginActor(
   languageDao: LanguageManager,
   rememberMeSessionTimeout: Int,
   sessionTimeout: Int,
-  override val secret: String)
-  extends Actor with ActorLogging with JwtHelper {
-
-  implicit val ec = context.dispatcher
+  val secret: String)(implicit c: ExecutionContext, t: Timeout) extends Actor with ActorLogging with JwtHelper {
 
   def validateUser(login: String, password: String): Future[User] = {
     for {

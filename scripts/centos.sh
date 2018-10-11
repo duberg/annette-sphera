@@ -21,7 +21,7 @@ service cassandra start
 
 cqlsh localhost -u cassandra -p cassandra
 
-CREATE USER valery WITH PASSWORD 'abc' SUPERUSER;
+CREATE USER kantemirov WITH PASSWORD 'abc' SUPERUSER;
 
 CREATE USER annette WITH PASSWORD 'abc' SUPERUSER;
 

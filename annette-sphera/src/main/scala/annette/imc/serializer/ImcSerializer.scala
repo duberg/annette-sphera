@@ -7,7 +7,7 @@ import annette.imc.user.{ ImcUserActor, ImcUserState }
 import annette.imc.{ ApsActor, ApsState }
 
 /**
- * Created by valery on 10.04.17.
+ * Created by kantemirov on 10.04.17.
  */
 class ImcSerializer extends SerializerWithStringManifest
   with ImcUserConverters

@@ -12,7 +12,7 @@
 //import annette.core.security.authentication.Session
 //import annette.core.inject.AkkaModule
 //import annette.core.test.InMemoryCleanup
-//import annette.imc.http.ImcApi
+//import annette.imc.http.SpheraApi
 //import annette.imc.model.ApFile.FileType
 //import annette.imc.model._
 //import annette.imc.user.model.UserRoled
@@ -41,7 +41,7 @@
 //        "Иванов", "Иван", "Иванович", None, true, true, true, true, true)))
 //  }
 //
-//  val ctx = ImcContext(system, ConfigFactory.load(), System.getProperty("java.io.tmpdir"), getUserRoled(system.dispatcher))
+//  val ctx = SpheraContext(system, ConfigFactory.load(), System.getProperty("java.io.tmpdir"), getUserRoled(system.dispatcher))
 //
 //  val sd: Session = Session(UUID.randomUUID(), UUID.randomUUID(), "IBM", "imc", "Ru")
 //
@@ -51,7 +51,7 @@
 //
 //  val coreModule = injector.instance[CoreModule]
 //
-//  val api = new ImcApi(coreModule, ctx, authent)
+//  val api = new SpheraApi(coreModule, ctx, authent)
 //
 //  "The api" should {
 //    var apId: String = ""

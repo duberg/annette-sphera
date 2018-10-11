@@ -3,7 +3,7 @@ package annette.core.security.authentication
 import annette.core.AnnetteException
 
 /**
- * Created by valery on 15.07.16.
+ * Created by kantemirov on 15.07.16.
  */
 class AuthenticationException(code: String) extends AnnetteException(code)
 

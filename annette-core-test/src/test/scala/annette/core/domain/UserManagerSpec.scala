@@ -38,8 +38,8 @@ class UserManagerSpec extends TestKit(ActorSystem("UserActorSpec"))
   "A UserDao" when {
     "create" must {
       "create new user" in {
-        val c1 = newCreateUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
-        val c2 = newCreateUser(email = Some("valery1@valery.com"), phone = Some("+7123451"), login = Some("valery1"))
+        val c1 = newCreateUser(email = Some("kantemirov@kantemirov.com"), phone = Some("+712345"), login = Some("kantemirov"))
+        val c2 = newCreateUser(email = Some("it@kantemirov.ru"), phone = Some("+7123451"), login = Some("kantemirov1"))
         val dao = newUserDao()
         for {
           cc1 <- dao.create(c1)
@@ -62,8 +62,8 @@ class UserManagerSpec extends TestKit(ActorSystem("UserActorSpec"))
       }
 
       //      "should not create new user if it already exists" in {
-      //        val c1 = newCreateUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
-      //        val c2 = c1.copy(email = Some("valery1@valery.com"), phone = Some("+7123451"), username = Some("valery1"))
+      //        val c1 = newCreateUser(email = Some("kantemirov@kantemirov.com"), phone = Some("+712345"), login = Some("kantemirov"))
+      //        val c2 = c1.copy(email = Some("it@kantemirov.ru"), phone = Some("+7123451"), username = Some("kantemirov1"))
       //        val dao = newUserDao()
       //        for {
       //
@@ -74,7 +74,7 @@ class UserManagerSpec extends TestKit(ActorSystem("UserActorSpec"))
       //        }
       //      }
       "should not create new user if email already exists" in {
-        val c1 = newCreateUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
+        val c1 = newCreateUser(email = Some("kantemirov@kantemirov.com"), phone = Some("+712345"), login = Some("kantemirov"))
         val c2 = newCreateUser(email = c1.email)
         val dao = newUserDao()
         for {
@@ -86,7 +86,7 @@ class UserManagerSpec extends TestKit(ActorSystem("UserActorSpec"))
         }
       }
       "should not create new user if phone already exists" in {
-        val c1 = newCreateUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
+        val c1 = newCreateUser(email = Some("kantemirov@kantemirov.com"), phone = Some("+712345"), login = Some("kantemirov"))
         val c2 = newCreateUser(phone = c1.phone)
         val dao = newUserDao()
         for {
@@ -98,7 +98,7 @@ class UserManagerSpec extends TestKit(ActorSystem("UserActorSpec"))
         }
       }
       "should not create new user if login already exists" in {
-        val c1 = newCreateUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
+        val c1 = newCreateUser(email = Some("kantemirov@kantemirov.com"), phone = Some("+712345"), login = Some("kantemirov"))
         val c2 = newCreateUser(login = c1.username)
         val dao = newUserDao()
         for {
@@ -114,8 +114,8 @@ class UserManagerSpec extends TestKit(ActorSystem("UserActorSpec"))
 
     //    "update" must {
     //      "update all data of user" in {
-    //        val c1 = newUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
-    //        val c2 = newUser(id = c1.id, email = Some("valery1@valery.com"), phone = Some("+7123451"), login = Some("valery1"))
+    //        val c1 = newUser(email = Some("kantemirov@kantemirov.com"), phone = Some("+712345"), login = Some("kantemirov"))
+    //        val c2 = newUser(id = c1.id, email = Some("it@kantemirov.ru"), phone = Some("+7123451"), login = Some("kantemirov1"))
     //        val u1 = UserUpdate(
     //          lastName = Some(c2.lastName),
     //          firstName = Some(c2.firstName),
@@ -138,7 +138,7 @@ class UserManagerSpec extends TestKit(ActorSystem("UserActorSpec"))
     //      }
     //
     //      "update none data of user" in {
-    //        val c1 = newUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
+    //        val c1 = newUser(email = Some("kantemirov@kantemirov.com"), phone = Some("+712345"), login = Some("kantemirov"))
     //        val u1 = UpdateUser(
     //          id = c1.id)
     //        val dao = newUserDao()
@@ -154,7 +154,7 @@ class UserManagerSpec extends TestKit(ActorSystem("UserActorSpec"))
     //      }
     //
     //      "should not update user if there are no email & phone & login" in {
-    //        val c1 = newUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
+    //        val c1 = newUser(email = Some("kantemirov@kantemirov.com"), phone = Some("+712345"), login = Some("kantemirov"))
     //        val u1 = UpdateUser(
     //          email = Some(None),
     //          phone = Some(None),
@@ -182,8 +182,8 @@ class UserManagerSpec extends TestKit(ActorSystem("UserActorSpec"))
     //      }
     //
     //      "should not update user if email already exists" in {
-    //        val c1 = newUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
-    //        val c2 = newUser(email = Some("valery1@valery.com"), phone = Some("+7123451"), login = Some("valery1"))
+    //        val c1 = newUser(email = Some("kantemirov@kantemirov.com"), phone = Some("+712345"), login = Some("kantemirov"))
+    //        val c2 = newUser(email = Some("it@kantemirov.ru"), phone = Some("+7123451"), login = Some("kantemirov1"))
     //        val u2 = UserUpdate(
     //          email = Some(c1.email),
     //          id = c2.id)
@@ -199,8 +199,8 @@ class UserManagerSpec extends TestKit(ActorSystem("UserActorSpec"))
     //        }
     //      }
     //      "should not update user if phone already exists" in {
-    //        val c1 = newUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
-    //        val c2 = newUser(email = Some("valery1@valery.com"), phone = Some("+7123451"), login = Some("valery1"))
+    //        val c1 = newUser(email = Some("kantemirov@kantemirov.com"), phone = Some("+712345"), login = Some("kantemirov"))
+    //        val c2 = newUser(email = Some("it@kantemirov.ru"), phone = Some("+7123451"), login = Some("kantemirov1"))
     //        val u2 = UpdateUser(
     //          phone = Some(c1.phone),
     //          id = c2.id)
@@ -217,8 +217,8 @@ class UserManagerSpec extends TestKit(ActorSystem("UserActorSpec"))
     //      }
     //
     //      "should not update user if login already exists" in {
-    //        val c1 = newUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
-    //        val c2 = newUser(email = Some("valery1@valery.com"), phone = Some("+7123451"), login = Some("valery1"))
+    //        val c1 = newUser(email = Some("kantemirov@kantemirov.com"), phone = Some("+712345"), login = Some("kantemirov"))
+    //        val c2 = newUser(email = Some("it@kantemirov.ru"), phone = Some("+7123451"), login = Some("kantemirov1"))
     //        val u2 = UserUpdate(
     //          login = Some(c1.username),
     //          id = c2.id)
@@ -238,8 +238,8 @@ class UserManagerSpec extends TestKit(ActorSystem("UserActorSpec"))
 
     "delete" must {
       "delete user" in {
-        val c1 = newCreateUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
-        val c2 = newCreateUser(email = Some("valery1@valery.com"), phone = Some("+7123451"), login = Some("valery1"))
+        val c1 = newCreateUser(email = Some("kantemirov@kantemirov.com"), phone = Some("+712345"), login = Some("kantemirov"))
+        val c2 = newCreateUser(email = Some("it@kantemirov.ru"), phone = Some("+7123451"), login = Some("kantemirov1"))
         val dao = newUserDao()
         for {
           cc1 <- dao.create(c1)
@@ -260,7 +260,7 @@ class UserManagerSpec extends TestKit(ActorSystem("UserActorSpec"))
 
     "findUserByLoginAndPassword" must {
       "find user for correct password" in {
-        val c1 = newCreateUser(email = Some("   valery@valery.com   "), phone = Some("   +712345   "), login = Some("   valery   ")).copy(password = "abc")
+        val c1 = newCreateUser(email = Some("   kantemirov@kantemirov.com   "), phone = Some("   +712345   "), login = Some("   kantemirov   ")).copy(password = "abc")
         val dao = newUserDao()
         for {
           cc1 <- dao.create(c1)
@@ -275,7 +275,7 @@ class UserManagerSpec extends TestKit(ActorSystem("UserActorSpec"))
       }
 
       "don't find user for incorrect password" in {
-        val c1 = newCreateUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
+        val c1 = newCreateUser(email = Some("kantemirov@kantemirov.com"), phone = Some("+712345"), login = Some("kantemirov"))
         val dao = newUserDao()
         for {
           cc1 <- dao.create(c1)
@@ -291,7 +291,7 @@ class UserManagerSpec extends TestKit(ActorSystem("UserActorSpec"))
       }
 
       "don't find user for incorrect login" in {
-        val c1 = newCreateUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
+        val c1 = newCreateUser(email = Some("kantemirov@kantemirov.com"), phone = Some("+712345"), login = Some("kantemirov"))
         val dao = newUserDao()
         for {
           cc1 <- dao.create(c1)
@@ -302,7 +302,7 @@ class UserManagerSpec extends TestKit(ActorSystem("UserActorSpec"))
 
     "setPassword" must {
       "update password" in {
-        val c1 = newCreateUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
+        val c1 = newCreateUser(email = Some("kantemirov@kantemirov.com"), phone = Some("+712345"), login = Some("kantemirov"))
         val dao = newUserDao()
         for {
           cc1 <- dao.create(c1)

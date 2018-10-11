@@ -6,14 +6,14 @@ import akka.http.scaladsl.settings.RoutingSettings
 import akka.stream.ActorMaterializer
 import annette.core.CoreModule
 import annette.core.security.authentication.Session
-import annette.imc.{ ApsActor, ApsState, ApsStorage, ImcContext }
+import annette.imc.{ ApsActor, ApsState, ApsStorage, SpheraContext }
 //import annette.imc.notification._
 import annette.imc.report.ReportService
 import annette.imc.user.{ ImcUserActor, ImcUserState }
 import com.typesafe.config.ConfigFactory
 import annette.imc.http.routes._
 
-class ImcApi(val coreModule: CoreModule, ctx1: ImcContext, auth1: Directive1[Session]) extends ApRoutes //AdminRoutes
+class SpheraApi(val coreModule: CoreModule, ctx1: SpheraContext, auth1: Directive1[Session]) extends ApRoutes //AdminRoutes
   with BulletinRoutes
   with CriterionRoutes
   with FileRoutes
@@ -25,7 +25,7 @@ class ImcApi(val coreModule: CoreModule, ctx1: ImcContext, auth1: Directive1[Ses
   with PdfRoute
   with API {
 
-  override lazy val ctx: ImcContext = ctx1
+  override lazy val ctx: SpheraContext = ctx1
   override lazy val auth: Directive1[Session] = auth1
 
   private val initState: ApsState = ApsState(storage = ApsStorage())

@@ -17,8 +17,8 @@ class UserManagerActorSpec extends TestKit(ActorSystem("UserActorSpec"))
   "A UserActor" when receive {
     "CreateUserCmd" must {
       "create new user" in {
-        val c1 = newCreateUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
-        val c2 = newCreateUser(email = Some("valery1@valery.com"), phone = Some("+7123451"), login = Some("valery1"))
+        val c1 = newCreateUser(email = Some("it@kantemirov.ru"), phone = Some("+712345"), login = Some("kantemirov"))
+        val c2 = newCreateUser(email = Some("it@kantemirov1.ru"), phone = Some("+7123451"), login = Some("kantemirov1"))
         val actor = newUserActor()
         for {
           cc1 <- ask(actor, CreateUserCmd(c1)).mapTo[CreateUserSuccess].map(_.x)
@@ -41,8 +41,8 @@ class UserManagerActorSpec extends TestKit(ActorSystem("UserActorSpec"))
       }
 
       //      "should not create new user if it already exists" in {
-      //        val c1 = newCreateUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
-      //        val c2 = c1.copy(email = Some("valery1@valery.com"), phone = Some("+7123451"), username = Some("valery1"))
+      //        val c1 = newCreateUser(email = Some("it@kantemirov.ru"), phone = Some("+712345"), login = Some("kantemirov"))
+      //        val c2 = c1.copy(email = Some("it@kantemirov.ru"), phone = Some("+7123451"), username = Some("kantemirov1"))
       //        val actor = newUserActor()
       //        for {
       //
@@ -51,7 +51,7 @@ class UserManagerActorSpec extends TestKit(ActorSystem("UserActorSpec"))
       //        } yield cc2 shouldBe a[UserAlreadyExistsMsg]
       //      }
       "should not create new user if email already exists" in {
-        val c1 = newCreateUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
+        val c1 = newCreateUser(email = Some("it@kantemirov.ru"), phone = Some("+712345"), login = Some("kantemirov"))
         val c2 = newCreateUser(email = c1.email)
         val actor = newUserActor()
         for {
@@ -60,7 +60,7 @@ class UserManagerActorSpec extends TestKit(ActorSystem("UserActorSpec"))
         } yield cc2 shouldBe a[EmailAlreadyExistsMsg]
       }
       "should not create new user if phone already exists" in {
-        val c1 = newCreateUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
+        val c1 = newCreateUser(email = Some("it@kantemirov.ru"), phone = Some("+712345"), login = Some("kantemirov"))
         val c2 = newCreateUser(phone = c1.phone)
         val actor = newUserActor()
         for {
@@ -70,7 +70,7 @@ class UserManagerActorSpec extends TestKit(ActorSystem("UserActorSpec"))
         } yield cc2 shouldBe a[PhoneAlreadyExistsMsg]
       }
       "should not create new user if login already exists" in {
-        val c1 = newCreateUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
+        val c1 = newCreateUser(email = Some("it@kantemirov.ru"), phone = Some("+712345"), login = Some("kantemirov"))
         val c2 = newCreateUser(login = c1.username)
         val actor = newUserActor()
         for {
@@ -84,8 +84,8 @@ class UserManagerActorSpec extends TestKit(ActorSystem("UserActorSpec"))
 
     "UpdateUserCmd" must {
       "update all data of user" in {
-        val c1 = newCreateUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
-        val c2 = newCreateUser(email = Some("valery1@valery.com"), phone = Some("+7123451"), login = Some("valery1"))
+        val c1 = newCreateUser(email = Some("it@kantemirov.ru"), phone = Some("+712345"), login = Some("kantemirov"))
+        val c2 = newCreateUser(email = Some("it@kantemirov.ru"), phone = Some("+7123451"), login = Some("kantemirov1"))
 
         val actor = newUserActor()
 
@@ -123,7 +123,7 @@ class UserManagerActorSpec extends TestKit(ActorSystem("UserActorSpec"))
       }
 
       "should not update user if there are no email & phone & login" in {
-        val c2 = newCreateUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
+        val c2 = newCreateUser(email = Some("it@kantemirov.ru"), phone = Some("+712345"), login = Some("kantemirov"))
 
         val actor = newUserActor()
 
@@ -164,8 +164,8 @@ class UserManagerActorSpec extends TestKit(ActorSystem("UserActorSpec"))
       }
 
       "should not update user if email already exists" in {
-        val c1 = newCreateUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
-        val c2 = newCreateUser(email = Some("valery1@valery.com"), phone = Some("+7123451"), login = Some("valery1"))
+        val c1 = newCreateUser(email = Some("it@kantemirov.ru"), phone = Some("+712345"), login = Some("kantemirov"))
+        val c2 = newCreateUser(email = Some("it@kantemirov1.ru"), phone = Some("+7123451"), login = Some("kantemirov1"))
         val actor = newUserActor()
 
         for {
@@ -202,8 +202,8 @@ class UserManagerActorSpec extends TestKit(ActorSystem("UserActorSpec"))
 
     "DeleteUserCmd" must {
       "delete user" in {
-        val c1 = newCreateUser(email = Some("valery@valery.com"), phone = Some("+712345"), login = Some("valery"))
-        val c2 = newCreateUser(email = Some("valery1@valery.com"), phone = Some("+7123451"), login = Some("valery1"))
+        val c1 = newCreateUser(email = Some("it@kantemirov.ru"), phone = Some("+712345"), login = Some("kantemirov"))
+        val c2 = newCreateUser(email = Some("it@kantemirov.ru"), phone = Some("+7123451"), login = Some("kantemirov1"))
         val actor = newUserActor()
         for {
           cc1 <- ask(actor, CreateUserCmd(c1)).mapTo[CreateUserSuccess].map(_.x)
@@ -222,7 +222,7 @@ class UserManagerActorSpec extends TestKit(ActorSystem("UserActorSpec"))
 
     "FindUserByLoginAndPassword" must {
       "find user for correct password" in {
-        val c1 = newCreateUser(email = Some("   valery@valery.com   "), phone = Some("   +712345   "), login = Some("   valery   ")).copy(password = "abc")
+        val c1 = newCreateUser(email = Some("   it@kantemirov.ru   "), phone = Some("   +712345   "), login = Some("   kantemirov   ")).copy(password = "abc")
         val actor = newUserActor()
         for {
           cc1 <- ask(actor, CreateUserCmd(c1))
