@@ -1,4 +1,4 @@
-# Integration platform Annette-Sphera
+# CQRS/Event Sourcing platform Annette-Sphera
 
 This project aims to provide complete CQRS/Event Sourcing platform.
 
