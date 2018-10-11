@@ -8,7 +8,8 @@ This project aims to provide complete CQRS/Event Sourcing platform.
 - Verification (sms, email)
 - User registration with email verification
 - Push notifications (sms, email, websocket)
-- Data pagination (server side paginator)
+- Data pagination 
+  Server side list paginator and client side using Google Material Paginator.
 - Domain (Tenancy, Application, User, Language)
 
 This project is based on ideas and source code of Valery Lobachev (https://github.com/valerylobachev)
