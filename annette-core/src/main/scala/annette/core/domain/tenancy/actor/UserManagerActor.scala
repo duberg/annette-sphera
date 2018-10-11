@@ -6,6 +6,7 @@ import java.util.UUID
 import akka.Done
 import annette.core.AnnetteMessageException
 import annette.core.akkaext.actor.ActorId
+import annette.core.akkaext.http.Pagination.paginate
 import annette.core.akkaext.http.{ Order, PageRequest }
 import annette.core.akkaext.persistence.CqrsPersistentActor
 import annette.core.domain.tenancy._
@@ -97,25 +98,8 @@ class UserManagerActor(val id: ActorId, val verificationBus: VerificationBus, va
     sender ! UsersMap(state.users)
 
   def paginateListUsers(state: UserManagerState, page: PageRequest): Unit = {
-    def sort = (state.users.values.toList /: page.sort) {
-      case (users, (field, order)) =>
-
-        field match {
-          case "lastName" =>
-            order match {
-              case Order.Asc => users.sortBy(_.lastName)(Ordering.String)
-              case Order.Desc => users.sortBy(_.lastName)(Ordering.String.reverse)
-            }
-          case _ =>
-            order match {
-              case Order.Asc => users.sortBy(_.firstName)(Ordering.String)
-              case Order.Desc => users.sortBy(_.firstName)(Ordering.String.reverse)
-            }
-        }
-    }
-
     sender ! UsersList(PaginateUsersList(
-      items = sort.slice(page.offset, page.offset + page.limit),
+      items = paginate(state.users, page),
       totalCount = state.users.size))
   }
 
