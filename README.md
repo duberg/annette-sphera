@@ -28,7 +28,7 @@ sbt ~annette-sphera-server/reStart
 ```
 
 ## Users page with pagination:
-![users page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_listusers.png)
+![users page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_users.png)
 
 ```scala
   val userRoutes: Route = (pathPrefix("users") & authorized) { implicit session =>
