@@ -2,7 +2,7 @@
 
 This project aims to provide complete CQRS/Event Sourcing platform.
 
-# Feature list:
+## Feature list:
 - Authentication
 - Authorization
 - Verification (sms, email)
@@ -15,7 +15,7 @@ This project aims to provide complete CQRS/Event Sourcing platform.
 
 This project is based on ideas and source code of Valery Lobachev (https://github.com/valerylobachev)
 
-# Installation:
+## Installation:
 
 - Ins# Feature list:tall sbt, postgresql, protoc-3.2.0, nodejs, @angular/cli: ```/scripts/install-project-tools.sh```
 
@@ -55,14 +55,14 @@ sbt ~annette-sphera-server/reStart
   }
 ```
 
-## Tenants page with pagination:
+### Tenants page with pagination:
 ![tenants page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_tenants.png)
 
 
-## Signin page:
+### Signin page:
 ![signin page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_signin.png)
 
-## Authorization directive akka-http:
+### Authorization directive akka-http:
 ```scala
  /**
    * = Authorization directive =
@@ -77,10 +77,10 @@ sbt ~annette-sphera-server/reStart
   }
 ```
 
-## Signup confirmation (example email template):
+### Signup confirmation (example email template):
 ![signup page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_emailconfirmation.png)
 
-## Contributing
+### Contributing
 
 Contributions are *very* welcome!
 
