@@ -78,4 +78,4 @@ Refer to the [CONTRIBUTING.md](docs/CONTRIBUTING.md) and  [CODE_OF_CONDUCT.md](d
 
 ## License
 
-Annette Axon is Open Source and available under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+Annette-Sphera is Open Source and available under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0)
