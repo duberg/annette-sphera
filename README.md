@@ -9,7 +9,8 @@ This project aims to provide complete CQRS/Event Sourcing platform.
 - User registration with email verification
 - Push notifications (sms, email, websocket)
 - Data pagination 
-  Server side list paginator and client side using Google Material Paginator.
+  - Akka http paginator
+  - Angular paginated table
 - Domain (Tenancy, Application, User, Language)
 
 This project is based on ideas and source code of Valery Lobachev (https://github.com/valerylobachev)
