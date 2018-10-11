@@ -27,7 +27,7 @@ class InitCoreTables @Inject() (
   db: DB,
   config: Config,
   userManager: UserManager,
-  tenantManager: TenantManager,
+  tenantService: TenantService,
   languageManager: LanguageManager,
   applicationManger: ApplicationManager,
   system: ActorSystem) {
@@ -52,27 +52,27 @@ class InitCoreTables @Inject() (
   }
 
   def createPersistenceMetadataTable: DBIO[Int] =
-    sqlu"""CREATE TABLE IF NOT EXISTS "persistence_metadata" (
+    sqlu"""CREATE TABLE IF NOT EXISTS persistence_metadata (
       persistence_key BIGSERIAL NOT NULL,
       persistence_id VARCHAR(255) NOT NULL,
       sequence_nr BIGINT NOT NULL,
       PRIMARY KEY (persistence_key),
-      UNIQUE (persistence_id));"""
+      UNIQUE (persistence_id))"""
 
   def createPersistenceJournalTable: DBIO[Int] =
-    sqlu"""CREATE TABLE IF NOT EXISTS "persistence_journal" (
-      persistence_key BIGINT NOT NULL REFERENCES "persistence_metadata"(persistence_key),
+    sqlu"""CREATE TABLE IF NOT EXISTS persistence_journal (
+      persistence_key BIGINT NOT NULL REFERENCES persistence_metadata(persistence_key),
       sequence_nr BIGINT NOT NULL,
       message BYTEA NOT NULL,
-      PRIMARY KEY (persistence_key, sequence_nr));"""
+      PRIMARY KEY (persistence_key, sequence_nr))"""
 
   def createPersistenceSnapshotTable: DBIO[Int] =
-    sqlu"""CREATE TABLE IF NOT EXISTS "persistence_snapshot" (
-      persistence_key BIGINT NOT NULL REFERENCES "persistence_metadata"(persistence_key),
+    sqlu"""CREATE TABLE IF NOT EXISTS persistence_snapshot (
+      persistence_key BIGINT NOT NULL REFERENCES persistence_metadata(persistence_key),
       sequence_nr BIGINT NOT NULL,
       created_at BIGINT NOT NULL,
       snapshot BYTEA NOT NULL,
-      PRIMARY KEY (persistence_key, sequence_nr));"""
+      PRIMARY KEY (persistence_key, sequence_nr))"""
 
   def createTables: DBIOAction[Unit, NoStream, Effect.All] = DBIO.seq(
     createPersistenceMetadataTable,
@@ -160,7 +160,7 @@ class InitCoreTables @Inject() (
           languages = languages.toSet)
     }
     Future.traverse(data) { obj =>
-      tenantManager.createTenant(obj).map(_ => ()).recover {
+      tenantService.createTenant(obj).map(_ => ()).recover {
         case _: TenantAlreadyExists =>
           log.error(s"Failed to load $obj: already exist")
         case th =>

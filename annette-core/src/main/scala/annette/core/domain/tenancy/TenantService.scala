@@ -14,7 +14,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 import annette.core.domain.tenancy.model.Tenant._
 
 @Singleton
-class TenantManager @Inject() (
+class TenantService @Inject() (
   @Named("CoreService") actor: ActorRef,
   userManager: UserManager,
   languageManager: LanguageManager,

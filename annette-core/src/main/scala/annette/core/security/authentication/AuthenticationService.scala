@@ -11,7 +11,7 @@ import annette.core.domain.application.ApplicationManager
 import annette.core.domain.application._
 import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.{ SessionManager, TenantManager, UserManager }
+import annette.core.domain.tenancy.{ SessionManager, TenantService, UserManager }
 import annette.core.domain.tenancy.model.{ Tenant, TenantData }
 import com.typesafe.config.Config
 
@@ -20,7 +20,7 @@ import AuthenticationService._
 
 class AuthenticationService(
   sessionManager: SessionManager,
-  tenantManager: TenantManager,
+  TenantService: TenantService,
   applicationManager: ApplicationManager,
   userManager: UserManager,
   languageManager: LanguageManager,
@@ -48,7 +48,7 @@ class AuthenticationService(
     FromConfig.props(
       Props(
         classOf[LoginActor],
-        userManager, sessionManager, tenantManager, applicationManager, languageManager,
+        userManager, sessionManager, TenantService, applicationManager, languageManager,
         rememberMeSessionTimeout, sessionTimeout, secret)),
     "login")
 
@@ -59,12 +59,12 @@ class AuthenticationService(
 
   val authenticateService = context.actorOf(
     FromConfig.props(
-      Props(classOf[AuthenticationActor], sessionManager, tenantManager, applicationManager, userManager, languageManager, secret)),
+      Props(classOf[AuthenticationActor], sessionManager, TenantService, applicationManager, userManager, languageManager, secret)),
     "authenticate")
 
   val applicationStateService = context.actorOf(
     FromConfig.props(
-      Props(classOf[ApplicationStateActor], sessionManager, tenantManager, applicationManager, userManager, languageManager, secret)),
+      Props(classOf[ApplicationStateActor], sessionManager, TenantService, applicationManager, userManager, languageManager, secret)),
     "applicationState")
 
   def receive: Receive = LoggingReceive {
@@ -129,7 +129,7 @@ object AuthenticationService {
 
   def props(
     sessionManager: SessionManager,
-    tenantManager: TenantManager,
+    TenantService: TenantService,
     applicationManager: ApplicationManager,
     userManager: UserManager,
     languageManager: LanguageManager,
@@ -137,7 +137,7 @@ object AuthenticationService {
     Props(
       new AuthenticationService(
         sessionManager = sessionManager,
-        tenantManager = tenantManager,
+        TenantService = TenantService,
         applicationManager = applicationManager,
         userManager = userManager,
         languageManager = languageManager,

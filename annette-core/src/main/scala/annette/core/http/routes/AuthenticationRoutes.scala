@@ -12,7 +12,7 @@ import annette.core.{ AnnetteException, RequiredValueNotProvided, TenantNotFound
 import annette.core.domain.application.Application
 import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.{ TenantManager, UserManager }
+import annette.core.domain.tenancy.{ TenantService, UserManager }
 import annette.core.domain.tenancy.model._
 import annette.core.model.EntityType.Verification
 import annette.core.notification._
@@ -27,7 +27,7 @@ import scala.util.{ Failure, Success }
 import scala.concurrent.duration._
 
 trait AuthenticationRoutes extends Directives with AskSupport with Generator {
-  val tenantManager: TenantManager
+  val TenantService: TenantService
   val userManager: UserManager
   val languageManager: LanguageManager
   val authenticationManager: ActorRef
@@ -86,7 +86,7 @@ trait AuthenticationRoutes extends Directives with AskSupport with Generator {
   }
 
   def signUp: Route = (path("signup") & post & entity(as[SignUpUser])) { x =>
-    def f = tenantManager.listTenantsIds.flatMap(f = tenantIds => {
+    def f = TenantService.listTenantsIds.flatMap(f = tenantIds => {
       // if empty tenants
       if (x.tenants.isEmpty) throw RequiredValueNotProvided("tenants")
 

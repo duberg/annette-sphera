@@ -7,7 +7,7 @@ import akka.routing.FromConfig
 import annette.core.domain.InitCoreTables
 import annette.core.domain.application.ApplicationManager
 import annette.core.domain.language.LanguageManager
-import annette.core.domain.tenancy.{ SessionManager, TenantManager, UserManager }
+import annette.core.domain.tenancy.{ SessionManager, TenantService, UserManager }
 import com.google.inject.Provider
 import com.typesafe.config.Config
 import javax.inject._
@@ -16,7 +16,7 @@ import javax.inject._
 class AuthenticationServiceProvider @Inject() (
   system: ActorSystem,
   sessionManager: SessionManager,
-  tenantManager: TenantManager,
+  TenantService: TenantService,
   applicationManager: ApplicationManager,
   userManager: UserManager,
   languageManager: LanguageManager,
@@ -59,7 +59,7 @@ class AuthenticationServiceProvider @Inject() (
     system.actorOf(
       AuthenticationService.props(
         sessionManager = sessionManager,
-        tenantManager = tenantManager,
+        TenantService = TenantService,
         applicationManager = applicationManager,
         userManager = userManager,
         languageManager = languageManager,

@@ -5,14 +5,14 @@ import akka.event.LoggingReceive
 import annette.core.domain.application.ApplicationManager
 import annette.core.domain.language.LanguageManager
 import annette.core.security.authentication.jwt.JwtHelper
-import annette.core.domain.tenancy.{ SessionManager, TenantManager, UserManager }
+import annette.core.domain.tenancy.{ SessionManager, TenantService, UserManager }
 import annette.core.domain.tenancy.model.OpenSession
 
 import scala.concurrent.Future
 
 class AuthenticationActor(
   sessionManager: SessionManager,
-  tenantManager: TenantManager,
+  TenantService: TenantService,
   applicationManager: ApplicationManager,
   userManager: UserManager,
   languageManager: LanguageManager,
@@ -63,9 +63,9 @@ class AuthenticationActor(
     val applicationId = sessionData.applicationId
     for {
       userOpt <- userManager.getUserById(session.userId)
-      tenantOpt <- tenantManager.getTenantById(tenantId)
+      tenantOpt <- TenantService.getTenantById(tenantId)
       applicationOpt <- applicationManager.getApplicationById(applicationId)
-      tenantUserExist <- tenantManager.isUserAssignedToTenant(tenantId, session.userId)
+      tenantUserExist <- TenantService.isUserAssignedToTenant(tenantId, session.userId)
     } yield {
       if (userOpt.isEmpty) throw new UserNotFoundException()
       if (tenantOpt.isEmpty) throw new TenantNotFoundException()

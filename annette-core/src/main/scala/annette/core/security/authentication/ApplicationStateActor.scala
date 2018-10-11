@@ -8,14 +8,14 @@ import annette.core.security.authentication.jwt.JwtHelper
 import annette.core.domain.application._
 import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.{ SessionManager, TenantManager, UserManager }
+import annette.core.domain.tenancy.{ SessionManager, TenantService, UserManager }
 import annette.core.domain.tenancy.model.Tenant
 
 import scala.concurrent.Future
 
 class ApplicationStateActor(
   sessionManager: SessionManager,
-  tenantManager: TenantManager,
+  TenantService: TenantService,
   applicationManager: ApplicationManager,
   userManager: UserManager,
   languageManager: LanguageManager,
@@ -39,10 +39,10 @@ class ApplicationStateActor(
         sessionData =>
           for {
             userOpt <- userManager.getUserById(sessionData.userId)
-            tenantOpt <- tenantManager.getTenantById(sessionData.tenantId)
+            tenantOpt <- TenantService.getTenantById(sessionData.tenantId)
             applicationOpt <- applicationManager.getApplicationById(sessionData.applicationId)
             languages <- languageManager.selectAll
-            userTenantData <- tenantManager.getUserTenantData(sessionData.userId)
+            userTenantData <- TenantService.getUserTenantData(sessionData.userId)
           } yield {
             val language = languages.find(_.id == sessionData.languageId).getOrElse(languages.head)
             val jwtToken = encodeSessionData(sessionData)
@@ -77,10 +77,10 @@ class ApplicationStateActor(
     languageId: Language.Id): Future[ApplicationState] = {
     for {
       userOpt <- userManager.getUserById(sessionData.userId)
-      tenantOpt <- tenantManager.getTenantById(tenantId)
+      tenantOpt <- TenantService.getTenantById(tenantId)
       applicationOpt <- applicationManager.getApplicationById(applicationId)
       languages <- languageManager.selectAll
-      userTenantData <- tenantManager.getUserTenantData(sessionData.userId)
+      userTenantData <- TenantService.getUserTenantData(sessionData.userId)
     } yield {
       val languageOpt = languages.find(_.id == languageId)
 

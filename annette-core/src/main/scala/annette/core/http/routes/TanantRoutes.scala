@@ -5,7 +5,7 @@ import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.{ Directives, Route }
 import annette.core.AnnetteException
 import annette.core.akkaext.http.PaginationDirectives
-import annette.core.domain.tenancy.TenantManager
+import annette.core.domain.tenancy.TenantService
 import annette.core.domain.tenancy.model._
 import annette.core.security.SecurityDirectives
 import annette.core.security.authentication.Session
@@ -18,7 +18,7 @@ import scala.util.{ Failure, Success }
 trait TenantRoutes extends Directives with PaginationDirectives {
   implicit val c: ExecutionContext
   val annetteSecurityDirectives: SecurityDirectives
-  val tenantManager: TenantManager
+  val TenantService: TenantService
   val authorizationManager: ActorRef
   val config: Config
 
@@ -27,7 +27,7 @@ trait TenantRoutes extends Directives with PaginationDirectives {
   import io.circe.generic.auto._
 
   def createTenant(implicit session: Session): Route = (post & entity(as[CreateTenant])) { x =>
-    //complete(tenantManager.create(x))
+    //complete(TenantService.create(x))
     ???
   }
 
@@ -40,14 +40,14 @@ trait TenantRoutes extends Directives with PaginationDirectives {
   }
 
   def deleteTenant(implicit session: Session): Route = (path(JavaUUID) & delete) { tenantId =>
-    //complete(tenantManager.delete(tenantId))
+    //complete(TenantService.delete(tenantId))
     ???
   }
 
   def listTenants(implicit session: Session): Route = (get & pagination) { page =>
     println(page)
     val ff = for {
-      f <- tenantManager.paginateListTenants(page)
+      f <- TenantService.paginateListTenants(page)
     } yield f
 
     onComplete(ff) {

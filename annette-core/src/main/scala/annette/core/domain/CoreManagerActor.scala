@@ -13,7 +13,7 @@ import annette.core.domain.tenancy.model.{ Tenant, User }
 
 import scala.concurrent.ExecutionContext
 import annette.core.domain.CoreService._
-import annette.core.domain.tenancy.actor.TenantManagerActor
+import annette.core.domain.tenancy.actor.TenantServiceActor
 import annette.core.notification.actor._
 import annette.core.security.verification.{ Verification, VerificationBus }
 
@@ -22,9 +22,9 @@ import annette.core.security.verification.{ Verification, VerificationBus }
 class CoreManagerActor(config: Config, verificationBus: VerificationBus)(implicit c: ExecutionContext, t: Timeout) extends Actor with ActorLogging {
   val coreId = ActorId("core")
 
-  val tenantManagerId = coreId / "tenant"
-  val tenantManagerActor = context.actorOf(
-    props = TenantManagerActor.props(tenantManagerId),
+  val tenantServiceId = coreId / "tenant"
+  val tenantServiceActor = context.actorOf(
+    props = TenantServiceActor.props(tenantServiceId),
     name = "tenant")
 
   val applicationManagerId = coreId / "application"
@@ -54,8 +54,8 @@ class CoreManagerActor(config: Config, verificationBus: VerificationBus)(implici
     name = NotificationManagerActorName)
 
   def receive: PartialFunction[Any, Unit] = {
-    case x: Tenant.Command => tenantManagerActor forward x
-    case x: Tenant.Query => tenantManagerActor forward x
+    case x: Tenant.Command => tenantServiceActor forward x
+    case x: Tenant.Query => tenantServiceActor forward x
 
     case x: Application.Command => applicationActor forward x
     case x: Application.Query => applicationActor forward x

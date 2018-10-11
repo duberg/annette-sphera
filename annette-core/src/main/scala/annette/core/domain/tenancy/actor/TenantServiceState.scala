@@ -4,8 +4,8 @@ import annette.core.akkaext.actor.CqrsState
 import annette.core.domain.tenancy.model.Tenant
 import annette.core.domain.tenancy.model.Tenant._
 
-case class TenantManagerState(tenants: Map[Tenant.Id, Tenant]) extends CqrsState {
-  def createTenant(x: Tenant): TenantManagerState = {
+case class TenantServiceState(tenants: Map[Tenant.Id, Tenant]) extends CqrsState {
+  def createTenant(x: Tenant): TenantServiceState = {
     copy(tenants = tenants + (x.id -> x))
   }
 
@@ -14,6 +14,6 @@ case class TenantManagerState(tenants: Map[Tenant.Id, Tenant]) extends CqrsState
   }
 }
 
-object TenantManagerState {
-  def empty: TenantManagerState = TenantManagerState(Map.empty)
+object TenantServiceState {
+  def empty: TenantServiceState = TenantServiceState(Map.empty)
 }

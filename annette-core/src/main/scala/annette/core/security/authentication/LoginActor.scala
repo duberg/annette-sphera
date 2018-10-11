@@ -11,7 +11,7 @@ import annette.core.security.authentication.jwt.JwtHelper
 import annette.core.domain.application._
 import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.{ SessionManager, TenantManager, UserManager }
+import annette.core.domain.tenancy.{ SessionManager, TenantService, UserManager }
 import annette.core.domain.tenancy.model.{ OpenSession, Tenant, TenantData, User }
 import org.joda.time.DateTime
 
@@ -20,7 +20,7 @@ import scala.concurrent.Future
 class LoginActor(
   userDao: UserManager,
   sessionDao: SessionManager,
-  tenantManager: TenantManager,
+  tenantService: TenantService,
   applicationDao: ApplicationManager,
   languageDao: LanguageManager,
   rememberMeSessionTimeout: Int,
@@ -61,7 +61,7 @@ class LoginActor(
       // 1. Проверки пользователя:
       user <- validateUser(msg.credentials.login, msg.credentials.password)
 
-      userTenants <- tenantManager.getUserTenantData(user.id)
+      userTenants <- tenantService.getUserTenantData(user.id)
       // получить организацию и приложение для входа
       (tenantId, applicationId) <- {
         val r = getTenantAndApplication(user.id, userTenants, msg.credentials.tenant, msg.credentials.application)
@@ -73,7 +73,7 @@ class LoginActor(
       // пользователю предлагается выбрать организацию/приложение
 
       // 5. Проверки организации:
-      tenant <- tenantManager
+      tenant <- tenantService
         .getTenantById(tenantId)
         .map(_.getOrElse(throw new TenantNotFoundException()))
 
@@ -85,7 +85,7 @@ class LoginActor(
       _ = if (!tenant.languages.contains(languageId)) throw new LanguageNotAssignedToTenantException()
 
       // 6. Проверки пользователя в организации:
-      tenantUser <- tenantManager.isUserAssignedToTenant(tenantId, user.id)
+      tenantUser <- tenantService.isUserAssignedToTenant(tenantId, user.id)
         .map(x => if (!x) throw new UserNotAssignedToTenantException())
 
       // 7. Проверки приложения:
@@ -131,6 +131,7 @@ class LoginActor(
         requestor ! FailureResponse(authenticationException)
       // при любой другой ошибке отправляем ошибку аутентификации
       case throwable: Throwable =>
+        throwable.printStackTrace()
         requestor ! FailureResponse(new AuthenticationFailedException())
     }
   }
@@ -200,7 +201,7 @@ class LoginActor(
   def provideUserTenantData(userFuture: Future[User], requestor: ActorRef, exOpt: Option[AuthenticationException]): Unit = {
     val future = for {
       user <- userFuture
-      userTenantData <- tenantManager.getUserTenantData(user.id)
+      userTenantData <- tenantService.getUserTenantData(user.id)
     } yield userTenantData
     future.foreach {
       case res =>
