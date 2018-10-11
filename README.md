@@ -1,8 +1,21 @@
 # Integration platform Annette-Sphera
 
+This project aims to provide complete CQRS/Event Sourcing platform.
+
+# Feature list:
+- Authentication
+- Authorization
+- Verification (sms, email)
+- User registration with email verification
+- Push notifications (sms, email, websocket)
+- Data pagination (server side paginator)
+- Domain (Tenancy, Application, User, Language)
+
 This project is based on ideas and source code of Valery Lobachev (https://github.com/valerylobachev)
 
-- Install sbt, postgresql, protoc-3.2.0, nodejs, @angular/cli: ```/scripts/install-project-tools.sh```
+# Installation:
+
+- Ins# Feature list:tall sbt, postgresql, protoc-3.2.0, nodejs, @angular/cli: ```/scripts/install-project-tools.sh```
 
 - Create database annette_sphera
 ```bash
