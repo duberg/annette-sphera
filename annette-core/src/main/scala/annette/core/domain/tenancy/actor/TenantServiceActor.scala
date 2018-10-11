@@ -41,9 +41,8 @@ class TenantServiceActor(val initState: TenantServiceState = TenantServiceState.
   }
 
   def paginateListTenants(state: TenantServiceState, page: PageRequest): Unit = {
-    sender ! TenantsList(PaginateTenantsList(
-      items = paginate(state.tenants, page),
-      totalCount = state.tenants.size))
+    val (items, totalCount) = paginate(state.tenants, page)
+    sender ! TenantsList(PaginateTenantsList(items, totalCount))
   }
 
   def behavior(state: TenantServiceState): Receive = {

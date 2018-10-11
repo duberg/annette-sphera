@@ -97,9 +97,8 @@ class UserManagerActor(val verificationBus: VerificationBus, val initState: User
     sender ! UsersMap(state.users)
 
   def paginateListUsers(state: UserManagerState, page: PageRequest): Unit = {
-    sender ! UsersList(PaginateUsersList(
-      items = paginate(state.users, page),
-      totalCount = state.users.size))
+    val (items, totalCount) = paginate(state.users, page)
+    sender ! UsersList(PaginateUsersList(items, totalCount))
   }
 
   def updatePassword(state: UserManagerState, userId: User.Id, password: String): Unit = {

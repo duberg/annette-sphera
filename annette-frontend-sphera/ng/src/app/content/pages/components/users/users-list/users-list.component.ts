@@ -28,10 +28,12 @@ export class UsersListComponent implements OnInit {
 	displayedColumns = ['select', 'id', 'lastName', 'firstName', 'email', 'gender', 'status', 'type', 'actions'];
 	@ViewChild(MatPaginator) paginator: MatPaginator;
 	@ViewChild(MatSort) sort: MatSort;
+
 	// Filter fields
 	@ViewChild('searchInput') searchInput: ElementRef;
 	filterStatus: string = '';
 	filterType: string = '';
+
 	// Selection
 	selection = new SelectionModel<UserModel>(true, []);
 	customersResult: UserModel[] = [];
@@ -99,13 +101,8 @@ export class UsersListComponent implements OnInit {
 		const filter: any = {};
 		const searchText: string = this.searchInput.nativeElement.value;
 
-		if (this.filterStatus && this.filterStatus.length > 0) {
-			filter.status = +this.filterStatus;
-		}
-
-		if (this.filterType && this.filterType.length > 0) {
-			filter.type = +this.filterType;
-		}
+		if (this.filterStatus) filter.status = this.filterStatus;
+		if (this.filterType) filter.type = this.filterType;
 
 		filter.lastName = searchText;
 		if (!isGeneralSearch) {

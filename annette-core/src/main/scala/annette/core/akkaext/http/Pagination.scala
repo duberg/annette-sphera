@@ -7,7 +7,7 @@ import scala.reflect.runtime.universe
 import scala.reflect.runtime.universe._
 
 object Pagination {
-  def getObjField[T: TypeTag: ClassTag](field: String, obj: T): Any = {
+  def getObjFieldValue[T: TypeTag: ClassTag](field: String, obj: T): Any = {
     val rm = scala.reflect.runtime.currentMirror
 
     val accessors: Iterable[universe.MethodSymbol] = typeOf[T].members.collect {
@@ -16,7 +16,7 @@ object Pagination {
 
     val fieldSymbol = accessors
       .find(_.name.toString == field)
-      .getOrElse(accessors.head)
+      .getOrElse(accessors.find(_.name.toString == "id").get)
 
     val instanceMirror = rm.reflect(obj)
 
@@ -38,19 +38,39 @@ object Pagination {
     (items /: fields) {
       case (_, (field, order)) =>
         order match {
-          case Order.Asc => items.sortBy(getObjField(field, _))(AnyOrdering)
-          case Order.Desc => items.sortBy(getObjField(field, _))(AnyOrdering.reverse)
+          case Order.Asc => items.sortBy(getObjFieldValue(field, _))(AnyOrdering)
+          case Order.Desc => items.sortBy(getObjFieldValue(field, _))(AnyOrdering.reverse)
         }
     }
   }
 
-  def paginate[T: TypeTag: ClassTag](items: Iterable[T], page: PageRequest): List[T] = {
-    sort(items.toList, page.sort)
-      .slice(page.offset, page.offset + page.limit)
+  def filter[T: TypeTag: ClassTag](items: List[T], filters: Map[String, String]): List[T] = {
+    (items /: filters) {
+      case (_, (field, value)) => items filter { item =>
+        val fieldValue = getObjFieldValue(field, item)
+        fieldValue match {
+          case x: Int => value.toInt == x
+          case x: Boolean => value.toBoolean == x
+          case x => value == x
+        }
+      }
+    }
   }
 
-  def paginate[A, T: TypeTag: ClassTag](items: Map[A, T], page: PageRequest): List[T] = {
-    sort(items.values.toList, page.sort)
-      .slice(page.offset, page.offset + page.limit)
+  /**
+   * Paginates items
+   *
+   * @param items Items
+   * @param page Page
+   * @return Paginated items, total item count
+   */
+  def paginate[T: TypeTag: ClassTag](items: Iterable[T], page: PageRequest): (List[T], Int) = {
+    val x = sort(filter(items.toList, page.filter), page.sort)
+    x.slice(page.offset, page.offset + page.limit) -> x.size
+  }
+
+  def paginate[A, T: TypeTag: ClassTag](items: Map[A, T], page: PageRequest): (List[T], Int) = {
+    val x = sort(filter(items.values.toList, page.filter), page.sort)
+    x.slice(page.offset, page.offset + page.limit) -> x.size
   }
 }

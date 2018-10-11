@@ -39,7 +39,7 @@
 									<mat-option value="">All</mat-option>
 									<mat-option value="0">Suspended</mat-option>
 									<mat-option value="1">Active</mat-option>
-									<mat-option value="Pending">Pending</mat-option>
+									<mat-option value="2">Pending</mat-option>
 								</mat-select>
 								<mat-hint align="start">
 									<strong>Filter</strong> by Status</mat-hint>
@@ -198,7 +198,7 @@
 			<mat-spinner [diameter]="20" *ngIf="dataSource.loading$ | async"></mat-spinner>
 			<!-- MATERIAL PAGINATOR | Binded to dasources -->
 			<!-- See off.documentations 'https://material.angular.io/components/paginator/overview' -->
-			<mat-paginator [pageSize]="10" [pageSizeOptions]="[3, 5, 10]" [length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
+			<mat-paginator [pageSize]="10" [pageSizeOptions]="[3, 5, 10, 15]" [length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
 		</div>
 		<!-- end: BOTTOM -->
 	</ng-container>
