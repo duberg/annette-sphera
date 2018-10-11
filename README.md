@@ -42,7 +42,7 @@ cd ../../
 sbt ~annette-sphera-server/reStart
 ```
 
-## Users page with pagination:
+### Users page with pagination:
 ![users page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_users.png)
 
 ```scala
@@ -91,6 +91,6 @@ Refer to the [CONTRIBUTING.md](docs/CONTRIBUTING.md) and  [CODE_OF_CONDUCT.md](d
  clarifications or guidance in GitHub issues.
 
 
-## License
+### License
 
 Annette-Sphera is Open Source and available under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0)
