@@ -16,7 +16,6 @@ class NotificationManagerActorSpec extends TestKit(ActorSystem("NotificationMana
     "ArithmeticException" must {
       "resume actorRef " in {
         val supervisor = TestActorRef[NotificationManagerActor](NotificationManagerActor.props(
-          id = generateActorId,
           config = config,
           verificationBus = new VerificationBus))
         val strategy = supervisor.underlyingActor.supervisorStrategy.decider
@@ -27,7 +26,6 @@ class NotificationManagerActorSpec extends TestKit(ActorSystem("NotificationMana
       "restart actorRef " in {
         val p = newTestProbeRef
         val supervisor = TestActorRef[NotificationManagerActor](NotificationManagerActor.props(
-          id = generateActorId,
           config = config,
           verificationBus = new VerificationBus))
         val strategy = supervisor.underlyingActor.supervisorStrategy.decider
@@ -38,7 +36,6 @@ class NotificationManagerActorSpec extends TestKit(ActorSystem("NotificationMana
       "resume actorRef " in {
         val p = newTestProbeRef
         val supervisor = TestActorRef[NotificationManagerActor](NotificationManagerActor.props(
-          id = generateActorId,
           config = config,
           verificationBus = new VerificationBus))
         val strategy = supervisor.underlyingActor.supervisorStrategy.decider
@@ -49,7 +46,6 @@ class NotificationManagerActorSpec extends TestKit(ActorSystem("NotificationMana
       "restart actorRef " in {
         val p = newTestProbeRef
         val supervisor = TestActorRef[NotificationManagerActor](NotificationManagerActor.props(
-          id = generateActorId,
           config = config,
           verificationBus = new VerificationBus))
         val strategy = supervisor.underlyingActor.supervisorStrategy.decider

@@ -12,6 +12,6 @@ trait NewApplication { _: PersistenceSpec with TestKit =>
 
   def newApplicationActor() = {
     val uuid = UUID.randomUUID().toString
-    system.actorOf(ApplicationManager.props(s"Application-$uuid"), s"application-$uuid")
+    system.actorOf(ApplicationManager.props, s"application-$uuid")
   }
 }

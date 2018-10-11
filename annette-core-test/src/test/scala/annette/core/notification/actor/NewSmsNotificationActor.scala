@@ -5,8 +5,6 @@ import java.net.ConnectException
 import akka.actor.ActorRef
 import annette.core.notification.client.SmsClient
 import annette.core.notification._
-import annette.core.akkaext.actor.ActorId
-import annette.core.notification
 import annette.core.test.PersistenceSpec
 import com.typesafe.config.ConfigFactory
 import org.scalamock.scalatest.AsyncMockFactory
@@ -55,9 +53,11 @@ trait NewSmsNotificationActor extends NotificationConfig with AsyncMockFactory {
   }
 
   def newSmsNotificationActor(
-    id: ActorId = generateActorId,
+    id: String = generateString(),
     state: SmsNotificationState = SmsNotificationState.empty): Future[ActorRef] = Future {
-    system.actorOf(SmsNotificationActor.props(id, smsNotificationConfig.retryInterval, smsNotificationConfig.sms), id.name)
+    system.actorOf(
+      props = SmsNotificationActor.props(smsNotificationConfig.retryInterval, smsNotificationConfig.sms),
+      name = id)
   }
 
   def stubbedSmsClient(settings: SmsSettings): SmsClient = {
@@ -102,31 +102,27 @@ trait NewSmsNotificationActor extends NotificationConfig with AsyncMockFactory {
     x
   }
 
-  def newStubbedSmsNotificationActor(id: ActorId = generateActorId, state: SmsNotificationState = SmsNotificationState.empty): Future[ActorRef] = Future {
+  def newStubbedSmsNotificationActor(id: String = generateString(), state: SmsNotificationState = SmsNotificationState.empty): Future[ActorRef] = Future {
     system.actorOf(SmsNotificationActor.propsWithSmsClient(
-      id,
       smsNotificationConfig.retryInterval,
-      stubbedSmsClient(smsNotificationConfig.sms)), id.name)
+      stubbedSmsClient(smsNotificationConfig.sms)), id)
   }
 
-  def newStubbedConnectionRefusedSmsNotificationActor(id: ActorId = generateActorId, state: SmsNotificationState = SmsNotificationState.empty): Future[ActorRef] = Future {
+  def newStubbedConnectionRefusedSmsNotificationActor(id: String = generateString(), state: SmsNotificationState = SmsNotificationState.empty): Future[ActorRef] = Future {
     system.actorOf(SmsNotificationActor.propsWithSmsClient(
-      id,
       smsNotificationConfig.retryInterval,
-      stubbedConnectionRefusedSmsClient(smsNotificationConfig.sms)), id.name)
+      stubbedConnectionRefusedSmsClient(smsNotificationConfig.sms)), id)
   }
 
-  def newStubbedSmsNotificationActorInDebug(id: ActorId = generateActorId, state: SmsNotificationState = SmsNotificationState.empty): Future[ActorRef] = Future {
+  def newStubbedSmsNotificationActorInDebug(id: String = generateString(), state: SmsNotificationState = SmsNotificationState.empty): Future[ActorRef] = Future {
     system.actorOf(SmsNotificationActor.propsWithSmsClient(
-      id,
       smsNotificationConfig.retryInterval,
-      stubbedSmsClientInDebug(smsNotificationConfig.sms)), id.name)
+      stubbedSmsClientInDebug(smsNotificationConfig.sms)), id)
   }
 
-  def newStubbedConnectionRefusedSmsNotificationManagerInDebug(id: ActorId = generateActorId, state: SmsNotificationState = SmsNotificationState.empty): Future[ActorRef] = Future {
+  def newStubbedConnectionRefusedSmsNotificationManagerInDebug(id: String = generateString(), state: SmsNotificationState = SmsNotificationState.empty): Future[ActorRef] = Future {
     system.actorOf(SmsNotificationActor.propsWithSmsClient(
-      id,
       smsNotificationConfig.retryInterval,
-      stubbedConnectionRefusedSmsClientInDebug(smsNotificationConfig.sms)), id.name)
+      stubbedConnectionRefusedSmsClientInDebug(smsNotificationConfig.sms)), id)
   }
 }

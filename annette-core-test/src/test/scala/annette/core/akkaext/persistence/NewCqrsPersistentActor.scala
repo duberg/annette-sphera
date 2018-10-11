@@ -33,9 +33,7 @@ case class TestCqrsPersistentState(storage: Seq[String] = Seq.empty) extends Cqr
   def size: Int = storage.size
 }
 
-class TestCqrsPersistentActor(
-  val id: ActorId,
-  val initState: TestCqrsPersistentState)(implicit val c: ExecutionContext, val t: Timeout) extends CqrsPersistentActor[TestCqrsPersistentState] {
+class TestCqrsPersistentActor(override val initState: TestCqrsPersistentState)(implicit val c: ExecutionContext, val t: Timeout) extends CqrsPersistentActor[TestCqrsPersistentState] {
   var snapshotCreated: Boolean = false
   var recoveredState: Option[TestCqrsPersistentState] = None
 
@@ -79,8 +77,7 @@ class TestCqrsPersistentActor(
       val event = CreatedEvt(x)
       persistAfter(Future.successful(1), event) { (response, state, event) =>
         publish(event)
-        val id = ActorId(s"create2-$generateUUIDStr")
-        val x = context.actorOf(TestCqrsPersistentActor.props(id), id.name)
+        context.actorOf(TestCqrsPersistentActor.props())
         sender() ! Done
       }
     }
@@ -92,8 +89,7 @@ class TestCqrsPersistentActor(
       val event = CreatedEvt(x)
       persist(state, event) { (state, event) =>
         publish(event)
-        val id = ActorId(s"create3-$generateUUIDStr")
-        val x = context.actorOf(TestCqrsPersistentActor.props(id), id.name)
+        context.actorOf(TestCqrsPersistentActor.props())
         sender() ! Done
       }
     }
@@ -134,8 +130,8 @@ object TestCqrsPersistentActor {
   case object Yes extends Response
   case object No extends Response
 
-  def props(id: ActorId, state: TestCqrsPersistentState = TestCqrsPersistentState())(implicit executor: ExecutionContext, timeout: Timeout) =
-    Props(new TestCqrsPersistentActor(id, state))
+  def props(state: TestCqrsPersistentState = TestCqrsPersistentState())(implicit executor: ExecutionContext, timeout: Timeout) =
+    Props(new TestCqrsPersistentActor(state))
 }
 
 trait NewCqrsPersistentActor { _: PersistenceSpec with TestKit =>
@@ -145,10 +141,8 @@ trait NewCqrsPersistentActor { _: PersistenceSpec with TestKit =>
       .map(_.getAll)
   }
 
-  def newTestPersistentActor(
-    state: TestCqrsPersistentState = TestCqrsPersistentState(),
-    id: ActorId = ActorId(generateId)): Future[ActorRef] = Future {
-    system.actorOf(TestCqrsPersistentActor.props(id, state), id.name)
+  def newTestPersistentActor(id: String = generateString(), state: TestCqrsPersistentState = TestCqrsPersistentState()): Future[ActorRef] = Future {
+    system.actorOf(TestCqrsPersistentActor.props(state), id)
   }
 
   def generateString(): String = s"str-$generateId"

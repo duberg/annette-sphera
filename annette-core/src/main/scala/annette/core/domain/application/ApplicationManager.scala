@@ -4,7 +4,7 @@ import akka.Done
 import akka.actor.{ ActorRef, Props }
 import akka.pattern.ask
 import akka.util.Timeout
-import annette.core.akkaext.actor.{ ActorId, CqrsCommand, CqrsEvent, CqrsQuery, CqrsResponse }
+import annette.core.akkaext.actor.{ CqrsCommand, CqrsEvent, CqrsQuery, CqrsResponse }
 import annette.core.domain.application.Application._
 import javax.inject._
 
@@ -53,6 +53,6 @@ class ApplicationManager @Inject() (@Named("CoreService") actor: ActorRef)(impli
 }
 
 object ApplicationManager {
-  def props(id: ActorId, state: ApplicationManagerState = ApplicationManagerState()) = Props(classOf[ApplicationManagerActor], id, state)
+  def props = Props(new ApplicationManagerActor())
 }
 

@@ -1,11 +1,11 @@
 package annette.core.domain.language
 
 import akka.actor.Props
-import annette.core.akkaext.actor.{ ActorId, CqrsCommand, CqrsEvent, CqrsQuery, CqrsResponse }
+import annette.core.akkaext.actor._
 import annette.core.domain.language.model._
 
 object LanguageService {
-  def props(id: ActorId, state: LanguageState = LanguageState()) = Props(classOf[LanguageActor], id, state)
+  def props = Props(new LanguageActor())
 
   trait Command extends CqrsCommand
   trait Query extends CqrsQuery

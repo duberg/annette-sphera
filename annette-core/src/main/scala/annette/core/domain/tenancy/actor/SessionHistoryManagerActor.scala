@@ -1,14 +1,12 @@
 package annette.core.domain.tenancy.actor
 
 import akka.Done
-import annette.core.akkaext.actor.ActorId
 import annette.core.akkaext.persistence.CqrsPersistentActor
 import annette.core.domain.tenancy.SessionHistoryManager
 import annette.core.domain.tenancy.model._
 import SessionHistoryManager._
 
-class SessionHistoryManagerActor(val id: ActorId, val initState: SessionHistoryManagerState) extends CqrsPersistentActor[SessionHistoryManagerState] {
-
+class SessionHistoryManagerActor(val initState: SessionHistoryManagerState = SessionHistoryManagerState()) extends CqrsPersistentActor[SessionHistoryManagerState] {
   def createSessionHistory(state: SessionHistoryManagerState, entry: SessionHistory): Unit = {
     if (state.sessionHistoryExists(entry.id)) sender ! EntryAlreadyExists
     else {
@@ -30,7 +28,5 @@ class SessionHistoryManagerActor(val id: ActorId, val initState: SessionHistoryM
     case CreateSessionHistoryCmd(entry) => createSessionHistory(state, entry)
     case FindSessionHistoryById(i) => findSessionHistoryById(state, i)
     case FindAllSessionHistory => findAllSessionHistory(state)
-
   }
-
 }

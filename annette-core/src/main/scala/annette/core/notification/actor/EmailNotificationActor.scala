@@ -13,10 +13,9 @@ import scala.concurrent.duration.FiniteDuration
 import scala.util.{ Failure, Success, Try }
 
 private class EmailNotificationActor(
-  val id: ActorId,
   val retryInterval: FiniteDuration,
   val emailClient: EmailClient,
-  val initState: EmailNotificationState)(implicit val executor: ExecutionContext)
+  val initState: EmailNotificationState = EmailNotificationState.empty)(implicit val executor: ExecutionContext)
   extends CqrsActor[EmailNotificationState] with Generator {
 
   type ClientResult = (EmailNotificationLike, Try[EmailClient.Response])
@@ -166,17 +165,9 @@ object EmailNotificationActor {
   case object NotificationNotFound extends CqrsResponse
   case class NotificationsMap(x: Map[Notification.Id, EmailNotificationLike]) extends CqrsResponse
 
-  def props(
-    id: ActorId,
-    retryInterval: FiniteDuration,
-    settings: EmailSettings,
-    state: EmailNotificationState = EmailNotificationState.empty)(implicit c: ExecutionContext): Props =
-    Props(new EmailNotificationActor(id, retryInterval, new EmailClient(settings), state))
+  def props(retryInterval: FiniteDuration, settings: EmailSettings)(implicit c: ExecutionContext): Props =
+    Props(new EmailNotificationActor(retryInterval, new EmailClient(settings)))
 
-  def propsWithMailClient(
-    id: ActorId,
-    retryInterval: FiniteDuration,
-    emailClient: EmailClient,
-    state: EmailNotificationState = EmailNotificationState.empty)(implicit c: ExecutionContext): Props =
-    Props(new EmailNotificationActor(id, retryInterval, emailClient, state))
+  def propsWithMailClient(retryInterval: FiniteDuration, emailClient: EmailClient)(implicit c: ExecutionContext): Props =
+    Props(new EmailNotificationActor(retryInterval, emailClient))
 }

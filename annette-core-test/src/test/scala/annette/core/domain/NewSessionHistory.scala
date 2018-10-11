@@ -28,7 +28,7 @@ trait NewSessionHistory { _: PersistenceSpec with TestKit =>
 
   def newSessionHistoryActor(): ActorRef = {
     val uuid = UUID.randomUUID().toString
-    system.actorOf(SessionHistoryManager.props(s"SessionHistory-$uuid"), s"session-history-$uuid")
+    system.actorOf(SessionHistoryManager.props, s"session-history-$uuid")
   }
 
 }

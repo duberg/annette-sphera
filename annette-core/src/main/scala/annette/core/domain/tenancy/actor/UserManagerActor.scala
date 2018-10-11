@@ -5,7 +5,6 @@ import java.util.UUID
 
 import akka.Done
 import annette.core.AnnetteMessageException
-import annette.core.akkaext.actor.ActorId
 import annette.core.akkaext.http.Pagination.paginate
 import annette.core.akkaext.http.{ Order, PageRequest }
 import annette.core.akkaext.persistence.CqrsPersistentActor
@@ -21,7 +20,7 @@ import org.mindrot.jbcrypt.BCrypt
 import scala.util.Try
 import shapeless._
 
-class UserManagerActor(val id: ActorId, val verificationBus: VerificationBus, val initState: UserManagerState) extends CqrsPersistentActor[UserManagerState] {
+class UserManagerActor(val verificationBus: VerificationBus, val initState: UserManagerState = UserManagerState()) extends CqrsPersistentActor[UserManagerState] {
   def processFailure: PartialFunction[Throwable, Unit] = {
     case e: AnnetteMessageException =>
       sender ! e.message

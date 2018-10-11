@@ -1,7 +1,6 @@
 package annette.core.security.verification
 
 import akka.actor.ActorRef
-import annette.core.akkaext.actor.ActorId
 import annette.core.security.verification.Verification._
 import annette.core.test.PersistenceSpec
 
@@ -30,10 +29,7 @@ trait NewVerificationActor { _: PersistenceSpec =>
   def verify(a: ActorRef, id: Verification.Id, code: String): Future[Any] =
     ask(a, VerifyCmd(id, code))
 
-  def newVerificationActor(id: ActorId = generateActorId, state: VerificationState = VerificationState.empty): Future[ActorRef] = Future {
-    system.actorOf(VerificationActor.props(
-      id = id,
-      bus = new VerificationBus,
-      state = state), id.name)
+  def newVerificationActor(name: String = generateString()): Future[ActorRef] = Future {
+    system.actorOf(VerificationActor.props(bus = new VerificationBus), name = name)
   }
 }

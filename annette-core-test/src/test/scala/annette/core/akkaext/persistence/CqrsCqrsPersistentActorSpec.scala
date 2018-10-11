@@ -3,7 +3,6 @@ package annette.core.akkaext.persistence
 import akka.actor.{ ActorSystem, PoisonPill }
 import akka.testkit.TestKit
 import annette.core.akkaext.persistence.TestCqrsPersistentActor._
-import annette.core.akkaext.actor.ActorId
 import annette.core.akkaext.actor.CqrsQuery._
 import annette.core.akkaext.actor.CqrsResponse._
 import annette.core.akkaext.persistence.CqrsPersistentActor._
@@ -59,16 +58,16 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
       "return all elements from init state" in {
         val s = Seq(generateString(), generateString())
         for {
-          a <- newTestPersistentActor(TestCqrsPersistentState(s))
+          a <- newTestPersistentActor(state = TestCqrsPersistentState(s))
           x <- getAll(a)
         } yield x shouldBe s
       }
       "not create snapshot" in {
-        val id = ActorId(generateId)
+        val id = generateString()
         val n = SnapshotInterval + SnapshotInterval / 2
         val s = TestCqrsPersistentState(Seq(generateString(), generateString()))
         for {
-          a <- newTestPersistentActor(s, id)
+          a <- newTestPersistentActor(id = id, state = s)
           _ <- Future.sequence {
             for (i <- 1 to n) yield a.ask(GetState).mapTo[TestCqrsPersistentState].map(_.getAll)
           }
@@ -76,7 +75,7 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
           y <- ask(a, HasSnapshot)
           _ <- Future { a ! PoisonPill }
           _ <- Future { Thread.sleep(500) }
-          c <- newTestPersistentActor(s, id)
+          c <- newTestPersistentActor(id = id, state = s)
           z <- c.ask(GetState).mapTo[TestCqrsPersistentState].map(_.getAll)
         } yield {
           x should have size s.size
@@ -90,7 +89,7 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
         val state = Seq(generateString(), generateString())
         val s1 = generateString()
         for {
-          a <- newTestPersistentActor(TestCqrsPersistentState(state))
+          a <- newTestPersistentActor(state = TestCqrsPersistentState(state))
           x <- ask(a, CreateCmd(s1))
           y <- getAll(a)
         } yield {
@@ -103,7 +102,7 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
         val s1 = generateString()
         val p = newSubscribedOnEventsTestProbe
         for {
-          a <- newTestPersistentActor(TestCqrsPersistentState(state))
+          a <- newTestPersistentActor(state = TestCqrsPersistentState(state))
           x <- ask(a, CreateCmd(s1))
           y <- getAll(a)
         } yield {
@@ -119,7 +118,7 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
         val state = Seq(generateString(), generateString())
         val s1 = generateString()
         for {
-          a <- newTestPersistentActor(TestCqrsPersistentState(state))
+          a <- newTestPersistentActor(state = TestCqrsPersistentState(state))
           x <- ask(a, CreateCmd1(s1))
           y <- getAll(a)
         } yield {
@@ -132,7 +131,7 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
         val s1 = generateString()
         val p = newSubscribedOnEventsTestProbe
         for {
-          a <- newTestPersistentActor(TestCqrsPersistentState(state))
+          a <- newTestPersistentActor(state = TestCqrsPersistentState(state))
           x <- ask(a, CreateCmd1(s1))
           y <- getAll(a)
         } yield {
@@ -148,7 +147,7 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
         val state = Seq(generateString(), generateString())
         val s1 = generateString()
         for {
-          a <- newTestPersistentActor(TestCqrsPersistentState(state))
+          a <- newTestPersistentActor(state = TestCqrsPersistentState(state))
           x <- ask(a, CreateCmd2(s1))
           y <- getAll(a)
         } yield {
@@ -161,7 +160,7 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
         val s1 = generateString()
         val p = newSubscribedOnEventsTestProbe
         for {
-          a <- newTestPersistentActor(TestCqrsPersistentState(state))
+          a <- newTestPersistentActor(state = TestCqrsPersistentState(state))
           x <- ask(a, CreateCmd2(s1))
           y <- getAll(a)
         } yield {
@@ -177,7 +176,7 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
         val state = Seq(generateString(), generateString())
         val s1 = generateString()
         for {
-          a <- newTestPersistentActor(TestCqrsPersistentState(state))
+          a <- newTestPersistentActor(state = TestCqrsPersistentState(state))
           x <- ask(a, CreateCmd3(s1))
           y <- getAll(a)
         } yield {
@@ -190,7 +189,7 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
         val s1 = generateString()
         val p = newSubscribedOnEventsTestProbe
         for {
-          a <- newTestPersistentActor(TestCqrsPersistentState(state))
+          a <- newTestPersistentActor(state = TestCqrsPersistentState(state))
           x <- ask(a, CreateCmd3(s1))
           y <- getAll(a)
         } yield {
@@ -217,7 +216,7 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
     }
     "snapshot" must {
       "restore" in {
-        val id = ActorId(generateId)
+        val id = generateString()
         val n = SnapshotInterval + SnapshotInterval / 2
         for {
           a <- newTestPersistentActor(id = id)
@@ -237,11 +236,11 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
         }
       }
       "restore initState" in {
-        val id = ActorId(generateId)
+        val id = generateString()
         val n = SnapshotInterval + SnapshotInterval / 2
         val s = TestCqrsPersistentState(Seq(generateString(), generateString()))
         for {
-          a <- newTestPersistentActor(s, id)
+          a <- newTestPersistentActor(id = id, state = s)
           _ <- Future.sequence {
             for (i <- 1 to n) yield ask(a, CreateCmd(generateString()))
           }
@@ -249,7 +248,7 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
           y <- ask(a, HasSnapshot)
           _ <- Future { a ! PoisonPill }
           _ <- Future { Thread.sleep(500) }
-          c <- newTestPersistentActor(s, id)
+          c <- newTestPersistentActor(id = id, state = s)
           z <- c.ask(GetState).mapTo[TestCqrsPersistentState].map(_.getAll)
         } yield {
           x should have size n + s.size
@@ -260,11 +259,11 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
     }
     "recover" must {
       "recover initState" in {
-        val id = ActorId(generateId)
+        val id = generateString()
         val n = SnapshotInterval / 2
         val s = TestCqrsPersistentState(Seq(generateString(), generateString()))
         for {
-          a <- newTestPersistentActor(s, id)
+          a <- newTestPersistentActor(id = id, state = s)
           _ <- Future.sequence {
             for (i <- 1 to n) yield ask(a, CreateCmd(generateString()))
           }
@@ -272,7 +271,7 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
           y <- ask(a, HasSnapshot)
           _ <- Future { a ! PoisonPill }
           _ <- Future { Thread.sleep(500) }
-          c <- newTestPersistentActor(s, id)
+          c <- newTestPersistentActor(id = id, state = s)
           z <- c.ask(GetState).mapTo[TestCqrsPersistentState].map(_.getAll)
         } yield {
           x should have size n + s.size
@@ -281,11 +280,11 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
         }
       }
       "recover when created with initState empty" in {
-        val id = ActorId(generateId)
+        val id = generateString()
         val n = SnapshotInterval / 2
         val s = TestCqrsPersistentState(Seq(generateString(), generateString()))
         for {
-          a <- newTestPersistentActor(s, id)
+          a <- newTestPersistentActor(id = id, state = s)
           _ <- Future.sequence {
             for (i <- 1 to n) yield ask(a, CreateCmd(generateString()))
           }
@@ -305,11 +304,11 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
         }
       }
       "afterRecover" in {
-        val id = ActorId(generateId)
+        val id = generateString()
         val n = SnapshotInterval / 2
         val s = TestCqrsPersistentState(Seq(generateString(), generateString()))
         for {
-          a <- newTestPersistentActor(s, id)
+          a <- newTestPersistentActor(id = id, state = s)
           _ <- Future.sequence {
             for (i <- 1 to n) yield ask(a, CreateCmd(generateString()))
           }
@@ -317,7 +316,7 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
           y <- ask(a, HasSnapshot)
           _ <- Future { a ! PoisonPill }
           _ <- Future { Thread.sleep(500) }
-          c <- newTestPersistentActor(s, id)
+          c <- newTestPersistentActor(id = id, state = s)
           z <- c.ask(GetState).mapTo[TestCqrsPersistentState].map(_.getAll)
           i <- ask(c, GetRecoveredState).mapTo[Option[TestCqrsPersistentState]]
         } yield {
@@ -331,11 +330,11 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
     }
     "recover (CreateCmd2)" must {
       "recover initState" in {
-        val id = ActorId(generateId)
+        val id = generateString()
         val n = SnapshotInterval / 2
         val s = TestCqrsPersistentState(Seq(generateString(), generateString()))
         for {
-          a <- newTestPersistentActor(s, id)
+          a <- newTestPersistentActor(id = id, state = s)
           _ <- Future.sequence {
             for (i <- 1 to n) yield ask(a, CreateCmd2(generateString()))
           }
@@ -343,7 +342,7 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
           y <- ask(a, HasSnapshot)
           _ <- Future { a ! PoisonPill }
           _ <- Future { Thread.sleep(500) }
-          c <- newTestPersistentActor(s, id)
+          c <- newTestPersistentActor(id = id, state = s)
           z <- c.ask(GetState).mapTo[TestCqrsPersistentState].map(_.getAll)
         } yield {
           x should have size n + s.size
@@ -352,11 +351,11 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
         }
       }
       "recover when created with initState empty" in {
-        val id = ActorId(generateId)
+        val id = generateString()
         val n = SnapshotInterval / 2
         val s = TestCqrsPersistentState(Seq(generateString(), generateString()))
         for {
-          a <- newTestPersistentActor(s, id)
+          a <- newTestPersistentActor(id = id, state = s)
           _ <- Future.sequence {
             for (i <- 1 to n) yield ask(a, CreateCmd2(generateString()))
           }
@@ -376,11 +375,11 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
         }
       }
       "afterRecover" in {
-        val id = ActorId(generateId)
+        val id = generateString()
         val n = SnapshotInterval / 2
         val s = TestCqrsPersistentState(Seq(generateString(), generateString()))
         for {
-          a <- newTestPersistentActor(s, id)
+          a <- newTestPersistentActor(id = id, state = s)
           _ <- Future.sequence {
             for (i <- 1 to n) yield ask(a, CreateCmd2(generateString()))
           }
@@ -388,7 +387,7 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
           y <- ask(a, HasSnapshot)
           _ <- Future { a ! PoisonPill }
           _ <- Future { Thread.sleep(500) }
-          c <- newTestPersistentActor(s, id)
+          c <- newTestPersistentActor(id = id, state = s)
           z <- c.ask(GetState).mapTo[TestCqrsPersistentState].map(_.getAll)
           i <- ask(c, GetRecoveredState).mapTo[Option[TestCqrsPersistentState]]
         } yield {
@@ -403,11 +402,11 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
 
     "recover (CreateCmd3)" must {
       "recover initState" in {
-        val id = ActorId(generateId)
+        val id = generateString()
         val n = SnapshotInterval / 2
         val s = TestCqrsPersistentState(Seq(generateString(), generateString()))
         for {
-          a <- newTestPersistentActor(s, id)
+          a <- newTestPersistentActor(id = id, state = s)
           _ <- Future.sequence {
             for (i <- 1 to n) yield ask(a, CreateCmd3(generateString()))
           }
@@ -415,7 +414,7 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
           y <- ask(a, HasSnapshot)
           _ <- Future { a ! PoisonPill }
           _ <- Future { Thread.sleep(500) }
-          c <- newTestPersistentActor(s, id)
+          c <- newTestPersistentActor(id = id, state = s)
           z <- c.ask(GetState).mapTo[TestCqrsPersistentState].map(_.getAll)
         } yield {
           x should have size n + s.size
@@ -424,11 +423,11 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
         }
       }
       "recover when created with initState empty" in {
-        val id = ActorId(generateId)
+        val id = generateString()
         val n = SnapshotInterval / 2
         val s = TestCqrsPersistentState(Seq(generateString(), generateString()))
         for {
-          a <- newTestPersistentActor(s, id)
+          a <- newTestPersistentActor(id = id, state = s)
           _ <- Future.sequence {
             for (i <- 1 to n) yield ask(a, CreateCmd3(generateString()))
           }
@@ -448,11 +447,11 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
         }
       }
       "afterRecover" in {
-        val id = ActorId(generateId)
+        val id = generateString()
         val n = SnapshotInterval / 2
         val s = TestCqrsPersistentState(Seq(generateString(), generateString()))
         for {
-          a <- newTestPersistentActor(s, id)
+          a <- newTestPersistentActor(id = id, state = s)
           _ <- Future.sequence {
             for (i <- 1 to n) yield ask(a, CreateCmd3(generateString()))
           }
@@ -460,7 +459,7 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
           y <- ask(a, HasSnapshot)
           _ <- Future { a ! PoisonPill }
           _ <- Future { Thread.sleep(500) }
-          c <- newTestPersistentActor(s, id)
+          c <- newTestPersistentActor(id = id, state = s)
           z <- c.ask(GetState).mapTo[TestCqrsPersistentState].map(_.getAll)
           i <- ask(c, GetRecoveredState).mapTo[Option[TestCqrsPersistentState]]
         } yield {

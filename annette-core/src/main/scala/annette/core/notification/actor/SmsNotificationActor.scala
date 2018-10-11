@@ -13,10 +13,9 @@ import scala.concurrent.duration.{ FiniteDuration, _ }
 import scala.util.{ Failure, Success, Try }
 
 private class SmsNotificationActor(
-  val id: ActorId,
   val retryInterval: FiniteDuration,
   val smsClient: SmsClient,
-  val initState: SmsNotificationState,
+  val initState: SmsNotificationState = SmsNotificationState.empty,
   implicit val t: Timeout = 30 seconds)(implicit val executor: ExecutionContext) extends CqrsPersistentActor[SmsNotificationState]
   with Generator {
   import SmsNotificationActor._
@@ -168,17 +167,9 @@ object SmsNotificationActor {
   case object NotificationNotFound extends Response
   case class NotificationMap(x: Map[Notification.Id, SmsNotificationLike]) extends Response
 
-  def props(
-    id: ActorId,
-    retryInterval: FiniteDuration,
-    settings: SmsSettings,
-    state: SmsNotificationState = SmsNotificationState.empty)(implicit c: ExecutionContext): Props =
-    Props(new SmsNotificationActor(id, retryInterval, new SmsClient(settings), state))
+  def props(retryInterval: FiniteDuration, settings: SmsSettings)(implicit c: ExecutionContext): Props =
+    Props(new SmsNotificationActor(retryInterval, new SmsClient(settings)))
 
-  def propsWithSmsClient(
-    id: ActorId,
-    retryInterval: FiniteDuration,
-    smsClient: SmsClient,
-    state: SmsNotificationState = SmsNotificationState.empty)(implicit c: ExecutionContext): Props =
-    Props(new SmsNotificationActor(id, retryInterval, smsClient, state))
+  def propsWithSmsClient(retryInterval: FiniteDuration, smsClient: SmsClient)(implicit c: ExecutionContext): Props =
+    Props(new SmsNotificationActor(retryInterval, smsClient))
 }

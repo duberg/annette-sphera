@@ -56,7 +56,7 @@ class VerificationActorSpec extends TestKit(ActorSystem("VerificationActorSpec")
     }
     "recover" must {
       "restore all verifications" in {
-        val id = generateActorId
+        val id = generateString()
         for {
           a <- newVerificationActor(id)
           _ <- createVerification(a)
@@ -67,7 +67,7 @@ class VerificationActorSpec extends TestKit(ActorSystem("VerificationActorSpec")
         } yield x1 should have size 2
       }
       "restore all verifications after verify" in {
-        val id = generateActorId
+        val id = generateString()
         for {
           a <- newVerificationActor(id)
           x1 <- createVerification(a)

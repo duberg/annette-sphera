@@ -1,7 +1,7 @@
 package annette.core.domain.tenancy
 
 import akka.actor.{ ActorRef, Props }
-import annette.core.akkaext.actor.{ ActorId, CqrsCommand, CqrsEvent, CqrsQuery, CqrsResponse }
+import annette.core.akkaext.actor.{ CqrsCommand, CqrsEvent, CqrsQuery, CqrsResponse }
 import annette.core.domain.application.Application
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.actor.{ OpenSessionManagerActor, OpenSessionManagerState }
@@ -35,6 +35,6 @@ object OpenSessionManager {
   case class OpenSessionOpt(maybeEntry: Option[OpenSession]) extends Response
   case class OpenSessionSeq(entries: Seq[OpenSession]) extends Response
 
-  def props(id: ActorId, lastSession: ActorRef, sessionHistory: ActorRef, state: OpenSessionManagerState = OpenSessionManagerState()) =
-    Props(new OpenSessionManagerActor(id, lastSession, sessionHistory, state))
+  def props(lastSession: ActorRef, sessionHistory: ActorRef) =
+    Props(new OpenSessionManagerActor(lastSession, sessionHistory))
 }

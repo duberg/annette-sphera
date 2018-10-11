@@ -3,7 +3,6 @@ package annette.core.domain
 import javax.inject.{ Named, Singleton }
 import akka.actor.{ Actor, ActorLogging, ActorRef, Props }
 import akka.util.Timeout
-import annette.core.akkaext.actor.ActorId
 import annette.core.domain.application._
 import annette.core.domain.language.LanguageService
 import annette.core.domain.tenancy.{ LastSessionManager, OpenSessionManager, SessionHistoryManager, UserManager }
@@ -20,38 +19,16 @@ import annette.core.security.verification.{ Verification, VerificationBus }
 @Singleton
 @Named("CoreService")
 class CoreManagerActor(config: Config, verificationBus: VerificationBus)(implicit c: ExecutionContext, t: Timeout) extends Actor with ActorLogging {
-  val coreId = ActorId("core")
-
-  val tenantServiceId = coreId / "tenant"
-  val tenantServiceActor = context.actorOf(
-    props = TenantServiceActor.props(tenantServiceId),
-    name = "tenant")
-
-  val applicationManagerId = coreId / "application"
-  val applicationActor: ActorRef = context.actorOf(ApplicationManager.props(applicationManagerId), "application")
-
-  val languageActorId = coreId / "language"
-  val languageActor: ActorRef = context.actorOf(LanguageService.props(languageActorId), "language")
-
-  val userActorId = coreId / "user"
-  val userActor: ActorRef = context.actorOf(UserManager.props(id = userActorId, verificationBus = verificationBus), "user")
-
-  val lastSessionActorId = coreId / "last-session"
-  val lastSessionActor: ActorRef = context.actorOf(LastSessionManager.props(lastSessionActorId), "last-session")
-
-  val sessionHistoryActorId = coreId / "session-history"
-  val sessionHistoryActor: ActorRef = context.actorOf(SessionHistoryManager.props(sessionHistoryActorId), "session-history")
-
-  val openSessionActorId = coreId / "core-open-session"
-  val openSessionActor: ActorRef = context.actorOf(OpenSessionManager.props(openSessionActorId, lastSessionActor, sessionHistoryActor), "open-session")
-
-  val notificationManagerId = coreId / NotificationManagerActorName
+  val tenantServiceActor: ActorRef = context.actorOf(props = TenantServiceActor.props, name = "tenant")
+  val applicationActor: ActorRef = context.actorOf(props = ApplicationManager.props, name = "application")
+  val languageActor: ActorRef = context.actorOf(props = LanguageService.props, name = "language")
+  val userActor: ActorRef = context.actorOf(props = UserManager.props(verificationBus = verificationBus), name = "user")
+  val lastSessionActor: ActorRef = context.actorOf(props = LastSessionManager.props, name = "last-session")
+  val sessionHistoryActor: ActorRef = context.actorOf(props = SessionHistoryManager.props, name = "session-history")
+  val openSessionActor: ActorRef = context.actorOf(props = OpenSessionManager.props(lastSessionActor, sessionHistoryActor), name = "open-session")
   val notificationManagerActor: ActorRef = context.actorOf(
-    props = NotificationManagerActor.props(
-      id = notificationManagerId,
-      config,
-      verificationBus = verificationBus),
-    name = NotificationManagerActorName)
+    props = NotificationManagerActor.props(config, verificationBus = verificationBus),
+    name = "notification")
 
   def receive: PartialFunction[Any, Unit] = {
     case x: Tenant.Command => tenantServiceActor forward x
@@ -88,8 +65,6 @@ class CoreManagerActor(config: Config, verificationBus: VerificationBus)(implici
 }
 
 object CoreService {
-  val NotificationManagerActorName = "notification"
-
   val name = "core"
 
   def props(config: Config, verificationBus: VerificationBus)(implicit c: ExecutionContext, t: Timeout) =

@@ -15,7 +15,7 @@ trait NewProperty { _: PersistenceSpec with TestKit =>
 
   def newPropertyActor() = {
     val uuid = UUID.randomUUID().toString
-    system.actorOf(PropertyService.props(s"Property-$uuid"), s"property-$uuid")
+    system.actorOf(PropertyService.props, s"property-$uuid")
   }
 
 }

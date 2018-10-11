@@ -4,7 +4,7 @@ import java.util.UUID
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.model.{ Tenant, User }
 import akka.actor.Props
-import annette.core.akkaext.actor.{ ActorId, CqrsCommand, CqrsEvent, CqrsQuery, CqrsResponse }
+import annette.core.akkaext.actor.{ CqrsCommand, CqrsEvent, CqrsQuery, CqrsResponse }
 import annette.core.domain.application.Application
 import annette.core.domain.property.model._
 import annette.core.utils.{ AnyValue, FilterOption, NoValue }
@@ -35,7 +35,6 @@ object PropertyService {
   case class PropertyOption(maybeEntry: Option[Property]) extends Response
   case class PropertySeq(entries: Seq[Property]) extends Response
 
-  def props(id: ActorId, state: PropertyState = PropertyState()) =
-    Props(new PropertyActor(id, state))
+  def props = Props(new PropertyActor)
 }
 

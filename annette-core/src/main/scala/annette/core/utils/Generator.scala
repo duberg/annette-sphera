@@ -5,13 +5,10 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import scala.util.Random
 import Generator._
-import annette.core.akkaext.actor.ActorId
 
 trait Generator {
   def generateId: String = s"i$generateInt"
   def generateIdOpt = Option(s"i$generateInt")
-  def generateActorId: ActorId = ActorId(generateId)
-  def generateActorIdStr: String = ActorId(generateId).raw
   def generateInt: Int = id.incrementAndGet()
   def generateIntOpt = Option(id.incrementAndGet())
   def generateUUID: UUID = UUID.randomUUID()

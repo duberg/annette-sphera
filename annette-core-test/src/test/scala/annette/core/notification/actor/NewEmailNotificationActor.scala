@@ -5,7 +5,6 @@ import java.net.{ ConnectException, SocketException }
 import akka.actor.ActorRef
 import annette.core.notification.client.EmailClient
 import annette.core.notification._
-import annette.core.akkaext.actor.ActorId
 import annette.core.test.PersistenceSpec
 import com.typesafe.config.ConfigFactory
 import org.scalamock.scalatest.AsyncMockFactory
@@ -13,10 +12,9 @@ import org.scalamock.scalatest.AsyncMockFactory
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.{ Failure, Success }
+import EmailNotificationActor._
 
 trait NewEmailNotificationActor extends NotificationConfig with AsyncMockFactory { _: PersistenceSpec =>
-  import EmailNotificationActor._
-
   lazy val emailNotificationConfig: EmailNotificationEntry =
     ConfigFactory.load().getConfig("annette").emailNotificationEntry
 
@@ -46,8 +44,8 @@ trait NewEmailNotificationActor extends NotificationConfig with AsyncMockFactory
       message = generateString())
   }
 
-  def newEmailNotificationActor(id: ActorId = generateActorId, state: EmailNotificationState = EmailNotificationState.empty): Future[ActorRef] = Future {
-    system.actorOf(EmailNotificationActor.props(id, emailNotificationConfig.retryInterval, emailNotificationConfig.email), id.name)
+  def newEmailNotificationActor(id: String = generateString()): Future[ActorRef] = Future {
+    system.actorOf(EmailNotificationActor.props(emailNotificationConfig.retryInterval, emailNotificationConfig.email), id)
   }
 
   def stubbedEmailClient(settings: EmailSettings): EmailClient = {
@@ -88,31 +86,29 @@ trait NewEmailNotificationActor extends NotificationConfig with AsyncMockFactory
     x
   }
 
-  def newStubbedEmailNotificationActor(id: ActorId = generateActorId, state: EmailNotificationState = EmailNotificationState.empty): Future[ActorRef] = Future {
+  def newStubbedEmailNotificationActor(id: String = generateString()): Future[ActorRef] = Future {
     system.actorOf(EmailNotificationActor.propsWithMailClient(
-      id = id,
       retryInterval = 1 hour,
-      emailClient = stubbedEmailClient(emailNotificationConfig.email)), id.name)
+      emailClient = stubbedEmailClient(emailNotificationConfig.email)), id)
   }
 
-  def newStubbedSocketExceptionEmailNotificationActor(id: ActorId = generateActorId, state: EmailNotificationState = EmailNotificationState.empty): Future[ActorRef] = Future {
+  def newStubbedSocketExceptionEmailNotificationActor(id: String = generateString()): Future[ActorRef] = Future {
     system.actorOf(EmailNotificationActor.propsWithMailClient(
-      id = id,
       retryInterval = 1 hour,
-      emailClient = stubbedSocketExceptionEmailClient(emailNotificationConfig.email)), id.name)
+      emailClient = stubbedSocketExceptionEmailClient(emailNotificationConfig.email)), id)
   }
 
-  def newStubbedSocketExceptionEmailNotificationActorInDebug(id: ActorId = generateActorId, state: EmailNotificationState = EmailNotificationState.empty): Future[ActorRef] = Future {
+  def newStubbedSocketExceptionEmailNotificationActorInDebug(id: String = generateString()): Future[ActorRef] = Future {
     system.actorOf(EmailNotificationActor.propsWithMailClient(
-      id = id,
       retryInterval = 1 hour,
-      emailClient = stubbedSocketExceptionEmailClientInDebug(emailNotificationConfig.email)), id.name)
+      emailClient = stubbedSocketExceptionEmailClientInDebug(emailNotificationConfig.email)), id)
   }
 
-  def newStubbedConnectionRefusedEmailNotificationActor(id: ActorId = generateActorId, state: EmailNotificationState = EmailNotificationState.empty): Future[ActorRef] = Future {
-    system.actorOf(EmailNotificationActor.propsWithMailClient(
-      id = id,
-      retryInterval = 1 hour,
-      emailClient = stubbedConnectionRefusedEmailClient(emailNotificationConfig.email)), id.name)
+  def newStubbedConnectionRefusedEmailNotificationActor(id: String = generateString()): Future[ActorRef] = Future {
+    system.actorOf(
+      props = EmailNotificationActor.propsWithMailClient(
+        retryInterval = 1 hour,
+        emailClient = stubbedConnectionRefusedEmailClient(emailNotificationConfig.email)),
+      name = id)
   }
 }

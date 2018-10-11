@@ -16,9 +16,7 @@ trait NewUser { _: PersistenceSpec with TestKit =>
 
   def newUserActor() = {
     val uuid = UUID.randomUUID().toString
-    system.actorOf(UserManager.props(
-      id = s"User-$uuid",
-      verificationBus = new VerificationBus), s"user-$uuid")
+    system.actorOf(UserManager.props(verificationBus = new VerificationBus), s"user-$uuid")
   }
 
   def newCreateUser(id: UUID = UUID.randomUUID(), email: Option[String] = None, phone: Option[String] = None, login: Option[String] = None) = {

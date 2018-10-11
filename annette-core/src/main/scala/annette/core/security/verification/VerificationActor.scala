@@ -8,11 +8,7 @@ import annette.core.security.verification.Verification._
 
 import scala.concurrent.ExecutionContext
 
-class VerificationActor(
-  val id: ActorId,
-  val bus: VerificationBus,
-  val initState: VerificationState)(implicit val c: ExecutionContext, val t: Timeout) extends CqrsPersistentActor[VerificationState] {
-
+class VerificationActor(val bus: VerificationBus, val initState: VerificationState = VerificationState.empty)(implicit val c: ExecutionContext, val t: Timeout) extends CqrsPersistentActor[VerificationState] {
   def createVerification(state: VerificationState, x: CreateVerificationLike): Unit = {
     val verification = x match {
       case y: CreateVerification => Verification(
@@ -72,10 +68,7 @@ class VerificationActor(
 }
 
 object VerificationActor {
-  def props(
-    id: ActorId,
-    bus: VerificationBus,
-    state: VerificationState = VerificationState.empty)(implicit c: ExecutionContext, t: Timeout): Props =
-    Props(new VerificationActor(id, bus, state))
+  def props(bus: VerificationBus)(implicit c: ExecutionContext, t: Timeout): Props =
+    Props(new VerificationActor(bus))
 }
 

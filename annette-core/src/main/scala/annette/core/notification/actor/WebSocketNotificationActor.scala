@@ -2,14 +2,12 @@ package annette.core.notification.actor
 
 import akka.actor.{ ActorRef, Props, Terminated }
 import annette.core.notification.actor.WebSocketNotificationActor._
-import annette.core.notification.{ CreateWebSocketNotificationLike, NotificationManager, WebSocketNotificationLike }
+import annette.core.notification.{ CreateWebSocketNotificationLike, NotificationManager, WebSocketNotification, WebSocketNotificationLike }
 import annette.core.akkaext.actor._
 import annette.core.akkaext.persistence._
 import annette.core.domain.tenancy.model.User
 
-private class WebSocketNotificationActor(val id: NotificationManager.Id, val initState: WebSocketNotificationState)
-  extends CqrsPersistentActor[WebSocketNotificationState] {
-
+private class WebSocketNotificationActor(val initState: WebSocketNotificationState = WebSocketNotificationState.empty) extends CqrsPersistentActor[WebSocketNotificationState] {
   def connect(x: User.Id, y: ActorRef): Unit = {
     // addSubscriber(self, x, y)
     context.watch(y)
@@ -44,8 +42,5 @@ object WebSocketNotificationActor {
 
   case object Done extends CqrsResponse
 
-  def props(
-    id: NotificationManager.Id,
-    state: WebSocketNotificationState = WebSocketNotificationState.empty): Props =
-    Props(new WebSocketNotificationActor(id, state))
+  def props: Props = Props(new WebSocketNotificationActor)
 }

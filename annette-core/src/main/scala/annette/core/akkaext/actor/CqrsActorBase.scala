@@ -22,8 +22,14 @@ trait CqrsActorBase[A <: CqrsState] extends Actor
 
   val parent: ActorRef = context.parent
 
-  def id: ActorId
+  /**
+   * Actor Id
+   */
+  val id: String = context.self.path.toStringWithoutAddress
 
+  /**
+   * Init actor state
+   */
   def initState: A
 
   def activeContext(state: A): Receive
@@ -57,12 +63,5 @@ trait CqrsActorBase[A <: CqrsState] extends Actor
    */
   def changeState(state: A): Unit = context.become(activeContext(state))
 
-  def getChildOpt(childId: ActorId): Option[ActorRef] = context.child(childId.name)
-
-  def getChild(childId: ActorId): ActorRef = getChildOpt(childId).get
-
-  def generateChildId: ActorId = id / generateUUIDStr
-
   def publish(event: CqrsEvent): Unit = context.system.eventStream.publish(event)
-
 }

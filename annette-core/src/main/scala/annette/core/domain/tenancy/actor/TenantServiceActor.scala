@@ -3,14 +3,13 @@ package annette.core.domain.tenancy.actor
 import java.util.UUID
 
 import akka.actor.Props
-import annette.core.akkaext.actor.ActorId
 import annette.core.akkaext.http.{ Order, PageRequest }
 import annette.core.akkaext.persistence.CqrsPersistentActor
 import annette.core.domain.tenancy.model._
 import annette.core.domain.tenancy.model.Tenant._
 import annette.core.akkaext.http.Pagination._
 
-class TenantServiceActor(val id: ActorId, val initState: TenantServiceState) extends CqrsPersistentActor[TenantServiceState] {
+class TenantServiceActor(val initState: TenantServiceState = TenantServiceState.empty) extends CqrsPersistentActor[TenantServiceState] {
   def createTenant(state: TenantServiceState, createTenant: CreateTenant): Unit = {
     val tenant = Tenant(
       id = createTenant.id,
@@ -58,6 +57,5 @@ class TenantServiceActor(val id: ActorId, val initState: TenantServiceState) ext
 }
 
 object TenantServiceActor {
-  def props(id: ActorId, initState: TenantServiceState = TenantServiceState.empty): Props =
-    Props(new TenantServiceActor(id, initState))
+  def props: Props = Props(new TenantServiceActor)
 }

@@ -8,9 +8,8 @@ import annette.core.domain.property.model._
 import annette.core.domain.tenancy.model.{ Tenant, User }
 import annette.core.utils.FilterOption
 import PropertyService._
-import annette.core.akkaext.actor.ActorId
 
-class PropertyActor(val id: ActorId, val initState: PropertyState) extends CqrsPersistentActor[PropertyState] {
+class PropertyActor(val initState: PropertyState = PropertyState()) extends CqrsPersistentActor[PropertyState] {
 
   def setProperty(state: PropertyState, entry: Property): Unit = {
     persist(PropertySetEvt(entry)) { event =>

@@ -14,6 +14,6 @@ trait NewLanguage { _: PersistenceSpec with TestKit =>
 
   def newLanguageActor() = {
     val uuid = UUID.randomUUID().toString
-    system.actorOf(LanguageService.props(s"Language-$uuid"), s"language--$uuid")
+    system.actorOf(LanguageService.props, s"language--$uuid")
   }
 }

@@ -13,14 +13,11 @@ trait DefaultBehaviors[State <: CqrsState] extends PipeToSupport with AskSupport
 
   def changeState(state: State): Unit
 
-  def getChildOpt(childId: ActorId): Option[ActorRef]
-
   def throwableBehavior: Receive = { case e: Exception => throw e }
 
   def creatorBehavior: Receive = {
     case p: Props => sender() ! context.actorOf(p)
     case (props: Props, name: String) => sender() ! context.actorOf(props, name)
-    case GetChild(childId) => sender() ! ChildOpt(getChildOpt(childId))
   }
 
   def getStateBehavior(state: State): Receive = {

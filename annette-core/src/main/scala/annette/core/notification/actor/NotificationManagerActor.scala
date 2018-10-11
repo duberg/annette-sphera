@@ -12,7 +12,6 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
 class NotificationManagerActor(
-  val id: NotificationManager.Id,
   val emailRetryInterval: FiniteDuration,
   val emailSettings: EmailSettings,
   val smsRetryInterval: FiniteDuration,
@@ -25,7 +24,6 @@ class NotificationManagerActor(
   val emailNotificationActor: ActorRef = {
     context.actorOf(
       props = EmailNotificationActor.props(
-        id = id / EmailNotificationActorName,
         retryInterval = emailRetryInterval,
         settings = emailSettings),
       name = EmailNotificationActorName)
@@ -34,7 +32,6 @@ class NotificationManagerActor(
   val smsNotificationActor: ActorRef = {
     context.actorOf(
       props = SmsNotificationActor.props(
-        id = id / SmsNotificationActorName,
         retryInterval = smsRetryInterval,
         settings = smsSettings),
       name = SmsNotificationActorName)
@@ -42,14 +39,13 @@ class NotificationManagerActor(
 
   val verificationActor: ActorRef = {
     context.actorOf(
-      props = VerificationActor.props(id = id / VerificationActorName, bus = verificationBus),
+      props = VerificationActor.props(bus = verificationBus),
       name = VerificationActorName)
   }
 
   val webSocketNotificationActor: ActorRef = {
     context.actorOf(
-      props = WebSocketNotificationActor.props(
-        id = id / WebSocketNotificationActorName),
+      props = WebSocketNotificationActor.props,
       name = WebSocketNotificationActorName)
   }
 
@@ -91,15 +87,11 @@ object NotificationManagerActor extends NotificationConfig {
   val VerificationActorName = "smsVerification"
   val WebSocketNotificationActorName = "ws"
 
-  def props(
-    id: NotificationManager.Id,
-    config: Config,
-    verificationBus: VerificationBus)(implicit c: ExecutionContext, t: Timeout): Props = {
+  def props(config: Config, verificationBus: VerificationBus)(implicit c: ExecutionContext, t: Timeout): Props = {
     val annetteConfig: Config = config.getConfig("annette")
     val mailNotificationConfig = annetteConfig.emailNotificationEntry
     val smsNotificationConfig = annetteConfig.smsNotificationEntry
     Props(new NotificationManagerActor(
-      id = id,
       emailRetryInterval = mailNotificationConfig.retryInterval,
       emailSettings = mailNotificationConfig.email,
       smsRetryInterval = smsNotificationConfig.retryInterval,

@@ -1,11 +1,10 @@
 package annette.core.domain.application
 
 import akka.Done
-import annette.core.akkaext.actor.ActorId
 import annette.core.akkaext.persistence.CqrsPersistentActor
 import annette.core.domain.application.Application._
 
-class ApplicationManagerActor(val id: ActorId, val initState: ApplicationManagerState) extends CqrsPersistentActor[ApplicationManagerState] {
+class ApplicationManagerActor(val initState: ApplicationManagerState = ApplicationManagerState()) extends CqrsPersistentActor[ApplicationManagerState] {
   def createApplication(p1: ApplicationManagerState, p2: Application): Unit = {
     if (p1.applicationExists(p2.id)) sender ! EntryAlreadyExists
     else persist(p1, ApplicationCreatedEvt(p2)) { (state, event) =>

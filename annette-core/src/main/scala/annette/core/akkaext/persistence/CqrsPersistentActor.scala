@@ -62,12 +62,17 @@ import scala.reflect.ClassTag
  * Use PersistenceSpec as base trait for idiomatic persistence tests.
  *
  */
-trait CqrsPersistentActor[A <: CqrsState] extends PersistentActor
+abstract class CqrsPersistentActor[A <: CqrsState] extends PersistentActor
   with CqrsActorBase[A]
   with ActiveContext[A]
   with ReceiveRecover[A] {
 
-  def persistenceId = id.raw
+  /**
+   * Поведение актора которое необходимо реализовать.
+   */
+  override def behavior(state: A): Receive
+
+  def persistenceId: String = id
   def snapshotInterval: Int = SnapshotInterval
 
   override def onPersistFailure(cause: Throwable, event: Any, seqNr: Long): Unit = {

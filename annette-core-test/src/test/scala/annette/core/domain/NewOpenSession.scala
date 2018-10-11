@@ -29,19 +29,19 @@ trait NewOpenSession { _: PersistenceSpec with TestKit =>
 
   def lastSessionActor(): ActorRef = {
     val uuid = UUID.randomUUID().toString
-    system.actorOf(LastSessionManager.props(s"LastSession-$uuid"), s"last-session-$uuid")
+    system.actorOf(LastSessionManager.props, s"last-session-$uuid")
   }
 
   def sessionHistoryActor(): ActorRef = {
     val uuid = UUID.randomUUID().toString
-    system.actorOf(SessionHistoryManager.props(s"SessionHistory-$uuid"), s"session-history-$uuid")
+    system.actorOf(SessionHistoryManager.props, s"session-history-$uuid")
   }
 
   def newOpenSessionActor(): ActorRef = {
     val uuid = UUID.randomUUID().toString
     system.actorOf(
-      OpenSessionManager.props(s"OpenSession-$uuid", lastSessionActor(), sessionHistoryActor()),
-      s"open-session-$uuid")
+      props = OpenSessionManager.props(lastSessionActor(), sessionHistoryActor()),
+      name = s"open-session-$uuid")
   }
 
 }

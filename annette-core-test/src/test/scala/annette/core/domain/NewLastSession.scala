@@ -28,7 +28,7 @@ trait NewLastSession { _: PersistenceSpec with TestKit =>
 
   def newLastSessionActor(): ActorRef = {
     val uuid = UUID.randomUUID().toString
-    system.actorOf(LastSessionManager.props(s"LastSession-$uuid"), s"last-session-$uuid")
+    system.actorOf(LastSessionManager.props, s"last-session-$uuid")
   }
 
 }
