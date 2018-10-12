@@ -61,7 +61,7 @@ case class SignUpUser(
   language: Option[String],
   tenants: Set[Tenant.Id])
 
-case class PaginateUsersList(items: List[User], totalCount: Int)
+case class PaginateUsers(items: List[User], totalCount: Int)
 
 case class CreateUser(
   id: Option[User.Id] = None,
@@ -140,5 +140,5 @@ object User {
   case class CreateUserSuccess(x: User) extends Response
   case class UserOpt(maybeEntry: Option[User]) extends Response
   case class UsersMap(x: Map[User.Id, User]) extends Response
-  case class UsersList(x: PaginateUsersList) extends Response
+  case class UsersList(x: PaginateUsers) extends Response
 }

@@ -14,18 +14,18 @@ import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.{ Failure, Success }
+import annette.core.json._
 
 trait UserRoutes extends Directives with PaginationDirectives {
   implicit val c: ExecutionContext
+
   val annetteSecurityDirectives: SecurityDirectives
   val userManager: UserManager
-  val TenantService: TenantService
+  val tenantService: TenantService
   val authorizationManager: ActorRef
   val config: Config
 
-  import FailFastCirceSupport._
   import annetteSecurityDirectives._
-  import io.circe.generic.auto._
 
   //
   //  private val userUpdate = (path("user" / "update" / JavaUUID) & post & auth & entity(as[UpdateUser])) {
@@ -589,7 +589,6 @@ trait UserRoutes extends Directives with PaginationDirectives {
   }
 
   def listUsers(implicit session: Session): Route = (get & pagination) { page =>
-    println(page)
     val ff = for {
       f <- userManager.paginateListUsers(page)
       //r <- tenantUserRoleDao.selectAll

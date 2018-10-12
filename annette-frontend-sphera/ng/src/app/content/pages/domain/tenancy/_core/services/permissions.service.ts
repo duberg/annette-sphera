@@ -14,7 +14,7 @@ const API_PERMISSIONS_URL = `${environment.server_addr}/api/permissions`;
 export class PermissionsService {
 	constructor(private http: HttpClient, private httpUtils: HttpUtilsService) { }
 
-	findPermissions(queryParams: QueryParamsModel): Observable<QueryResultsModel> {
+	listPermissions(queryParams: QueryParamsModel): Observable<QueryResultsModel> {
 		const params = this.httpUtils.getFindHTTPParams(queryParams);
 		return this.http.get<QueryResultsModel>(API_PERMISSIONS_URL, { params: params })
 	}

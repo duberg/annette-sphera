@@ -28,8 +28,8 @@ export class SigninComponent implements OnInit, OnDestroy {
 	public model: any = {
 		login: 'it@kantemirov.ru',
 		password: 'abc',
-		rememberMe:false,
-		selectTenant:false,
+		rememberMe: true,
+		selectTenant: false,
 		tenant: "SPHERA",
 		application: "ADMIN"
 	};

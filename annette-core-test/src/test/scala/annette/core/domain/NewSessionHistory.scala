@@ -1,5 +1,6 @@
 package annette.core.domain
 
+import java.time.LocalDateTime
 import java.util.UUID
 
 import akka.actor.ActorRef
@@ -21,8 +22,8 @@ trait NewSessionHistory { _: PersistenceSpec with TestKit =>
     tenantId = "tenant" + random.nextInt(),
     applicationId = "application" + random.nextInt(),
     languageId = "lang" + random.nextInt(),
-    startTimestamp = DateTime.now(),
-    endTimestamp = DateTime.now(),
+    startTimestamp = LocalDateTime.now(),
+    endTimestamp = LocalDateTime.now(),
     ip = "localhost",
     id = UUID.randomUUID())
 

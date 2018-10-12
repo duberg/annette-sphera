@@ -23,7 +23,8 @@ export const locale = {
 			USERS: 'Users',
 			ROLES: 'Roles',
 			PERMISSIONS: 'Permissions',
-			TENANTS: 'Tenants'
+			TENANTS: 'Tenants',
+			SESSIONS: 'Sessions'
 		},
 		AUTH: {
 			GENERAL: {
@@ -180,6 +181,33 @@ export const locale = {
 				TENANTS: 'Tenants',
 				TENANTS_LIST: 'Tenants list',
 				NEW_TENANT: 'New Tenant',
+				DELETE_CUSTOMER_SIMPLE: {
+					TITLE: 'Customer Delete',
+					DESCRIPTION: 'Are you sure to permanently delete this customer?',
+					WAIT_DESCRIPTION: 'Customer is deleting...',
+					MESSAGE: 'Customer has been deleted'
+				},
+				DELETE_CUSTOMER_MULTY: {
+					TITLE: 'Customers Delete',
+					DESCRIPTION: 'Are you sure to permanently delete selected customers?',
+					WAIT_DESCRIPTION: 'Customers are deleting...',
+					MESSAGE: 'Selected customers have been deleted'
+				},
+				UPDATE_STATUS: {
+					TITLE: 'Status has been updated for selected customers',
+					MESSAGE: 'Selected customers status have successfully been updated'
+				},
+				EDIT: {
+					UPDATE_MESSAGE: 'Customer has been updated',
+					ADD_MESSAGE: 'Customer has been created'
+				}
+			}
+		},
+		SESSIONS: {
+			SESSIONS: {
+				SESSIONS: 'Sessions',
+				SESSIONS_LIST: 'Sessions list',
+				NEW_SESSION: 'New Session',
 				DELETE_CUSTOMER_SIMPLE: {
 					TITLE: 'Customer Delete',
 					DESCRIPTION: 'Are you sure to permanently delete this customer?',

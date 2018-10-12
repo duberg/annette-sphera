@@ -12,7 +12,7 @@ import scala.concurrent.Future
 
 class AuthenticationActor(
   sessionManager: SessionManager,
-  TenantService: TenantService,
+  tenantService: TenantService,
   applicationManager: ApplicationManager,
   userManager: UserManager,
   languageManager: LanguageManager,
@@ -63,9 +63,9 @@ class AuthenticationActor(
     val applicationId = sessionData.applicationId
     for {
       userOpt <- userManager.getUserById(session.userId)
-      tenantOpt <- TenantService.getTenantById(tenantId)
+      tenantOpt <- tenantService.getTenantById(tenantId)
       applicationOpt <- applicationManager.getApplicationById(applicationId)
-      tenantUserExist <- TenantService.isUserAssignedToTenant(tenantId, session.userId)
+      tenantUserExist <- tenantService.isUserAssignedToTenant(tenantId, session.userId)
     } yield {
       if (userOpt.isEmpty) throw new UserNotFoundException()
       if (tenantOpt.isEmpty) throw new TenantNotFoundException()

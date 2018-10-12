@@ -1,5 +1,6 @@
 package annette.core.domain
 
+import java.time.LocalDateTime
 import java.util.UUID
 
 import akka.Done
@@ -126,7 +127,7 @@ class OpenSessionManagerActorSpec extends TestKit(ActorSystem("OpenSessionActorS
         val s1 = newOpenSession
         val upd = OpenSessionUpdate(
           id = s1.id,
-          lastOpTimestamp = Some(DateTime.now))
+          lastOpTimestamp = Some(LocalDateTime.now()))
         val actor = newOpenSessionActor()
         for {
           c1 <- ask(actor, OpenSessionManager.CreateOpenSessionCmd(s1))
@@ -189,7 +190,7 @@ class OpenSessionManagerActorSpec extends TestKit(ActorSystem("OpenSessionActorS
     "getOpenSessionById" must {
       "close session if expired" in {
         val s1 = newOpenSession
-        val s2 = s1.copy(timeout = 1, rememberMe = true, startTimestamp = DateTime.now().minusMinutes(14))
+        val s2 = s1.copy(timeout = 1, rememberMe = true, startTimestamp = LocalDateTime.now().minusMinutes(14))
         val actor = newOpenSessionActor()
         for {
           c1 <- ask(actor, OpenSessionManager.CreateOpenSessionCmd(s2))

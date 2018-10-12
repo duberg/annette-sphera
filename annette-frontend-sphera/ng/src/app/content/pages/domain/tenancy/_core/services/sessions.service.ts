@@ -6,15 +6,15 @@ import {HttpUtilsService} from "../../../../components/users/_core/utils/http-ut
 import {QueryParamsModel} from "../../../../components/users/_core/models/query-models/query-params.model";
 import {QueryResultsModel} from "../../../../components/users/_core/models/query-models/query-results.model";
 
-const API_TENANTS_URL = `${environment.server_addr}/api/tenants`;
+const API_SESSIONS_URL = `${environment.server_addr}/api/auth/sessions`;
 
 @Injectable()
-export class TenantsService {
+export class SessionsService {
 	constructor(private http: HttpClient, private httpUtils: HttpUtilsService) { }
 
-	listTenants(queryParams: QueryParamsModel): Observable<QueryResultsModel> {
+	listSessions(queryParams: QueryParamsModel): Observable<QueryResultsModel> {
 		const params = this.httpUtils.getFindHTTPParams(queryParams);
-		return this.http.get<QueryResultsModel>(API_TENANTS_URL, { params: params })
+		return this.http.get<QueryResultsModel>(API_SESSIONS_URL, { params: params })
 	}
 }
 

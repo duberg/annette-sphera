@@ -1,5 +1,7 @@
 package annette.core.domain.tenancy.actor
 
+import java.time.LocalDateTime
+
 import akka.Done
 import akka.actor.ActorRef
 import akka.util.Timeout
@@ -65,9 +67,9 @@ class OpenSessionManagerActor(
 
   private def isSessionExpired(session: OpenSession) = {
     if (session.rememberMe) {
-      session.timeout != 0 && session.startTimestamp.plusMinutes(session.timeout).isBeforeNow
+      session.timeout != 0 && session.startTimestamp.plusMinutes(session.timeout).isBefore(LocalDateTime.now())
     } else {
-      session.timeout != 0 && session.lastOpTimestamp.plusMinutes(session.timeout).isBeforeNow
+      session.timeout != 0 && session.lastOpTimestamp.plusMinutes(session.timeout).isBefore(LocalDateTime.now())
     }
   }
 
@@ -87,9 +89,9 @@ class OpenSessionManagerActor(
     if (openSessionOpt.isDefined && isSessionExpired(openSessionOpt.get)) {
       val session = openSessionOpt.get
       val sessionHistory = SessionHistory(session.userId, session.tenantId, session.applicationId,
-        session.languageId, session.startTimestamp, DateTime.now(), session.ip, session.id)
+        session.languageId, session.startTimestamp, LocalDateTime.now(), session.ip, session.id)
       val lastSession = LastSession(session.userId, session.tenantId, session.applicationId,
-        session.languageId, session.startTimestamp, DateTime.now(), session.ip, session.id)
+        session.languageId, session.startTimestamp, LocalDateTime.now(), session.ip, session.id)
       val f = for {
         _ <- ask(self, OpenSessionManager.DeleteOpenSessionCmd(id))
         _ <- ask(lastSessionRef, LastSessionManager.StoreLastSessionCmd(lastSession))

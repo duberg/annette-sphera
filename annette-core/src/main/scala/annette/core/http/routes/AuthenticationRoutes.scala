@@ -4,11 +4,12 @@ import akka.actor.ActorRef
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.{ Directives, Route }
 import akka.pattern.AskSupport
+import annette.core.akkaext.http.PaginationDirectives
 import annette.core.domain.application.Application
 import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.model._
-import annette.core.domain.tenancy.{ TenantService, UserManager }
+import annette.core.domain.tenancy.{ SessionManager, TenantService, UserManager }
 import annette.core.notification._
 import annette.core.security.SecurityDirectives
 import annette.core.security.authentication.{ ApplicationState, AuthenticationService, ForbiddenException }
@@ -21,11 +22,15 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 import scala.util.{ Failure, Success }
 
-trait AuthenticationRoutes extends Directives with AskSupport with Generator {
-  val TenantService: TenantService
+trait AuthenticationRoutes extends Directives
+  with AskSupport
+  with Generator
+  with PaginationDirectives {
+  val tenantService: TenantService
   val userManager: UserManager
   val languageManager: LanguageManager
-  val authenticationManager: ActorRef
+  val authenticationService: ActorRef
+  val sessionManager: SessionManager
   val annetteSecurityDirectives: SecurityDirectives
   val notificationManager: NotificationManager
   val apiUrl: String
@@ -45,7 +50,7 @@ trait AuthenticationRoutes extends Directives with AskSupport with Generator {
   def signIn: Route = (path("signin") & post) {
     (entity(as[AuthenticationService.Credentials]) & extractClientIP) {
       (loginData, clientIp) =>
-        val future = authenticationManager
+        val future = authenticationService
           .ask(AuthenticationService.Login(loginData, clientIp.toOption.map(_.toString).getOrElse("")))
 
         onComplete(future) {
@@ -72,7 +77,7 @@ trait AuthenticationRoutes extends Directives with AskSupport with Generator {
 
   def signOut: Route = (path("signout") & post & authenticatedOpt) {
     case Some(sessionData) =>
-      complete(authenticationManager
+      complete(authenticationService
         .ask(AuthenticationService.Logout(sessionData.sessionId))
         .mapTo[AuthenticationService.Response])
     case None =>
@@ -80,7 +85,7 @@ trait AuthenticationRoutes extends Directives with AskSupport with Generator {
   }
 
   def signUp: Route = (path("signup") & post & entity(as[SignUpUser])) { x =>
-    def f = TenantService.listTenantsIds.flatMap(f = tenantIds => {
+    def f = tenantService.listTenantsIds.flatMap(f = tenantIds => {
       // if empty tenants
       if (x.tenants.isEmpty) throw RequiredValueNotProvided("tenants")
 
@@ -153,7 +158,7 @@ trait AuthenticationRoutes extends Directives with AskSupport with Generator {
       authenticatedOpt {
         maybeSession =>
 
-          val applicationStateFuture = authenticationManager
+          val applicationStateFuture = authenticationService
             .ask(AuthenticationService.GetApplicationState(maybeSession))
             .mapTo[ApplicationState]
           onComplete(applicationStateFuture) {
@@ -173,7 +178,7 @@ trait AuthenticationRoutes extends Directives with AskSupport with Generator {
       (post & authenticated & entity(as[SetApplicationState])) {
         case (sessionData, SetApplicationState(tenantId, applicationId, languageId)) =>
 
-          val applicationStateFuture = authenticationManager
+          val applicationStateFuture = authenticationService
             .ask(AuthenticationService.SetApplicationState(sessionData, tenantId, applicationId, languageId))
             .mapTo[ApplicationState]
           onComplete(applicationStateFuture) {
@@ -204,14 +209,39 @@ trait AuthenticationRoutes extends Directives with AskSupport with Generator {
     case (live, sessionData) =>
       import FailFastCirceSupport._
       if (live == "true") {
-        val applicationStateFuture = authenticationManager
+        val applicationStateFuture = authenticationService
           .ask(AuthenticationService.UpdateLastOpTimestamp(sessionData.sessionId))
       }
       complete(true)
   }
 
+  def listOpenSessions = (path("sessions") & get & pagination) { page =>
+    val ff = for {
+      f <- sessionManager.paginateOpenSessions(page)
+      //r <- tenantUserRoleDao.selectAll
+    } yield f
+
+    onComplete(ff) {
+      case Success(x) => complete(x)
+      case Success(_) => complete(StatusCodes.InternalServerError)
+      case Failure(throwable) =>
+        throwable match {
+          case annetteException: AnnetteException =>
+            complete(StatusCodes.InternalServerError -> annetteException.exceptionMessage)
+          case _ =>
+            complete(StatusCodes.InternalServerError -> Map("code" -> throwable.getMessage))
+        }
+    }
+  }
+
   def authenticationRoutes = pathPrefix("auth") {
-    signIn ~ signOut ~ signUp ~ applicationStateRoutes ~ heartbeatRoute ~ languagesRoute
+    signIn ~
+      signOut ~
+      signUp ~
+      applicationStateRoutes ~
+      heartbeatRoute ~
+      languagesRoute ~
+      listOpenSessions
   }
 
 }

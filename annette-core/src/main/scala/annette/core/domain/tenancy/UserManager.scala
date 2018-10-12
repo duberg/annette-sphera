@@ -68,7 +68,7 @@ class UserManager @Inject() (@Named("CoreService") actor: ActorRef)(implicit c: 
       .mapTo[UsersMap]
       .map(_.x.values.toList)
 
-  def paginateListUsers(page: PageRequest): Future[PaginateUsersList] =
+  def paginateListUsers(page: PageRequest): Future[PaginateUsers] =
     ask(actor, PaginateListUsers(page))
       .mapTo[UsersList]
       .map(_.x)

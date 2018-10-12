@@ -21,10 +21,10 @@ trait AuthorizationRoutes extends Directives
   with PaginationDirectives
   with AskSupport
   with Generator {
-  val TenantService: TenantService
+  val tenantService: TenantService
   val userManager: UserManager
   val languageManager: LanguageManager
-  val authenticationManager: ActorRef
+  val authenticationService: ActorRef
   val annetteSecurityDirectives: SecurityDirectives
   val notificationManager: NotificationManager
   val authorizationManager: ActorRef

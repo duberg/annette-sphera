@@ -1,5 +1,6 @@
 package annette.core.domain
 
+import java.time.LocalDateTime
 import java.util.UUID
 
 import akka.Done
@@ -684,7 +685,7 @@ class CoreManagerActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
         val s1 = newOpenSession
         val upd = OpenSessionUpdate(
           id = s1.id,
-          lastOpTimestamp = Some(DateTime.now))
+          lastOpTimestamp = Some(LocalDateTime.now()))
         val actor = newCoreServiceActor()
         for {
           c1 <- ask(actor, OpenSessionManager.CreateOpenSessionCmd(s1))

@@ -1,5 +1,6 @@
 package annette.core.domain
 
+import java.time.LocalDateTime
 import java.util.UUID
 
 import akka.Done
@@ -47,7 +48,7 @@ class SessionManagerSpec extends TestKit(ActorSystem("SessionDaoSpec"))
           cc1 <- dao.createSession(s1)
           r1 <- dao.getOpenSessionById(s1.id)
           cc2 <- dao.createSession(s2)
-          r2 <- dao.getAllOpenSessions
+          r2 <- dao.listOpenSessions
 
         } yield {
           cc1 shouldBe s1
@@ -65,7 +66,7 @@ class SessionManagerSpec extends TestKit(ActorSystem("SessionDaoSpec"))
           cc1 <- dao.createSession(s1)
           r1 <- dao.getOpenSessionById(s1.id)
           cc2 <- recoverToExceptionIf[AnnetteException](dao.createSession(s2))
-          r2 <- dao.getAllOpenSessions
+          r2 <- dao.listOpenSessions
 
         } yield {
           cc1 shouldBe s1
@@ -87,13 +88,13 @@ class SessionManagerSpec extends TestKit(ActorSystem("SessionDaoSpec"))
         for {
           cc1 <- dao.createSession(s1)
           r1 <- dao.getOpenSessionById(s1.id)
-          r2 <- dao.getAllLastSessions
-          r3 <- dao.getAllSessionHistories
+          r2 <- dao.listLastSessions
+          r3 <- dao.listSessionHistories
           d <- dao.closeSession(s1.id)
-          r4 <- dao.getAllOpenSessions
+          r4 <- dao.listOpenSessions
           _ <- Future { Thread.sleep(100) }
-          r5 <- dao.getAllLastSessions
-          r6 <- dao.getAllSessionHistories
+          r5 <- dao.listLastSessions
+          r6 <- dao.listSessionHistories
 
         } yield {
           cc1 shouldBe s1
@@ -111,7 +112,7 @@ class SessionManagerSpec extends TestKit(ActorSystem("SessionDaoSpec"))
       val dao = newSessionDao()
       for {
         d <- recoverToExceptionIf[AnnetteException](dao.closeSession(UUID.randomUUID()))
-        r2 <- dao.getAllOpenSessions
+        r2 <- dao.listOpenSessions
 
       } yield {
         d.exceptionMessage.get("code") shouldBe Some("core.tenancy.session.notFound")
@@ -184,7 +185,7 @@ class SessionManagerSpec extends TestKit(ActorSystem("SessionDaoSpec"))
     "getOpenSessionById" must {
       "close session if expired" in {
         val s1 = newOpenSession
-        val s2 = s1.copy(timeout = 1, rememberMe = true, startTimestamp = DateTime.now().minusMinutes(14))
+        val s2 = s1.copy(timeout = 1, rememberMe = true, startTimestamp = LocalDateTime.now().minusMinutes(14))
         val dao = newSessionDao()
         for {
           cc1 <- dao.createSession(s2)
@@ -195,9 +196,9 @@ class SessionManagerSpec extends TestKit(ActorSystem("SessionDaoSpec"))
           _ <- Future {
             Thread.sleep(500)
           }
-          r2 <- dao.getAllLastSessions
-          r4 <- dao.getAllOpenSessions
-          r3 <- dao.getAllSessionHistories
+          r2 <- dao.listLastSessions
+          r4 <- dao.listOpenSessions
+          r3 <- dao.listSessionHistories
           r5 <- dao.getLastSessionByUserId(s2.userId)
           r6 <- dao.getSessionHistoryById(s2.id)
 

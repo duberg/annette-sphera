@@ -1,16 +1,21 @@
 package annette.core.domain.tenancy
 
+import java.time.LocalDateTime
+
 import akka.Done
 import akka.actor.{ ActorRef, ActorSystem }
 import akka.event.{ LogSource, Logging }
 import akka.pattern.ask
 import akka.util.Timeout
+import annette.core.akkaext.http.PageRequest
+import annette.core.akkaext.http.Pagination.paginate
 import annette.core.domain.application.Application
 import annette.core.domain.language.model.Language
+import annette.core.domain.tenancy.actor.UserManagerState
 import annette.core.domain.tenancy.model.OpenSession.Id
+import annette.core.domain.tenancy.model.User.UsersList
 import annette.core.domain.tenancy.model._
 import javax.inject._
-import org.joda.time.DateTime
 
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -38,9 +43,9 @@ class SessionManager @Inject() (@Named("CoreService") actor: ActorRef, system: A
         .mapTo[OpenSessionManager.OpenSessionOpt].map(_.maybeEntry)
       session <- s.map(Future.successful).getOrElse(throw new SessionNotFound)
       sessionHistory <- Future.successful(SessionHistory(session.userId, session.tenantId, session.applicationId,
-        session.languageId, session.startTimestamp, DateTime.now(), session.ip, session.id))
+        session.languageId, session.startTimestamp, LocalDateTime.now(), session.ip, session.id))
       lastSession <- Future.successful(LastSession(session.userId, session.tenantId, session.applicationId,
-        session.languageId, session.startTimestamp, DateTime.now(), session.ip, session.id))
+        session.languageId, session.startTimestamp, LocalDateTime.now(), session.ip, session.id))
       _ <- ask(actor, OpenSessionManager.DeleteOpenSessionCmd(id))
       _ <- ask(actor, LastSessionManager.StoreLastSessionCmd(lastSession))
       _ <- ask(actor, SessionHistoryManager.CreateSessionHistoryCmd(sessionHistory))
@@ -50,7 +55,7 @@ class SessionManager @Inject() (@Named("CoreService") actor: ActorRef, system: A
   def updateLastOpTimestamp(id: OpenSession.Id): Unit = {
     ask(actor, OpenSessionManager.UpdateOpenSessionCmd(OpenSessionUpdate(
       id = id,
-      lastOpTimestamp = Some(DateTime.now())))).failed.foreach(e => log.error(e.getMessage))
+      lastOpTimestamp = Some(LocalDateTime.now())))).failed.foreach(e => log.error(e.getMessage))
 
   }
 
@@ -79,15 +84,22 @@ class SessionManager @Inject() (@Named("CoreService") actor: ActorRef, system: A
       .mapTo[SessionHistoryManager.SessionHistoryOpt].map(_.maybeEntry)
   }
 
-  def getAllOpenSessions: Future[Seq[OpenSession]] = {
+  def listOpenSessions: Future[Seq[OpenSession]] = {
     ask(actor, OpenSessionManager.FindAllOpenSessions).mapTo[OpenSessionManager.OpenSessionSeq].map(_.entries)
   }
 
-  def getAllLastSessions: Future[Seq[LastSession]] = {
+  def paginateOpenSessions(page: PageRequest): Future[PaginateOpenSessions] = {
+    listOpenSessions.map { list =>
+      val (items, totalCount) = paginate(list, page)
+      PaginateOpenSessions(items, totalCount)
+    }
+  }
+
+  def listLastSessions: Future[Seq[LastSession]] = {
     ask(actor, LastSessionManager.FindAllLastSessions).mapTo[LastSessionManager.LastSessionSeq].map(_.entries)
   }
 
-  def getAllSessionHistories: Future[Seq[SessionHistory]] = {
+  def listSessionHistories: Future[Seq[SessionHistory]] = {
     ask(actor, SessionHistoryManager.FindAllSessionHistory).mapTo[SessionHistoryManager.SessionHistorySeq].map(_.entries)
   }
 }

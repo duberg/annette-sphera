@@ -20,6 +20,9 @@
 				<input matInput minlength="3" type="password" name="password" placeholder="Password" autocomplete="off" [(ngModel)]="model.password" #password="ngModel" required>
 			</mat-form-field>
 		</div>
+		<div class="form-group">
+			<mat-checkbox name="rememberMe" [(ngModel)]="model.rememberMe">Remember me</mat-checkbox>
+		</div>
 	</form>
 	<!--end::Form-->
 

@@ -1,8 +1,9 @@
 package annette.core.domain.tenancy.model
 
+import java.time.LocalDateTime
+
 import annette.core.domain.application.Application
 import annette.core.domain.language.model.Language
-import org.joda.time.DateTime
 
 /**
  * Содержит историю пользовательских сессий
@@ -20,7 +21,7 @@ case class LastSession(
   tenantId: Tenant.Id,
   applicationId: Application.Id,
   languageId: Language.Id,
-  startTimestamp: DateTime,
-  endTimestamp: DateTime,
+  startTimestamp: LocalDateTime,
+  endTimestamp: LocalDateTime,
   ip: String,
   id: OpenSession.Id)

@@ -1,5 +1,6 @@
 package annette.core.security.authentication
 
+import java.time.LocalDateTime
 import java.util.UUID
 
 import akka.actor.{ Actor, ActorLogging, ActorRef }
@@ -178,12 +179,12 @@ class LoginActor(
       tenant.id,
       application.id,
       language.id,
-      DateTime.now,
-      DateTime.now,
+      LocalDateTime.now(),
+      LocalDateTime.now(),
       rememberMe,
       timeout,
       ip,
-      DateTime.now(),
+      LocalDateTime.now(),
       UUID.randomUUID())
     sessionDao.createSession(openSession)
   }

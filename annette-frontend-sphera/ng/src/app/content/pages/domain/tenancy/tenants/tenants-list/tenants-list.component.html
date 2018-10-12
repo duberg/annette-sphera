@@ -131,7 +131,7 @@
 				<ng-container matColumnDef="id">
 					<!-- ATTRIBUTE mat-sort-header  for sorting | https://material.angular.io/components/sort/overview -->
 					<mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
-					<mat-cell *matCellDef="let tenant" matTooltip="{{tenant.id}}">{{tenant.id}}</mat-cell>
+					<mat-cell *matCellDef="let tenant" matTooltip="{{tenant.id}}">{{tenant.id | slice:-4}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="name">

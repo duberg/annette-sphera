@@ -7,7 +7,7 @@
 	<ng-container mPortletHeadTitle>
 		<div class="m-portlet__head-title">
 			<h3 class="m-portlet__head-text">
-				<span translate="USERS.USERS.USERS_LIST">Users list</span>
+				<span translate="SESSIONS.SESSIONS.SESSIONS_LIST">Sessions list</span>
 			</h3>
 		</div>
 		<!-- For localisations we use @ngx-translate | See off. documentations => https://github.com/ngx-translate/core -->
@@ -15,8 +15,8 @@
 	</ng-container>
 
 	<ng-container mPortletHeadTools>
-		<button (click)="addCustomer()" mat-raised-button matTooltip="Create new customer" color="primary" type="button">
-			<span translate="USERS.USERS.NEW_USER">New User</span>
+		<button (click)="addsession()" mat-raised-button matTooltip="Create new session" color="primary" type="button">
+			<span translate="SESSIONS.SESSIONS.NEW_SESSION">New Session</span>
 		</button>
 		<!-- Buttons (Material Angular) | See off.documenations 'https://material.angular.io/components/button/overview' -->
 		<!-- mat-raised-button | Rectangular contained button w/ elevation  -->
@@ -35,11 +35,11 @@
 						<!-- 'm  margin-bottom-10-mobile' for adaptive make-up  -->
 						<div class="m-form__control">
 							<mat-form-field class="mat-form-field-fluid">
-								<mat-select [(value)]="filterStatus" (selectionChange)="loadUsersList()">
+								<mat-select [(value)]="filterStatus" (selectionChange)="loadSessionsList()">
 									<mat-option value="">All</mat-option>
 									<mat-option value="0">Suspended</mat-option>
 									<mat-option value="1">Active</mat-option>
-									<mat-option value="2">Pending</mat-option>
+									<mat-option value="Pending">Pending</mat-option>
 								</mat-select>
 								<mat-hint align="start">
 									<strong>Filter</strong> by Status</mat-hint>
@@ -51,7 +51,7 @@
 
 						<div class="m-form__control">
 							<mat-form-field class="mat-form-field-fluid">
-								<mat-select [(value)]="filterType" (selectionChange)="loadUsersList()">
+								<mat-select [(value)]="filterType" (selectionChange)="loadSessionsList()">
 									<mat-option value="">All</mat-option>
 									<mat-option value="0">Business</mat-option>
 									<mat-option value="1">Individual</mat-option>
@@ -64,7 +64,7 @@
 
 					<div class="col-md-2 m--margin-bottom-10-mobile">
 						<mat-form-field class="mat-form-field-fluid">
-							<input matInput placeholder="Search customer" #searchInput placeholder="Search">
+							<input matInput placeholder="Search session" #searchInput placeholder="Search">
 							<mat-hint align="start">
 								<strong>Search</strong> in all fields</mat-hint>
 						</mat-form-field>
@@ -85,18 +85,18 @@
 							<label class="m--font-bold m--font-danger-">
 								<span translate="ECOMMERCE.COMMON.SELECTED_RECORDS_COUNT"></span> {{ selection.selected.length }}
 							</label>
-							<!-- selectedCountsTitle => function from codeBehind (customer-list.component.ts file) -->
+							<!-- selectedCountsTitle => function from codeBehind (session-list.component.ts file) -->
 							<!-- selectedCountsTitle => just returns title of selected items count -->
 							<!-- for example: Selected records count: 4 -->
 						</div>
 						<div class="m-form__control m-form__group--inline">
-							<button (click)="deleteCustomers()" mat-raised-button color="accent" matTooltip="Delete selected customers">
+							<button (click)="deletesessions()" mat-raised-button color="accent" matTooltip="Delete selected sessions">
 								<mat-icon>delete</mat-icon> Delete All
 							</button>&nbsp;<!-- Call 'delete-entity-dialog' from _shared folder -->
-							<button  (click)="fetchCustomers()" mat-raised-button matTooltip="Fetch selected customers">
+							<button  (click)="fetchsessions()" mat-raised-button matTooltip="Fetch selected sessions">
 								<mat-icon>clear_all</mat-icon> Fetch Selected
 							</button>&nbsp;<!-- Call 'fetch-entity-dialog' from _shared folder -->
-							<button (click)="updateStatusForCustomers()" mat-raised-button matTooltip="Update status for selected customers">
+							<button (click)="updateStatusForsessions()" mat-raised-button matTooltip="Update status for selected sessions">
 								<mat-icon>update</mat-icon> Update status
 							</button><!-- Call 'update-stated-dialog' from _shared folder -->
 						</div>
@@ -131,51 +131,59 @@
 				<ng-container matColumnDef="id">
 					<!-- ATTRIBUTE mat-sort-header  for sorting | https://material.angular.io/components/sort/overview -->
 					<mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
-					<mat-cell *matCellDef="let customer" matTooltip="{{customer.id}}">{{customer.id | slice:-4}}</mat-cell>
+					<mat-cell *matCellDef="let session" matTooltip="{{session.id}}">{{session.id | slice:-4}}</mat-cell>
 				</ng-container>
 
-				<ng-container matColumnDef="firstName">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>firstName</mat-header-cell>
-					<mat-cell *matCellDef="let customer">{{customer.firstName}}</mat-cell>
+				<ng-container matColumnDef="userId">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>User</mat-header-cell>
+					<mat-cell *matCellDef="let session" matTooltip="{{session.userId}}">{{session.userId | slice:-4}}</mat-cell>
 				</ng-container>
 
-				<ng-container matColumnDef="lastName">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>lastName</mat-header-cell>
-					<mat-cell *matCellDef="let customer">{{customer.lastName}}</mat-cell>
+				<ng-container matColumnDef="tenantId">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Tenant</mat-header-cell>
+					<mat-cell *matCellDef="let session" matTooltip="{{session.tenantId}}">{{session.tenantId}}</mat-cell>
 				</ng-container>
 
-				<ng-container matColumnDef="email">
-					<mat-header-cell *matHeaderCellDef mat-sort-header class="email-cell">Email</mat-header-cell>
-					<mat-cell *matCellDef="let customer" class="email-cell">
-						<a href="ecommerce/customers#" class="m-link">{{customer.email}}</a>
-					</mat-cell>
+				<ng-container matColumnDef="applicationId">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Application</mat-header-cell>
+					<mat-cell *matCellDef="let session">{{session.applicationId}}</mat-cell>
 				</ng-container>
 
-				<ng-container matColumnDef="gender">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Gender</mat-header-cell>
-					<mat-cell *matCellDef="let customer">{{customer.gender}}</mat-cell>
+				<ng-container matColumnDef="languageId">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Language</mat-header-cell>
+					<mat-cell *matCellDef="let session">{{session.languageId}}</mat-cell>
 				</ng-container>
 
-				<ng-container matColumnDef="status">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
-					<mat-cell *matCellDef="let customer">
-						<span class="m-badge m-badge--{{ getItemCssClassByStatus(customer.status) }} m-badge--wide">{{  getItemStatusString(customer.status) }}</span>
-					</mat-cell>
+				<ng-container matColumnDef="startTimestamp">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Start timestamp</mat-header-cell>
+					<mat-cell *matCellDef="let session">{{session.startTimestamp | date:'short'}}</mat-cell>
 				</ng-container>
 
-				<ng-container matColumnDef="type">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Type</mat-header-cell>
-					<mat-cell *matCellDef="let customer">
-						<span class="m-badge m-badge--{{ getItemCssClassByType(customer.type) }} m-badge--dot"></span>&nbsp;
-						<span class="m--font-bold m--font-{{ getItemCssClassByType(customer.type) }}">{{ getItemTypeString(customer.type) }}</span>
-					</mat-cell>
+				<ng-container matColumnDef="lastOpTimestamp">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Last Op timestamp</mat-header-cell>
+					<mat-cell *matCellDef="let session">{{session.lastOpTimestamp | date:'short'}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="rememberMe">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Remember me</mat-header-cell>
+					<mat-cell *matCellDef="let session">{{session.rememberMe}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="ip">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>IP</mat-header-cell>
+					<mat-cell *matCellDef="let session">{{session.ip}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="timestamp">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Timestamp</mat-header-cell>
+					<mat-cell *matCellDef="let session">{{session.timestamp | date:'short'}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="actions">
 					<mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
-					<mat-cell *matCellDef="let customer">
-						<button mat-icon-button color="primary" matTooltip="Edit customer" (click)="editCustomer(customer)"><mat-icon>create</mat-icon></button>&nbsp;
-						<button mat-icon-button color="warn" matTooltip="Delete customer" type="button" (click)="deleteCustomer(customer)"><mat-icon>delete</mat-icon></button>&nbsp;
+					<mat-cell *matCellDef="let session">
+						<button mat-icon-button color="primary" matTooltip="Edit session" (click)="editsession(session)"><mat-icon>create</mat-icon></button>&nbsp;
+						<button mat-icon-button color="warn" matTooltip="Delete session" type="button" (click)="deletesession(session)"><mat-icon>delete</mat-icon></button>&nbsp;
 						<button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="More actions"><mat-icon>more_vert</mat-icon></button>
 						<mat-menu #menu="matMenu">
 							<button mat-menu-item><mat-icon>dialpad</mat-icon><span>Redial</span></button>
@@ -198,7 +206,7 @@
 			<mat-spinner [diameter]="20" *ngIf="dataSource.loading$ | async"></mat-spinner>
 			<!-- MATERIAL PAGINATOR | Binded to dasources -->
 			<!-- See off.documentations 'https://material.angular.io/components/paginator/overview' -->
-			<mat-paginator [pageSize]="10" [pageSizeOptions]="[3, 5, 10, 15]" [length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
+			<mat-paginator [pageSize]="10" [pageSizeOptions]="[3, 5, 10]" [length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
 		</div>
 		<!-- end: BOTTOM -->
 	</ng-container>

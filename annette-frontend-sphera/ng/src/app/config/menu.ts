@@ -503,6 +503,14 @@ export class MenuConfig implements ConfigModel {
 						//badge: {type: 'm-badge--danger', value: '0'},
 						translate: 'MENU.PERMISSIONS'
 					},
+					{
+						title: 'Sessions',
+						desc: 'Sessions list',
+						root: true,
+						icon: 'flaticon-time-1',
+						page: '/domain/tenancy/sessions',
+						translate: 'MENU.SESSIONS'
+					},
 
 					{section: 'Components'},
 					{

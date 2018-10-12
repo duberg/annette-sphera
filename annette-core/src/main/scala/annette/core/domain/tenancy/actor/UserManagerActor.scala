@@ -92,9 +92,9 @@ class UserManagerActor(val verificationBus: VerificationBus, val initState: User
   def listUsers(state: UserManagerState): Unit =
     sender ! UsersMap(state.users)
 
-  def paginateListUsers(state: UserManagerState, page: PageRequest): Unit = {
+  def paginateUsers(state: UserManagerState, page: PageRequest): Unit = {
     val (items, totalCount) = paginate(state.users, page)
-    sender ! UsersList(PaginateUsersList(items, totalCount))
+    sender ! UsersList(PaginateUsers(items, totalCount))
   }
 
   def updatePassword(state: UserManagerState, userId: User.Id, password: String): Unit = {
@@ -126,7 +126,7 @@ class UserManagerActor(val verificationBus: VerificationBus, val initState: User
     case DeleteUserCmd(x) => deleteUser(state, x)
     case GetUserById(x) => findUserById(state, x)
     case ListUsers => listUsers(state)
-    case PaginateListUsers(x) => paginateListUsers(state, x)
+    case PaginateListUsers(x) => paginateUsers(state, x)
     case UpdatePasswordCmd(userId, password) => updatePassword(state, userId, password)
     case GetUserByLoginAndPassword(login, password) => findUserByLoginAndPassword(state, login, password)
     case Verification.EmailVerifiedEvt(x) => activateUser(state, x.email)

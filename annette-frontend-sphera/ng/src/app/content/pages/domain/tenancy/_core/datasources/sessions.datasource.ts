@@ -1,18 +1,18 @@
 import { Observable, of } from 'rxjs';
 import {catchError, finalize, map, tap} from 'rxjs/operators';
-import {TenantsService} from "../services/tenants.service";
 import {BaseDataSource} from "../../../../../../core/datasources/base.datasource";
 import {QueryParamsModel} from "../../../../components/users/_core/models/query-models/query-params.model";
 import {QueryResultsModel} from "../../../../components/apps/e-commerce/_core/models/query-models/query-results.model";
+import {SessionsService} from "../services/sessions.service";
 
-export class TenantsDatasource extends BaseDataSource {
-	constructor(private tenantsService: TenantsService) {
+export class SessionsDatasource extends BaseDataSource {
+	constructor(private sessionsService: SessionsService) {
 		super();
 	}
 
-	loadTenants(queryParams: QueryParamsModel): void {
+	loadSessions(queryParams: QueryParamsModel): void {
 		this.loadingSubject.next(true);
-		this.tenantsService.listTenants(queryParams).pipe(
+		this.sessionsService.listSessions(queryParams).pipe(
 			tap(res => {
 				this.entitySubject.next(res.items);
 				this.paginatorTotalSubject.next(res.totalCount);

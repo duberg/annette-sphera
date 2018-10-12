@@ -12,7 +12,7 @@ export class PermissionsDatasource extends BaseDataSource {
 
 	loadPermissions(queryParams: QueryParamsModel): void {
 		this.loadingSubject.next(true);
-		this.permissionsService.findPermissions(queryParams).pipe(
+		this.permissionsService.listPermissions(queryParams).pipe(
 			tap(res => {
 				this.entitySubject.next(res.items);
 				this.paginatorTotalSubject.next(res.totalCount);

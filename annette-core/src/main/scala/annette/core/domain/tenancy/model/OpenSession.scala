@@ -1,10 +1,10 @@
 package annette.core.domain.tenancy.model
 
+import java.time.LocalDateTime
 import java.util.UUID
 
 import annette.core.domain.application.Application
 import annette.core.domain.language.model.Language
-import org.joda.time.DateTime
 
 /**
  * Содержит параметры открытой сессии пользователя
@@ -24,17 +24,15 @@ case class OpenSession(
   tenantId: Tenant.Id,
   applicationId: Application.Id,
   languageId: Language.Id,
-  startTimestamp: DateTime,
-  lastOpTimestamp: DateTime,
+  startTimestamp: LocalDateTime,
+  lastOpTimestamp: LocalDateTime,
   rememberMe: Boolean,
   timeout: Int,
   ip: String,
-  timestamp: DateTime = DateTime.now(),
+  timestamp: LocalDateTime = LocalDateTime.now(),
   id: OpenSession.Id = UUID.randomUUID())
 
-object OpenSession {
-  type Id = UUID
-}
+case class PaginateOpenSessions(items: List[OpenSession], totalCount: Int)
 
 case class OpenSessionUpdate(
   id: OpenSession.Id,
@@ -42,6 +40,9 @@ case class OpenSessionUpdate(
   applicationId: Option[Application.Id] = None,
   languageId: Option[Language.Id] = None,
   rememberMe: Option[Boolean] = None,
-  lastOpTimestamp: Option[DateTime] = None,
-  timestamp: DateTime = DateTime.now())
+  lastOpTimestamp: Option[LocalDateTime] = None,
+  timestamp: LocalDateTime = LocalDateTime.now())
 
+object OpenSession {
+  type Id = UUID
+}

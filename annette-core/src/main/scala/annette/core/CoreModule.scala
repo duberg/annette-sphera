@@ -26,13 +26,13 @@ class CoreModule @Inject() (
   val system: ActorSystem,
   val config: Config,
   val userManager: UserManager,
-  val TenantService: TenantService,
+  val tenantService: TenantService,
   val languageManager: LanguageManager,
   val applicationManager: ApplicationManager,
   val sessionManager: SessionManager,
   val annetteSecurityDirectives: SecurityDirectives,
   val notificationManager: NotificationManager,
-  @Named(AuthenticationService.name) val authenticationManager: ActorRef,
+  @Named(AuthenticationService.name) val authenticationService: ActorRef,
   @Named("AuthorizationManager") val authorizationManager: ActorRef) extends AnnetteHttpModule with ApiRoutes with ExceptionHandler {
   System.setProperty("logback.configurationFile", "conf/logback.xml")
 
