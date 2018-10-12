@@ -481,7 +481,7 @@ export class MenuConfig implements ConfigModel {
 						desc: 'Users list',
 						root: true,
 						icon: 'flaticon-users',
-						page: '/users',
+						page: '/domain/tenancy/users',
 						//badge: {type: 'm-badge--danger', value: '0'},
 						translate: 'MENU.USERS'
 					},

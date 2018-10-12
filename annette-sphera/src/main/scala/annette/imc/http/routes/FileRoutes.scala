@@ -94,7 +94,7 @@ trait FileRoutes
 
   }
 
-  private val update = (path("update" / JavaUUID) & post & auth & entity(as[ApFile])) {
+  private val update = (path("updateUser" / JavaUUID) & post & auth & entity(as[ApFile])) {
     (apId, sessionData, file) =>
       {
         val userId = sessionData.userId

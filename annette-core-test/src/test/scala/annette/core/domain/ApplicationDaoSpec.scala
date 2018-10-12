@@ -29,14 +29,14 @@ class ApplicationDaoSpec extends TestKit(ActorSystem("ApplicationDaoSpec"))
       verificationBus = new VerificationBus), s"CoreService-$uuid")
   }
 
-  def newApplicationDao(): ApplicationManager = {
+  def newApplicationDao(): ApplicationService = {
     val coreServiceActor = newCoreServiceActor()
-    new ApplicationManager(coreServiceActor)
+    new ApplicationService(coreServiceActor)
   }
 
   "An ApplicationDao" when {
-    "create" must {
-      "create new application" in {
+    "createUser" must {
+      "createUser new application" in {
         val c1 = Application("App1", "app1", "APP1")
         val c2 = Application("App2", "app2", "APP2")
         val dao = newApplicationDao()
@@ -46,7 +46,7 @@ class ApplicationDaoSpec extends TestKit(ActorSystem("ApplicationDaoSpec"))
           ccs <- dao.selectAll
         } yield ccs.size shouldBe 2
       }
-      "should not create new application if it already exists" in {
+      "should not createUser new application if it already exists" in {
         val c1 = Application("App1", "app1", "APP1")
         val dao = newApplicationDao()
         for {
@@ -61,8 +61,8 @@ class ApplicationDaoSpec extends TestKit(ActorSystem("ApplicationDaoSpec"))
       }
     }
 
-    "update" must {
-      "update application" in {
+    "updateUser" must {
+      "updateUser application" in {
         val c1 = Application("App1", "app1", "APP1")
         val c2 = Application("App2", "app2", "APP1")
         val dao = newApplicationDao()
@@ -73,7 +73,7 @@ class ApplicationDaoSpec extends TestKit(ActorSystem("ApplicationDaoSpec"))
           ccs <- dao.getApplicationById(c1.id)
         } yield ccs shouldBe Some(c2)
       }
-      "should not update application if it doesn't exist" in {
+      "should not updateUser application if it doesn't exist" in {
         val c1 = Application("App1", "app1", "APP1")
         val c2 = Application("App2", "app2", "APP2")
         val dao = newApplicationDao()
@@ -86,7 +86,7 @@ class ApplicationDaoSpec extends TestKit(ActorSystem("ApplicationDaoSpec"))
     }
 
     "delete" must {
-      "delete application" in {
+      "deleteUser application" in {
         val c1 = Application("App1", "app1", "APP1")
         val c2 = Application("App2", "app2", "APP2")
         val dao = newApplicationDao()
@@ -104,7 +104,7 @@ class ApplicationDaoSpec extends TestKit(ActorSystem("ApplicationDaoSpec"))
           ccr.size shouldBe 1
         }
       }
-      "should not delete application if it does not exist" in {
+      "should not deleteUser application if it does not exist" in {
         val c1 = Application("App1", "app1", "APP1")
         val dao = newApplicationDao()
         for {

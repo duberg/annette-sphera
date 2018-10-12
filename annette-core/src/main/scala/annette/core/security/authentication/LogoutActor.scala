@@ -3,11 +3,11 @@ package annette.core.security.authentication
 import akka.actor.{ Actor, ActorLogging }
 import akka.event.LoggingReceive
 import akka.util.Timeout
-import annette.core.domain.tenancy.SessionManager
+import annette.core.domain.tenancy.SessionService
 
 import scala.concurrent.ExecutionContext
 
-class LogoutActor(sessionDao: SessionManager)(implicit c: ExecutionContext, t: Timeout) extends Actor with ActorLogging {
+class LogoutActor(sessionDao: SessionService)(implicit c: ExecutionContext, t: Timeout) extends Actor with ActorLogging {
   def receive: Receive = LoggingReceive {
     case AuthenticationService.Logout(token) =>
       val requestor = sender()

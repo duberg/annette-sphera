@@ -3,10 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { mergeMap, map, flatMap, tap } from 'rxjs/operators';
 import {environment} from "../../../environments/environment";
-import {UserModel} from "../../content/pages/components/users/_core/models/user.model";
-import {HttpUtilsService} from "../../content/pages/components/users/_core/utils/http-utils.service";
-import {QueryParamsModel} from "../../content/pages/components/users/_core/models/query-models/query-params.model";
-import {QueryResultsModel} from "../../content/pages/components/users/_core/models/query-models/query-results.model";
+import {UserModel} from "../../content/pages/domain/tenancy/_core/user.model";
+import {HttpUtilsService} from "../../content/pages/domain/tenancy/_core/utils/http-utils.service";
+import {QueryParamsModel} from "../../content/pages/domain/tenancy/_core/query-models/query-params.model";
+import {QueryResultsModel} from "../../content/pages/domain/tenancy/_core/query-models/query-results.model";
 
 const API_CUSTOMERS_URL = `${environment.server_addr}/api/users`;
 

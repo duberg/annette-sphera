@@ -5,9 +5,9 @@ import java.util.UUID
 import akka.actor.ActorSystem
 import akka.event.{ LogSource, Logging }
 import akka.http.scaladsl.util.FastFuture
-import annette.core.domain.application.{ Application, ApplicationAlreadyExists, ApplicationManager }
+import annette.core.domain.application.{ Application, ApplicationAlreadyExists, ApplicationService }
 import annette.core.domain.language.model.Language
-import annette.core.domain.language.{ LanguageAlreadyExists, LanguageManager }
+import annette.core.domain.language.{ LanguageAlreadyExists, LanguageService }
 import annette.core.domain.tenancy._
 import annette.core.domain.tenancy.model._
 import com.typesafe.config.Config
@@ -23,10 +23,10 @@ import scala.util.Try
 class InitCoreTables @Inject() (
   db: DB,
   config: Config,
-  userManager: UserManager,
+  userManager: UserService,
   tenantService: TenantService,
-  languageManager: LanguageManager,
-  applicationManger: ApplicationManager,
+  languageManager: LanguageService,
+  applicationManger: ApplicationService,
   system: ActorSystem) {
 
   implicit val myLogSourceType: LogSource[InitCoreTables] = (a: InitCoreTables) => "InitCoreTables"
@@ -209,10 +209,10 @@ class InitCoreTables @Inject() (
 
     Future.traverse(data) {
       case (x, tenantsAndRoles) =>
-        def f1: Future[User] = userManager.create(x)
+        def f1: Future[User] = userManager.createUser(x)
         //        def f2(user: User) = Future.sequence(tenantsAndRoles.map {
         //          case (tenant, roles) =>
-        //            tenantUserDao.create(tenant, user.id)
+        //            tenantUserDao.createUser(tenant, user.id)
         //        })
         //        def f3(user: User) = Future.sequence(tenantsAndRoles.map {
         //          case (tenant, roles) =>

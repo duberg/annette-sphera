@@ -1,4 +1,4 @@
-import {BaseModel} from "../../../components/users/_core/models/_base.model";
+import {BaseModel} from "./_base.model";
 
 export class SessionModel extends BaseModel {
 	id: string;

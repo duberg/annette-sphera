@@ -24,7 +24,7 @@ object GuiceAkkaExtension extends ExtensionId[GuiceAkkaExtensionImpl] with Exten
   /** Register ourselves with the ExtensionIdProvider */
   override def lookup() = GuiceAkkaExtension
 
-  /** Called by Akka in order to create an instance of the extension. */
+  /** Called by Akka in order to createUser an instance of the extension. */
   override def createExtension(system: ExtendedActorSystem) = new GuiceAkkaExtensionImpl
 
   /** Java API: Retrieve the extension for the given system. */

@@ -11,7 +11,7 @@ class VerificationActorSpec extends TestKit(ActorSystem("VerificationActorSpec")
 
   "A VerificationActor" when receive {
     "CreateVerificationCmd" must {
-      "create verification" in {
+      "createUser verification" in {
         for {
           a <- newVerificationActor()
           x1 <- createVerification(a)
@@ -23,7 +23,7 @@ class VerificationActorSpec extends TestKit(ActorSystem("VerificationActorSpec")
       }
     }
     "DeleteNotificationCmd" must {
-      "delete verification" in {
+      "deleteUser verification" in {
         for {
           a <- newVerificationActor()
           x1 <- createVerification(a)
@@ -37,7 +37,7 @@ class VerificationActorSpec extends TestKit(ActorSystem("VerificationActorSpec")
       }
     }
     "VerifyCmd" must {
-      "verify and delete verification" in {
+      "verify and deleteUser verification" in {
         for {
           a <- newVerificationActor()
           x1 <- createVerification(a)

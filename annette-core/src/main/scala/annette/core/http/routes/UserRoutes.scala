@@ -6,7 +6,7 @@ import akka.http.scaladsl.server.{ Directives, Route }
 import annette.core.AnnetteException
 import annette.core.akkaext.http.PaginationDirectives
 import annette.core.domain.tenancy.model._
-import annette.core.domain.tenancy.{ TenantService, UserManager }
+import annette.core.domain.tenancy.{ TenantService, UserService }
 import annette.core.security.SecurityDirectives
 import annette.core.security.authentication.Session
 import com.typesafe.config.Config
@@ -20,15 +20,15 @@ trait UserRoutes extends Directives with PaginationDirectives {
   implicit val c: ExecutionContext
 
   val annetteSecurityDirectives: SecurityDirectives
-  val userManager: UserManager
+  val userService: UserService
   val tenantService: TenantService
-  val authorizationManager: ActorRef
+  val authorizationService: ActorRef
   val config: Config
 
   import annetteSecurityDirectives._
 
   //
-  //  private val userUpdate = (path("user" / "update" / JavaUUID) & post & auth & entity(as[UpdateUser])) {
+  //  private val userUpdate = (path("user" / "updateUser" / JavaUUID) & post & auth & entity(as[UpdateUser])) {
   //    (id, sessionData, updateUser) =>
   //
   //      val userFuture = getUserRoled(sessionData.userId).mapTo[Option[UserRoled]]
@@ -59,7 +59,7 @@ trait UserRoutes extends Directives with PaginationDirectives {
   //          otherTel = updateUser.otherTel,
   //          otherMail = updateUser.otherMail)
   //
-  //        coreModule.userDao.update(user)
+  //        coreModule.userDao.updateUser(user)
   //        imcUserActor ! ImcUserActor.UpdateCmd(imcUser)
   //      }
   //
@@ -105,7 +105,7 @@ trait UserRoutes extends Directives with PaginationDirectives {
   //            phone = phoneOpt,
   //            defaultLanguage = language)
   //
-  //          coreModule.userDao.create(u, password).map(_ => coreModule.tenantUserDao.create("IMC", id))
+  //          coreModule.userDao.createUser(u, password).map(_ => coreModule.tenantUserDao.createUser("IMC", id))
   //
   //          val imcUser = ImcUser(
   //            id,
@@ -462,7 +462,7 @@ trait UserRoutes extends Directives with PaginationDirectives {
   //
   //        u <- userFuture
   //        _ <- predicate(u.exists(_.admin))(new Exception("must be in role of admin"))
-  //        x <- coreModule.userDao.delete(id)
+  //        x <- coreModule.userDao.deleteUser(id)
   //
   //      } yield x
   //
@@ -572,131 +572,24 @@ trait UserRoutes extends Directives with PaginationDirectives {
   //  }
   //
 
-  def createUser(implicit session: Session): Route = (post & entity(as[CreateUser])) { x =>
-    complete(userManager.create(x))
+  def createUser: Route = (post & entity(as[CreateUser])) { x =>
+    complete(userService.createUser(x))
   }
 
-  def getUser(implicit session: Session): Route = (path(JavaUUID) & get) { userId =>
+  def getUser: Route = (path(JavaUUID) & get) { userId =>
     ???
   }
 
-  def updateUser(implicit session: Session): Route = (path(JavaUUID) & post) { userId =>
-    ???
+  def listUsers: Route = (get & pagination) { page =>
+    complete(userService.paginateListUsers(page))
   }
 
-  def deleteUser(implicit session: Session): Route = (path(JavaUUID) & delete) { userId =>
-    complete(userManager.delete(userId))
+  def updateUser: Route = (path(JavaUUID) & post & entity(as[UpdateUser])) { (_, x) =>
+    complete(userService.updateUser(x))
   }
 
-  def listUsers(implicit session: Session): Route = (get & pagination) { page =>
-    val ff = for {
-      f <- userManager.paginateListUsers(page)
-      //r <- tenantUserRoleDao.selectAll
-    } yield f
-
-    onComplete(ff) {
-      case Success(x) => complete(x)
-      case Success(_) => complete(StatusCodes.InternalServerError)
-      case Failure(throwable) =>
-        throwable match {
-          case annetteException: AnnetteException =>
-            complete(StatusCodes.InternalServerError -> annetteException.exceptionMessage)
-          case _ =>
-            complete(StatusCodes.InternalServerError -> Map("code" -> throwable.getMessage))
-        }
-    }
-  }
-
-  //  private val getManagers = (pathPrefix("user" / "managers") & get & auth) {
-  //    sessionData =>
-  //      val userFuture = getUserRoled(sessionData.userId).mapTo[Option[UserRoled]]
-  //      val ff = for {
-  //        u <- userFuture
-  //        _ <- predicate(u.exists(x => x.admin || x.chairman))(new Exception("must be in role of admin or chairman"))
-  //        f <- coreModule.userDao.selectAll
-  //        r <- coreModule.tenantUserRoleDao.selectAll
-  //      } yield (f, r)
-  //
-  //      onComplete(ff) {
-  //        case Success((x, y)) =>
-  //
-  //          val z = x.map { user =>
-  //            val roles = y.find(_.userId == user.id).map(_.roles)
-  //
-  //            UserRoled(
-  //              user.id,
-  //              user.lastName,
-  //              user.firstName,
-  //              user.middleName.getOrElse(""),
-  //              user.email,
-  //              roles.exists(_.contains("admin")),
-  //              roles.exists(_.contains("secretar")),
-  //              roles.exists(_.contains("manager")),
-  //              roles.exists(_.contains("chairman")),
-  //              roles.exists(_.contains("expert")),
-  //              roles.exists(_.contains("additional")))
-  //          }.filter(_.manager)
-  //
-  //          complete(z.asJson)
-  //        case Success(_) => complete(StatusCodes.InternalServerError)
-  //        case Failure(throwable) =>
-  //          throwable match {
-  //            case annetteException: AnnetteException =>
-  //              complete(StatusCodes.InternalServerError -> annetteException.exceptionMessage)
-  //            case _ =>
-  //              complete(StatusCodes.InternalServerError -> Map("code" -> throwable.getMessage))
-  //          }
-  //      }
-  //  }
-  //
-  //  private val currentUser = (path("user" / "current") & get & auth) {
-  //    sessionData =>
-  //
-  //      val ff = for {
-  //        f <- coreModule.userDao.getById(sessionData.userId)
-  //        r <- coreModule.tenantUserRoleDao.getByIds(sessionData.tenantId, sessionData.userId)
-  //      } yield (f, r)
-  //
-  //      onComplete(ff) {
-  //        case Success((x, y)) =>
-  //
-  //          val z = x.map { user =>
-  //            val roles = y.map(_.roles)
-  //
-  //            UserRoled(
-  //              user.id,
-  //              user.lastName,
-  //              user.firstName,
-  //              user.middleName.getOrElse(""),
-  //              user.email,
-  //              roles.exists(_.contains("admin")),
-  //              roles.exists(_.contains("secretar")),
-  //              roles.exists(_.contains("manager")),
-  //              roles.exists(_.contains("chairman")),
-  //              roles.exists(_.contains("expert")),
-  //              roles.exists(_.contains("additional")))
-  //          }
-  //
-  //          complete(z.asJson)
-  //        case Success(_) => complete(StatusCodes.InternalServerError)
-  //        case Failure(throwable) =>
-  //          throwable match {
-  //            case annetteException: AnnetteException =>
-  //              complete(StatusCodes.InternalServerError -> annetteException.exceptionMessage)
-  //            case _ =>
-  //              complete(StatusCodes.InternalServerError -> Map("code" -> throwable.getMessage))
-  //          }
-  //      }
-  //
-  //  }
-  //
-
-  def hasAdminRights = Future { //req: AuthrReqUser =>
-    // authorizationManager.ask(ValidateAuthorizedUser(
-    // Some(req.userId), Some(req.accessPath), Some(req.action))).mapTo[Boolean]
-
-    //println("authorized")
-    true
+  def deleteUser: Route = (path(JavaUUID) & delete) { x =>
+    complete(userService.deleteUser(x))
   }
 
   val userRoutes: Route = (pathPrefix("users") & authorized) { implicit session =>

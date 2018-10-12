@@ -4,8 +4,8 @@ import akka.actor.ActorRef
 import akka.pattern.AskSupport
 import akka.util.Timeout
 import annette.core.akkaext.http.PageRequest
-import annette.core.domain.application.{ Application, ApplicationManager }
-import annette.core.domain.language.LanguageManager
+import annette.core.domain.application.{ Application, ApplicationService }
+import annette.core.domain.language.LanguageService
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.model.Tenant._
 import annette.core.domain.tenancy.model._
@@ -16,9 +16,9 @@ import scala.concurrent.{ ExecutionContext, Future }
 @Singleton
 class TenantService @Inject() (
   @Named("CoreService") actor: ActorRef,
-  userManager: UserManager,
-  languageManager: LanguageManager,
-  applicationManager: ApplicationManager)(implicit val c: ExecutionContext, val t: Timeout) extends AskSupport {
+  userManager: UserService,
+  languageManager: LanguageService,
+  applicationManager: ApplicationService)(implicit val c: ExecutionContext, val t: Timeout) extends AskSupport {
 
   def createTenant(x: CreateTenant): Future[Tenant] =
     ask(actor, CreateTenantCmd(x))

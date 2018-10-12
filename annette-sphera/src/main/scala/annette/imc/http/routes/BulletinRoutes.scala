@@ -29,7 +29,7 @@ trait BulletinRoutes
   //extends NotificationConfig
   extends Generator { self: APIContext with API =>
 
-  private val update = (path("update" / JavaUUID) & post & auth & entity(as[UpdateBulletin])) {
+  private val update = (path("updateUser" / JavaUUID) & post & auth & entity(as[UpdateBulletin])) {
     (apId, sessionData, bulletin) =>
       {
         val userId = sessionData.userId
@@ -45,7 +45,7 @@ trait BulletinRoutes
             // ========= Verification =========
             //todo: verification
             //            val f = for {
-            //              user <- coreModule.userManager.getById(userId).map(_.get) if user.phone.nonEmpty
+            //              user <- coreModule.userService.getById(userId).map(_.get) if user.phone.nonEmpty
             //              x <- notificationService.addSmsVerificationVoted(user.phone.get, apId, bulletin, user.language.getOrElse(""))
             //            } yield x
             onComplete(Future.successful(generateUUID)) {

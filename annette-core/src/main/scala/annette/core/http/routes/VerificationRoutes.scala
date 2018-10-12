@@ -16,10 +16,10 @@ trait VerificationRoutes extends Directives with Generator {
 
   val httpUrl: String
   val annetteSecurityDirectives: SecurityDirectives
-  val notificationManager: NotificationManager
+  val notificationService: NotificationService
 
   def verify = (pathPrefix(JavaUUID) & pathPrefix(JavaUUID) & get & pathEndOrSingleSlash) { (x, y) =>
-    onSuccess(notificationManager.verify(x, y).map(_.asJson)) & redirect(httpUrl, PermanentRedirect)
+    onSuccess(notificationService.verify(x, y).map(_.asJson)) & redirect(httpUrl, PermanentRedirect)
   }
 
   def verificationRoutes: Route = pathPrefix("verification") {

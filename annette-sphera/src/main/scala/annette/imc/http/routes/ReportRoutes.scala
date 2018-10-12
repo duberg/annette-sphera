@@ -38,7 +38,7 @@ trait ReportRoutes
             val userId = sessionData.userId
             val format = ReportFormatType(x)
             val f = for {
-              user <- coreModule.userManager.getUserById(userId).map(_.get)
+              user <- coreModule.userService.getUserById(userId).map(_.get)
               x <- reportService.generate(reportId, apId, userId, Map.empty, format, user.language.getOrElse(""))
             } yield x
             onComplete(f) {
@@ -65,7 +65,7 @@ trait ReportRoutes
             val userId = sessionData.userId
             val format = ReportFormatType(x)
             val f = for {
-              user <- coreModule.userManager.getUserById(userId).map(_.get)
+              user <- coreModule.userService.getUserById(userId).map(_.get)
               x <- reportService.generate(reportId, apId, userId, parameters, format, user.language.getOrElse(""))
             } yield x
             onComplete(f) {
@@ -90,7 +90,7 @@ trait ReportRoutes
           val userId = sessionData.userId
           val format = ReportFormatType("pdf")
           val f = for {
-            user <- coreModule.userManager.getUserById(expertId).map(_.get)
+            user <- coreModule.userService.getUserById(expertId).map(_.get)
             x <- reportService.generate(reportId, apId, expertId, Map.empty, format, user.language.getOrElse(""))
           } yield x
           onComplete(f) {

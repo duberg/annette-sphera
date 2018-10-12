@@ -61,7 +61,7 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
           x <- getAll(a)
         } yield x shouldBe s
       }
-      "not create snapshot" in {
+      "not createUser snapshot" in {
         val id = generateString()
         val n = SnapshotInterval + SnapshotInterval / 2
         val s = TestCqrsPersistentState(Seq(generateString(), generateString()))
@@ -199,7 +199,7 @@ class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSp
         }
       }
     }
-    "create snapshot" in {
+    "createUser snapshot" in {
       val n = SnapshotInterval + SnapshotInterval / 2
       for {
         a <- newTestPersistentActor()

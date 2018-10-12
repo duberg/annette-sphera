@@ -1,4 +1,4 @@
-import {BaseModel} from "../../../components/users/_core/models/_base.model";
+import {BaseModel} from "./_base.model";
 
 export class TenantModel extends BaseModel {
 	id: string;

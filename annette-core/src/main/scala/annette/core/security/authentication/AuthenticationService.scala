@@ -7,11 +7,11 @@ import akka.actor.{ Actor, ActorLogging, Props }
 import akka.event.LoggingReceive
 import akka.routing.FromConfig
 import akka.util.Timeout
-import annette.core.domain.application.{ ApplicationManager, _ }
-import annette.core.domain.language.LanguageManager
+import annette.core.domain.application.{ ApplicationService, _ }
+import annette.core.domain.language.LanguageService
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.model.{ Tenant, TenantData }
-import annette.core.domain.tenancy.{ SessionManager, TenantService, UserManager }
+import annette.core.domain.tenancy.{ SessionService, TenantService, UserService }
 import annette.core.security.authentication.AuthenticationService._
 import com.typesafe.config.Config
 
@@ -19,11 +19,11 @@ import scala.concurrent.ExecutionContext
 import scala.util.Try
 
 class AuthenticationService(
-  sessionManager: SessionManager,
+  sessionManager: SessionService,
   TenantService: TenantService,
-  applicationManager: ApplicationManager,
-  userManager: UserManager,
-  languageManager: LanguageManager,
+  applicationManager: ApplicationService,
+  userManager: UserService,
+  languageManager: LanguageService,
   config: Config)(implicit c: ExecutionContext) extends Actor with ActorLogging {
   val secret = config.getString("annette.secret")
 
@@ -129,11 +129,11 @@ object AuthenticationService {
     languageId: Language.Id)
 
   def props(
-    sessionManager: SessionManager,
+    sessionManager: SessionService,
     TenantService: TenantService,
-    applicationManager: ApplicationManager,
-    userManager: UserManager,
-    languageManager: LanguageManager,
+    applicationManager: ApplicationService,
+    userManager: UserService,
+    languageManager: LanguageService,
     config: Config)(implicit c: ExecutionContext): Props = {
     Props(
       new AuthenticationService(

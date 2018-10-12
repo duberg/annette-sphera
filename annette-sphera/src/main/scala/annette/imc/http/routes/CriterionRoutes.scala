@@ -34,7 +34,7 @@ trait CriterionRoutes
   //  extends NotificationConfig
   extends Generator { self: APIContext with API =>
 
-  private val updateCriterion = (path("update" / JavaUUID) & post & auth & entity(as[UpdateCriterion])) {
+  private val updateCriterion = (path("updateUser" / JavaUUID) & post & auth & entity(as[UpdateCriterion])) {
     (apId, sessionData, criterion) =>
       {
         val userId = sessionData.userId

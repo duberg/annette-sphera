@@ -19,7 +19,7 @@ trait TenantRoutes extends Directives with PaginationDirectives {
   implicit val c: ExecutionContext
   val annetteSecurityDirectives: SecurityDirectives
   val tenantService: TenantService
-  val authorizationManager: ActorRef
+  val authorizationService: ActorRef
   val config: Config
 
   import FailFastCirceSupport._
@@ -27,7 +27,7 @@ trait TenantRoutes extends Directives with PaginationDirectives {
   import io.circe.generic.auto._
 
   def createTenant(implicit session: Session): Route = (post & entity(as[CreateTenant])) { x =>
-    //complete(tenantService.create(x))
+    //complete(tenantService.createUser(x))
     ???
   }
 
@@ -40,7 +40,7 @@ trait TenantRoutes extends Directives with PaginationDirectives {
   }
 
   def deleteTenant(implicit session: Session): Route = (path(JavaUUID) & delete) { tenantId =>
-    //complete(tenantService.delete(tenantId))
+    //complete(tenantService.deleteUser(tenantId))
     ???
   }
 

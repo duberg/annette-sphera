@@ -1,11 +1,11 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MatDialog, MatPaginator, MatSnackBar, MatSort} from "@angular/material";
 import {SelectionModel} from "@angular/cdk/collections";
-import {LayoutUtilsService} from "../../../../components/apps/e-commerce/_core/utils/layout-utils.service";
+import {LayoutUtilsService} from "../../_core/utils/layout-utils.service";
 import {TranslateService} from "@ngx-translate/core";
 import {fromEvent, merge} from "rxjs";
 import {debounceTime, distinctUntilChanged, tap} from "rxjs/operators";
-import {QueryParamsModel} from "../../../../components/apps/e-commerce/_core/models/query-models/query-params.model";
+import {QueryParamsModel} from "../../_core/query-models/query-params.model";
 import {SessionModel} from "../../_core/session.model";
 import {SessionsDatasource} from "../../_core/datasources/sessions.datasource";
 import {SessionsService} from "../../_core/services/sessions.service";

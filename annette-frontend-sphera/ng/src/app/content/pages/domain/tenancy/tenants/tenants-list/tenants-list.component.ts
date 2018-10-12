@@ -1,14 +1,14 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MatDialog, MatPaginator, MatSnackBar, MatSort} from "@angular/material";
 import {SelectionModel} from "@angular/cdk/collections";
-import {LayoutUtilsService} from "../../../../components/apps/e-commerce/_core/utils/layout-utils.service";
+import {LayoutUtilsService} from "../../_core/utils/layout-utils.service";
 import {TranslateService} from "@ngx-translate/core";
 import {fromEvent, merge} from "rxjs";
 import {debounceTime, distinctUntilChanged, tap} from "rxjs/operators";
-import {QueryParamsModel} from "../../../../components/apps/e-commerce/_core/models/query-models/query-params.model";
 import {TenantModel} from "../../_core/tenant.model";
 import {TenantsDatasource} from "../../_core/datasources/tenants.datasource";
 import {TenantsService} from "../../_core/services/tenants.service";
+import {QueryParamsModel} from "../../_core/query-models/query-params.model";
 
 @Component({
   selector: 'm-tenants-list',

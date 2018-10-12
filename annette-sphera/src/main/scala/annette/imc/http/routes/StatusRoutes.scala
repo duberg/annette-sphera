@@ -36,7 +36,7 @@
 //            case class UserWithRoles(u: User, isSecretar: Boolean, isChairman: Boolean)
 //
 //            for {
-//              allUsers <- coreModule.userManager.listUsers.map(_.toSet)
+//              allUsers <- coreModule.userService.listUsers.map(_.toSet)
 //              allUserRole <- Future.successful(Set.empty)
 //                //coreModule.tenantUserRoleDao.selectAll.map(_.toSet)
 //              ap <- getApById(apId)
@@ -166,7 +166,7 @@
 //            case class UserWithRoles(u: User, isSecretar: Boolean, isChairman: Boolean)
 //
 //            for {
-//              allUsers <- coreModule.userManager.listUsers.map(_.toSet)
+//              allUsers <- coreModule.userService.listUsers.map(_.toSet)
 //              allUserRole <- coreModule.tenantUserRoleDao.selectAll.map(_.toSet)
 //              ap <- getApById(apId)
 //            } yield {
@@ -293,8 +293,8 @@
 //          a <- apsActor.ask(GetApById(apId)).mapTo[ApFound].map(_.ap)
 //          name <- Future(a.apData.name.map(_.ru).getOrElse("Наименование на русском не указано"))
 //          id <- Future(a.projectManager)
-//          u <- coreModule.userManager.getUserById(id)
-//          sender <- coreModule.userManager.getUserById(userId)
+//          u <- coreModule.userService.getUserById(id)
+//          sender <- coreModule.userService.getUserById(userId)
 //        } yield (name, u, sender)
 //
 //        onComplete(f) {
@@ -382,7 +382,7 @@
 //              expertIds <- apsActor.ask(GetApById(apId))
 //                .mapTo[ApFound]
 //                .map(_.ap.expertise.experts)
-//              experts <- coreModule.userManager.listUsers.map(_.filter(expertIds contains _.id))
+//              experts <- coreModule.userService.listUsers.map(_.filter(expertIds contains _.id))
 //              allUsers: Set[User] <- getUsersAll
 //              allUserRole: Set[TenantUserRole] <- getUserRoleAll
 //              allImcUsers: Map[UUID, ImcUser] <- getAllImcUsers

@@ -26,7 +26,7 @@ trait API { self: APIContext =>
       .map(_.ap)
 
   def getUsers(x: Set[User.Id]): Future[Set[User]] =
-    Future.sequence(x.map(coreModule.userManager.getUserById))
+    Future.sequence(x.map(coreModule.userService.getUserById))
       .map(_.flatten)
 
   def getImcUser(userId: User.Id): Future[Option[ImcUser]] =
@@ -41,7 +41,7 @@ trait API { self: APIContext =>
   def getAllImcUsers: Future[Map[UUID, ImcUser]] =
     imcUserActor.ask(ImcUserActor.GetAll).mapTo[ImcUserActor.MultipleEntries].map(_.entries)
 
-  def getUsersAll: Future[Set[User]] = coreModule.userManager.listUsers.map(_.toSet)
+  def getUsersAll: Future[Set[User]] = coreModule.userService.listUsers.map(_.toSet)
 
   def getUserRoleAll: Future[Set[TenantUserRole]] = {
     Future.successful(Set.empty)

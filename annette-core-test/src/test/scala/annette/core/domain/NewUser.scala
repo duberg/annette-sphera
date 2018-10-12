@@ -3,7 +3,7 @@ import java.time.ZonedDateTime
 import java.util.UUID
 
 import akka.testkit.TestKit
-import annette.core.domain.tenancy.UserManager
+import annette.core.domain.tenancy.UserService
 import annette.core.domain.tenancy.model.{ CreateUser, User }
 import annette.core.security.verification.VerificationBus
 import annette.core.test.PersistenceSpec
@@ -16,7 +16,7 @@ trait NewUser { _: PersistenceSpec with TestKit =>
 
   def newUserActor() = {
     val uuid = UUID.randomUUID().toString
-    system.actorOf(UserManager.props(verificationBus = new VerificationBus), s"user-$uuid")
+    system.actorOf(UserService.props(verificationBus = new VerificationBus), s"user-$uuid")
   }
 
   def newCreateUser(id: UUID = UUID.randomUUID(), email: Option[String] = None, phone: Option[String] = None, login: Option[String] = None) = {

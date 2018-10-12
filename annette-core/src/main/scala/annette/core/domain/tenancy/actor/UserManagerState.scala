@@ -38,7 +38,7 @@ case class UserManagerState(
     if (create.phone.exists(phone => phoneIndex.get(phone.trim.toLowerCase).isDefined)) throw new PhoneAlreadyExists(create.phone.get)
     if (create.username.exists(login => usernameIndex.get(login.trim.toLowerCase).isDefined)) throw new LoginAlreadyExists(create.username.get)
     // проверяем существует ли пользователь с таким же id
-    //if (users.get(create.id).isDefined) throw new UserAlreadyExists(create.id)
+    //if (users.get(createUser.id).isDefined) throw new UserAlreadyExists(createUser.id)
   }
 
   def validateUpdate(x: UpdateUser): User = {

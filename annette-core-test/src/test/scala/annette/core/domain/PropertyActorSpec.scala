@@ -56,7 +56,7 @@ class PropertyActorSpec extends TestKit(ActorSystem("PropertyActorSpec"))
           ccr should have length (1)
         }
       }
-      "should not delete property if it does not exist" in {
+      "should not deleteUser property if it does not exist" in {
         val c1 = Property(tenantId = Some("tenant1"), key = "a", value = "value1")
         val c2 = Property(tenantId = Some("tenant2"), key = "a", value = "value1")
         val actor = newPropertyActor()

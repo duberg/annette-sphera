@@ -111,7 +111,7 @@ trait NotificationActorBehavior extends NewSmsNotificationActor
    * Повторяющиеся тесты для различных типов уведомлений
    */
   def createNotificationBehavior(newActor: => Future[ActorRef], generate: => Future[CreateNotification]): Unit = {
-    s"[$generateTestName] create notification" in {
+    s"[$generateTestName] createUser notification" in {
       for {
         a <- newActor
         x <- generate
@@ -139,7 +139,7 @@ trait NotificationActorBehavior extends NewSmsNotificationActor
         y shouldBe empty
       }
     }
-    s"[$name] update retry" in {
+    s"[$name] updateUser retry" in {
       for {
         a <- newActorWithFail
         n1 <- generate
@@ -154,7 +154,7 @@ trait NotificationActorBehavior extends NewSmsNotificationActor
         y.values.map(_.retry) should contain only 1
       }
     }
-    s"[$name] delete notifications" in {
+    s"[$name] deleteUser notifications" in {
       for {
         a <- newActorWithFail
         n <- generate

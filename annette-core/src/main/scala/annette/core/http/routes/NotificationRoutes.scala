@@ -16,7 +16,7 @@ trait NotificationRoutes extends Directives with Generator {
   implicit val t: Timeout
 
   val annetteSecurityDirectives: SecurityDirectives
-  val notificationManager: NotificationManager
+  val notificationService: NotificationService
 
   import annetteSecurityDirectives._
 
@@ -38,7 +38,7 @@ trait NotificationRoutes extends Directives with Generator {
           message = x.message)
       }
 
-      notificationManager.push(notification)
+      notificationService.push(notification)
 
       Accepted
     }
@@ -57,7 +57,7 @@ trait NotificationRoutes extends Directives with Generator {
   //        message = x.message,
   //        code = x.code)
   //
-  //      notificationManager.push(notification)
+  //      notificationService.push(notification)
   //
   //      Accepted -> Response(
   //        entityId = notification.id.toString,
@@ -66,7 +66,7 @@ trait NotificationRoutes extends Directives with Generator {
   //  }
 
   //  def verify = (pathPrefix("verifications" / JavaUUID) & entity(as[String]) & post & pathEndOrSingleSlash) { (x, y) =>
-  //    complete(notificationManager.verify(x, y).map(_.asJson))
+  //    complete(notificationService.verify(x, y).map(_.asJson))
   //  }
 
   // def sms = ???

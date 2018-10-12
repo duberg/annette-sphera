@@ -12,7 +12,6 @@ import { CoreModule } from '../../core/core.module';
 import { AngularEditorModule } from '@kolkov/angular-editor';
 import { FormsModule } from '@angular/forms';
 import { ErrorPageComponent } from './snippets/error-page/error-page.component';
-import {UsersModule} from "./components/users/users.module";
 import {TenancyModule} from "./domain/tenancy/tenancy.module";
 
 @NgModule({
@@ -32,7 +31,6 @@ import {TenancyModule} from "./domain/tenancy/tenancy.module";
 		MailModule,
 		ECommerceModule,
 		AngularEditorModule,
-		UsersModule,
 		TenancyModule
 	],
 	providers: []

@@ -1,8 +1,8 @@
 import { CollectionViewer, DataSource } from '@angular/cdk/collections';
 import { Observable, BehaviorSubject, from } from 'rxjs';
-import { QueryParamsModel } from '../../content/pages/components/users/_core/models/query-models/query-params.model';
-import { QueryResultsModel } from '../../content/pages/components/users/_core/models/query-models/query-results.model';
-import { BaseModel } from '../../content/pages/components/users/_core/models/_base.model';
+import { QueryParamsModel } from '../../content/pages/domain/tenancy/_core/query-models/query-params.model';
+import { QueryResultsModel } from '../../content/pages/domain/tenancy/_core/query-models/query-results.model';
+import { BaseModel } from '../../content/pages/domain/tenancy/_core/_base.model';
 import * as _ from 'lodash';
 
 // Why not use MatTableDataSource?

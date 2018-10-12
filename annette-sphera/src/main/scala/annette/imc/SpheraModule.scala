@@ -23,7 +23,7 @@ class SpheraModule extends AnnetteHttpModule {
   def getUserRoled(ec: ExecutionContext)(userId: UUID) = {
     //    implicit val e: ExecutionContext = ec
     //    for {
-    //      x <- coreModule.userManager.getUserById(userId)
+    //      x <- coreModule.userService.getUserById(userId)
     //      y <- coreModule.tenantUserRoleDao.getByIds("IMC", userId)
     //    } yield {
     //      x.map { user =>

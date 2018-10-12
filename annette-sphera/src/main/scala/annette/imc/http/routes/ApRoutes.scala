@@ -158,7 +158,7 @@ trait ApRoutes
       }
   }
 
-  private val update = (path("update") & post & auth & entity(as[UpdateAp])) {
+  private val update = (path("updateUser") & post & auth & entity(as[UpdateAp])) {
     (sessionData, up) =>
       {
         val userId = sessionData.userId
@@ -313,7 +313,7 @@ trait ApRoutes
       }
   }
 
-  private val getUpdateAp = (path("get" / "update" / JavaUUID) & auth) {
+  private val getUpdateAp = (path("get" / "updateUser" / JavaUUID) & auth) {
     (apId, sessionData) =>
       {
         val userId = sessionData.userId

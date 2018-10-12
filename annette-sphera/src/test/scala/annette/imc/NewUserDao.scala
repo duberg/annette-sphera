@@ -155,10 +155,10 @@
 //  def initUsersDao(): Unit = {
 //    implicit val ec: ExecutionContextExecutor = coreModule.system.dispatcher
 //    val f = for {
-//      x <- coreModule.userDao.create(gene)
-//      y <- coreModule.userDao.create(userB)
-//      z <- coreModule.userDao.create(userC, generateId)
-//      q <- coreModule.userDao.create(userD, generateId)
+//      x <- coreModule.userDao.createUser(gene)
+//      y <- coreModule.userDao.createUser(userB)
+//      z <- coreModule.userDao.createUser(userC, generateId)
+//      q <- coreModule.userDao.createUser(userD, generateId)
 //    } yield x
 //    Await.result(f, 1 minute)
 //    info("UsersDao initialized")

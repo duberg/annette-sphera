@@ -40,7 +40,7 @@
 //
 //        // удаляем userPermissions
 //        val deleteFuture = Future
-//          .traverse(userPermissionsToDeleteSet) { p => userPermissionDao.delete(p._1, p._2, p._3, p._4) }
+//          .traverse(userPermissionsToDeleteSet) { p => userPermissionDao.deleteUser(p._1, p._2, p._3, p._4) }
 //          .map(p => Done)
 //        // создаём userPermissions
 //        val createFuture = Future

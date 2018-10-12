@@ -14,10 +14,10 @@
 //
 //trait WebSocketRoute {
 //  implicit def system: ActorSystem
-//  implicit def notificationManagerActor: ActorRef
+//  implicit def notificationServiceActor: ActorRef
 //
 //  private def newConnection(userId: User.Id): Flow[WebSocketNotificationLike, WebSocketNotificationLike, NotUsed] = {
-//    val p = WebSocketClientActor.props(userId, notificationManagerActor)
+//    val p = WebSocketClientActor.props(userId, notificationServiceActor)
 //    val a = system.actorOf(p, s"web-socket-client-$userId")
 //
 //    val in: Sink[WebSocketNotificationLike, NotUsed] =

@@ -4,7 +4,7 @@ import akka.Done
 import akka.actor.ActorSystem
 import akka.pattern.ask
 import akka.testkit.TestKit
-import annette.core.domain.application.ApplicationManager
+import annette.core.domain.application.ApplicationService
 import annette.core.domain.application._
 import annette.core.test.PersistenceSpec
 
@@ -13,7 +13,7 @@ class ApplicationActorSpec extends TestKit(ActorSystem("ApplicationActorSpec"))
 
   "An ApplicationActor" when receive {
     "CreateApplicationCmd" must {
-      "create new application" in {
+      "createUser new application" in {
         val c1 = Application("App1", "app1", "APP1")
         val c2 = Application("App2", "app2", "APP2")
         val a = newApplicationActor()
@@ -28,7 +28,7 @@ class ApplicationActorSpec extends TestKit(ActorSystem("ApplicationActorSpec"))
           ccs(c2.id) shouldBe c2
         }
       }
-      "should not create new application if it already exists" in {
+      "should not createUser new application if it already exists" in {
         val c1 = Application("App1", "app1", "APP1")
         val a = newApplicationActor()
         for {
@@ -43,7 +43,7 @@ class ApplicationActorSpec extends TestKit(ActorSystem("ApplicationActorSpec"))
     }
 
     "UpdateApplicationCmd" must {
-      "update application" in {
+      "updateUser application" in {
         val c1 = Application("App1", "app1", "APP1")
         val c2 = Application("App2", "app2", "APP1")
         val a = newApplicationActor()
@@ -58,7 +58,7 @@ class ApplicationActorSpec extends TestKit(ActorSystem("ApplicationActorSpec"))
           ccs shouldBe Some(c2)
         }
       }
-      "should not update application if it doesn't exist" in {
+      "should not updateUser application if it doesn't exist" in {
         val c1 = Application("App1", "app1", "APP1")
         val c2 = Application("App2", "app2", "APP2")
         val a = newApplicationActor()
@@ -71,7 +71,7 @@ class ApplicationActorSpec extends TestKit(ActorSystem("ApplicationActorSpec"))
     }
 
     "DeleteApplicationCmd" must {
-      "delete application" in {
+      "deleteUser application" in {
         val c1 = Application("App1", "app1", "APP1")
         val c2 = Application("App2", "app2", "APP2")
         val a = newApplicationActor()
@@ -91,7 +91,7 @@ class ApplicationActorSpec extends TestKit(ActorSystem("ApplicationActorSpec"))
           ccr.size shouldBe 1
         }
       }
-      "should not delete application if it does not exist" in {
+      "should not deleteUser application if it does not exist" in {
         val c1 = Application("App1", "app1", "APP1")
         val a = newApplicationActor()
         for {

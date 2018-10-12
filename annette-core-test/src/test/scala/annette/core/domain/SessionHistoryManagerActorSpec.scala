@@ -17,7 +17,7 @@ class SessionHistoryManagerActorSpec extends TestKit(ActorSystem("SessionHistory
   with PersistenceSpec with NewSessionHistory {
   "A SessionHistoryActor" when receive {
     "CreateSessionHistoryCmd" must {
-      "create new SessionHistory" in {
+      "createUser new SessionHistory" in {
         val s1 = newSessionHistory
         val s2 = newSessionHistory
         val actor = newSessionHistoryActor()

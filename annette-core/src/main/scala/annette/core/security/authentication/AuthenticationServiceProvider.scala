@@ -6,9 +6,9 @@ import akka.event.{ LogSource, Logging }
 import akka.routing.FromConfig
 import akka.util.Timeout
 import annette.core.domain.InitCoreTables
-import annette.core.domain.application.ApplicationManager
-import annette.core.domain.language.LanguageManager
-import annette.core.domain.tenancy.{ SessionManager, TenantService, UserManager }
+import annette.core.domain.application.ApplicationService
+import annette.core.domain.language.LanguageService
+import annette.core.domain.tenancy.{ SessionService, TenantService, UserService }
 import com.google.inject.Provider
 import com.typesafe.config.Config
 import javax.inject._
@@ -18,11 +18,11 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class AuthenticationServiceProvider @Inject() (
   system: ActorSystem,
-  sessionManager: SessionManager,
+  sessionManager: SessionService,
   TenantService: TenantService,
-  applicationManager: ApplicationManager,
-  userManager: UserManager,
-  languageManager: LanguageManager,
+  applicationManager: ApplicationService,
+  userManager: UserService,
+  languageManager: LanguageService,
   config: Config,
   initCoreTables: InitCoreTables)(implicit c: ExecutionContext, t: Timeout) extends Provider[ActorRef] {
 

@@ -6,10 +6,10 @@ import akka.http.scaladsl.server.{ Directives, Route }
 import akka.pattern.AskSupport
 import annette.core.akkaext.http.PaginationDirectives
 import annette.core.domain.application.Application
-import annette.core.domain.language.LanguageManager
+import annette.core.domain.language.LanguageService
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.model._
-import annette.core.domain.tenancy.{ SessionManager, TenantService, UserManager }
+import annette.core.domain.tenancy.{ SessionService, TenantService, UserService }
 import annette.core.notification._
 import annette.core.security.SecurityDirectives
 import annette.core.security.authentication.{ ApplicationState, AuthenticationService, ForbiddenException }
@@ -27,12 +27,12 @@ trait AuthenticationRoutes extends Directives
   with Generator
   with PaginationDirectives {
   val tenantService: TenantService
-  val userManager: UserManager
-  val languageManager: LanguageManager
+  val userService: UserService
+  val languageService: LanguageService
   val authenticationService: ActorRef
-  val sessionManager: SessionManager
+  val sessionService: SessionService
   val annetteSecurityDirectives: SecurityDirectives
-  val notificationManager: NotificationManager
+  val notificationService: NotificationService
   val apiUrl: String
 
   implicit val c: ExecutionContext
@@ -130,8 +130,8 @@ trait AuthenticationRoutes extends Directives
           duration = 10.minutes)
 
         for {
-          user <- userManager.create(x1)
-          verification <- notificationManager.createVerification(x2)
+          user <- userService.createUser(x1)
+          verification <- notificationService.createVerification(x2)
         } yield {
           /**
            * = Email verification =
@@ -144,7 +144,7 @@ trait AuthenticationRoutes extends Directives
             message = template.toString(),
             code = code)
 
-          notificationManager.push(c3)
+          notificationService.push(c3)
 
           user
         }
@@ -199,7 +199,7 @@ trait AuthenticationRoutes extends Directives
   }
 
   private def languagesRoute = (get & path("languages")) {
-    onComplete(languageManager.selectAll) {
+    onComplete(languageService.selectAll) {
       languages =>
         complete(languages)
     }
@@ -217,7 +217,7 @@ trait AuthenticationRoutes extends Directives
 
   def listOpenSessions = (path("sessions") & get & pagination) { page =>
     val ff = for {
-      f <- sessionManager.paginateOpenSessions(page)
+      f <- sessionService.paginateOpenSessions(page)
       //r <- tenantUserRoleDao.selectAll
     } yield f
 

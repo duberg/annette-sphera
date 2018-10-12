@@ -66,7 +66,7 @@
 //        parse(responseAs[String]).flatMap(_.as[List[ApSimple]]).map(_.size) shouldBe Right(1)
 //      }
 //
-//      Get("/imc/api/ap/get/update/" + apId) ~> api.routes ~> check {
+//      Get("/imc/api/ap/get/updateUser/" + apId) ~> api.routes ~> check {
 //        //        val n = ApString("про", "pro")
 //        //        val f = Financing(Financing.LOANS)
 //        //        val p = ApString("Иванов", "Ivanov")
@@ -133,7 +133,7 @@
 //
 //      val postRequest = HttpRequest(
 //        HttpMethods.POST,
-//        uri = "/imc/api/ap/update",
+//        uri = "/imc/api/ap/updateUser",
 //        entity = HttpEntity(MediaTypes.`application/json`, updateString))
 //
 //      postRequest ~> api.routes ~> check {
@@ -142,14 +142,14 @@
 //
 //      val postRequest1 = HttpRequest(
 //        HttpMethods.POST,
-//        uri = "/imc/api/ap/update",
+//        uri = "/imc/api/ap/updateUser",
 //        entity = HttpEntity(MediaTypes.`application/json`, updateString1))
 //
 //      postRequest1 ~> api.routes ~> check {
 //        responseAs[String].replaceAll("\"", "") shouldBe "ApNotExists"
 //      }
 //
-//      Get("/imc/api/ap/get/update/" + apId) ~> api.routes ~> check {
+//      Get("/imc/api/ap/get/updateUser/" + apId) ~> api.routes ~> check {
 //        parse(responseAs[String]).flatMap(_.as[UpdateAp].map(_.entityName.map(_.en))).toOption.flatten shouldBe Some("pro")
 //        parse(responseAs[String]).flatMap(_.as[UpdateAp].map(_.purpose)).toOption.flatten shouldBe Some("med")
 //
@@ -243,7 +243,7 @@
 //
 //      val postRequest2 = HttpRequest(
 //        HttpMethods.POST,
-//        uri = s"/imc/api/file/update/$apId",
+//        uri = s"/imc/api/file/updateUser/$apId",
 //        entity = HttpEntity(MediaTypes.`application/json`, fileUpdate.asJson.toString()))
 //
 //      postRequest2 ~> api.routes ~> check {
@@ -271,7 +271,7 @@
 //
 //      val postRequest3 = HttpRequest(
 //        HttpMethods.POST,
-//        uri = s"/imc/api/criterion/update/$apId",
+//        uri = s"/imc/api/criterion/updateUser/$apId",
 //        entity = HttpEntity(MediaTypes.`application/json`, criterionUpdate1.asJson.toString()))
 //
 //      postRequest3 ~> api.routes ~> check {
@@ -280,7 +280,7 @@
 //
 //      val postRequest4 = HttpRequest(
 //        HttpMethods.POST,
-//        uri = s"/imc/api/criterion/update/$apId",
+//        uri = s"/imc/api/criterion/updateUser/$apId",
 //        entity = HttpEntity(MediaTypes.`application/json`, criterionUpdate2.asJson.toString()))
 //
 //      postRequest4 ~> api.routes ~> check {
@@ -389,7 +389,7 @@
 //      //      val updateBulletin = UpdateBulletin(expertId, criterions = Some(Map(1 -> Vote("bla", true, "la"))))
 //      //      val postRequest5 = HttpRequest(
 //      //        HttpMethods.POST,
-//      //        uri = s"/imc/api/bulletin/update/$apId/$expertId",
+//      //        uri = s"/imc/api/bulletin/updateUser/$apId/$expertId",
 //      //        entity = HttpEntity(MediaTypes.`application/json`, updateBulletin.asJson.toString()))
 //      //
 //      //      postRequest5 ~> api.routes ~> check {
@@ -463,7 +463,7 @@
 //        response.status.toString() shouldBe "200 OK"
 //      }
 //      //      val userId = UUID.fromString("535c5063-71af-4182-94be-8161df2d27d0")
-//      //      Get(s"/imc-admin/update/535c5063-71af-4182-94be-8161df2d27d0") ~> api.routes ~> check {
+//      //      Get(s"/imc-admin/updateUser/535c5063-71af-4182-94be-8161df2d27d0") ~> api.routes ~> check {
 //      //        response.status.toString() shouldBe "200 OK"
 //      //      }
 //

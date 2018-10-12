@@ -9,7 +9,7 @@ trait CqrsState {
   def postUpdate: Update = PartialFunction.empty
   def orElseUpdate: Update = PartialFunction.empty
 
-  private def exceptionHandler: Update = { case x => sys.error(s"Unknown event $x when update state") }
+  private def exceptionHandler: Update = { case x => sys.error(s"Unknown event $x when updateUser state") }
 
   final def updated: Updated = {
     preUpdate

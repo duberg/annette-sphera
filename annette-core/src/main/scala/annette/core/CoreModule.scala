@@ -6,12 +6,12 @@ import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.settings.RoutingSettings
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
-import annette.core.domain.application.ApplicationManager
-import annette.core.domain.language.LanguageManager
-import annette.core.domain.tenancy.{ SessionManager, TenantService, UserManager }
+import annette.core.domain.application.ApplicationService
+import annette.core.domain.language.LanguageService
+import annette.core.domain.tenancy.{ SessionService, TenantService, UserService }
 import annette.core.http.ExceptionHandler
 import annette.core.http.routes.ApiRoutes
-import annette.core.notification.NotificationManager
+import annette.core.notification.NotificationService
 import annette.core.security.SecurityDirectives
 import annette.core.security.authentication.AuthenticationService
 import com.typesafe.config.Config
@@ -25,15 +25,15 @@ class CoreModule @Inject() (
   implicit
   val system: ActorSystem,
   val config: Config,
-  val userManager: UserManager,
+  val userService: UserService,
   val tenantService: TenantService,
-  val languageManager: LanguageManager,
-  val applicationManager: ApplicationManager,
-  val sessionManager: SessionManager,
+  val languageService: LanguageService,
+  val applicationService: ApplicationService,
+  val sessionService: SessionService,
   val annetteSecurityDirectives: SecurityDirectives,
-  val notificationManager: NotificationManager,
+  val notificationService: NotificationService,
   @Named(AuthenticationService.name) val authenticationService: ActorRef,
-  @Named("AuthorizationManager") val authorizationManager: ActorRef) extends AnnetteHttpModule with ApiRoutes with ExceptionHandler {
+  @Named("AuthorizationManager") val authorizationService: ActorRef) extends AnnetteHttpModule with ApiRoutes with ExceptionHandler {
   System.setProperty("logback.configurationFile", "conf/logback.xml")
 
   implicit val c: ExecutionContext = system.dispatcher

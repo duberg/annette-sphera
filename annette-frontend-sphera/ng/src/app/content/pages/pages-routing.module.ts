@@ -24,10 +24,6 @@ const routes: Routes = [
 				loadChildren: './components/dashboard/dashboard.module#DashboardModule'
 			},
 			{
-				path: 'users',
-				loadChildren: './components/users/users.module#UsersModule'
-			},
-			{
 				path: 'domain/tenancy',
 				loadChildren: './domain/tenancy/tenancy.module#TenancyModule'
 			},

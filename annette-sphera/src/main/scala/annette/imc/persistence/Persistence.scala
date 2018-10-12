@@ -314,7 +314,7 @@ object Persistence extends AskSupport {
 
     /**
      * Persist event in Future.
-     * Don't forget to create local val with self ActorRef outside Future context.
+     * Don't forget to createUser local val with self ActorRef outside Future context.
      */
     def persistEvt(selfRef: ActorRef, event: PersistentEvent)(implicit e: ExecutionContext): Future[PersistentEvent] =
       Future {

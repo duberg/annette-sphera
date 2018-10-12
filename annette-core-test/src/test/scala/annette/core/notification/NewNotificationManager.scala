@@ -20,7 +20,7 @@ trait NewNotificationManager { _: PersistenceSpec with TestKit =>
       name = id)
   }
 
-  def newNotificationManager(id: String = generateString()): Future[NotificationManager] =
+  def newNotificationManager(id: String = generateString()): Future[NotificationService] =
     newNotificationManagerActor()
-      .map(NotificationManager(_))
+      .map(NotificationService(_))
 }

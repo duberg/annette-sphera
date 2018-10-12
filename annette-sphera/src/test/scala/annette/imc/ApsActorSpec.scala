@@ -17,11 +17,11 @@
 //  with NewAps {
 //  "A ApsActor" when receive {
 //    "CreateCmd" must {
-//      "create new ap" in {
+//      "createUser new ap" in {
 //        val user = UUID.randomUUID()
 //        for {
 //          a <- newAps()
-//          create <- ask(a, CreateCmd(user))
+//          createUser <- ask(a, CreateCmd(user))
 //          create1 <- ask(a, CreateCmd(user))
 //          create2 <- ask(a, CreateCmd(user))
 //
@@ -75,7 +75,7 @@
 //
 //        for {
 //          a <- newAps()
-//          create <- ask(a, CreateCmd(user))
+//          createUser <- ask(a, CreateCmd(user))
 //          id <- ask(a, FindAps(SearchParams())).mapTo[ApsFound].map(_.aps.head.id)
 //          u1 <- ask(a, FillingFormCmd(update1(id)))
 //          u2 <- ask(a, FillingFormCmd(update2(id)))
@@ -155,7 +155,7 @@
 //
 //        for {
 //          a <- newAps()
-//          create <- ask(a, CreateCmd(user))
+//          createUser <- ask(a, CreateCmd(user))
 //          id <- ask(a, FindAps(SearchParams())).mapTo[ApsFound].map(_.aps.head.id)
 //          f1 <- ask(a, AddFileCmd(id, file1))
 //          f2 <- ask(a, AddFileCmd(id, file2))
@@ -163,7 +163,7 @@
 //
 //          apFound <- ask(a, GetApById(id)).mapTo[ApFound].map(_.ap)
 //
-//          update <- ask(a, UpdateFileCmd(id, file1.copy(comments = "Blah-blah-blah")))
+//          updateUser <- ask(a, UpdateFileCmd(id, file1.copy(comments = "Blah-blah-blah")))
 //
 //          apFound1 <- ask(a, GetApById(id)).mapTo[ApFound].map(_.ap)
 //          wrongUpdate <- ask(a, UpdateFileCmd(UUID.randomUUID(), file1.copy(comments = "Blah-blah-blah")))
@@ -182,7 +182,7 @@
 //          apFound.apFiles.get(file1.id).map(_.fileType) shouldBe Some(FileType(FileType.Fl160Files))
 //          apFound.apFiles.get(file1.id).map(_.lang) shouldBe Some("Ru")
 //          apFound.apFiles.get(file3.id).map(_.lang) shouldBe Some("En")
-//          update shouldBe Done
+//          updateUser shouldBe Done
 //          apFound1.apFiles.get(file1.id).map(_.comments) shouldBe Some("Blah-blah-blah")
 //          apFound1.apFiles.size shouldBe 3
 //          wrongUpdate shouldBe ApNotExists
@@ -214,7 +214,7 @@
 //
 //        for {
 //          a <- newAps()
-//          create <- ask(a, CreateCmd(user))
+//          createUser <- ask(a, CreateCmd(user))
 //          id <- ask(a, FindAps(SearchParams())).mapTo[ApsFound].map(_.aps.head.id)
 //          f1 <- ask(a, AddFileCmd(id, file1))
 //          f2 <- ask(a, AddFileCmd(id, file2))
@@ -284,7 +284,7 @@
 //
 //        for {
 //          a <- newAps()
-//          create <- ask(a, CreateCmd(user))
+//          createUser <- ask(a, CreateCmd(user))
 //          id <- ask(a, FindAps(SearchParams())).mapTo[ApsFound].map(_.aps.head.id)
 //          add1 <- ask(a, AddExpertCmd(id, expert1))
 //          empty <- ask(a, GetApById(id)).mapTo[ApFound].map(_.ap.expertise.experts)
@@ -328,7 +328,7 @@
 //
 //      for {
 //        a <- newAps()
-//        create <- ask(a, CreateCmd(user))
+//        createUser <- ask(a, CreateCmd(user))
 //        id <- ask(a, FindAps(SearchParams())).mapTo[ApsFound].map(_.aps.head.id)
 //        add2 <- ask(a, AddExpertCmd(id, expert1))
 //        add3 <- ask(a, AddExpertCmd(id, expert2))
@@ -364,7 +364,7 @@
 //      def fill(apId: UUID) = UpdateAp(id = apId, entityName = Some(ApString("Ай-би-эм", "IBM")))
 //      for {
 //        a <- newAps()
-//        create <- ask(a, CreateCmd(user))
+//        createUser <- ask(a, CreateCmd(user))
 //        id <- ask(a, FindAps(SearchParams())).mapTo[ApsFound].map(_.aps.head.id)
 //        f <- ask(a, FillingFormCmd(fill(id)))
 //        add1 <- ask(a, AddExpertCmd(id, expert1))

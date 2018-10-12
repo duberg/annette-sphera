@@ -52,7 +52,7 @@ import {HttpErrorHandler} from "./core/auth/http-error-handler.service";
 import {JwtModule} from "@auth0/angular-jwt";
 import {TokenStorage} from "./core/auth/token-storage.service";
 import {UsersService} from "./core/services/users.service";
-import {HttpUtilsService} from "./content/pages/components/users/_core/utils/http-utils.service";
+import {HttpUtilsService} from "./content/pages/domain/tenancy/_core/utils/http-utils.service";
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
 	// suppressScrollX: true

@@ -31,7 +31,7 @@
 //  extends NotificationConfig
 //  with Generator { self: APIContext with API =>
 //
-//  private val userUpdate = (path("user" / "update" / JavaUUID) & post & auth & entity(as[UpdateUser])) {
+//  private val userUpdate = (path("user" / "updateUser" / JavaUUID) & post & auth & entity(as[UpdateUser])) {
 //    (id, sessionData, updateUser) =>
 //
 //      val userFuture = getUserRoled(sessionData.userId).mapTo[Option[UserRoled]]
@@ -62,7 +62,7 @@
 //          otherTel = updateUser.otherTel,
 //          otherMail = updateUser.otherMail)
 //
-//        coreModule.userDao.update(user)
+//        coreModule.userDao.updateUser(user)
 //        imcUserActor ! ImcUserActor.UpdateCmd(imcUser)
 //      }
 //
@@ -108,7 +108,7 @@
 //          phone = phoneOpt,
 //          defaultLanguage = language)
 //
-//        coreModule.userDao.create(u, password).map(_ => coreModule.tenantUserDao.create("IMC", id))
+//        coreModule.userDao.createUser(u, password).map(_ => coreModule.tenantUserDao.createUser("IMC", id))
 //
 //        val imcUser = ImcUser(
 //          id,
@@ -465,7 +465,7 @@
 //
 //        u <- userFuture
 //        _ <- predicate(u.exists(_.admin))(new Exception("must be in role of admin"))
-//        x <- coreModule.userDao.delete(id)
+//        x <- coreModule.userDao.deleteUser(id)
 //
 //      } yield x
 //

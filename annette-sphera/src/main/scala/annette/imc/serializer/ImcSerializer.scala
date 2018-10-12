@@ -80,7 +80,7 @@ class ImcSerializer extends SerializerWithStringManifest
       case _: ApsActor.ChangeManagerEvt => ApChangeManagerEvtManifestV1
 
       case _ =>
-        val errorMsg = s"Can't create manifest for object using $className [${o.toString}]"
+        val errorMsg = s"Can't createUser manifest for object using $className [${o.toString}]"
         throw new IllegalArgumentException(errorMsg)
     }
   }

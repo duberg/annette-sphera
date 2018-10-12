@@ -14,7 +14,7 @@ class LanguageActorSpec extends TestKit(ActorSystem("LanguageActorSpec"))
 
   "A LanguageActor" when receive {
     "CreateLanguageCmd" must {
-      "create new language" in {
+      "createUser new language" in {
         val c1 = Language("English", "EN")
         val c2 = Language("Russian", "RU")
         val a = newLanguageActor()
@@ -29,7 +29,7 @@ class LanguageActorSpec extends TestKit(ActorSystem("LanguageActorSpec"))
           ccs(c2.id) shouldBe c2
         }
       }
-      "should not create new language if it already exists" in {
+      "should not createUser new language if it already exists" in {
         val c1 = Language("English", "EN")
         val a = newLanguageActor()
         for {
@@ -44,7 +44,7 @@ class LanguageActorSpec extends TestKit(ActorSystem("LanguageActorSpec"))
     }
 
     "UpdateLanguageCmd" must {
-      "update language" in {
+      "updateUser language" in {
         val c1 = Language("English", "EN")
         val c2 = Language("English-US", "EN")
         val a = newLanguageActor()
@@ -59,7 +59,7 @@ class LanguageActorSpec extends TestKit(ActorSystem("LanguageActorSpec"))
           ccs shouldBe Some(c2)
         }
       }
-      "should not update language if it doesn't exist" in {
+      "should not updateUser language if it doesn't exist" in {
         val c1 = Language("English", "EN")
         val c2 = Language("English-US", "EN")
         val a = newLanguageActor()
@@ -72,7 +72,7 @@ class LanguageActorSpec extends TestKit(ActorSystem("LanguageActorSpec"))
     }
 
     "DeleteLanguageCmd" must {
-      "delete language" in {
+      "deleteUser language" in {
         val c1 = Language("English", "EN")
         val c2 = Language("Russian", "RU")
         val a = newLanguageActor()
@@ -92,7 +92,7 @@ class LanguageActorSpec extends TestKit(ActorSystem("LanguageActorSpec"))
           ccr.size shouldBe 1
         }
       }
-      "should not delete language if it does not exist" in {
+      "should not deleteUser language if it does not exist" in {
         val c1 = Language("English", "EN")
         val a = newLanguageActor()
         for {
