@@ -1,6 +1,21 @@
-# Integration platform Annette-Sphera
+# CQRS/Event Sourcing platform Annette-Sphera
+
+This project aims to provide complete CQRS/Event Sourcing platform.
+
+## Feature list:
+- Authentication
+- Authorization
+- Verification (sms, email)
+- User registration with email verification
+- Push notifications (sms, email, websocket)
+- Data pagination 
+  - Akka http paginator
+  - Angular paginated table
+- Domain (Tenancy, Application, User, Language)
 
 This project is based on ideas and source code of Valery Lobachev (https://github.com/valerylobachev)
+
+## Installation:
 
 - Install sbt, postgresql, protoc-3.2.0, nodejs, @angular/cli: ```/scripts/install-project-tools.sh```
 
@@ -27,7 +42,7 @@ cd ../../
 sbt ~annette-sphera-server/reStart
 ```
 
-## Users page with pagination:
+### Users page with pagination:
 ![users page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_users.png)
 
 ```scala
@@ -40,14 +55,14 @@ sbt ~annette-sphera-server/reStart
   }
 ```
 
-## Tenants page with pagination:
+### Tenants page with pagination:
 ![tenants page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_tenants.png)
 
 
-## Signin page:
+### Signin page:
 ![signin page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_signin.png)
 
-## Authorization directive akka-http:
+### Authorization directive akka-http:
 ```scala
  /**
    * = Authorization directive =
@@ -62,10 +77,10 @@ sbt ~annette-sphera-server/reStart
   }
 ```
 
-## Signup confirmation (example email template):
+### Signup confirmation (example email template):
 ![signup page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_emailconfirmation.png)
 
-## Contributing
+### Contributing
 
 Contributions are *very* welcome!
 
@@ -76,6 +91,6 @@ Refer to the [CONTRIBUTING.md](docs/CONTRIBUTING.md) and  [CODE_OF_CONDUCT.md](d
  clarifications or guidance in GitHub issues.
 
 
-## License
+### License
 
 Annette-Sphera is Open Source and available under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0)
