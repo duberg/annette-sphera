@@ -12,7 +12,7 @@ import annette.core.security.authentication.Session
 import com.typesafe.config.Config
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.ExecutionContext
 import scala.util.{ Failure, Success }
 
 trait TenantRoutes extends Directives with PaginationDirectives {

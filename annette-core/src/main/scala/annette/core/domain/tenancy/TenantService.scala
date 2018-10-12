@@ -7,11 +7,11 @@ import annette.core.akkaext.http.PageRequest
 import annette.core.domain.application.{ Application, ApplicationManager }
 import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
+import annette.core.domain.tenancy.model.Tenant._
 import annette.core.domain.tenancy.model._
 import javax.inject.{ Inject, Named, Singleton }
 
 import scala.concurrent.{ ExecutionContext, Future }
-import annette.core.domain.tenancy.model.Tenant._
 
 @Singleton
 class TenantService @Inject() (

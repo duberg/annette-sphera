@@ -4,10 +4,10 @@ import akka.Done
 import annette.core.akkaext.persistence.CqrsPersistentActor
 import annette.core.domain.application.Application
 import annette.core.domain.language.model.Language
+import annette.core.domain.property.PropertyService._
 import annette.core.domain.property.model._
 import annette.core.domain.tenancy.model.{ Tenant, User }
 import annette.core.utils.FilterOption
-import PropertyService._
 
 class PropertyActor(val initState: PropertyState = PropertyState()) extends CqrsPersistentActor[PropertyState] {
 

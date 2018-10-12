@@ -1,6 +1,6 @@
 package annette.core.json
 
-import io.circe.{ Json, JsonObject }
+import io.circe.Json
 
 trait ExtendedJson {
   implicit class JsonOpt(json: Json) {

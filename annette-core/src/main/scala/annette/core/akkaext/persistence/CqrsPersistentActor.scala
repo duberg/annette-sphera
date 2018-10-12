@@ -1,21 +1,9 @@
 package annette.core.akkaext.persistence
 
-import java.time.{ Instant, LocalDateTime, ZoneId }
-import java.util.UUID
-
-import akka.actor.{ ActorRef, Props }
 import akka.persistence._
-import akka.util.Timeout
 import annette.core.akkaext.actor.CqrsQuery._
 import annette.core.akkaext.actor.CqrsResponse._
 import annette.core.akkaext.actor.{ CqrsActorBase, _ }
-import annette.core.akkaext.persistence.CqrsPersistentActor._
-
-import scala.concurrent.{ ExecutionContext, Future }
-import scala.concurrent.duration._
-import scala.util
-import scala.util.{ Failure, Success, Try }
-import scala.reflect.ClassTag
 
 /**
  * = Actor in pure functional style =
@@ -66,34 +54,15 @@ abstract class CqrsPersistentActor[A <: CqrsState] extends PersistentActor
   with CqrsActorBase[A]
   with ActiveContext[A]
   with ReceiveRecover[A] {
+  /**
+   * Init actor state
+   */
+  def initState: A
 
   /**
    * Поведение актора которое необходимо реализовать.
    */
-  override def behavior(state: A): Receive
-
-  def persistenceId: String = id
-  def snapshotInterval: Int = SnapshotInterval
-
-  override def onPersistFailure(cause: Throwable, event: Any, seqNr: Long): Unit = {
-    super.onPersistFailure(cause, event, seqNr)
-    cause.printStackTrace()
-    self ! cause
-  }
-
-  override def onPersistRejected(cause: Throwable, event: Any, seqNr: Long): Unit = {
-    super.onPersistRejected(cause: Throwable, event: Any, seqNr: Long)
-    cause.printStackTrace()
-    self ! cause
-  }
-
-  override def postStop(): Unit = {
-    terminateOpt.foreach {
-      // Required to correctly shutdown persistence layer
-      case (x, y) => context.system.scheduler.scheduleOnce(50 milliseconds, x, y)(context.dispatcher)
-    }
-    log.info("Terminated")
-  }
+  def behavior(state: A): Receive
 }
 
 object CqrsPersistentActor {

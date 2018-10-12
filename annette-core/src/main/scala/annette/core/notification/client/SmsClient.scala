@@ -2,8 +2,8 @@ package annette.core.notification.client
 
 import java.net.URLEncoder
 
-import annette.core.notification.{ Notification, SmsSettings }
 import annette.core.akkaext.actor.CqrsResponse
+import annette.core.notification.{ Notification, SmsSettings }
 import com.roundeights.hasher.Implicits._
 import io.circe.generic.auto._
 import io.circe.parser.decode

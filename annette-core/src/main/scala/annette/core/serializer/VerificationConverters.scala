@@ -4,7 +4,7 @@ import java.util.UUID
 
 import annette.core.security.verification.Verification._
 import annette.core.security.verification._
-import Implicits._
+import annette.core.serializer.Implicits._
 import annette.core.serializer.proto.verification._
 
 trait VerificationConverters {

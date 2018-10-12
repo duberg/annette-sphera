@@ -4,9 +4,9 @@ import akka.actor.{ Actor, ActorLogging }
 import akka.event.LoggingReceive
 import annette.core.domain.application.ApplicationManager
 import annette.core.domain.language.LanguageManager
-import annette.core.security.authentication.jwt.JwtHelper
-import annette.core.domain.tenancy.{ SessionManager, TenantService, UserManager }
 import annette.core.domain.tenancy.model.OpenSession
+import annette.core.domain.tenancy.{ SessionManager, TenantService, UserManager }
+import annette.core.security.authentication.jwt.JwtHelper
 
 import scala.concurrent.Future
 

@@ -1,12 +1,10 @@
 package annette.core.serializer
 
 import akka.serialization.SerializerWithStringManifest
-import annette.core.domain.tenancy.UserManager
-import annette.core.domain.application._
-import annette.core.domain.application.{ ApplicationManager, ApplicationManagerState }
+import annette.core.domain.application.{ ApplicationManagerState, _ }
 import annette.core.domain.tenancy.actor.UserManagerState
-import annette.core.security.verification.{ Verification, VerificationState }
 import annette.core.domain.tenancy.model.User
+import annette.core.security.verification.{ Verification, VerificationState }
 
 class CoreSerializer extends SerializerWithStringManifest
   with UserConverters

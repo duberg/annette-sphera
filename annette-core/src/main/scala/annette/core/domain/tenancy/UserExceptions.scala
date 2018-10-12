@@ -1,7 +1,7 @@
 package annette.core.domain.tenancy
 
-import annette.core.{ AnnetteMessage, AnnetteMessageException }
 import annette.core.domain.tenancy.model.User
+import annette.core.{ AnnetteMessage, AnnetteMessageException }
 
 case class LoginRequiredMsg() extends AnnetteMessage("core.tenancy.user.loginRequired") {
   override def toException = new LoginRequired()

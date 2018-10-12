@@ -7,7 +7,6 @@ import com.google.inject.{ AbstractModule, Injector, Provider }
 import com.typesafe.config.Config
 import javax.inject.Inject
 import net.codingwell.scalaguice.ScalaModule
-import annette.core.inject._
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._

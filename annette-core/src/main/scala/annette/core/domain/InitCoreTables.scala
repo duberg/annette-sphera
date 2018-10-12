@@ -2,25 +2,22 @@ package annette.core.domain
 
 import java.util.UUID
 
-import javax.inject._
 import akka.actor.ActorSystem
 import akka.event.{ LogSource, Logging }
 import akka.http.scaladsl.util.FastFuture
 import annette.core.domain.application.{ Application, ApplicationAlreadyExists, ApplicationManager }
 import annette.core.domain.language.model.Language
 import annette.core.domain.language.{ LanguageAlreadyExists, LanguageManager }
-import annette.core.domain.tenancy.model._
 import annette.core.domain.tenancy._
-import annette.core.domain.tenancy.model.Tenant.Id
-import annette.core.domain.tenancy.model.User.Id
+import annette.core.domain.tenancy.model._
 import com.typesafe.config.Config
+import javax.inject._
+import slick.jdbc.PostgresProfile.api._
 
 import scala.collection.JavaConverters._
-import scala.collection.immutable
 import scala.concurrent.duration.Duration
 import scala.concurrent.{ Await, ExecutionContextExecutor, Future }
 import scala.util.Try
-import slick.jdbc.PostgresProfile.api._
 
 @Singleton
 class InitCoreTables @Inject() (

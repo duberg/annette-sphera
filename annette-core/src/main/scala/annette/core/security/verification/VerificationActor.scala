@@ -2,7 +2,6 @@ package annette.core.security.verification
 
 import akka.actor.Props
 import akka.util.Timeout
-import annette.core.akkaext.actor._
 import annette.core.akkaext.persistence._
 import annette.core.security.verification.Verification._
 

@@ -1,11 +1,11 @@
 package annette.core.notification.actor
 
 import akka.actor.{ ActorRef, Props, Terminated }
-import annette.core.notification.actor.WebSocketNotificationActor._
-import annette.core.notification.{ CreateWebSocketNotificationLike, NotificationManager, WebSocketNotification, WebSocketNotificationLike }
 import annette.core.akkaext.actor._
 import annette.core.akkaext.persistence._
 import annette.core.domain.tenancy.model.User
+import annette.core.notification.CreateWebSocketNotificationLike
+import annette.core.notification.actor.WebSocketNotificationActor._
 
 private class WebSocketNotificationActor(val initState: WebSocketNotificationState = WebSocketNotificationState.empty) extends CqrsPersistentActor[WebSocketNotificationState] {
   def connect(x: User.Id, y: ActorRef): Unit = {

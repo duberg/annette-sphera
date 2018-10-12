@@ -4,12 +4,8 @@ import java.util.UUID
 
 import akka.actor.{ ActorRef, ActorSystem }
 import akka.event.{ LogSource, Logging }
-import akka.http.scaladsl.model.{ HttpMethod, Uri }
 import akka.http.scaladsl.model.headers.HttpChallenge
-import akka.http.scaladsl.server.Directives.reject
-import akka.http.scaladsl.server.directives.BasicDirectives.provide
-import akka.http.scaladsl.server.directives.FutureDirectives.onComplete
-import akka.http.scaladsl.server.directives.HeaderDirectives.optionalHeaderValueByName
+import akka.http.scaladsl.model.{ HttpMethod, Uri }
 import akka.http.scaladsl.server._
 import akka.http.scaladsl.util.FastFuture
 import akka.pattern.ask

@@ -4,7 +4,7 @@ import java.util.UUID
 
 import annette.core.akkaext.actor.{ CqrsCommand, CqrsEvent, CqrsQuery, CqrsResponse }
 
-import scala.concurrent.duration.{ FiniteDuration, _ }
+import scala.concurrent.duration.FiniteDuration
 
 trait VerificationLike {
   def id: Verification.Id

@@ -1,14 +1,11 @@
 package annette.core
 
-import javax.inject.{ Inject, Named, Singleton }
 import akka.actor.{ ActorRef, ActorSystem }
 import akka.event.LoggingAdapter
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.settings.RoutingSettings
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
-import annette.core.security.authentication.{ AuthenticationService, Session }
-import annette.core.domain.DB
 import annette.core.domain.application.ApplicationManager
 import annette.core.domain.language.LanguageManager
 import annette.core.domain.tenancy.{ SessionManager, TenantService, UserManager }
@@ -16,10 +13,12 @@ import annette.core.http.ExceptionHandler
 import annette.core.http.routes.ApiRoutes
 import annette.core.notification.NotificationManager
 import annette.core.security.SecurityDirectives
+import annette.core.security.authentication.AuthenticationService
 import com.typesafe.config.Config
+import javax.inject.{ Inject, Named, Singleton }
 
-import scala.concurrent.{ ExecutionContext, ExecutionContextExecutor, Future }
 import scala.concurrent.duration._
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 class CoreModule @Inject() (

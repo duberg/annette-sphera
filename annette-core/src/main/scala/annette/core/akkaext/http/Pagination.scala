@@ -1,7 +1,5 @@
 package annette.core.akkaext.http
 
-import annette.core.domain.tenancy.model.PaginateTenantsList
-import annette.core.domain.tenancy.model.Tenant.TenantsList
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe
 import scala.reflect.runtime.universe._

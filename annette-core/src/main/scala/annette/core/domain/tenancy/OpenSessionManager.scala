@@ -4,7 +4,7 @@ import akka.actor.{ ActorRef, Props }
 import annette.core.akkaext.actor.{ CqrsCommand, CqrsEvent, CqrsQuery, CqrsResponse }
 import annette.core.domain.application.Application
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.actor.{ OpenSessionManagerActor, OpenSessionManagerState }
+import annette.core.domain.tenancy.actor.OpenSessionManagerActor
 import annette.core.domain.tenancy.model._
 
 object OpenSessionManager {

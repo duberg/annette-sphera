@@ -1,8 +1,8 @@
 package annette.core.notification.actor
 
 import akka.actor.{ Actor, ActorRef, Props }
-import annette.core.notification.WebSocketNotificationLike
 import annette.core.domain.tenancy.model.User
+import annette.core.notification.WebSocketNotificationLike
 
 class WebSocketClientActor(userId: User.Id, notificationManagerActor: ActorRef) extends Actor {
   import WebSocketClientActor._

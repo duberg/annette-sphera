@@ -1,9 +1,8 @@
 package annette.core.domain.tenancy.actor
 
-import annette.core.domain.tenancy.LastSessionManager
-import annette.core.domain.tenancy.model.{ LastSession, User }
 import annette.core.akkaext.actor.CqrsState
 import annette.core.domain.tenancy.LastSessionManager._
+import annette.core.domain.tenancy.model.{ LastSession, User }
 case class LastSessionManagerState(lastSessions: Map[User.Id, LastSession] = Map.empty) extends CqrsState {
 
   // both for updating and creating

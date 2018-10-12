@@ -2,13 +2,11 @@ package annette.core.security.authorization
 
 import java.util
 
-import akka.actor.{ Actor, ActorLogging, Props }
 import akka.actor.Status.Failure
+import akka.actor.{ Actor, ActorLogging, Props }
 import annette.core.security.authorization.AuthorizationActor._
 import javax.inject.Named
-import org.casbin.jcasbin.main.{ CoreEnforcer, Enforcer }
-import org.casbin.jcasbin.model.Model
-import org.casbin.jcasbin.persist.file_adapter.FileAdapter
+import org.casbin.jcasbin.main.Enforcer
 
 import scala.collection.JavaConverters._
 import scala.concurrent.Future

@@ -1,11 +1,10 @@
 package annette.core.domain.tenancy.model
 
 import java.time.ZonedDateTime
-import java.util.{ Locale, UUID }
+import java.util.UUID
 
 import annette.core.akkaext.actor.{ CqrsCommand, CqrsEvent, CqrsQuery, CqrsResponse }
 import annette.core.akkaext.http.PageRequest
-import annette.core.domain.application.Application
 import annette.core.domain.authorization.model.Role
 
 /**

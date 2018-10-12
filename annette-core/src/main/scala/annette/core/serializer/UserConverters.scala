@@ -1,15 +1,11 @@
 package annette.core.serializer
 
-import java.time.ZonedDateTime
-import java.util.UUID
-
+import annette.core.domain.authorization.model.Role
+import annette.core.domain.tenancy.actor.UserManagerState
 import annette.core.domain.tenancy.model.User._
 import annette.core.domain.tenancy.model._
-import annette.core.domain.tenancy.{ UserManager, actor }
-import annette.core.domain.tenancy.actor.UserManagerState
+import annette.core.serializer.Implicits._
 import annette.core.serializer.proto.user._
-import Implicits._
-import annette.core.domain.authorization.model.Role
 
 trait UserConverters {
 

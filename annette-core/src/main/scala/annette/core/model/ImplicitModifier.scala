@@ -1,6 +1,5 @@
 package annette.core.model
 
-import annette.core.akkaext.actor.CqrsActorBase
 import annette.core.utils.Generator
 
 trait ImplicitModifier extends Generator {

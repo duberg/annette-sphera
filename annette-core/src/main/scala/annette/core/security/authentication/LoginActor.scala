@@ -6,14 +6,13 @@ import akka.actor.{ Actor, ActorLogging, ActorRef }
 import akka.event.LoggingReceive
 import akka.http.scaladsl.util.FastFuture
 import akka.util.Timeout
-import annette.core.domain.application.ApplicationManager
-import annette.core.security.authentication.AuthenticationService.{ FailureResponse, Login }
-import annette.core.security.authentication.jwt.JwtHelper
-import annette.core.domain.application._
+import annette.core.domain.application.{ ApplicationManager, _ }
 import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.{ SessionManager, TenantService, UserManager }
 import annette.core.domain.tenancy.model.{ OpenSession, Tenant, TenantData, User }
+import annette.core.domain.tenancy.{ SessionManager, TenantService, UserManager }
+import annette.core.security.authentication.AuthenticationService.{ FailureResponse, Login }
+import annette.core.security.authentication.jwt.JwtHelper
 import org.joda.time.DateTime
 
 import scala.concurrent.{ ExecutionContext, Future }

@@ -2,9 +2,9 @@ package annette.core.notification.client
 
 import java.util.Properties
 
+import annette.core.akkaext.actor.CqrsResponse
 import annette.core.notification.EmailSettings
 import annette.core.notification.client.EmailClient._
-import annette.core.akkaext.actor.CqrsResponse
 import javax.mail._
 import javax.mail.internet.{ InternetAddress, MimeMessage }
 

@@ -1,12 +1,10 @@
 package annette.core.domain.property
-import java.util.UUID
-
-import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.model.{ Tenant, User }
 import akka.actor.Props
 import annette.core.akkaext.actor.{ CqrsCommand, CqrsEvent, CqrsQuery, CqrsResponse }
 import annette.core.domain.application.Application
+import annette.core.domain.language.model.Language
 import annette.core.domain.property.model._
+import annette.core.domain.tenancy.model.{ Tenant, User }
 import annette.core.utils.{ AnyValue, FilterOption, NoValue }
 
 object PropertyService {

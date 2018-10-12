@@ -1,10 +1,7 @@
 package annette.core.serializer
 
-import java.util.UUID
-
-import annette.core.domain.application._
 import annette.core.domain.application.Application._
-import annette.core.domain.application.{ ApplicationManager, ApplicationManagerState }
+import annette.core.domain.application.{ ApplicationManagerState, _ }
 import annette.core.serializer.proto.application._
 
 trait ApplicationConverters {

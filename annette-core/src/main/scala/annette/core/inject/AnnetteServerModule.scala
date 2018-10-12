@@ -1,6 +1,6 @@
 package annette.core.inject
 
-import akka.actor.{ ActorRef, ActorSystem, Props }
+import akka.actor.{ ActorRef, ActorSystem }
 import akka.util.Timeout
 import annette.core.CoreModule
 import annette.core.domain.{ CoreService, InitCoreTables }
@@ -12,8 +12,7 @@ import com.google.inject.{ AbstractModule, Provides }
 import com.typesafe.config.Config
 import javax.inject.{ Named, Singleton }
 import net.codingwell.scalaguice.ScalaModule
-import org.casbin.jcasbin.main.{ CoreEnforcer, Enforcer }
-import org.casbin.jcasbin.persist.file_adapter.FileAdapter
+import org.casbin.jcasbin.main.Enforcer
 import org.casbin.jcasbin.util.Util
 
 import scala.concurrent.ExecutionContext

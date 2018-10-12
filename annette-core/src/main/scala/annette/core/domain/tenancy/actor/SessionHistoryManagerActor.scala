@@ -3,8 +3,8 @@ package annette.core.domain.tenancy.actor
 import akka.Done
 import annette.core.akkaext.persistence.CqrsPersistentActor
 import annette.core.domain.tenancy.SessionHistoryManager
+import annette.core.domain.tenancy.SessionHistoryManager._
 import annette.core.domain.tenancy.model._
-import SessionHistoryManager._
 
 class SessionHistoryManagerActor(val initState: SessionHistoryManagerState = SessionHistoryManagerState()) extends CqrsPersistentActor[SessionHistoryManagerState] {
   def createSessionHistory(state: SessionHistoryManagerState, entry: SessionHistory): Unit = {

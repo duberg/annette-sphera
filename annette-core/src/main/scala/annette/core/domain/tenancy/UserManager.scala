@@ -2,29 +2,17 @@ package annette.core.domain.tenancy
 
 import akka.Done
 import akka.actor.{ ActorRef, Props }
-import akka.util.Timeout
-import annette.core.domain.tenancy.model.User.Id
-import annette.core.domain.tenancy.model._
-import javax.inject.{ Inject, Named, Singleton }
-
-import scala.concurrent.{ ExecutionContext, Future }
-import akka.Done
-import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
 import annette.core.AnnetteMessage
-import annette.core.akkaext.actor._
 import annette.core.akkaext.http.PageRequest
-import annette.core.domain.tenancy.model.User._
 import annette.core.domain.tenancy.actor.{ UserManagerActor, UserManagerState }
-import annette.core.domain.tenancy.model.User.Id
-import annette.core.domain.tenancy.model.{ UpdateUser, User }
+import annette.core.domain.tenancy.model.User.{ Id, _ }
+import annette.core.domain.tenancy.model.{ UpdateUser, User, _ }
 import annette.core.security.verification.VerificationBus
-import javax.inject._
+import javax.inject.{ Inject, Named, Singleton }
 
 import scala.concurrent.{ ExecutionContext, Future }
-import scala.concurrent.duration._
-import annette.core.domain.tenancy.model.User._
 
 @Singleton
 class UserManager @Inject() (@Named("CoreService") actor: ActorRef)(implicit c: ExecutionContext, t: Timeout) {

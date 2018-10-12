@@ -3,10 +3,10 @@ package annette.core.notification.actor
 import akka.actor.SupervisorStrategy.{ Escalate, Restart, Resume }
 import akka.actor.{ Actor, ActorLogging, ActorRef, OneForOneStrategy, Props }
 import akka.util.Timeout
-import annette.core.notification._
 import annette.core.akkaext.actor.ActorLifecycleHooks
-import com.typesafe.config.Config
+import annette.core.notification._
 import annette.core.security.verification.{ Verification, VerificationActor, VerificationBus }
+import com.typesafe.config.Config
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._

@@ -1,9 +1,8 @@
 package annette.core.notification.actor
 
-import annette.core.notification.actor.SmsNotificationActor._
-import annette.core.notification._
 import annette.core.akkaext.actor.CqrsState
-import com.sun.xml.internal.ws.resources.SenderMessages
+import annette.core.notification._
+import annette.core.notification.actor.SmsNotificationActor._
 
 case class SmsNotificationState(notifications: Map[Notification.Id, SmsNotificationLike]) extends CqrsState {
   def nonEmpty: Boolean = notifications.nonEmpty

@@ -1,7 +1,6 @@
 package annette.core
 
 import annette.core.domain.tenancy.model.Tenant
-import annette.core.notification.VerifyBySmsNotification
 import annette.core.notification.Notification
 
 sealed trait CoreException extends RuntimeException {

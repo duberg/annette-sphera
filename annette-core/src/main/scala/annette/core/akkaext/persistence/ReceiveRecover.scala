@@ -5,6 +5,8 @@ import java.time.{ Instant, LocalDateTime, ZoneId }
 import akka.persistence.{ RecoveryCompleted, SnapshotMetadata, SnapshotOffer }
 import annette.core.akkaext.actor.{ CqrsEvent, CqrsState }
 
+import scala.concurrent.duration._
+
 trait ReceiveRecover[A <: CqrsState] { _: CqrsPersistentActor[A] =>
   private var recoveryOpt: Option[A] = None
   private def d(timestamp: Long): String = LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault()).toString
@@ -29,5 +31,13 @@ trait ReceiveRecover[A <: CqrsState] { _: CqrsPersistentActor[A] =>
       else persist(initState) { _ => }
       log.info("Recovery completed")
       afterRecover(state)
+  }
+
+  override def postStop(): Unit = {
+    terminateOpt.foreach {
+      // Required to correctly shutdown persistence layer
+      case (x, y) => context.system.scheduler.scheduleOnce(50 milliseconds, x, y)(context.dispatcher)
+    }
+    log.info("Terminated")
   }
 }

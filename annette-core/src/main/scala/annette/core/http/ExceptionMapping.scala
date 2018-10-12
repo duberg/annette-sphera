@@ -1,6 +1,6 @@
 package annette.core.http
 
-import annette.core.{ AnnetteException, CoreException }
+import annette.core.AnnetteException
 //
 //import annette.bpm.Exception._
 //import annette.bpm.model.EntityType

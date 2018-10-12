@@ -1,7 +1,5 @@
 package annette.core.akkaext.actor
 
-import java.util.UUID
-
 import akka.actor.ActorRef
 
 trait CqrsResponse

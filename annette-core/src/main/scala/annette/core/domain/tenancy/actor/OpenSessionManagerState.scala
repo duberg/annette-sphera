@@ -2,8 +2,8 @@ package annette.core.domain.tenancy.actor
 
 import annette.core.akkaext.actor.CqrsState
 import annette.core.domain.tenancy.OpenSessionManager
+import annette.core.domain.tenancy.OpenSessionManager._
 import annette.core.domain.tenancy.model.{ OpenSession, OpenSessionUpdate }
-import OpenSessionManager._
 
 case class OpenSessionManagerState(openSessions: Map[OpenSession.Id, OpenSession] = Map.empty) extends CqrsState {
 

@@ -3,8 +3,8 @@ package annette.core.domain.property
 import annette.core.akkaext.actor.CqrsState
 import annette.core.domain.application.Application
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.model.{ Tenant, User }
 import annette.core.domain.property.model._
+import annette.core.domain.tenancy.model.{ Tenant, User }
 import annette.core.utils.{ AnyValue, FilterOption, NoValue, Value }
 
 case class PropertyState(

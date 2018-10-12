@@ -1,13 +1,11 @@
 package annette.core.domain.tenancy.actor
 
-import java.util.UUID
-
 import akka.actor.Props
-import annette.core.akkaext.http.{ Order, PageRequest }
-import annette.core.akkaext.persistence.CqrsPersistentActor
-import annette.core.domain.tenancy.model._
-import annette.core.domain.tenancy.model.Tenant._
+import annette.core.akkaext.http.PageRequest
 import annette.core.akkaext.http.Pagination._
+import annette.core.akkaext.persistence.CqrsPersistentActor
+import annette.core.domain.tenancy.model.Tenant._
+import annette.core.domain.tenancy.model._
 
 class TenantServiceActor(val initState: TenantServiceState = TenantServiceState.empty) extends CqrsPersistentActor[TenantServiceState] {
   def createTenant(state: TenantServiceState, createTenant: CreateTenant): Unit = {

@@ -1,10 +1,10 @@
 package annette.core.notification.actor
 
 import akka.actor.Props
+import annette.core.akkaext.actor._
+import annette.core.notification._
 import annette.core.notification.actor.EmailNotificationActor._
 import annette.core.notification.client.EmailClient
-import annette.core.notification._
-import annette.core.akkaext.actor._
 import annette.core.utils.Generator
 import javax.mail.AuthenticationFailedException
 

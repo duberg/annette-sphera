@@ -2,7 +2,7 @@ package annette.core.domain.tenancy
 
 import akka.actor.Props
 import annette.core.akkaext.actor.{ CqrsCommand, CqrsEvent, CqrsQuery, CqrsResponse }
-import annette.core.domain.tenancy.actor.{ LastSessionManagerActor, LastSessionManagerState }
+import annette.core.domain.tenancy.actor.LastSessionManagerActor
 import annette.core.domain.tenancy.model._
 
 object LastSessionManager {

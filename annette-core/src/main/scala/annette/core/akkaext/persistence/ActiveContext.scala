@@ -1,10 +1,12 @@
 package annette.core.akkaext.persistence
 
-import akka.persistence.PersistentActor
-import annette.core.akkaext.actor.{ CqrsCommand, CqrsEvent, CqrsMessage, CqrsState }
+import annette.core.akkaext.actor.{ CqrsCommand, CqrsEvent, CqrsState }
 
 trait ActiveContext[A <: CqrsState] extends AfterSnapshotBehavior
   with PersistBehavior[A] { _: CqrsPersistentActor[A] =>
+
+  // todo: make config
+  def snapshotInterval: Int = CqrsPersistentActor.SnapshotInterval
 
   /**
    * Поведение: Автоматическое создание снимка состояния.

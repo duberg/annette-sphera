@@ -4,11 +4,8 @@ import akka.event.LoggingAdapter
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.{ ContentType, HttpEntity, HttpResponse, MediaTypes }
 import akka.http.scaladsl.server.{ Directives, ExceptionHandler => AkkaExceptionHandler }
-import annette.core.{ AnnetteException, CoreException }
 import annette.core.json._
-import io.circe.generic.AutoDerivation
-import io.circe.generic.auto._
-import io.circe.generic._
+import annette.core.{ AnnetteException, CoreException }
 
 trait ExceptionHandler extends Directives {
   implicit def exceptionHandler(implicit log: LoggingAdapter): AkkaExceptionHandler = {

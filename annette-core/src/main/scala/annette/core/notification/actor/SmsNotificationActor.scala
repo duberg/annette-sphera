@@ -2,10 +2,10 @@ package annette.core.notification.actor
 
 import akka.actor.Props
 import akka.util.Timeout
-import annette.core.notification.client.SmsClient
-import annette.core.notification._
 import annette.core.akkaext.actor._
 import annette.core.akkaext.persistence._
+import annette.core.notification._
+import annette.core.notification.client.SmsClient
 import annette.core.utils.Generator
 
 import scala.concurrent.ExecutionContext

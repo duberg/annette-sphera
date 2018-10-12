@@ -1,7 +1,5 @@
 package annette.core.security.authorization
 
-import scala.collection.{ JavaConverters, mutable }
-
 class ParamValidationUtil {
 
 }

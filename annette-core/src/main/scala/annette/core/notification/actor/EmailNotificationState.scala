@@ -1,8 +1,8 @@
 package annette.core.notification.actor
 
-import annette.core.notification.actor.EmailNotificationActor._
-import annette.core.notification._
 import annette.core.akkaext.actor.CqrsState
+import annette.core.notification._
+import annette.core.notification.actor.EmailNotificationActor._
 
 case class EmailNotificationState(notifications: Map[Notification.Id, EmailNotificationLike]) extends CqrsState {
   def nonEmpty: Boolean = notifications.nonEmpty

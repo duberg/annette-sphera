@@ -1,16 +1,9 @@
 
 package annette.core.domain
 
-import java.net.InetSocketAddress
-
-import javax.inject._
-import com.datastax.driver.core._
-import com.outworkers.phantom.connectors.KeySpaceBuilder
 import com.typesafe.config.Config
-import slick.basic.DatabaseConfig
+import javax.inject._
 import slick.jdbc.PostgresProfile
-
-import scala.collection.JavaConverters._
 import slick.jdbc.PostgresProfile.api._
 
 @Singleton

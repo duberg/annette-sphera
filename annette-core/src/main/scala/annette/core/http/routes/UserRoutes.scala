@@ -1,33 +1,19 @@
 package annette.core.http.routes
 
-import java.time.LocalDate
-import java.util.UUID
-
 import akka.actor.ActorRef
-import akka.http.scaladsl.model.{ HttpEntity, _ }
-import akka.http.scaladsl.server.Directives.{ entity, pathPrefix, _ }
-import akka.http.scaladsl.server.{ Directive1, Directives, Route }
-import akka.http.scaladsl.settings.RoutingSettings
-import akka.pattern.ask
+import akka.http.scaladsl.model._
+import akka.http.scaladsl.server.{ Directives, Route }
+import annette.core.AnnetteException
 import annette.core.akkaext.http.PaginationDirectives
-import annette.core.security.authentication.Session
-import annette.core.{ AnnetteException, CoreModule }
-import annette.core.domain.tenancy.{ TenantService, UserManager }
-import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
-import io.circe._
-import io.circe.generic.auto._
-import io.circe.syntax._
-
-import scala.concurrent.{ ExecutionContext, Future }
 import annette.core.domain.tenancy.model._
+import annette.core.domain.tenancy.{ TenantService, UserManager }
 import annette.core.security.SecurityDirectives
-import annette.core.security.authorization.AuthorizationActor.ValidateAuthorizedUser
-import annette.core.security.authorization.AuthrReqUser
-
-import scala.util.{ Failure, Success }
-import annette.core.utils.Generator
+import annette.core.security.authentication.Session
 import com.typesafe.config.Config
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
+
+import scala.concurrent.{ ExecutionContext, Future }
+import scala.util.{ Failure, Success }
 
 trait UserRoutes extends Directives with PaginationDirectives {
   implicit val c: ExecutionContext
@@ -38,8 +24,8 @@ trait UserRoutes extends Directives with PaginationDirectives {
   val config: Config
 
   import FailFastCirceSupport._
-  import io.circe.generic.auto._
   import annetteSecurityDirectives._
+  import io.circe.generic.auto._
 
   //
   //  private val userUpdate = (path("user" / "update" / JavaUUID) & post & auth & entity(as[UpdateUser])) {

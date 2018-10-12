@@ -1,20 +1,18 @@
 package annette.core.domain
 
-import javax.inject.{ Named, Singleton }
 import akka.actor.{ Actor, ActorLogging, ActorRef, Props }
 import akka.util.Timeout
 import annette.core.domain.application._
 import annette.core.domain.language.LanguageService
-import annette.core.domain.tenancy.{ LastSessionManager, OpenSessionManager, SessionHistoryManager, UserManager }
-import annette.core.notification.actor.NotificationManagerActor
-import com.typesafe.config.Config
+import annette.core.domain.tenancy.actor.TenantServiceActor
 import annette.core.domain.tenancy.model.{ Tenant, User }
+import annette.core.domain.tenancy.{ LastSessionManager, OpenSessionManager, SessionHistoryManager, UserManager }
+import annette.core.notification.actor.{ NotificationManagerActor, _ }
+import annette.core.security.verification.{ Verification, VerificationBus }
+import com.typesafe.config.Config
+import javax.inject.{ Named, Singleton }
 
 import scala.concurrent.ExecutionContext
-import annette.core.domain.CoreService._
-import annette.core.domain.tenancy.actor.TenantServiceActor
-import annette.core.notification.actor._
-import annette.core.security.verification.{ Verification, VerificationBus }
 
 @Singleton
 @Named("CoreService")

@@ -7,18 +7,16 @@ import akka.actor.{ Actor, ActorLogging, Props }
 import akka.event.LoggingReceive
 import akka.routing.FromConfig
 import akka.util.Timeout
-import annette.core.domain.application.ApplicationManager
-import annette.core.domain.application._
+import annette.core.domain.application.{ ApplicationManager, _ }
 import annette.core.domain.language.LanguageManager
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.{ SessionManager, TenantService, UserManager }
 import annette.core.domain.tenancy.model.{ Tenant, TenantData }
+import annette.core.domain.tenancy.{ SessionManager, TenantService, UserManager }
+import annette.core.security.authentication.AuthenticationService._
 import com.typesafe.config.Config
 
-import scala.util.Try
-import AuthenticationService._
-
 import scala.concurrent.ExecutionContext
+import scala.util.Try
 
 class AuthenticationService(
   sessionManager: SessionManager,

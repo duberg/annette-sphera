@@ -2,7 +2,6 @@ package annette.core.domain.tenancy.actor
 
 import akka.Done
 import akka.actor.ActorRef
-import akka.pattern.ask
 import akka.util.Timeout
 import annette.core.akkaext.persistence.CqrsPersistentActor
 import annette.core.domain.application.Application

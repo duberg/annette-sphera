@@ -1,7 +1,6 @@
 package annette.core.security.verification
 
 import annette.core.akkaext.actor.CqrsState
-import annette.core.notification._
 import annette.core.security.verification.Verification._
 import annette.core.utils.Generator
 

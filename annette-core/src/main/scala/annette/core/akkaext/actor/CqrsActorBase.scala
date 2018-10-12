@@ -1,14 +1,8 @@
 package annette.core.akkaext.actor
 
-import akka.actor.{ Actor, ActorLogging, ActorRef, Props }
+import akka.actor.{ Actor, ActorLogging, ActorRef }
 import akka.pattern.{ AskSupport, PipeToSupport }
-import akka.util.Timeout
-import annette.core.akkaext.actor.CqrsQuery.{ GetState, Publish }
-import annette.core.akkaext.actor.CqrsResponse.Success
 import annette.core.utils.Generator
-
-import scala.concurrent.{ ExecutionContext, Future }
-import scala.reflect.ClassTag
 
 /**
  * Functional actor

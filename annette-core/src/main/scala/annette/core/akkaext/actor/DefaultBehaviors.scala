@@ -4,7 +4,7 @@ import akka.actor.{ Actor, ActorRef, Props }
 import akka.pattern.{ AskSupport, PipeToSupport }
 import akka.util.Timeout
 import annette.core.akkaext.actor.CqrsQuery._
-import annette.core.akkaext.actor.CqrsResponse.{ ChildOpt, Pong, Success, Terminated }
+import annette.core.akkaext.actor.CqrsResponse.{ Pong, Success, Terminated }
 
 import scala.concurrent.{ ExecutionContext, Future }
 

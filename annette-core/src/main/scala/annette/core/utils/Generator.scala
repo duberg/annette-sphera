@@ -3,8 +3,9 @@ package annette.core.utils
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicInteger
 
+import annette.core.utils.Generator._
+
 import scala.util.Random
-import Generator._
 
 trait Generator {
   def generateId: String = s"i$generateInt"

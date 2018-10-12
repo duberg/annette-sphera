@@ -3,14 +3,13 @@ package annette.core.http.routes
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.{ Directives, Route }
 import akka.util.Timeout
-import annette.core.json.{ JsonNotification, JsonVerification }
+import annette.core.json.{ JsonNotification, _ }
 import annette.core.notification._
+import annette.core.security.SecurityDirectives
+import annette.core.security.verification.Verification
 import annette.core.utils.Generator
 
 import scala.concurrent.ExecutionContext
-import annette.core.json._
-import annette.core.security.SecurityDirectives
-import annette.core.security.verification.Verification
 
 trait NotificationRoutes extends Directives with Generator {
   implicit val c: ExecutionContext

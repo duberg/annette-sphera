@@ -1,12 +1,9 @@
 package annette.core.domain.tenancy.actor
 
-import java.time.ZonedDateTime
-
-import annette.core.akkaext.actor.{ CqrsEvent, CqrsState }
-import annette.core.domain.application.Application
+import annette.core.akkaext.actor.CqrsState
 import annette.core.domain.tenancy._
-import annette.core.domain.tenancy.model._
 import annette.core.domain.tenancy.model.User._
+import annette.core.domain.tenancy.model._
 import org.mindrot.jbcrypt.BCrypt
 
 case class UserManagerState(

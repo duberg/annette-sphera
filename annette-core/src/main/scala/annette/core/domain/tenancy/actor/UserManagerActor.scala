@@ -5,20 +5,16 @@ import java.util.UUID
 
 import akka.Done
 import annette.core.AnnetteMessageException
+import annette.core.akkaext.http.PageRequest
 import annette.core.akkaext.http.Pagination.paginate
-import annette.core.akkaext.http.{ Order, PageRequest }
 import annette.core.akkaext.persistence.CqrsPersistentActor
-import annette.core.domain.tenancy._
-import annette.core.domain.tenancy.model._
+import annette.core.domain.tenancy.UserNotFoundMsg
 import annette.core.domain.tenancy.model.User._
-import annette.core.domain.tenancy.{ UserManager, UserNotFoundMsg }
+import annette.core.domain.tenancy.model._
 import annette.core.security.verification._
-import com.outworkers.phantom.builder.QueryBuilder.Create
-import monocle.macros.GenLens
 import org.mindrot.jbcrypt.BCrypt
 
 import scala.util.Try
-import shapeless._
 
 class UserManagerActor(val verificationBus: VerificationBus, val initState: UserManagerState = UserManagerState()) extends CqrsPersistentActor[UserManagerState] {
   def processFailure: PartialFunction[Throwable, Unit] = {
