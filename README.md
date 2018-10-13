@@ -55,6 +55,9 @@ sbt ~annette-sphera-server/reStart
   }
 ```
 
+### Users edit dialog:
+![users edit](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_useredit.png)
+
 ### Tenants page with pagination:
 ![tenants page](https://raw.githubusercontent.com/duberg/annette-sphera/master/screenshot/s_tenants.png)
 

@@ -1,27 +1,87 @@
 import { BaseModel } from './_base.model';
 
 export class UserModel extends BaseModel {
-	id: string;
-	firstName: string;
-	lastName: string;
-	email: string;
-	userName: string;
-	gender: string;
-	status: number; // 0 = Active | 1 = Suspended | Pending = 2
-	dateOfBbirth: string;
-	dob: Date;
-	ipAddress: string;
-	type: number; // 0 = Business | 1 = Individual
+	id?: string;
+	username?: string;
+	displayName?: string;
+	firstName?: string;
+	lastName?: string;
+	middleName?: string;
+	gender?: string;
+	email?: string;
+	url?: string;
+	description?: string;
+	phone?: string;
+	language?: string;
+	registeredDate?: string;
+	roles?: {};
+	password?: string;
+	avatarUrl?: string;
+	sphere?: string;
+	company?: string;
+	position?: string;
+	rank?: string;
+	additionalTel?: string;
+	additionalMail?: string;
+	meta?: {};
+	status?: number; // 0 = Active | 1 = Suspended | Pending = 2
+
+	//: string;
+	dob?: Date;
+	type?: number; // 0 = Business | 1 = Individual
+	dateOfBbirth?: string;
 
 	clear() {
-		this.dob = new Date();
+		//this.dob = new Date();
+		this.username = '';
+		this.displayName = '';
 		this.firstName = '';
 		this.lastName = '';
+		this.middleName = '';
+		this.gender = 'Male';
 		this.email = '';
-		this.userName = '';
-		this.gender = 'Female';
-		this.ipAddress = '';
-		this.type = 1;
+		this.url = '';
+		this.description = '';
+		this.phone = '';
+		this.language = '';
+		this.registeredDate = '';
+		this.roles = {};
+		this.password = '';
+		this.avatarUrl = '';
+		this.sphere = '';
+		this.company = '';
+		this.position = '';
+		this.rank = '';
+		this.additionalTel = '';
+		this.additionalMail = '';
+		this.meta = {};
 		this.status = 1;
 	}
+}
+
+export interface UpdateUser extends BaseModel {
+	id: string;
+	username?: string;
+	displayName?: string;
+	firstName?: string;
+	lastName?: string;
+	middleName?: string;
+	gender?: string;
+	email?: string;
+	url?: string;
+	description?: string;
+	phone?: string;
+	language?: string;
+	registeredDate?: string;
+	roles?: {};
+	password?: string;
+	avatarUrl?: string;
+	sphere?: string;
+	company?: string;
+	position?: string;
+	rank?: string;
+	additionalTel?: string;
+	additionalMail?: string;
+	meta?: {};
+	status?: number;
 }

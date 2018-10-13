@@ -41,27 +41,24 @@ case class UserManagerState(
     //if (users.get(createUser.id).isDefined) throw new UserAlreadyExists(createUser.id)
   }
 
-  def validateUpdate(x: UpdateUser): User = {
-    users
-      .get(x.id)
-      .map {
-        user =>
-          // проверяем что email уже существует
-          if (x.email.flatten.exists(email => emailIndex.get(email.trim.toLowerCase).exists(_ != x.id))) throw new EmailAlreadyExists(x.email.get.get)
-          // проверяем что phone уже существует
-          if (x.phone.flatten.exists(phone => phoneIndex.get(phone.trim.toLowerCase).exists(_ != x.id))) throw new PhoneAlreadyExists(x.phone.get.get)
-          // проверяем что login уже существует
-          if (x.username.flatten.exists(username => usernameIndex.get(username.trim.toLowerCase).exists(_ != x.id))) throw new LoginAlreadyExists(x.username.get.get)
+  def validateUpdate(x: UpdateUser): User = users.get(x.id).fold(throw new UserNotFound(x.id)) { user =>
+    val emailOpt = x.email.flatten
+    val phoneOpt = x.phone.flatten
+    val usernameOpt = x.username
+    // проверяем что email уже существует
+    if (emailOpt.exists(email => emailIndex.get(email.trim.toLowerCase).exists(_ != x.id))) throw new EmailAlreadyExists(x.email.get.get)
+    // проверяем что phone уже существует
+    if (phoneOpt.exists(phone => phoneIndex.get(phone.trim.toLowerCase).exists(_ != x.id))) throw new PhoneAlreadyExists(x.phone.get.get)
+    // проверяем что login уже существует
+    if (usernameOpt.flatten.exists(username => usernameIndex.get(username.trim.toLowerCase).exists(_ != x.id))) throw new LoginAlreadyExists(x.username.get.get)
 
-          // проверяем наличие mail'а, телефона или логина
-          val email = x.email.getOrElse(user.email)
-          val phone = x.phone.getOrElse(user.phone)
-          val username = x.username.getOrElse(user.username)
-          //println(s"Validate Update: entry = $entry, user = $user email = $email, phone = $phone, login = $login")
-          if (email.isEmpty && phone.isEmpty && username.isEmpty) throw new LoginRequired
-          user
-      }
-      .getOrElse(throw new UserNotFound(x.id))
+    // проверяем наличие mail'а, телефона или логина
+    val email = emailOpt.orElse(user.email)
+    val phone = phoneOpt.orElse(user.phone)
+    val username = usernameOpt.flatten.orElse(user.username)
+    println(s"Validate Update: update = $x, user = $user email = $email, phone = $phone, username = $username")
+    if (email.isEmpty && phone.isEmpty && username.isEmpty) throw new LoginRequired
+    user
   }
 
   def updateUser(x: UpdateUser): UserManagerState = {
@@ -95,13 +92,27 @@ case class UserManagerState(
     }.getOrElse(usernameIndex) // ничего не меняем
 
     val updated = user.copy(
-      username = x.username.getOrElse(user.username),
+      username = x.username.flatten.orElse(user.username),
       firstName = x.firstName.getOrElse(user.firstName),
       lastName = x.lastName.getOrElse(user.lastName),
-      middleName = x.middleName.getOrElse(user.middleName),
-      email = x.email.getOrElse(user.email),
-      phone = x.phone.getOrElse(user.phone),
-      language = x.language.getOrElse(user.language))
+      middleName = x.middleName.flatten.orElse(user.middleName),
+      gender = x.gender.flatten.orElse(user.gender),
+      email = x.email.flatten.orElse(user.email),
+      url = x.url.flatten.orElse(user.url),
+      description = x.description.flatten.orElse(user.description),
+      phone = x.phone.flatten.orElse(user.phone),
+      language = x.language.flatten.orElse(user.language),
+      roles = x.roles.getOrElse(user.roles),
+      // password
+      avatarUrl = x.avatarUrl.flatten.orElse(user.avatarUrl),
+      sphere = x.sphere.flatten.orElse(user.sphere),
+      company = x.company.flatten.orElse(user.company),
+      position = x.position.flatten.orElse(user.position),
+      rank = x.rank.flatten.orElse(user.rank),
+      additionalTel = x.additionalTel.flatten.orElse(user.additionalTel),
+      additionalMail = x.additionalMail.flatten.orElse(user.additionalMail),
+      meta = x.meta.getOrElse(user.meta),
+      status = x.status.getOrElse(user.status))
 
     copy(
       users = users + (x.id -> updated),

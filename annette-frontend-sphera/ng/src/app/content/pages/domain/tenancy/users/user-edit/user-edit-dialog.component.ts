@@ -1,9 +1,10 @@
-import { Component, OnInit, Inject, ChangeDetectionStrategy } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TypesUtilsService } from '../../_core/utils/types-utils.service';
-import { UserModel } from '../../_core/user.model';
+import {Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {TypesUtilsService} from '../../_core/utils/types-utils.service';
+import {UpdateUser, UserModel} from '../../_core/user.model';
 import {UsersService} from "../../../../../../core/services/users.service";
+import {addedDiff, updatedDiff, diff} from 'deep-object-diff';
 
 @Component({
 	selector: 'm-customers-edit-dialog',
@@ -25,7 +26,6 @@ export class UserEditDialogComponent implements OnInit {
 
 	/** LOAD DATA */
 	ngOnInit() {
-		console.log(this.data.user);
 		this.user = this.data.user;
 		this.createForm();
 
@@ -39,16 +39,37 @@ export class UserEditDialogComponent implements OnInit {
 	createForm() {
 		this.user.dob = this.typesUtilsService.getDateFromString(this.user.dateOfBbirth);
 		this.customerForm = this.fb.group({
+			username: [this.user.username, Validators.nullValidator],
+			displayName: [this.user.displayName, Validators.nullValidator],
 			firstName: [this.user.firstName, Validators.required],
 			lastName: [this.user.lastName, Validators.required],
-			email: [
-				this.user.email,
-				[Validators.required, Validators.email]
-			],
-			dob: [this.user.dob, Validators.nullValidator],
-			userName: [this.user.userName, Validators.required],
-			gender: [this.user.gender, Validators.required],
-			ipAddress: [this.user.ipAddress, Validators.required],
+			middleName: [this.user.middleName, Validators.nullValidator],
+			gender: [this.user.gender, Validators.nullValidator],
+			email: [this.user.email, [Validators.required, Validators.email]],
+			url: [this.user.url, Validators.nullValidator],
+			description: [this.user.description, Validators.nullValidator],
+			phone: [this.user.phone, Validators.nullValidator],
+			language: [this.user.language, Validators.nullValidator],
+			password: [this.user.password, Validators.nullValidator],
+			avatarUrl: [this.user.avatarUrl, Validators.nullValidator],
+			sphere: [this.user.sphere, Validators.nullValidator],
+			company: [this.user.company, Validators.nullValidator],
+			position: [this.user.position, Validators.nullValidator],
+			status: [this.user.status.toString(), Validators.required]
+
+		// user.registeredDate = this.user.registeredDate;
+		// user.roles = this.user.roles = [];
+		// user.password = this.user.password;
+		// user.avatarUrl = this.user.avatarUrl;
+		// user.sphere = this.user.sphere;
+		// user.company = this.user.company;
+		// user.position = this.user.position;
+		// user.rank = this.user.rank;
+		// user.additionalTel = this.user.additionalTel;
+		// user.additionalMail = this.user.additionalMail;
+		// user.meta = this.user.meta;
+		// user.status = this.user.status;
+			//ipAddress: [this.user.ipAddress, Validators.required],
 			//type: [this.user.type.toString(), Validators.required]
 		});
 	}
@@ -56,12 +77,12 @@ export class UserEditDialogComponent implements OnInit {
 	/** UI */
 	getTitle(): string {
 		if (this.user.id > '') {
-			return `Edit customer '${this.user.firstName} ${
+			return `Edit user '${this.user.firstName} ${
 				this.user.lastName
 			}'`;
 		}
 
-		return 'New customer';
+		return 'New user';
 	}
 
 	isControlInvalid(controlName: string): boolean {
@@ -71,20 +92,36 @@ export class UserEditDialogComponent implements OnInit {
 	}
 
 	/** ACTIONS */
-	prepareCustomer(): UserModel {
+	prepareUser(): UserModel {
 		const controls = this.customerForm.controls;
-		const _customer = new UserModel();
-		_customer.id = this.user.id;
-		_customer.dateOfBbirth = this.typesUtilsService.dateCustomFormat(controls['dob'].value);
-		_customer.firstName = controls['firstName'].value;
-		_customer.lastName = controls['lastName'].value;
-		_customer.email = controls['email'].value;
-		_customer.userName = controls['userName'].value;
-		_customer.gender = controls['gender'].value;
-		_customer.ipAddress = controls['ipAddress'].value;
-		_customer.type = +controls['type'].value;
-		_customer.status = this.user.status;
-		return _customer;
+		const _user = new UserModel();
+		_user.id = this.user.id;
+		_user.username = controls['username'].value;
+		_user.displayName = controls['displayName'].value;
+		_user.firstName = controls['firstName'].value;
+		_user.lastName = controls['lastName'].value;
+		_user.middleName = controls['middleName'].value;
+		_user.gender = controls['gender'].value;
+		_user.email = controls['email'].value;
+		_user.url = controls['url'].value;
+		_user.description = controls['description'].value;
+		_user.phone = controls['phone'].value;
+		_user.language = this.user.language;
+		_user.registeredDate = this.user.registeredDate;
+		_user.roles = this.user.roles;
+		_user.password = controls['password'].value;
+		_user.avatarUrl = controls['avatarUrl'].value;
+		_user.sphere = controls['sphere'].value;
+		_user.company = controls['company'].value;
+		_user.position = controls['position'].value;
+		_user.rank = this.user.rank;
+		_user.additionalTel = this.user.additionalTel;
+		_user.additionalMail = this.user.additionalMail;
+		_user.meta = this.user.meta;
+		_user.status = controls['status'].value;
+		// _user.dateOfBbirth = this.typesUtilsService.dateCustomFormat(controls['dob'].value);
+
+		return _user;
 	}
 
 	onSubmit() {
@@ -101,35 +138,34 @@ export class UserEditDialogComponent implements OnInit {
 			return;
 		}
 
-		const editedCustomer = this.prepareCustomer();
-		if (editedCustomer.id > '0') {
-			this.updateCustomer(editedCustomer);
-		} else {
-			this.createCustomer(editedCustomer);
-		}
+		const x = this.prepareUser();
+
+		if (x.id > '0') {
+			var updatedUser: any = diff(this.user, x);
+			updatedUser.id = this.user.id;
+			console.log(updatedUser);
+			this.updateUser(updatedUser as UpdateUser);
+		} else this.createUser(x);
 	}
 
-	updateCustomer(_customer: UserModel) {
+	updateUser(x: UpdateUser) {
 		this.loadingAfterSubmit = true;
 		this.viewLoading = true;
-		this.customerService.updateCustomer(_customer).subscribe(res => {
-			/* Server loading imitation. Remove this on real code */
-			this.viewLoading = false;
-			this.viewLoading = false;
+		this.customerService.updateUser(x).subscribe(res => {
 			this.dialogRef.close({
-				_customer,
+				_user: x,
 				isEdit: true
 			});
 		});
 	}
 
-	createCustomer(_customer: UserModel) {
+	createUser(_customer: UserModel) {
 		this.loadingAfterSubmit = true;
 		this.viewLoading = true;
 		this.customerService.createCustomer(_customer).subscribe(res => {
 			this.viewLoading = false;
 			this.dialogRef.close({
-				_customer,
+				_user: _customer,
 				isEdit: false
 			});
 		});

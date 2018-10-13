@@ -3,12 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { mergeMap, map, flatMap, tap } from 'rxjs/operators';
 import {environment} from "../../../environments/environment";
-import {UserModel} from "../../content/pages/domain/tenancy/_core/user.model";
+import {UpdateUser, UserModel} from "../../content/pages/domain/tenancy/_core/user.model";
 import {HttpUtilsService} from "../../content/pages/domain/tenancy/_core/utils/http-utils.service";
 import {QueryParamsModel} from "../../content/pages/domain/tenancy/_core/query-models/query-params.model";
 import {QueryResultsModel} from "../../content/pages/domain/tenancy/_core/query-models/query-results.model";
 
-const API_CUSTOMERS_URL = `${environment.server_addr}/api/users`;
+const API_USERS_URL = `${environment.server_addr}/api/users`;
 
 @Injectable()
 export class UsersService {
@@ -17,50 +17,51 @@ export class UsersService {
 	// CREATE =>  POST: add a new customer to the server
 	createCustomer(customer: UserModel): Observable<UserModel> {
 		return this.httpUtils.getHTTPHeader().pipe(flatMap(headers => {
-			return this.http.post<UserModel>(API_CUSTOMERS_URL, customer, headers);
+			return this.http.post<UserModel>(API_USERS_URL, customer, headers);
 		}));
 	}
 
 	// READ
 	getAllCustomers(): Observable<QueryResultsModel> {
-		return this.http.get<QueryResultsModel>(API_CUSTOMERS_URL);
+		return this.http.get<QueryResultsModel>(API_USERS_URL);
 	}
 
 	getCustomerById(customerId: number): Observable<UserModel> {
-		return this.http.get<UserModel>(API_CUSTOMERS_URL + `/${customerId}`);
+		return this.http.get<UserModel>(API_USERS_URL + `/${customerId}`);
 	}
 
 	// Method from server should return QueryResultsModel(any[], totalsCount: number)
-	findCustomers(queryParams: QueryParamsModel): Observable<QueryResultsModel> {
+	listUsers(queryParams: QueryParamsModel): Observable<QueryResultsModel> {
 		const params = this.httpUtils.getFindHTTPParams(queryParams);
-		return this.http.get<QueryResultsModel>(API_CUSTOMERS_URL, { params: params })
+		return this.http.get<QueryResultsModel>(API_USERS_URL, { params: params })
 		// 	.pipe(
 		// 	map(res => new QueryResultsModel(res.items, res.totalCount))
 		// );
 	}
 
 	// UPDATE => PUT: update the customer on the server
-	updateCustomer(customer: UserModel): Observable<any> {
-		return of('')
-		//return this.http.put(API_CUSTOMERS_URL, customer, this.httpUtils.getHTTPHeader());
+	updateUser(user: UpdateUser): Observable<any> {
+		const url = `${API_USERS_URL}/${user.id}`;
+		return this.http.post(url, user);
 	}
 
 	// UPDATE Status
 	// Comment this when you start work with real server
 	// This code imitates server calls
 	updateStatusForCustomer(customers: UserModel[], status: number): Observable<any> {
-		const tasks$ = [];
-		for (let i = 0; i < customers.length; i++) {
-			const _customer = customers[i];
-			_customer.status = status;
-			tasks$.push(this.updateCustomer(_customer));
-		}
-		return forkJoin(tasks$);
+		// const tasks$ = [];
+		// for (let i = 0; i < customers.length; i++) {
+		// 	const _user = customers[i];
+		// 	_user.status = status;
+		// 	tasks$.push(this.updateUser(_user));
+		// }
+		// return forkJoin(tasks$);
+		return of('');
 	}
 
 	// DELETE => delete the customer from the server
 	deleteCustomer(customerId: string): Observable<any> {
-		const url = `${API_CUSTOMERS_URL}/${customerId}`;
+		const url = `${API_USERS_URL}/${customerId}`;
 		return this.http.delete(url);
 	}
 

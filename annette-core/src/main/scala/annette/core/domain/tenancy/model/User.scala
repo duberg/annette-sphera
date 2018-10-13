@@ -53,6 +53,8 @@ case class User(
   meta: Map[String, String],
   status: Int)
 
+// todo: add dateOfBbirth
+
 case class SignUpUser(
   email: String,
   firstName: String,

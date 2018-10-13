@@ -20,100 +20,279 @@
 				Oh snap! Change a few things up and try submitting again.
 			</m-alert>
 
-			<div class="form-group m-form__group row">
-				<div class="col-lg-4 m--margin-bottom-20-mobile">
-					<mat-form-field class="mat-form-field-fluid">
-						<input matInput placeholder="Enter First Name" formControlName="firstName" />
-						<mat-error>First Name is
-							<strong>required</strong>
-						</mat-error>
-						<mat-hint align="start">Please enter
-							<strong>First Name</strong>
-						</mat-hint>
-					</mat-form-field>
-				</div>
-				<div class="col-lg-4 m--margin-bottom-20-mobile">
-					<mat-form-field class="mat-form-field-fluid">
-						<input matInput placeholder="Enter Last Name" formControlName="lastName" />
-						<mat-error>Last Name is
-							<strong>required</strong>
-						</mat-error>
-						<mat-hint align="start">Please enter
-							<strong>Last Name</strong>
-						</mat-hint>
-					</mat-form-field>
-				</div>
-				<div class="col-lg-4 m--margin-bottom-20-mobile">
-					<mat-form-field class="mat-form-field-fluid">
-						<input matInput placeholder="Enter Login" formControlName="userName" />
-						<mat-error>Login is
-							<strong>required</strong>
-						</mat-error>
-						<mat-hint align="start">Please enter
-							<strong>Login</strong>
-						</mat-hint>
-					</mat-form-field>
-				</div>
-			</div>
-			<div class="m-separator m-separator--dashed"></div>
-			<div class="form-group m-form__group row">
-				<div class="col-lg-4 m--margin-bottom-20-mobile">
-					<mat-form-field class="mat-form-field-fluid">
-						<input type="email" matInput placeholder="Enter Email" formControlName="email" />
-						<mat-error>Email is
-							<strong>required</strong>
-						</mat-error>
-						<mat-hint align="start">Please enter
-							<strong>Email</strong>
-						</mat-hint>
-					</mat-form-field>
-				</div>
-				<div class="col-lg-4 m--margin-bottom-20-mobile">
-					<mat-form-field class="mat-form-field-fluid">
-						<input matInput [matDatepicker]="picker" placeholder="Choose a Date of Birth" formControlName="dob" />
-						<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-						<mat-datepicker #picker></mat-datepicker>
-						<mat-hint align="start">Please enter
-							<strong>Date of Birth</strong> in 'mm/dd/yyyy' format</mat-hint>
-					</mat-form-field>
-				</div>
-				<div class="col-lg-4 m--margin-bottom-20-mobile">
-					<mat-form-field class="mat-form-field-fluid">
-						<input type="email" matInput placeholder="Enter IP Address" formControlName="ipAddress" />
-						<mat-error>IP Address
-							<strong>required</strong>
-						</mat-error>
-						<mat-hint align="start">We'll never share customer
-							<strong>IP Address</strong> with anyone else</mat-hint>
-					</mat-form-field>
-				</div>
-			</div>
-			<div class="m-separator m-separator--dashed"></div>
-			<div class="form-group m-form__group row">
-				<div class="col-lg-4 m--margin-bottom-20-mobile">
-					<mat-form-field class="mat-form-field-fluid">
-						<mat-select placeholder="Gender" formControlName="gender">
-							<mat-option value="Female">Female</mat-option>
-							<mat-option value="Male">Male</mat-option>
-						</mat-select>
-						<mat-hint align="start">
-							<strong>Gender</strong>
-						</mat-hint>
-					</mat-form-field>
-				</div>
-				<div class="col-lg-4 m--margin-bottom-20-mobile">
-					<mat-form-field class="mat-form-field-fluid">
-						<mat-select placeholder="Type" formControlName="type">
-							<mat-option value="0">Business</mat-option>
-							<mat-option value="1">Individual</mat-option>
-						</mat-select>
-						<mat-hint align="start">
-							<strong>Account Type</strong>
-						</mat-hint>
-					</mat-form-field>
-				</div>
-			</div>
+					<mat-vertical-stepper>
+						<mat-step label="Basic user information">
+
+							<!-- from group 1 -->
+							<div class="form-group m-form__group row">
+								<div class="col-lg-4 m--margin-bottom-20-mobile">
+									<mat-form-field class="mat-form-field-fluid">
+										<input matInput placeholder="Enter First Name" formControlName="firstName" />
+										<mat-error>First Name is
+											<strong>required</strong>
+										</mat-error>
+										<mat-hint align="start">Please enter
+											<strong>First Name</strong>
+										</mat-hint>
+									</mat-form-field>
+								</div>
+								<div class="col-lg-4 m--margin-bottom-20-mobile">
+									<mat-form-field class="mat-form-field-fluid">
+										<input matInput placeholder="Enter Last Name" formControlName="lastName" />
+										<mat-error>Last Name is
+											<strong>required</strong>
+										</mat-error>
+										<mat-hint align="start">Please enter
+											<strong>Last Name</strong>
+										</mat-hint>
+									</mat-form-field>
+								</div>
+								<div class="col-lg-4 m--margin-bottom-20-mobile">
+									<mat-form-field class="mat-form-field-fluid">
+										<input matInput placeholder="Enter Middle Name" formControlName="middleName" />
+										<mat-error>Middle Name is
+											<strong>required</strong>
+										</mat-error>
+										<mat-hint align="start">Please enter
+											<strong>Middle Name</strong>
+										</mat-hint>
+									</mat-form-field>
+								</div>
+							</div>
+
+							<div class="m-separator m-separator--dashed"></div>
+
+							<!-- from group 2 -->
+							<div class="form-group m-form__group row">
+								<div class="col-lg-4 m--margin-bottom-20-mobile">
+									<mat-form-field class="mat-form-field-fluid">
+										<input matInput placeholder="Enter Username" formControlName="username" />
+										<mat-error>Username is
+											<strong>required</strong>
+										</mat-error>
+										<mat-hint align="start">Please enter
+											<strong>Username</strong>
+										</mat-hint>
+									</mat-form-field>
+								</div>
+								<div class="col-lg-4 m--margin-bottom-20-mobile">
+									<mat-form-field class="mat-form-field-fluid">
+										<input matInput placeholder="Enter Display Name" formControlName="displayName" />
+										<mat-error>Display Name is
+											<strong>required</strong>
+										</mat-error>
+										<mat-hint align="start">Please enter
+											<strong>Display Name</strong>
+										</mat-hint>
+									</mat-form-field>
+								</div>
+								<div class="col-lg-4 m--margin-bottom-20-mobile">
+									<mat-form-field class="mat-form-field-fluid">
+										<mat-select placeholder="Gender" formControlName="gender">
+											<mat-option value="Female">Female</mat-option>
+											<mat-option value="Male">Male</mat-option>
+										</mat-select>
+										<mat-hint align="start">
+											<strong>Gender</strong>
+										</mat-hint>
+									</mat-form-field>
+								</div>
+							</div>
+
+
+						</mat-step>
+
+						<mat-step label="Additional user info">
+
+
+							<!-- from group 3 -->
+							<div class="form-group m-form__group row">
+								<div class="col-lg-4 m--margin-bottom-20-mobile">
+									<mat-form-field class="mat-form-field-fluid">
+										<input type="email" matInput placeholder="Enter Email" formControlName="email" />
+										<mat-error>Email is
+											<strong>required</strong>
+										</mat-error>
+										<mat-hint align="start">Please enter
+											<strong>Email</strong>
+										</mat-hint>
+									</mat-form-field>
+								</div>
+								<div class="col-lg-4 m--margin-bottom-20-mobile">
+									<mat-form-field class="mat-form-field-fluid">
+										<input matInput placeholder="Enter Phone" formControlName="phone" />
+										<mat-error>Phone is
+											<strong>required</strong>
+										</mat-error>
+										<mat-hint align="start">Please enter
+											<strong>Phone</strong>
+										</mat-hint>
+									</mat-form-field>
+								</div>
+							</div>
+
+							<div class="m-separator m-separator--dashed"></div>
+
+
+							<!-- from group 4 -->
+							<div class="form-group m-form__group row">
+								<div class="col-lg-4 m--margin-bottom-20-mobile">
+									<mat-form-field class="mat-form-field-fluid">
+										<input type="description" matInput placeholder="Enter Description" formControlName="description" />
+										<mat-error>Description is
+											<strong>required</strong>
+										</mat-error>
+										<mat-hint align="start">Please enter
+											<strong>Description</strong>
+										</mat-hint>
+									</mat-form-field>
+								</div>
+								<div class="col-lg-4 m--margin-bottom-20-mobile">
+									<mat-form-field class="mat-form-field-fluid">
+										<input type="url" matInput placeholder="Enter Url" formControlName="url" />
+										<mat-error>Url is
+											<strong>required</strong>
+										</mat-error>
+										<mat-hint align="start">Please enter
+											<strong>Url</strong>
+										</mat-hint>
+									</mat-form-field>
+								</div>
+								<div class="col-lg-4 m--margin-bottom-20-mobile">
+									<mat-form-field class="mat-form-field-fluid">
+										<input type="url" matInput placeholder="Enter Avatar Url" formControlName="avatarUrl" />
+										<mat-error>Avatar Url is
+											<strong>required</strong>
+										</mat-error>
+										<mat-hint align="start">Please enter
+											<strong>Avatar Url</strong>
+										</mat-hint>
+									</mat-form-field>
+								</div>
+							</div>
+
+							<div class="m-separator m-separator--dashed"></div>
+
+							<!-- from group 6 -->
+							<div class="form-group m-form__group row">
+								<div class="col-lg-4 m--margin-bottom-20-mobile">
+									<mat-form-field class="mat-form-field-fluid">
+										<mat-select placeholder="Enter Status" formControlName="status">
+											<mat-option value="0">Deactivated</mat-option>
+											<mat-option value="1">Activated</mat-option>
+											<mat-option value="2">Pending</mat-option>
+										</mat-select>
+										<mat-hint align="start">
+											<strong>Account Status</strong>
+										</mat-hint>
+									</mat-form-field>
+								</div>
+							</div>
+						</mat-step>
+
+						<mat-step label="Company info">
+							<!-- from group 5 -->
+							<div class="form-group m-form__group row">
+								<div class="col-lg-4 m--margin-bottom-20-mobile">
+									<mat-form-field class="mat-form-field-fluid">
+										<input matInput placeholder="Enter Sphere" formControlName="sphere" />
+										<mat-error>Sphere is
+											<strong>required</strong>
+										</mat-error>
+										<mat-hint align="start">Please enter
+											<strong>Sphere</strong>
+										</mat-hint>
+									</mat-form-field>
+								</div>
+								<div class="col-lg-4 m--margin-bottom-20-mobile">
+									<mat-form-field class="mat-form-field-fluid">
+										<input matInput placeholder="Enter Company" formControlName="company" />
+										<mat-error>Company is
+											<strong>required</strong>
+										</mat-error>
+										<mat-hint align="start">Please enter
+											<strong>Company</strong>
+										</mat-hint>
+									</mat-form-field>
+								</div>
+								<div class="col-lg-4 m--margin-bottom-20-mobile">
+									<mat-form-field class="mat-form-field-fluid">
+										<input matInput placeholder="Enter Position" formControlName="position" />
+										<mat-error>Position is
+											<strong>required</strong>
+										</mat-error>
+										<mat-hint align="start">Please enter
+											<strong>Position</strong>
+										</mat-hint>
+									</mat-form-field>
+								</div>
+							</div>
+						</mat-step>
+					</mat-vertical-stepper>
+
+
+
+
+			<!--<div class="form-group m-form__group row">-->
+				<!--<div class="col-lg-4 m&#45;&#45;margin-bottom-20-mobile">-->
+					<!--<mat-form-field class="mat-form-field-fluid">-->
+						<!--<input type="email" matInput placeholder="Enter Email" formControlName="email" />-->
+						<!--<mat-error>Email is-->
+							<!--<strong>required</strong>-->
+						<!--</mat-error>-->
+						<!--<mat-hint align="start">Please enter-->
+							<!--<strong>Email</strong>-->
+						<!--</mat-hint>-->
+					<!--</mat-form-field>-->
+				<!--</div>-->
+				<!--<div class="col-lg-4 m&#45;&#45;margin-bottom-20-mobile">-->
+					<!--<mat-form-field class="mat-form-field-fluid">-->
+						<!--<input matInput [matDatepicker]="picker" placeholder="Choose a Date of Birth" formControlName="dob" />-->
+						<!--<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>-->
+						<!--<mat-datepicker #picker></mat-datepicker>-->
+						<!--<mat-hint align="start">Please enter-->
+							<!--<strong>Date of Birth</strong> in 'mm/dd/yyyy' format</mat-hint>-->
+					<!--</mat-form-field>-->
+				<!--</div>-->
+				<!--<div class="col-lg-4 m&#45;&#45;margin-bottom-20-mobile">-->
+					<!--<mat-form-field class="mat-form-field-fluid">-->
+						<!--<input type="email" matInput placeholder="Enter IP Address" formControlName="ipAddress" />-->
+						<!--<mat-error>IP Address-->
+							<!--<strong>required</strong>-->
+						<!--</mat-error>-->
+						<!--<mat-hint align="start">We'll never share customer-->
+							<!--<strong>IP Address</strong> with anyone else</mat-hint>-->
+					<!--</mat-form-field>-->
+				<!--</div>-->
+			<!--</div>-->
+
+			<!--<div class="m-separator m-separator&#45;&#45;dashed"></div>-->
+			<!--<div class="form-group m-form__group row">-->
+				<!--<div class="col-lg-4 m&#45;&#45;margin-bottom-20-mobile">-->
+					<!--<mat-form-field class="mat-form-field-fluid">-->
+						<!--<mat-select placeholder="Gender" formControlName="gender">-->
+							<!--<mat-option value="Female">Female</mat-option>-->
+							<!--<mat-option value="Male">Male</mat-option>-->
+						<!--</mat-select>-->
+						<!--<mat-hint align="start">-->
+							<!--<strong>Gender</strong>-->
+						<!--</mat-hint>-->
+					<!--</mat-form-field>-->
+				<!--</div>-->
+				<!--<div class="col-lg-4 m&#45;&#45;margin-bottom-20-mobile">-->
+					<!--<mat-form-field class="mat-form-field-fluid">-->
+						<!--<mat-select placeholder="Type" formControlName="type">-->
+							<!--<mat-option value="0">Business</mat-option>-->
+							<!--<mat-option value="1">Individual</mat-option>-->
+						<!--</mat-select>-->
+						<!--<mat-hint align="start">-->
+							<!--<strong>Account Type</strong>-->
+						<!--</mat-hint>-->
+					<!--</mat-form-field>-->
+				<!--</div>-->
+			<!--</div>-->
 		</div>
+
 		<div class="m-portlet__foot m-portlet__no-border m-portlet__foot--fit">
 			<div class="m-form__actions m-form__actions--solid">
 				<div class="row text-right">

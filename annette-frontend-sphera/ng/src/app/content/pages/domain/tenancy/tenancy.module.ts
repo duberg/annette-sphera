@@ -25,7 +25,7 @@ import {
 	MatRadioModule,
 	MatSelectModule,
 	MatSnackBarModule,
-	MatSortModule,
+	MatSortModule, MatStepperModule,
 	MatTableModule,
 	MatTabsModule,
 	MatTooltipModule
@@ -46,6 +46,10 @@ import {UsersListComponent} from "./users/users-list/users-list.component";
 import {UserEditDialogComponent} from "./users/user-edit/user-edit-dialog.component";
 import {AlertComponent} from "./_shared/alert/alert.component";
 import {LayoutUtilsService} from "./_core/utils/layout-utils.service";
+import {ActionNotificationComponent} from "./_shared/action-natification/action-notification.component";
+import {DeleteEntityDialogComponent} from "./_shared/delete-entity-dialog/delete-entity-dialog.component";
+import {FetchEntityDialogComponent} from "./_shared/fetch-entity-dialog/fetch-entity-dialog.component";
+import {UpdateStatusDialogComponent} from "./_shared/update-status-dialog/update-status-dialog.component";
 
 const routes: Routes = [
 	{
@@ -109,7 +113,8 @@ const routes: Routes = [
 	  MatSnackBarModule,
 	  MatTabsModule,
 	  MatTooltipModule,
-	  MatListModule
+	  MatListModule,
+	  MatStepperModule
   ],
 	providers: [
 		{
@@ -130,15 +135,19 @@ const routes: Routes = [
 		SessionsService
 	],
 	entryComponents: [
-		//ActionNotificationComponent,
+		ActionNotificationComponent,
 		UserEditDialogComponent,
-		//DeleteEntityDialogComponent,
-		//FetchEntityDialogComponent,
-		//UpdateStatusDialogComponent
+		DeleteEntityDialogComponent,
+		FetchEntityDialogComponent,
+		UpdateStatusDialogComponent
 	],
 
   declarations: [
 	AlertComponent,
+	  ActionNotificationComponent,
+	  DeleteEntityDialogComponent,
+	  FetchEntityDialogComponent,
+	  UpdateStatusDialogComponent,
   	TenancyComponent,
 	UsersListComponent,
 	UserEditDialogComponent,

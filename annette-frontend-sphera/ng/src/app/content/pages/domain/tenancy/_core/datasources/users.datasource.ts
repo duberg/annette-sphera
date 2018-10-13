@@ -12,7 +12,7 @@ export class UsersDatasource extends BaseDataSource {
 
 	loadCustomers(queryParams: QueryParamsModel): void {
 		this.loadingSubject.next(true);
-		this.customersService.findCustomers(queryParams).pipe(
+		this.customersService.listUsers(queryParams).pipe(
 			tap(res => {
 				// Comment this when you start work with real server
 				// This code imitates server calls

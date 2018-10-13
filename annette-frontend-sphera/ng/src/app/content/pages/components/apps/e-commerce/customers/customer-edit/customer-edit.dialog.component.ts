@@ -116,7 +116,7 @@ export class CustomerEditDialogComponent implements OnInit {
 			this.viewLoading = false;
 			this.viewLoading = false;
 			this.dialogRef.close({
-				_customer,
+				_user: _customer,
 				isEdit: true
 			});
 		});
@@ -128,7 +128,7 @@ export class CustomerEditDialogComponent implements OnInit {
 		this.customerService.createCustomer(_customer).subscribe(res => {
 			this.viewLoading = false;
 			this.dialogRef.close({
-				_customer,
+				_user: _customer,
 				isEdit: false
 			});
 		});
