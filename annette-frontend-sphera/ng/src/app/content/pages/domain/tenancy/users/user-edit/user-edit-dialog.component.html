@@ -135,6 +135,19 @@
 							<div class="form-group m-form__group row">
 
 								<div class="col-lg-4 m--margin-bottom-20-mobile">
+									<mat-list>
+										<mat-list-item>
+											<img mat-list-avatar [src]="user.avatarUrl" class="m--img-rounded m--marginless m--img-centered" alt=""/>
+											<h4 mat-line>{{user.avatarUrl}}</h4>
+											<p mat-line>
+												<span>
+													<file-upload (complete)="onFileComplete($event)"></file-upload>
+												</span>
+											</p>
+										</mat-list-item>
+									</mat-list>
+								</div>
+								<div class="col-lg-4 m--margin-bottom-20-mobile">
 									<mat-form-field class="mat-form-field-fluid">
 										<input matInput placeholder="Enter Display Name" formControlName="displayName" />
 										<mat-error>Display Name is
@@ -156,6 +169,12 @@
 										</mat-hint>
 									</mat-form-field>
 								</div>
+							</div>
+
+							<div class="m-separator m-separator--dashed"></div>
+
+							<!-- from group -->
+							<div class="form-group m-form__group row">
 								<div class="col-lg-4 m--margin-bottom-20-mobile">
 									<mat-form-field class="mat-form-field-fluid">
 										<mat-select placeholder="Gender" formControlName="gender">
@@ -167,12 +186,6 @@
 										</mat-hint>
 									</mat-form-field>
 								</div>
-							</div>
-
-							<div class="m-separator m-separator--dashed"></div>
-
-							<!-- from group -->
-							<div class="form-group m-form__group row">
 								<div class="col-lg-4 m--margin-bottom-20-mobile">
 									<mat-form-field class="mat-form-field-fluid">
 										<input type="url" matInput placeholder="Enter Url" formControlName="url" />
@@ -183,19 +196,6 @@
 											<strong>Url</strong>
 										</mat-hint>
 									</mat-form-field>
-								</div>
-								<div class="col-lg-4 m--margin-bottom-20-mobile">
-									<mat-list>
-										<mat-list-item>
-										<img mat-list-avatar [src]="user.avatarUrl" class="m--img-rounded m--marginless m--img-centered" alt="" style="max-width: 41px !important;"/>
-
-											<p mat-line>
-												<span>
-													<file-upload (complete)="onFileComplete($event)"></file-upload>
-												</span>
-											</p>
-										</mat-list-item>
-									</mat-list>
 								</div>
 							</div>
 						</mat-step>
