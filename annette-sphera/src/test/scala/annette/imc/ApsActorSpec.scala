@@ -414,7 +414,7 @@
 //      }
 //    }
 //
-//    "searching ApData" in {
+//    "search ApData" in {
 //      val user = UUID.randomUUID()
 //
 //      def update1(apId: UUID) = UpdateAp(id = apId, entityName = Some(ApString("Ай-би-эм", "IBM")))

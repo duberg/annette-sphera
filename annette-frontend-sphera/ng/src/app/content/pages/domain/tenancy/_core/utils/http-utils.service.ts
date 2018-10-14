@@ -19,7 +19,8 @@ export class HttpUtilsService {
 		let params = new HttpParams()
 			.set('offset', offset.toString())
 			.set('limit', queryParams.pageSize.toString())
-			.set('sort', `${queryParams.sortField},${queryParams.sortOrder}`);
+			.set('sort', `${queryParams.sortField},${queryParams.sortOrder}`)
+			.set('search', queryParams.search);
 
 		Object.keys(queryParams.filter).forEach(key =>{
 			const value = queryParams.filter[key];

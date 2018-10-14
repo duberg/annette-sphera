@@ -6,13 +6,13 @@ import { QueryResultsModel } from '../query-models/query-results.model';
 import {BaseDataSource} from "../../../../../../core/datasources/base.datasource";
 
 export class UsersDatasource extends BaseDataSource {
-	constructor(private customersService: UsersService) {
+	constructor(private usersService: UsersService) {
 		super();
 	}
 
 	loadCustomers(queryParams: QueryParamsModel): void {
 		this.loadingSubject.next(true);
-		this.customersService.listUsers(queryParams).pipe(
+		this.usersService.listUsers(queryParams).pipe(
 			tap(res => {
 				// Comment this when you start work with real server
 				// This code imitates server calls

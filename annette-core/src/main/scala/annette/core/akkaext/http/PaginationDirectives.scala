@@ -36,6 +36,7 @@ trait PaginationDirectives {
   private lazy val LimitParam = get[String]("akka.http.extensions.pagination.limit-param-name") || "limit"
   private lazy val SortParam = get[String]("akka.http.extensions.pagination.sort-param-name") || "sort"
   private lazy val FilterParam = get[String]("akka.http.extensions.pagination.filter-param-name") || "filter"
+  private lazy val SearchParam = get[String]("akka.http.extensions.pagination.search-param-name") || "search"
 
   private lazy val AscParam = get[String]("akka.http.extensions.pagination.asc-param-name") || "asc"
   private lazy val DescParam = get[String]("akka.http.extensions.pagination.desc-param-name") || "desc"
@@ -63,12 +64,32 @@ trait PaginationDirectives {
   def optionalPagination: Directive1[Option[PageRequest]] =
     parameterMap.flatMap { params =>
       (params.get(OffsetParam).map(_.toInt), params.get(LimitParam).map(_.toInt)) match {
-        case (Some(offset), Some(limit)) => provide(Some(deserializePage(offset, limit, params.get(SortParam), params.get(FilterParam))))
-        case (Some(offset), None) if ShouldFallbackToDefaults => provide(Some(deserializePage(offset, DefaultLimitParam, params.get(SortParam), params.get(FilterParam))))
+        case (Some(offset), Some(limit)) => provide(Some(deserializePage(
+          offset = offset,
+          limit = limit,
+          sorting = params.get(SortParam),
+          filtering = params.get(FilterParam),
+          search = params.get(SearchParam))))
+        case (Some(offset), None) if ShouldFallbackToDefaults => provide(Some(deserializePage(
+          offset = offset,
+          limit = DefaultLimitParam,
+          sorting = params.get(SortParam),
+          filtering = params.get(FilterParam),
+          search = params.get(SearchParam))))
         case (Some(offset), None) => reject(MalformedPaginationRejection("Missing page limit parameter", None))
-        case (None, Some(limit)) if ShouldFallbackToDefaults => provide(Some(deserializePage(DefaultOffsetParam, limit, params.get(SortParam), params.get(FilterParam))))
+        case (None, Some(limit)) if ShouldFallbackToDefaults => provide(Some(deserializePage(
+          offset = DefaultOffsetParam,
+          limit = limit,
+          sorting = params.get(SortParam),
+          filtering = params.get(FilterParam),
+          search = params.get(SearchParam))))
         case (None, Some(limit)) => reject(MalformedPaginationRejection("Missing page offset parameter", None))
-        case (_, _) if ShouldAlwaysFallbackToDefaults => provide(Some(deserializePage(DefaultOffsetParam, DefaultLimitParam, params.get(SortParam), params.get(FilterParam))))
+        case (_, _) if ShouldAlwaysFallbackToDefaults => provide(Some(deserializePage(
+          offset = DefaultOffsetParam,
+          limit = DefaultLimitParam,
+          sorting = params.get(SortParam),
+          filtering = params.get(FilterParam),
+          search = params.get(SearchParam))))
         case (_, _) => provide(None)
       }
     }
@@ -83,35 +104,54 @@ trait PaginationDirectives {
   def pagination: Directive1[PageRequest] = {
     parameterMap.flatMap { params =>
       (params.get(OffsetParam).map(_.toInt), params.get(LimitParam).map(_.toInt)) match {
-        case (Some(offset), Some(limit)) => provide(deserializePage(offset, limit, params.get(SortParam), params.get(FilterParam)))
-        case (Some(offset), None) => provide(deserializePage(offset, DefaultLimitParam, params.get(SortParam), params.get(FilterParam)))
-        case (None, Some(limit)) => provide(deserializePage(DefaultOffsetParam, limit, params.get(SortParam), params.get(FilterParam)))
-        case (_, _) => provide(deserializePage(DefaultOffsetParam, DefaultLimitParam, params.get(SortParam), params.get(FilterParam)))
+        case (Some(offset), Some(limit)) => provide(deserializePage(
+          offset = offset,
+          limit = limit,
+          sorting = params.get(SortParam),
+          filtering = params.get(FilterParam),
+          search = params.get(SearchParam)))
+        case (Some(offset), None) => provide(deserializePage(
+          offset = offset,
+          limit = DefaultLimitParam,
+          sorting = params.get(SortParam),
+          filtering = params.get(FilterParam),
+          search = params.get(SearchParam)))
+        case (None, Some(limit)) => provide(deserializePage(
+          offset = DefaultOffsetParam,
+          limit = limit,
+          sorting = params.get(SortParam),
+          filtering = params.get(FilterParam),
+          search = params.get(SearchParam)))
+        case (_, _) => provide(deserializePage(
+          offset = DefaultOffsetParam,
+          limit = DefaultLimitParam,
+          sorting = params.get(SortParam),
+          filtering = params.get(FilterParam),
+          search = params.get(SearchParam)))
       }
     }
   }
 
-  private def deserializePage(offset: Int, limit: Int, sorting: Option[String], filtering: Option[String]): PageRequest = {
-    val sortingParam: Option[Map[String, Order]] =
-      sorting
-        .map(_.split(SortingSeparator)
-          .map(_.span(_ != OrderSeparator))
-          .collect {
-            case (field, sort) if sort == ',' + AscParam => (field, Order.Asc)
-            case (field, sort) if sort == ',' + DescParam => (field, Order.Desc)
-          }.toMap)
+  private def deserializePage(offset: Int, limit: Int, sorting: Option[String], filtering: Option[String], search: Option[String]): PageRequest = {
+    val sortingParam: Option[Map[String, Order]] = sorting
+      .map(_.split(SortingSeparator)
+        .map(_.span(_ != OrderSeparator))
+        .collect {
+          case (field, sort) if sort == ',' + AscParam => (field, Order.Asc)
+          case (field, sort) if sort == ',' + DescParam => (field, Order.Desc)
+        }.toMap)
 
-    val filteringParam: Option[Map[String, String]] =
-      filtering
-        .map(_.split(FilteringSeparator)
-          .map(_.span(_ != OrderSeparator)).toMap)
-        .map(_.mapValues(_.tail))
+    val filteringParam: Option[Map[String, String]] = filtering
+      .map(_.split(FilteringSeparator)
+        .map(_.span(_ != OrderSeparator)).toMap)
+      .map(_.mapValues(_.tail))
 
     PageRequest(
       offset = offset,
       limit = limit,
       sort = sortingParam.getOrElse(Map.empty),
-      filter = filteringParam.getOrElse(Map.empty))
+      filter = filteringParam.getOrElse(Map.empty),
+      search = search)
   }
 
   case class MalformedPaginationRejection(errorMsg: String, cause: Option[Throwable] = None) extends Rejection
@@ -129,6 +169,7 @@ case class PageRequest(
   offset: Int,
   limit: Int,
   sort: Map[String, Order],
-  filter: Map[String, String])
+  filter: Map[String, String] = Map.empty,
+  search: Option[String] = None)
 
 case class PageResponse[T](elements: Seq[T], totalElements: Int)

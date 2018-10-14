@@ -91,7 +91,8 @@ export class UsersListComponent implements OnInit {
 			this.sort.direction,
 			this.sort.active,
 			this.paginator.pageIndex,
-			this.paginator.pageSize
+			this.paginator.pageSize,
+			this.searchInput.nativeElement.value
 		);
 		this.dataSource.loadCustomers(queryParams);
 		this.selection.clear();
@@ -100,19 +101,19 @@ export class UsersListComponent implements OnInit {
 	/** FILTRATION */
 	filterConfiguration(isGeneralSearch: boolean = true): any {
 		const filter: any = {};
-		const searchText: string = this.searchInput.nativeElement.value;
+		//const searchText: string = this.searchInput.nativeElement.value;
 
 		if (this.filterStatus) filter.status = this.filterStatus;
 		if (this.filterType) filter.type = this.filterType;
 
-		filter.lastName = searchText;
+		//filter.lastName = searchText;
 		if (!isGeneralSearch) {
 			return filter;
 		}
 
-		filter.firstName = searchText;
-		filter.email = searchText;
-		filter.ipAddress = searchText;
+		//filter.firstName = searchText;
+		//filter.email = searchText;
+		//filter.ipAddress = searchText;
 		return filter;
 	}
 
