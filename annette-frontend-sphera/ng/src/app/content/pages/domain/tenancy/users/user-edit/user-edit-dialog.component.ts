@@ -2,9 +2,10 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {TypesUtilsService} from '../../_core/utils/types-utils.service';
-import {UpdateUser, UserModel} from '../../_core/user.model';
+import {CreateUser, UpdateUser, User} from '../../_core/user.model';
 import {UsersService} from "../../../../../../core/services/users.service";
 import {addedDiff, updatedDiff, diff} from 'deep-object-diff';
+import * as _ from 'lodash';
 
 @Component({
 	selector: 'm-customers-edit-dialog',
@@ -12,7 +13,7 @@ import {addedDiff, updatedDiff, diff} from 'deep-object-diff';
 	// changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserEditDialogComponent implements OnInit {
-	user: UserModel;
+	user: User;
 	customerForm: FormGroup;
 	hasFormErrors: boolean = false;
 	viewLoading: boolean = false;
@@ -92,9 +93,9 @@ export class UserEditDialogComponent implements OnInit {
 	}
 
 	/** ACTIONS */
-	prepareUser(): UserModel {
+	prepareUser(): User {
 		const controls = this.customerForm.controls;
-		const _user = new UserModel();
+		const _user = new User();
 		_user.id = this.user.id;
 		_user.username = controls['username'].value;
 		_user.displayName = controls['displayName'].value;
@@ -118,7 +119,7 @@ export class UserEditDialogComponent implements OnInit {
 		_user.additionalTel = this.user.additionalTel;
 		_user.additionalMail = this.user.additionalMail;
 		_user.meta = this.user.meta;
-		_user.status = controls['status'].value;
+		_user.status = +controls['status'].value;
 		// _user.dateOfBbirth = this.typesUtilsService.dateCustomFormat(controls['dob'].value);
 
 		return _user;
@@ -141,11 +142,13 @@ export class UserEditDialogComponent implements OnInit {
 		const x = this.prepareUser();
 
 		if (x.id > '0') {
-			var updatedUser: any = diff(this.user, x);
-			updatedUser.id = this.user.id;
-			console.log(updatedUser);
-			this.updateUser(updatedUser as UpdateUser);
-		} else this.createUser(x);
+			var u: any = diff(this.user, x);
+			u.id = x.id;
+			this.updateUser(u as UpdateUser);
+		} else {
+			const c: any = diff(this.user.clear(), x);
+			this.createUser(c as CreateUser);
+		}
 	}
 
 	updateUser(x: UpdateUser) {
@@ -159,13 +162,13 @@ export class UserEditDialogComponent implements OnInit {
 		});
 	}
 
-	createUser(_customer: UserModel) {
+	createUser(x: CreateUser) {
 		this.loadingAfterSubmit = true;
 		this.viewLoading = true;
-		this.customerService.createCustomer(_customer).subscribe(res => {
+		this.customerService.createUser(x).subscribe(res => {
 			this.viewLoading = false;
 			this.dialogRef.close({
-				_user: _customer,
+				_user: x,
 				isEdit: false
 			});
 		});

@@ -3,8 +3,8 @@ package annette.core.notification.actor
 import java.net.ConnectException
 
 import akka.actor.ActorRef
-import annette.core.notification.client.SmsClient
 import annette.core.notification._
+import annette.core.notification.client.SmsClient
 import annette.core.test.PersistenceSpec
 import com.typesafe.config.ConfigFactory
 import org.scalamock.scalatest.AsyncMockFactory

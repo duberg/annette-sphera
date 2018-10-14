@@ -1,11 +1,6 @@
 package annette.core.akkaext.http
 
 import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.testkit.{ RouteTestTimeout, ScalatestRouteTest }
-import org.scalatest.{ FlatSpec, Matchers }
-
-import scala.concurrent.duration.FiniteDuration
 
 class PaginationDirectivesWithDefaults extends PaginationSpec {
 

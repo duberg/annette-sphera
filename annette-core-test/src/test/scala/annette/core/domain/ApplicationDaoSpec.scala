@@ -2,20 +2,12 @@ package annette.core.domain
 
 import java.util.UUID
 
-import akka.Done
 import akka.actor.{ ActorRef, ActorSystem }
-import akka.pattern.ask
 import akka.testkit.TestKit
 import annette.core.domain.application._
-import annette.core.domain.language.LanguageService
-import annette.core.domain.language.model.{ Language, LanguageUpdate }
-import annette.core.domain.tenancy._
-import annette.core.domain.tenancy.model._
 import annette.core.security.verification.VerificationBus
 import annette.core.test.PersistenceSpec
 import com.typesafe.config.{ Config, ConfigFactory }
-
-import scala.concurrent.Future
 
 class ApplicationDaoSpec extends TestKit(ActorSystem("ApplicationDaoSpec"))
   with PersistenceSpec

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { mergeMap, map, flatMap, tap } from 'rxjs/operators';
 import {environment} from "../../../environments/environment";
-import {UpdateUser, UserModel} from "../../content/pages/domain/tenancy/_core/user.model";
+import {CreateUser, UpdateUser, User} from "../../content/pages/domain/tenancy/_core/user.model";
 import {HttpUtilsService} from "../../content/pages/domain/tenancy/_core/utils/http-utils.service";
 import {QueryParamsModel} from "../../content/pages/domain/tenancy/_core/query-models/query-params.model";
 import {QueryResultsModel} from "../../content/pages/domain/tenancy/_core/query-models/query-results.model";
@@ -14,20 +14,12 @@ const API_USERS_URL = `${environment.server_addr}/api/users`;
 export class UsersService {
 	constructor(private http: HttpClient, private httpUtils: HttpUtilsService) { }
 
-	// CREATE =>  POST: add a new customer to the server
-	createCustomer(customer: UserModel): Observable<UserModel> {
-		return this.httpUtils.getHTTPHeader().pipe(flatMap(headers => {
-			return this.http.post<UserModel>(API_USERS_URL, customer, headers);
-		}));
+	createUser(x: CreateUser): Observable<any> {
+		return this.http.post(API_USERS_URL, x);
 	}
 
-	// READ
-	getAllCustomers(): Observable<QueryResultsModel> {
-		return this.http.get<QueryResultsModel>(API_USERS_URL);
-	}
-
-	getCustomerById(customerId: number): Observable<UserModel> {
-		return this.http.get<UserModel>(API_USERS_URL + `/${customerId}`);
+	getUserById(userId: number): Observable<User> {
+		return this.http.get<User>(API_USERS_URL + `/${userId}`);
 	}
 
 	// Method from server should return QueryResultsModel(any[], totalsCount: number)
@@ -39,7 +31,6 @@ export class UsersService {
 		// );
 	}
 
-	// UPDATE => PUT: update the customer on the server
 	updateUser(user: UpdateUser): Observable<any> {
 		const url = `${API_USERS_URL}/${user.id}`;
 		return this.http.post(url, user);
@@ -48,7 +39,7 @@ export class UsersService {
 	// UPDATE Status
 	// Comment this when you start work with real server
 	// This code imitates server calls
-	updateStatusForCustomer(customers: UserModel[], status: number): Observable<any> {
+	updateStatusForCustomer(customers: User[], status: number): Observable<any> {
 		// const tasks$ = [];
 		// for (let i = 0; i < customers.length; i++) {
 		// 	const _user = customers[i];
@@ -59,9 +50,8 @@ export class UsersService {
 		return of('');
 	}
 
-	// DELETE => delete the customer from the server
-	deleteCustomer(customerId: string): Observable<any> {
-		const url = `${API_USERS_URL}/${customerId}`;
+	deleteUser(userId: string): Observable<any> {
+		const url = `${API_USERS_URL}/${userId}`;
 		return this.http.delete(url);
 	}
 
@@ -74,7 +64,7 @@ export class UsersService {
 		const tasks$ = [];
 		const length = ids.length;
 		for (let i = 0; i < length; i++) {
-			tasks$.push(this.deleteCustomer(ids[i]));
+			tasks$.push(this.deleteUser(ids[i]));
 		}
 		return forkJoin(tasks$);
 		// END

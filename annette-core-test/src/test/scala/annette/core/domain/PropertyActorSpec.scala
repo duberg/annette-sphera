@@ -3,7 +3,6 @@ package annette.core.domain
 
 import akka.Done
 import akka.actor.ActorSystem
-import akka.pattern.ask
 import akka.testkit.TestKit
 import annette.core.domain.property.PropertyService
 import annette.core.domain.property.model.Property
@@ -89,9 +88,6 @@ class PropertyActorSpec extends TestKit(ActorSystem("PropertyActorSpec"))
           cc2 shouldBe Done
           cc3 shouldBe Done
           cc4 shouldBe Done
-          println(s"ccs1 = $ccs1")
-          println(s"ccs2 = $ccs2")
-          println(s"ccs3 = $ccs3")
           ccs1 should contain(c1)
           ccs1 should contain(c2)
           ccs2 should contain(c4)

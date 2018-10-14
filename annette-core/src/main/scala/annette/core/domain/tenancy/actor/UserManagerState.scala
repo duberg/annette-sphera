@@ -38,32 +38,31 @@ case class UserManagerState(
     if (create.phone.exists(phone => phoneIndex.get(phone.trim.toLowerCase).isDefined)) throw new PhoneAlreadyExists(create.phone.get)
     if (create.username.exists(login => usernameIndex.get(login.trim.toLowerCase).isDefined)) throw new LoginAlreadyExists(create.username.get)
     // проверяем существует ли пользователь с таким же id
-    //if (users.get(createUser.id).isDefined) throw new UserAlreadyExists(createUser.id)
+    if (create.id.flatMap(users.get).isDefined) throw new UserAlreadyExists(create.id.get)
   }
 
-  def validateUpdate(x: UpdateUser): User = users.get(x.id).fold(throw new UserNotFound(x.id)) { user =>
-    val emailOpt = x.email.flatten
-    val phoneOpt = x.phone.flatten
-    val usernameOpt = x.username
-    // проверяем что email уже существует
-    if (emailOpt.exists(email => emailIndex.get(email.trim.toLowerCase).exists(_ != x.id))) throw new EmailAlreadyExists(x.email.get.get)
-    // проверяем что phone уже существует
-    if (phoneOpt.exists(phone => phoneIndex.get(phone.trim.toLowerCase).exists(_ != x.id))) throw new PhoneAlreadyExists(x.phone.get.get)
-    // проверяем что login уже существует
-    if (usernameOpt.flatten.exists(username => usernameIndex.get(username.trim.toLowerCase).exists(_ != x.id))) throw new LoginAlreadyExists(x.username.get.get)
+  def validateUpdate(x: UpdateUser): User = {
+    users.get(x.id).map { user =>
+      // проверяем что email уже существует
+      if (x.email.flatten.exists(email => emailIndex.get(email.trim.toLowerCase).exists(_ != x.id))) throw new EmailAlreadyExists(x.email.get.get)
+      // проверяем что phone уже существует
+      if (x.phone.flatten.exists(phone => phoneIndex.get(phone.trim.toLowerCase).exists(_ != x.id))) throw new PhoneAlreadyExists(x.phone.get.get)
+      // проверяем что login уже существует
+      if (x.username.flatten.exists(username => usernameIndex.get(username.trim.toLowerCase).exists(_ != x.id))) throw new LoginAlreadyExists(x.username.get.get)
 
-    // проверяем наличие mail'а, телефона или логина
-    val email = emailOpt.orElse(user.email)
-    val phone = phoneOpt.orElse(user.phone)
-    val username = usernameOpt.flatten.orElse(user.username)
-    println(s"Validate Update: update = $x, user = $user email = $email, phone = $phone, username = $username")
-    if (email.isEmpty && phone.isEmpty && username.isEmpty) throw new LoginRequired
-    user
+      // проверяем наличие mail'а, телефона или логина
+      val email = x.email.getOrElse(user.email)
+      val phone = x.phone.getOrElse(user.phone)
+      val username = x.username.getOrElse(user.username)
+      //println(s"Validate Update: x = $x, user = $user email = $email, phone = $phone, username = $username")
+      if (email.isEmpty && phone.isEmpty && username.isEmpty) throw new LoginRequired
+      user
+    }
+      .getOrElse(throw new UserNotFound(x.id))
   }
 
   def updateUser(x: UpdateUser): UserManagerState = {
     val user = validateUpdate(x)
-
     val newEmailIndex = x.email.map {
       // удаляем старый email, если он существует
       case None =>
@@ -90,29 +89,33 @@ case class UserManagerState(
       case Some(newLogin) =>
         user.username.map(oldUsername => usernameIndex - oldUsername.trim.toLowerCase).getOrElse(usernameIndex) + (newLogin.trim.toLowerCase -> x.id)
     }.getOrElse(usernameIndex) // ничего не меняем
-
+    println(user)
+    println(x)
     val updated = user.copy(
-      username = x.username.flatten.orElse(user.username),
+      username = x.username.getOrElse(user.username),
+      displayName = x.displayName.getOrElse(user.displayName),
       firstName = x.firstName.getOrElse(user.firstName),
       lastName = x.lastName.getOrElse(user.lastName),
-      middleName = x.middleName.flatten.orElse(user.middleName),
-      gender = x.gender.flatten.orElse(user.gender),
-      email = x.email.flatten.orElse(user.email),
-      url = x.url.flatten.orElse(user.url),
-      description = x.description.flatten.orElse(user.description),
-      phone = x.phone.flatten.orElse(user.phone),
-      language = x.language.flatten.orElse(user.language),
+      middleName = x.middleName.getOrElse(user.middleName),
+      gender = x.gender.getOrElse(user.gender),
+      email = x.email.getOrElse(user.email),
+      url = x.url.getOrElse(user.url),
+      description = x.description.getOrElse(user.description),
+      phone = x.phone.getOrElse(user.phone),
+      language = x.language.getOrElse(user.language),
       roles = x.roles.getOrElse(user.roles),
       // password
-      avatarUrl = x.avatarUrl.flatten.orElse(user.avatarUrl),
-      sphere = x.sphere.flatten.orElse(user.sphere),
-      company = x.company.flatten.orElse(user.company),
-      position = x.position.flatten.orElse(user.position),
-      rank = x.rank.flatten.orElse(user.rank),
-      additionalTel = x.additionalTel.flatten.orElse(user.additionalTel),
-      additionalMail = x.additionalMail.flatten.orElse(user.additionalMail),
+      avatarUrl = x.avatarUrl.getOrElse(user.avatarUrl),
+      sphere = x.sphere.getOrElse(user.sphere),
+      company = x.company.getOrElse(user.company),
+      position = x.position.getOrElse(user.position),
+      rank = x.rank.getOrElse(user.rank),
+      additionalTel = x.additionalTel.getOrElse(user.additionalTel),
+      additionalMail = x.additionalMail.getOrElse(user.additionalMail),
       meta = x.meta.getOrElse(user.meta),
       status = x.status.getOrElse(user.status))
+
+    println(updated)
 
     copy(
       users = users + (x.id -> updated),
@@ -149,7 +152,6 @@ case class UserManagerState(
   }
 
   def findUserByLoginAndPassword(login: String, password: String): Option[User] = {
-    println(users)
     val cleanLogin = login.toLowerCase.trim
     findUserId(cleanLogin)
       .flatMap {

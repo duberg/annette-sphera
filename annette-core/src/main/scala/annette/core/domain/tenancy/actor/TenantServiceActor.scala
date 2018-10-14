@@ -30,7 +30,6 @@ class TenantServiceActor(val initState: TenantServiceState = TenantServiceState.
   }
 
   def findTenantById(state: TenantServiceState, tenantId: Tenant.Id): Unit = {
-    println(state)
     sender() ! TenantOpt(state.tenants.get(tenantId))
   }
 

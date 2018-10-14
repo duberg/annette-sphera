@@ -104,7 +104,7 @@ trait AuthenticationRoutes extends Directives
           gender = None,
 
           // Set default role "user"
-          roles = x.tenants.map(_ -> Set("user")).toMap,
+          roles = Some(x.tenants.map(_ -> Set("user")).toMap),
 
           email = Some(x.email),
           url = None,
@@ -119,8 +119,8 @@ trait AuthenticationRoutes extends Directives
           rank = None,
           additionalTel = None,
           additionalMail = None,
-          meta = Map.empty,
-          status = 0)
+          meta = None,
+          status = Some(0))
 
         val code = generateUUIDStr
 

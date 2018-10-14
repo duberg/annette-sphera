@@ -1,17 +1,10 @@
 package annette.core.domain
 
-import java.util.UUID
-
 import akka.Done
 import akka.actor.ActorSystem
-import akka.pattern.ask
 import akka.testkit.TestKit
 import annette.core.domain.tenancy.SessionHistoryManager
-import annette.core.domain.tenancy.LastSessionManager.LastSessionOpt
-import annette.core.domain.tenancy.OpenSessionManager.{ OpenSessionOpt, OpenSessionSeq }
-import annette.core.domain.tenancy.model.OpenSessionUpdate
 import annette.core.test.PersistenceSpec
-import org.joda.time.DateTime
 
 class SessionHistoryManagerActorSpec extends TestKit(ActorSystem("SessionHistoryActorSpec"))
   with PersistenceSpec with NewSessionHistory {

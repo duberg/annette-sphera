@@ -15,7 +15,7 @@ message UsersStateV1 {
 message UserV1 {
     required string id = 1;
     optional string username = 2;
-    optional string name = 3;
+    optional string displayName = 3;
     required string lastName = 4;
     required string firstName = 5;
     optional string middleName = 6;
@@ -24,19 +24,19 @@ message UserV1 {
     optional string url = 9;
     optional string description = 10;
     optional string phone = 11;
-    optional string locale = 12;
+    optional string language = 12;
     required string registeredDate = 13;
     map<string, RolesV1> roles = 14;
-    required string password = 17;
-    optional string avatarUrl = 18;
-    optional string sphere = 19;
-    optional string company = 20;
-    optional string position = 21;
-    optional string rank = 22;
-    optional string additionalTel = 23;
-    optional string additionalMail = 24;
-    map<string, string> meta = 25;
-    required int32 status = 26;
+    required string password = 15;
+    optional string avatarUrl = 16;
+    optional string sphere = 17;
+    optional string company = 18;
+    optional string position = 19;
+    optional string rank = 20;
+    optional string additionalTel = 21;
+    optional string additionalMail = 22;
+    map<string, string> meta = 23;
+    required int32 status = 24;
 }
 
 message RolesV1 {
@@ -46,7 +46,7 @@ message RolesV1 {
 message UpdateUserV1 {
     required string id = 1;
     optional string username = 2;
-    optional string name = 3;
+    optional string displayName = 3;
     optional string lastName = 4;
     optional string firstName = 5;
     optional string middleName = 6;
@@ -55,19 +55,41 @@ message UpdateUserV1 {
     optional string url = 9;
     optional string description = 10;
     optional string phone = 11;
-    optional string locale = 12;
+    optional string language = 12;
     optional string registeredDate = 13;
-    map<string, RolesV1> roles = 14;
-    optional string password = 17;
-    optional string avatarUrl = 18;
-    optional string sphere = 19;
-    optional string company = 20;
-    optional string position = 21;
-    optional string rank = 22;
-    optional string additionalTel = 23;
-    optional string additionalMail = 24;
-    map<string, string> meta = 25;
-    optional int32 status = 26;
+    required OptionRolesMapV1 roles = 14;
+    optional string password = 15;
+    optional string avatarUrl = 16;
+    optional string sphere = 17;
+    optional string company = 18;
+    optional string position = 19;
+    optional string rank = 20;
+    optional string additionalTel = 21;
+    optional string additionalMail = 22;
+    required OptionMetaMapV1 meta = 23;
+    optional int32 status = 24;
+}
+
+message OptionRolesMapV1 {
+    oneof Option_oneof {
+        RolesMapV1 opt1 = 1;
+        bool opt2 = 2;
+    }
+}
+
+message OptionMetaMapV1 {
+    oneof Option_oneof {
+        MetaMapV1 opt1 = 1;
+        bool opt2 = 2;
+    }
+}
+
+message RolesMapV1 {
+    map<string, RolesV1> x = 1;
+}
+
+message MetaMapV1 {
+    map<string, string> x = 1;
 }
 
 message UserPropertyV1 {
@@ -98,5 +120,4 @@ message UpdatedPasswordEvtV1 {
     required string userId = 1;
     required string password = 2;
 }
-
 

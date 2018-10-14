@@ -2,16 +2,15 @@ package annette.core.domain.language
 
 import akka.Done
 import akka.actor.{ ActorRef, Props }
+import akka.pattern.ask
 import akka.util.Timeout
 import annette.core.akkaext.actor._
+import annette.core.domain.language.LanguageService._
 import annette.core.domain.language.model.Language.Id
 import annette.core.domain.language.model._
 import javax.inject.{ Inject, Named, Singleton }
 
 import scala.concurrent.{ ExecutionContext, Future }
-import LanguageService._
-import akka.pattern.ask
-import akka.util.Timeout
 
 @Singleton
 class LanguageService @Inject() (@Named("CoreService") actor: ActorRef)(implicit val c: ExecutionContext, val t: Timeout) {

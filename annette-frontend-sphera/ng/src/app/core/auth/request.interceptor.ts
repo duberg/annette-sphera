@@ -17,6 +17,7 @@ import {Router} from "@angular/router";
 import {AuthenticationService} from "./authentication.service";
 import {UtilsService} from "../services/utils.service";
 import {TranslateService} from "@ngx-translate/core";
+import * as _ from "lodash";
 
 @Injectable()
 export class RequestInterceptor implements HttpInterceptor {
@@ -29,8 +30,18 @@ export class RequestInterceptor implements HttpInterceptor {
 	) {}
 
 	intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+		// Filter unwanted object fields
+		const b = _(request.body)
+			.pickBy((value, key) => !_.startsWith(key, '_'))
+			.omitBy(_.isNil)
+			.value();
+
+		// Add request headers
 		const h = request.headers.set('Content-Type', 'application/json; charset=utf-8');
-		const r = request.clone({headers: h});
+
+		// Update request
+		const r = request.clone({body: b, headers: h});
+
 		return next.handle(r).pipe(
 			catchError((err: HttpErrorResponse) => {
 				if (this.router.url !== '/signin') {

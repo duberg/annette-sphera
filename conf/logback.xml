@@ -27,7 +27,7 @@
   <logger name="slick" level="WARN" />
   <logger name="org.casbin.jcasbin.util.Util" level="OFF" />
 
-  <root level="DEBUG">
+  <root level="INFO">
     <appender-ref ref="ASYNCFILE" />
     <appender-ref ref="ASYNCSTDOUT" />
   </root>

@@ -78,7 +78,7 @@ case class CreateUser(
   description: Option[String],
   phone: Option[String],
   language: Option[String],
-  roles: Map[Tenant.Id, Set[Role.Id]],
+  roles: Option[Map[Tenant.Id, Set[Role.Id]]],
   password: String,
   avatarUrl: Option[String],
   sphere: Option[String],
@@ -87,8 +87,8 @@ case class CreateUser(
   rank: Option[String],
   additionalTel: Option[String],
   additionalMail: Option[String],
-  meta: Map[String, String],
-  status: Int)
+  meta: Option[Map[String, String]],
+  status: Option[Int])
 
 case class UpdateUser(
   id: User.Id,

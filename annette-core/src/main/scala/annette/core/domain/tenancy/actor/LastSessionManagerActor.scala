@@ -2,7 +2,6 @@ package annette.core.domain.tenancy.actor
 
 import akka.Done
 import annette.core.akkaext.persistence.CqrsPersistentActor
-import annette.core.domain.tenancy.LastSessionManager
 import annette.core.domain.tenancy.LastSessionManager._
 import annette.core.domain.tenancy.model._
 

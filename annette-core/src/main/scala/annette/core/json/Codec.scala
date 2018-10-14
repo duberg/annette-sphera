@@ -1,6 +1,12 @@
 package annette.core.json
 
+import java.util.concurrent.TimeUnit
+
+import io.circe.{ Decoder, DecodingFailure, FailedCursor, HCursor }
+import io.circe.Decoder.{ withReattempt }
 import io.circe.generic.AutoDerivation
+
+import scala.concurrent.duration.{ Duration, FiniteDuration }
 
 //import io.circe.generic._
 //import io.circe.syntax._
@@ -58,4 +64,18 @@ trait Codec extends AutoDerivation
 
   //val x1 = x.asJson.as[TaskInfo]
 
+  //  /**
+  //   * @group Decoding
+  //   */
+  //  implicit def decodeOption[A](implicit d: Decoder[A]): Decoder[Option[A]] = withReattempt {
+  //    case c: HCursor =>
+  //      println("================1")
+  //      println(c.value)
+  //      if (c.value.isNull) Right(None) else d(c) match {
+  //        case Right(a) => Right(Some(a))
+  //        case Left(df) => Left(df)
+  //      }
+  //    case c: FailedCursor =>
+  //      if (!c.incorrectFocus) Right(None) else Left(DecodingFailure("[A]Option[A]", c.history))
+  //  }
 }

@@ -5,13 +5,11 @@ import java.util.UUID
 
 import akka.Done
 import akka.actor.ActorSystem
-import akka.pattern.ask
 import akka.testkit.TestKit
 import annette.core.domain.tenancy.OpenSessionManager
 import annette.core.domain.tenancy.OpenSessionManager.{ OpenSessionOpt, OpenSessionSeq }
 import annette.core.domain.tenancy.model.OpenSessionUpdate
 import annette.core.test.PersistenceSpec
-import org.joda.time.DateTime
 
 import scala.concurrent.Future
 

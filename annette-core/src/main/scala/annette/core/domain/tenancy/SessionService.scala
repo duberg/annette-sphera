@@ -11,9 +11,7 @@ import annette.core.akkaext.http.PageRequest
 import annette.core.akkaext.http.Pagination.paginate
 import annette.core.domain.application.Application
 import annette.core.domain.language.model.Language
-import annette.core.domain.tenancy.actor.UserManagerState
 import annette.core.domain.tenancy.model.OpenSession.Id
-import annette.core.domain.tenancy.model.User.UsersList
 import annette.core.domain.tenancy.model._
 import javax.inject._
 

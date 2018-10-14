@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { mergeMap, map, flatMap, tap } from 'rxjs/operators';
 import {environment} from "../../../../../../../environments/environment";
-import {UserModel} from "../user.model";
+import {User} from "../user.model";
 import {HttpUtilsService} from "../utils/http-utils.service";
 import {QueryParamsModel} from "../query-models/query-params.model";
 import {QueryResultsModel} from "../query-models/query-results.model";

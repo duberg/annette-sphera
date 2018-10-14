@@ -1,4 +1,4 @@
-import {UserModel} from "../user.model";
+import {User} from "../user.model";
 
 export class QueryResultsModel {
 	// fields
@@ -6,7 +6,7 @@ export class QueryResultsModel {
 	totalCount: number;
 	errorMessage: string;
 
-	constructor(_items: UserModel[] = [], _totalCount: number = 0,  _errorMessage: string = '') {
+	constructor(_items: User[] = [], _totalCount: number = 0, _errorMessage: string = '') {
 		this.items = _items;
 		this.totalCount = _totalCount;
 	}

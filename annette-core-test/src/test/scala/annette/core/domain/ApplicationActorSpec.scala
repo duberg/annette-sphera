@@ -1,10 +1,7 @@
 package annette.core.domain
 
-import akka.Done
 import akka.actor.ActorSystem
-import akka.pattern.ask
 import akka.testkit.TestKit
-import annette.core.domain.application.ApplicationService
 import annette.core.domain.application._
 import annette.core.test.PersistenceSpec
 
@@ -22,8 +19,8 @@ class ApplicationActorSpec extends TestKit(ActorSystem("ApplicationActorSpec"))
           cc2 <- ask(a, Application.CreateApplicationCmd(c2))
           ccs <- ask(a, Application.ListApplications).mapTo[Application.ApplicationsMap].map(_.x)
         } yield {
-          //cc1 shouldBe Done
-          //cc2 shouldBe Done
+          //x1 shouldBe Done
+          //x2 shouldBe Done
           ccs(c1.id) shouldBe c1
           ccs(c2.id) shouldBe c2
         }
@@ -36,7 +33,7 @@ class ApplicationActorSpec extends TestKit(ActorSystem("ApplicationActorSpec"))
           cc1 <- ask(a, Application.CreateApplicationCmd(c1))
           cc2 <- ask(a, Application.CreateApplicationCmd(c1))
         } yield {
-          //cc1 shouldBe Done
+          //x1 shouldBe Done
           cc2 shouldBe Application.EntryAlreadyExists
         }
       }
@@ -53,8 +50,8 @@ class ApplicationActorSpec extends TestKit(ActorSystem("ApplicationActorSpec"))
           cc2 <- ask(a, Application.UpdateApplicationCmd(UpdateApplication(Some(c2.name), Some(c2.code), c1.id)))
           ccs <- ask(a, Application.GetApplicationById(c1.id)).mapTo[Application.ApplicationOpt].map(_.x)
         } yield {
-          // cc1 shouldBe Done
-          //cc2 shouldBe Done
+          // x1 shouldBe Done
+          //x2 shouldBe Done
           ccs shouldBe Some(c2)
         }
       }
@@ -82,8 +79,8 @@ class ApplicationActorSpec extends TestKit(ActorSystem("ApplicationActorSpec"))
           d1 <- ask(a, Application.DeleteApplicationCmd(c1.id))
           ccr <- ask(a, Application.ListApplications).mapTo[Application.ApplicationsMap].map(_.x)
         } yield {
-          //cc1 shouldBe Done
-          //cc2 shouldBe Done
+          //x1 shouldBe Done
+          //x2 shouldBe Done
           ccs(c1.id) shouldBe c1
           ccs(c2.id) shouldBe c2
           //d1 shouldBe Done

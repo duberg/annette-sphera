@@ -2,9 +2,7 @@ package annette.core.domain
 
 import java.util.UUID
 
-import akka.Done
 import akka.actor.ActorSystem
-import akka.pattern.ask
 import akka.testkit.TestKit
 import annette.core.domain.tenancy._
 import annette.core.domain.tenancy.model.User._
@@ -46,9 +44,9 @@ class UserServiceActorSpec extends TestKit(ActorSystem("UserActorSpec"))
       //        val actor = newUserActor()
       //        for {
       //
-      //          cc1 <- ask(actor, UserService.CreateUserCmd(c1))
-      //          cc2 <- ask(actor, UserService.CreateUserCmd(c2))
-      //        } yield cc2 shouldBe a[UserAlreadyExistsMsg]
+      //          x1 <- ask(actor, UserService.CreateUserCmd(c1))
+      //          x2 <- ask(actor, UserService.CreateUserCmd(c2))
+      //        } yield x2 shouldBe a[UserAlreadyExistsMsg]
       //      }
       "should not createUser new user if email already exists" in {
         val c1 = newCreateUser(email = Some("it@kantemirov.ru"), phone = Some("+712345"), login = Some("kantemirov"))
@@ -95,27 +93,27 @@ class UserServiceActorSpec extends TestKit(ActorSystem("UserActorSpec"))
             UpdateUser(
               id = cc1.id,
               username = Some(c2.username),
-              displayName = None,
+              displayName = Some(c2.displayName),
               firstName = Some(c2.firstName),
               lastName = Some(c2.lastName),
               middleName = Some(c2.middleName),
               gender = Some(c2.gender),
-              email = None,
-              url = None,
-              description = None,
-              phone = None,
+              email = Some(c2.email),
+              url = Some(c2.url),
+              description = Some(c2.description),
+              phone = Some(c2.phone),
               language = Some(c2.language),
-              roles = Some(c2.roles),
+              roles = c2.roles,
               password = Some(c2.password),
-              avatarUrl = None,
-              sphere = None,
-              company = None,
-              position = None,
-              rank = None,
-              additionalTel = None,
-              additionalMail = None,
-              meta = None,
-              status = None)))
+              avatarUrl = Some(c2.avatarUrl),
+              sphere = Some(c2.sphere),
+              company = Some(c2.company),
+              position = Some(c2.position),
+              rank = Some(c2.rank),
+              additionalTel = Some(c2.additionalTel),
+              additionalMail = Some(c2.additionalMail),
+              meta = c2.meta,
+              status = c2.status)))
           ccs <- ask(actor, GetUserById(cc1.id)).mapTo[UserOpt].map(_.maybeEntry.get)
         } yield {
           ccs shouldBe a[User]
@@ -134,27 +132,27 @@ class UserServiceActorSpec extends TestKit(ActorSystem("UserActorSpec"))
             UpdateUser(
               id = user.id,
               username = Some(None),
-              displayName = None,
+              displayName = Some(c2.displayName),
               firstName = Some(c2.firstName),
               lastName = Some(c2.lastName),
               middleName = Some(c2.middleName),
               gender = Some(c2.gender),
               email = Some(None),
-              url = None,
-              description = None,
+              url = Some(c2.url),
+              description = Some(c2.description),
               phone = Some(None),
               language = Some(c2.language),
-              roles = Some(c2.roles),
+              roles = c2.roles,
               password = Some(c2.password),
-              avatarUrl = None,
-              sphere = None,
-              company = None,
-              position = None,
-              rank = None,
-              additionalTel = None,
-              additionalMail = None,
-              meta = None,
-              status = None)
+              avatarUrl = Some(c2.avatarUrl),
+              sphere = Some(c2.sphere),
+              company = Some(c2.company),
+              position = Some(c2.position),
+              rank = Some(c2.rank),
+              additionalTel = Some(c2.additionalTel),
+              additionalMail = Some(c2.additionalMail),
+              meta = c2.meta,
+              status = c2.status)
           })
 
         for {
@@ -173,28 +171,28 @@ class UserServiceActorSpec extends TestKit(ActorSystem("UserActorSpec"))
           cc2 <- ask(actor, CreateUserCmd(c2)).mapTo[CreateUserSuccess].map(_.x)
           cc3 <- ask(actor, UpdateUserCmd(UpdateUser(
             id = cc2.id,
-            username = None,
-            displayName = None,
+            username = Some(None),
+            displayName = Some(c2.displayName),
             firstName = Some(c2.firstName),
             lastName = Some(c2.lastName),
             middleName = Some(c2.middleName),
             gender = Some(c2.gender),
             email = Some(c1.email),
-            url = None,
-            description = None,
+            url = Some(c2.url),
+            description = Some(c2.description),
             phone = Some(None),
             language = Some(c2.language),
-            roles = Some(c2.roles),
+            roles = c2.roles,
             password = Some(c2.password),
-            avatarUrl = None,
-            sphere = None,
-            company = None,
-            position = None,
-            rank = None,
-            additionalTel = None,
-            additionalMail = None,
-            meta = None,
-            status = None)))
+            avatarUrl = Some(c2.avatarUrl),
+            sphere = Some(c2.sphere),
+            company = Some(c2.company),
+            position = Some(c2.position),
+            rank = Some(c2.rank),
+            additionalTel = Some(c2.additionalTel),
+            additionalMail = Some(c2.additionalMail),
+            meta = c2.meta,
+            status = c2.status)))
         } yield cc3 shouldBe a[EmailAlreadyExistsMsg]
       }
 

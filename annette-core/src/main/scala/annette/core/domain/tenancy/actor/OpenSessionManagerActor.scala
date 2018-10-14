@@ -10,7 +10,6 @@ import annette.core.domain.application.Application
 import annette.core.domain.language.model.Language
 import annette.core.domain.tenancy.model._
 import annette.core.domain.tenancy.{ LastSessionManager, OpenSessionManager, SessionHistoryManager }
-import org.joda.time.DateTime
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._

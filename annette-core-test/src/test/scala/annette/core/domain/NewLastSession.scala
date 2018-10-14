@@ -5,11 +5,9 @@ import java.util.UUID
 
 import akka.actor.ActorRef
 import akka.testkit.TestKit
-import annette.core.domain.language.LanguageService
 import annette.core.domain.tenancy.LastSessionManager
-import annette.core.domain.tenancy.model.{ LastSession, OpenSession }
+import annette.core.domain.tenancy.model.LastSession
 import annette.core.test.PersistenceSpec
-import org.joda.time.DateTime
 
 import scala.util.Random
 

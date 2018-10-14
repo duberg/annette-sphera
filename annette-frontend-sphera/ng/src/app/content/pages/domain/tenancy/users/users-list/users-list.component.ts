@@ -10,7 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { LayoutUtilsService, MessageType } from '../../_core/utils/layout-utils.service';
 // Models
 import {UserEditDialogComponent} from "../user-edit/user-edit-dialog.component";
-import {UserModel} from "../../_core/user.model";
+import {User} from "../../_core/user.model";
 import {UsersDatasource} from "../../_core/datasources/users.datasource";
 import {QueryParamsModel} from "../../_core/query-models/query-params.model";
 import {UsersService} from "../../../../../../core/services/users.service";
@@ -36,8 +36,8 @@ export class UsersListComponent implements OnInit {
 	filterType: string = '';
 
 	// Selection
-	selection = new SelectionModel<UserModel>(true, []);
-	customersResult: UserModel[] = [];
+	selection = new SelectionModel<User>(true, []);
+	customersResult: User[] = [];
 
 	constructor(
 		private usersService: UsersService,
@@ -118,7 +118,7 @@ export class UsersListComponent implements OnInit {
 
 	/** ACTIONS */
 	/** Delete */
-	deleteCustomer(_item: UserModel) {
+	deleteCustomer(_item: User) {
 		const _title: string = this.translate.instant('ECOMMERCE.CUSTOMERS.DELETE_CUSTOMER_SIMPLE.TITLE');
 		const _description: string = this.translate.instant('ECOMMERCE.CUSTOMERS.DELETE_CUSTOMER_SIMPLE.DESCRIPTION');
 		const _waitDesciption: string = this.translate.instant('ECOMMERCE.CUSTOMERS.DELETE_CUSTOMER_SIMPLE.WAIT_DESCRIPTION');
@@ -130,7 +130,7 @@ export class UsersListComponent implements OnInit {
 				return;
 			}
 
-			this.usersService.deleteCustomer(_item.id).subscribe(() => {
+			this.usersService.deleteUser(_item.id).subscribe(() => {
 				this.layoutUtilsService.showActionNotification(_deleteMessage, MessageType.Delete);
 				this.loadUsersList();
 			});
@@ -211,13 +211,13 @@ export class UsersListComponent implements OnInit {
 	}
 
 	addCustomer() {
-		const newCustomer = new UserModel();
+		const newCustomer = new User();
 		newCustomer.clear(); // Set all defaults fields
 		this.editCustomer(newCustomer);
 	}
 
 	/** Edit */
-	editCustomer(user: UserModel) {
+	editCustomer(user: User) {
 		let saveMessageTranslateParam = 'ECOMMERCE.CUSTOMERS.EDIT.';
 		saveMessageTranslateParam += user.id > '' ? 'UPDATE_MESSAGE' : 'ADD_MESSAGE';
 		const _saveMessage = this.translate.instant(saveMessageTranslateParam);

@@ -6,8 +6,6 @@ import akka.testkit.TestKit
 import annette.core.domain.application.ApplicationService
 import annette.core.test.PersistenceSpec
 
-import scala.util.Random
-
 trait NewApplication { _: PersistenceSpec with TestKit =>
 
   def newApplicationActor() = {

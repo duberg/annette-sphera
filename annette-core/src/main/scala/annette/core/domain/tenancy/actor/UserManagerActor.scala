@@ -43,7 +43,7 @@ class UserManagerActor(val verificationBus: VerificationBus, val initState: User
         phone = x.phone,
         language = x.language,
         registeredDate = ZonedDateTime.now(),
-        roles = x.roles,
+        roles = x.roles.getOrElse(Map.empty),
         password = hashedPassword,
         avatarUrl = x.avatarUrl,
         sphere = x.sphere,
@@ -52,8 +52,8 @@ class UserManagerActor(val verificationBus: VerificationBus, val initState: User
         rank = x.rank,
         additionalTel = x.additionalTel,
         additionalMail = x.additionalMail,
-        meta = x.meta,
-        status = x.status)
+        meta = x.meta.getOrElse(Map.empty),
+        status = x.status.getOrElse(0))
 
       persist(CreatedUserEvt(user)) { event =>
         changeState(state.updated(event))

@@ -3,8 +3,9 @@ package annette.core.notification.actor
 import java.net.{ ConnectException, SocketException }
 
 import akka.actor.ActorRef
-import annette.core.notification.client.EmailClient
 import annette.core.notification._
+import annette.core.notification.actor.EmailNotificationActor._
+import annette.core.notification.client.EmailClient
 import annette.core.test.PersistenceSpec
 import com.typesafe.config.ConfigFactory
 import org.scalamock.scalatest.AsyncMockFactory
@@ -12,7 +13,6 @@ import org.scalamock.scalatest.AsyncMockFactory
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.{ Failure, Success }
-import EmailNotificationActor._
 
 trait NewEmailNotificationActor extends NotificationConfig with AsyncMockFactory { _: PersistenceSpec =>
   lazy val emailNotificationConfig: EmailNotificationEntry =

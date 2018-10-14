@@ -1,5 +1,4 @@
 package annette.core.domain
-import java.time.ZonedDateTime
 import java.util.UUID
 
 import akka.testkit.TestKit
@@ -19,8 +18,9 @@ trait NewUser { _: PersistenceSpec with TestKit =>
     system.actorOf(UserService.props(verificationBus = new VerificationBus), s"user-$uuid")
   }
 
-  def newCreateUser(id: UUID = UUID.randomUUID(), email: Option[String] = None, phone: Option[String] = None, login: Option[String] = None) = {
+  def newCreateUser(id: Option[User.Id] = None, email: Option[String] = None, phone: Option[String] = None, login: Option[String] = None) = {
     CreateUser(
+      id = id,
       username = login,
       displayName = None,
       firstName = generateString(),
@@ -32,7 +32,7 @@ trait NewUser { _: PersistenceSpec with TestKit =>
       description = None,
       phone = phone,
       language = genStrOpt,
-      roles = Map.empty,
+      roles = None,
       password = generatePassword,
       avatarUrl = None,
       sphere = None,
@@ -41,7 +41,7 @@ trait NewUser { _: PersistenceSpec with TestKit =>
       rank = None,
       additionalTel = None,
       additionalMail = None,
-      meta = Map.empty,
-      status = 1)
+      meta = None,
+      status = Some(1))
   }
 }

@@ -3,7 +3,6 @@ package annette.core.domain
 
 import akka.Done
 import akka.actor.ActorSystem
-import akka.pattern.ask
 import akka.testkit.TestKit
 import annette.core.domain.language.LanguageService
 import annette.core.domain.language.model.{ Language, LanguageUpdate }

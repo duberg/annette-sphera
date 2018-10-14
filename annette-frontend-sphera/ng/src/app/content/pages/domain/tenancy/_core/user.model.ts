@@ -1,6 +1,6 @@
 import { BaseModel } from './_base.model';
 
-export class UserModel extends BaseModel {
+export class User extends BaseModel {
 	id?: string;
 	username?: string;
 	displayName?: string;
@@ -38,7 +38,7 @@ export class UserModel extends BaseModel {
 		this.firstName = '';
 		this.lastName = '';
 		this.middleName = '';
-		this.gender = 'Male';
+		this.gender = '';
 		this.email = '';
 		this.url = '';
 		this.description = '';
@@ -55,8 +55,35 @@ export class UserModel extends BaseModel {
 		this.additionalTel = '';
 		this.additionalMail = '';
 		this.meta = {};
-		this.status = 1;
+		this.status = 0;
+
+		return this;
 	}
+}
+
+export interface CreateUser extends BaseModel {
+	username?: string;
+	displayName?: string;
+	firstName: string;
+	lastName: string;
+	middleName?: string;
+	gender?: string;
+	email: string;
+	url?: string;
+	description?: string;
+	phone?: string;
+	language?: string;
+	roles: {};
+	password: string;
+	avatarUrl?: string;
+	sphere?: string;
+	company?: string;
+	position?: string;
+	rank?: string;
+	additionalTel?: string;
+	additionalMail?: string;
+	meta: {};
+	status: number;
 }
 
 export interface UpdateUser extends BaseModel {

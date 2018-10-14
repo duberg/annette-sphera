@@ -12,6 +12,7 @@ import annette.core.domain.tenancy._
 import annette.core.domain.tenancy.model._
 import com.typesafe.config.Config
 import javax.inject._
+import scalikejdbc.TxBoundary
 import slick.jdbc.PostgresProfile.api._
 
 import scala.collection.JavaConverters._
@@ -192,7 +193,7 @@ class InitCoreTables @Inject() (
         description = opt(conf.getString("description")),
         phone = opt(conf.getString("phone")),
         language = opt(conf.getString("locale")),
-        roles = tenantsAndRoles,
+        roles = Some(tenantsAndRoles),
         password = opt(conf.getString("password")).getOrElse("abc"),
         avatarUrl = opt(conf.getString("avatarUrl")),
         sphere = opt(conf.getString("sphere")),
@@ -201,8 +202,8 @@ class InitCoreTables @Inject() (
         rank = opt(conf.getString("rank")),
         additionalTel = opt(conf.getString("additionalTel")),
         additionalMail = opt(conf.getString("additionalMail")),
-        meta = Map.empty,
-        status = opt(conf.getInt("status")).getOrElse(1))
+        meta = None,
+        status = opt(conf.getInt("status")).orElse(Some(1)))
 
       (x, tenantsAndRoles)
     }

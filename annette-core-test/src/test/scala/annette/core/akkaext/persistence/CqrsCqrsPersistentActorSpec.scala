@@ -2,11 +2,12 @@ package annette.core.akkaext.persistence
 
 import akka.actor.{ ActorSystem, PoisonPill }
 import akka.testkit.TestKit
-import annette.core.akkaext.persistence.TestCqrsPersistentActor._
 import annette.core.akkaext.actor.CqrsQuery._
 import annette.core.akkaext.actor.CqrsResponse._
+import annette.core.akkaext.persistence.CqrsPersistentActor._
+import annette.core.akkaext.persistence.TestCqrsPersistentActor._
 import annette.core.test.PersistenceSpec
-import CqrsPersistentActor._
+
 import scala.concurrent.Future
 
 class CqrsPersistentActorSpec extends TestKit(ActorSystem("CqrsPersistentActorSpec"))

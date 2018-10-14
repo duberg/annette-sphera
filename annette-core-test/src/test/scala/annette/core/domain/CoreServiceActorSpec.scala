@@ -5,21 +5,18 @@ import java.util.UUID
 
 import akka.Done
 import akka.actor.{ ActorRef, ActorSystem }
-import akka.pattern.ask
 import akka.testkit.TestKit
-import annette.core.domain.application.ApplicationService
 import annette.core.domain.application._
 import annette.core.domain.language.LanguageService
 import annette.core.domain.language.model.{ Language, LanguageUpdate }
+import annette.core.domain.tenancy.LastSessionManager.LastSessionOpt
+import annette.core.domain.tenancy.OpenSessionManager.{ OpenSessionOpt, OpenSessionSeq }
 import annette.core.domain.tenancy._
-import LastSessionManager.LastSessionOpt
-import OpenSessionManager.{ OpenSessionOpt, OpenSessionSeq }
 import annette.core.domain.tenancy.model.User.CreateUserSuccess
 import annette.core.domain.tenancy.model._
 import annette.core.security.verification.VerificationBus
 import annette.core.test.PersistenceSpec
 import com.typesafe.config.{ Config, ConfigFactory }
-import org.joda.time.DateTime
 
 class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
   with PersistenceSpec
@@ -96,8 +93,8 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
           d1 <- ask(a, Application.DeleteApplicationCmd(c1.id))
           ccr <- ask(a, Application.ListApplications).mapTo[Application.ApplicationsMap].map(_.x)
         } yield {
-          // cc1 shouldBe Done
-          //cc2 shouldBe Done
+          // x1 shouldBe Done
+          //x2 shouldBe Done
           ccs(c1.id) shouldBe c1
           ccs(c2.id) shouldBe c2
           //d1 shouldBe Done
@@ -186,8 +183,8 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
           d1 <- ask(a, LanguageService.DeleteLanguageCmd(c1.id))
           ccr <- ask(a, LanguageService.FindAllLanguages).mapTo[LanguageService.MultipleLanguages].map(_.entries)
         } yield {
-          //cc1 shouldBe Done
-          //cc2 shouldBe Done
+          //x1 shouldBe Done
+          //x2 shouldBe Done
           ccs(c1.id) shouldBe c1
           ccs(c2.id) shouldBe c2
           //d1 shouldBe Done
@@ -240,11 +237,11 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
       //        val actor = newCoreServiceActor()
       //        for {
       //
-      //          cc1 <- ask(actor, UserService.CreateUserCmd(c1))
-      //          cc2 <- ask(actor, UserService.CreateUserCmd(c2))
+      //          x1 <- ask(actor, UserService.CreateUserCmd(c1))
+      //          x2 <- ask(actor, UserService.CreateUserCmd(c2))
       //        } yield {
-      //          cc1 shouldBe a[CreateUserSuccess]
-      //          cc2 shouldBe a[UserAlreadyExistsMsg]
+      //          x1 shouldBe a[CreateUserSuccess]
+      //          x2 shouldBe a[UserAlreadyExistsMsg]
       //        }
       //      }
       "should not createUser new user if email already exists" in {
@@ -313,7 +310,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
               description = None,
               phone = Some(c2.phone),
               language = Some(c2.language),
-              roles = Some(c2.roles),
+              roles = c2.roles,
               password = Some(c2.password),
               avatarUrl = None,
               sphere = None,
@@ -355,7 +352,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
               description = None,
               phone = Some(None),
               language = Some(c2.language),
-              roles = Some(c2.roles),
+              roles = c2.roles,
               password = Some(c2.password),
               avatarUrl = None,
               sphere = None,
@@ -395,7 +392,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
             description = None,
             phone = Some(None),
             language = Some(c2.language),
-            roles = Some(c2.roles),
+            roles = c2.roles,
             password = Some(c2.password),
             avatarUrl = None,
             sphere = None,
@@ -430,7 +427,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
             description = None,
             phone = Some(c1.phone),
             language = Some(c2.language),
-            roles = Some(c2.roles),
+            roles = c2.roles,
             password = Some(c2.password),
             avatarUrl = None,
             sphere = None,
@@ -465,7 +462,7 @@ class CoreServiceActorSpec extends TestKit(ActorSystem("CoreServiceActorSpec"))
             description = None,
             phone = None,
             language = Some(c2.language),
-            roles = Some(c2.roles),
+            roles = c2.roles,
             password = Some(c2.password),
             avatarUrl = None,
             sphere = None,

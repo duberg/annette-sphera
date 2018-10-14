@@ -14,7 +14,6 @@ import annette.core.domain.tenancy.model.{ OpenSession, Tenant, TenantData, User
 import annette.core.domain.tenancy.{ SessionService, TenantService, UserService }
 import annette.core.security.authentication.AuthenticationService.{ FailureResponse, Login }
 import annette.core.security.authentication.jwt.JwtHelper
-import org.joda.time.DateTime
 
 import scala.concurrent.{ ExecutionContext, Future }
 
