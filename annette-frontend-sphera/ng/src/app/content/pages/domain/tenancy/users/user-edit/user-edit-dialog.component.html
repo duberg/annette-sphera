@@ -185,15 +185,17 @@
 									</mat-form-field>
 								</div>
 								<div class="col-lg-4 m--margin-bottom-20-mobile">
-									<mat-form-field class="mat-form-field-fluid">
-										<input type="url" matInput placeholder="Enter Avatar Url" formControlName="avatarUrl" />
-										<mat-error>Avatar Url is
-											<strong>required</strong>
-										</mat-error>
-										<mat-hint align="start">Please enter
-											<strong>Avatar Url</strong>
-										</mat-hint>
-									</mat-form-field>
+									<mat-list>
+										<mat-list-item>
+										<img mat-list-avatar [src]="user.avatarUrl" class="m--img-rounded m--marginless m--img-centered" alt="" style="max-width: 41px !important;"/>
+
+											<p mat-line>
+												<span>
+													<file-upload (complete)="onFileComplete($event)"></file-upload>
+												</span>
+											</p>
+										</mat-list-item>
+									</mat-list>
 								</div>
 							</div>
 						</mat-step>

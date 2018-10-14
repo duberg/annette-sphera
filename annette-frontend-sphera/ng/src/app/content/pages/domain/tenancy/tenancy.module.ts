@@ -30,6 +30,7 @@ import {
 	MatTabsModule,
 	MatTooltipModule
 } from "@angular/material";
+import { MatFileUploadModule } from 'angular-material-fileupload';
 import {PartialsModule} from "../../../partials/partials.module";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TranslateModule} from "@ngx-translate/core";
@@ -50,6 +51,7 @@ import {ActionNotificationComponent} from "./_shared/action-natification/action-
 import {DeleteEntityDialogComponent} from "./_shared/delete-entity-dialog/delete-entity-dialog.component";
 import {FetchEntityDialogComponent} from "./_shared/fetch-entity-dialog/fetch-entity-dialog.component";
 import {UpdateStatusDialogComponent} from "./_shared/update-status-dialog/update-status-dialog.component";
+import {FileUploadComponent} from "./_shared/file-upload/file-upload.component";
 
 const routes: Routes = [
 	{
@@ -114,7 +116,8 @@ const routes: Routes = [
 	  MatTabsModule,
 	  MatTooltipModule,
 	  MatListModule,
-	  MatStepperModule
+	  MatStepperModule,
+	  MatIconModule
   ],
 	providers: [
 		{
@@ -157,7 +160,8 @@ const routes: Routes = [
 	PermissionEditComponent,
 	TenantsListComponent,
 	TenantEditComponent,
-	SessionsListComponent
+	SessionsListComponent,
+	  FileUploadComponent
   ]
 })
 export class TenancyModule { }

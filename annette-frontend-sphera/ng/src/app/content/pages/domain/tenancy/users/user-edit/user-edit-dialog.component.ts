@@ -177,4 +177,8 @@ export class UserEditDialogComponent implements OnInit {
 	onAlertClose($event) {
 		this.hasFormErrors = false;
 	}
+
+	onFileComplete(data: any) {
+		console.log(data);
+	}
 }

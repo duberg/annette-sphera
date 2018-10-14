@@ -26,7 +26,19 @@ import {UsersService} from "../../../../../../core/services/users.service";
 export class UsersListComponent implements OnInit {
 	// Table fields
 	dataSource: UsersDatasource;
-	displayedColumns = ['select', 'id', 'lastName', 'firstName', 'email', 'gender', 'status', 'type', 'actions'];
+
+	displayedColumns = [
+		'select',
+		//'avatarUrl',
+		'id',
+		'lastName',
+		'firstName',
+		'email',
+		'gender',
+		'status',
+		'type',
+		'actions'];
+
 	@ViewChild(MatPaginator) paginator: MatPaginator;
 	@ViewChild(MatSort) sort: MatSort;
 
