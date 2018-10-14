@@ -51,7 +51,7 @@ export class UserEditDialogComponent implements OnInit {
 			description: [this.user.description, Validators.nullValidator],
 			phone: [this.user.phone, Validators.nullValidator],
 			language: [this.user.language, Validators.nullValidator],
-			password: [this.user.password, Validators.nullValidator],
+			password: [this.user.password, Validators.required],
 			avatarUrl: [this.user.avatarUrl, Validators.nullValidator],
 			sphere: [this.user.sphere, Validators.nullValidator],
 			company: [this.user.company, Validators.nullValidator],
