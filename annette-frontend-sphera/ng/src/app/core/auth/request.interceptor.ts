@@ -30,10 +30,8 @@ export class RequestInterceptor implements HttpInterceptor {
 	) {}
 
 	intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-		const body = JSON.parse(request.body.toString());
-
 		// Filter unwanted object fields
-		const b = _(body)
+		const b = _(request.body)
 			.pickBy((value, key) => !_.startsWith(key, '_'))
 			.omitBy(_.isNil)
 			.value();

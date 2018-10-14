@@ -107,8 +107,7 @@ export class AuthenticationService implements AuthService {
 	 * @returns {Observable<any>}
 	 */
 	public signIn(credential: Credential2): Observable<any> {
-		const x = JSON.stringify(credential);
-		return this.http.post<AccessData>(this.API_URL + this.API_ENDPOINT_SIGNIN, x).pipe(
+		return this.http.post<AccessData>(this.API_URL + this.API_ENDPOINT_SIGNIN, credential).pipe(
 			tap(this.saveAccessData.bind(this))
 		);
 	}
