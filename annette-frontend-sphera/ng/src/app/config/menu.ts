@@ -512,6 +512,18 @@ export class MenuConfig implements ConfigModel {
 						translate: 'MENU.SESSIONS'
 					},
 
+
+					// = MASTERDATA =
+					{section: 'Masterdata'},
+					{
+						title: 'Masterdata',
+						desc: 'Masterdata list',
+						root: true,
+						icon: 'flaticon-list-1',
+						page: '/masterdata/forms',
+						translate: 'MENU.MASTERDATA'
+					},
+
 					{section: 'Components'},
 					{
 						title: 'Google Material',

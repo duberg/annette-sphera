@@ -24,7 +24,8 @@ export const locale = {
 			ROLES: 'Roles',
 			PERMISSIONS: 'Permissions',
 			TENANTS: 'Tenants',
-			SESSIONS: 'Sessions'
+			SESSIONS: 'Sessions',
+			MASTERDATA: 'Forms'
 		},
 		AUTH: {
 			GENERAL: {

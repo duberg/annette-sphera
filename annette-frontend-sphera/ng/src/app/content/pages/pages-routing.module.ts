@@ -28,6 +28,10 @@ const routes: Routes = [
 				loadChildren: './domain/tenancy/tenancy.module#TenancyModule'
 			},
 			{
+				path: 'masterdata',
+				loadChildren: './masterdata/masterdata.module#MasterdataModule'
+			},
+			{
 				path: 'mail',
 				loadChildren: './components/apps/mail/mail.module#MailModule'
 			},

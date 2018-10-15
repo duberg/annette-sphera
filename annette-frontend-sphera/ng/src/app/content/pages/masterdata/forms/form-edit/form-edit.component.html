@@ -1,0 +1,28 @@
+
+
+
+
+<div class="container">
+	<div class="row">
+		<div class="col-sm">
+
+			<pre>{{m | json}}</pre>
+
+		</div>
+
+		<div class="col-sm">
+			<json-schema-form
+				loadExternalAssets="true"
+				framework="material-design"
+				[schema]="m.schema"
+				[layout]="m.layout"
+				[(data)]="m.data">
+			</json-schema-form>
+
+		</div>
+
+	</div>
+</div>
+
+
+

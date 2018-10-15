@@ -32,7 +32,7 @@ export class FileUploadComponent implements OnInit {
 
 	show: Boolean = true;
 
-	private files: Array<FileUploadModel> = [];
+	files: Array<FileUploadModel> = [];
 
 	constructor(private _http: HttpClient) { }
 
