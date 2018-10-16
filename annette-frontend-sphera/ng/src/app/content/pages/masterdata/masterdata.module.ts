@@ -14,6 +14,7 @@ import {
 	MatToolbarModule
 } from "@angular/material";
 import {MaterialDesignFrameworkModule} from "angular6-json-schema-form";
+import {HighlightModule} from "ngx-highlightjs";
 
 const routes: Routes = [
 	{
@@ -47,7 +48,8 @@ const routes: Routes = [
 		MatSelectModule,
 		MatToolbarModule,
 		MatGridListModule,
-		MaterialDesignFrameworkModule
+		MaterialDesignFrameworkModule,
+		HighlightModule.forRoot({ theme: 'googlecode' })
 	],
 	declarations: [FormEditComponent]
 })
