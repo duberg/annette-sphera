@@ -11,7 +11,7 @@ This project aims to provide complete CQRS/Event Sourcing platform.
 - Data pagination 
   - Akka http paginator
   - Angular paginated table
-- Domain (Tenancy, Application, User, Language)
+- Form Builder. Build forms, just the way you do it in Google forms.
 
 This project is based on ideas and source code of Valery Lobachev (https://github.com/valerylobachev)
 
