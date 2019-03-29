@@ -11,8 +11,6 @@ This project aims to provide complete CQRS/Event Sourcing platform.
 - Data pagination.
 - Form Builder. Build forms, just the way you do it in Google forms.
 
-This project is based on ideas and source code of Valery Lobachev (https://github.com/valerylobachev)
-
 ## Installation:
 
 - Install sbt, postgresql, protoc-3.2.0, nodejs, @angular/cli: ```/scripts/install-project-tools.sh```
